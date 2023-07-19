@@ -19,6 +19,15 @@ textarea {
     max-width: 280px;
 }
 
+:root {
+    --bg: #FBFCFE;
+    --text: #2E3841;
+    --primary: #4A81B5;
+    --secondary: #C9D9E9;
+    --danger: #b64a4a;
+    --accent: #4C6883;
+}
+
 .create-form {
     width: clamp(20%, 30%, 90%);
     display: flex;
@@ -30,10 +39,34 @@ textarea {
 .card-set {
     display: flex;
     padding: 2rem;
+    color: var(--text);
+    text-decoration: none;
     cursor: pointer;
-    border: 1px solid black;
+    background: var(--secondary);
+    border-radius: 5px;
 }
 
 .status {
     color: green;
+}
+
+.button-icon {
+    font-size: 1.5rem;
+    width: 2.5rem;
+    aspect-ratio: 1/1;
+    color: var(--bg);
+    border: none;
+    text-decoration: none;
+    text-align: center;
+    background: var(--primary);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.button-icon-upload:hover {
+    background: var(--accent);
+}
+
+.button-icon-trash:hover {
+    background: var(--danger);
 }

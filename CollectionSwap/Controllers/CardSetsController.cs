@@ -24,6 +24,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.Cards = files.OrderBy(f => f.Length);
             ViewBag.Status = TempData["Success"];
+            ViewBag.ImageUrl = TempData["ImageUrl"];
             return View(cardSet);
         }
 
@@ -54,6 +55,7 @@ namespace CollectionSwap.Controllers
             {
                 if (cardSet.FileInput != null && cardSet.FileInput.ContentLength > 0)
                 {
+                    // Save the cardSet to the database so it is allocated an Id
                     CardSet newCardSet = new CardSet()
                     {
                         card_set_name = cardSet.card_set_name
@@ -90,6 +92,56 @@ namespace CollectionSwap.Controllers
                 }
             }
             return View(cardSet);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int? cardSetId)
+        {
+            CardSet cardSet = db.CardSets.Find(cardSetId);
+            db.CardSets.Remove(cardSet);
+            db.SaveChanges();
+
+            string directoryPath = Server.MapPath("~/Card_Sets/" + cardSetId);
+            if (Directory.Exists(directoryPath))
+            {
+                // Delete the directory and its content (recursive: true)
+                Directory.Delete(directoryPath, recursive: true);
+            }
+
+            return RedirectToAction("Index", "Manage");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteCard(int? cardSetId, string cardId)
+        {
+            string filePath = Server.MapPath("~/Card_Sets/" + cardSetId + '/' + cardId);
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+
+            return RedirectToAction("Edit/" + cardSetId);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChangeCard(int? cardSetId, string cardId, HttpPostedFileBase fileInput)
+        {
+            if (fileInput != null && fileInput.ContentLength > 0)
+            {
+                // Process the uploaded file
+                // For example, save the file to a specific location on the server
+
+                string filePath = Server.MapPath("~/Card_Sets/" + cardSetId + '/' + cardId + ".png");
+                fileInput.SaveAs(filePath);
+
+                string cacheBuster = DateTime.UtcNow.Ticks.ToString();
+                TempData["ImageUrl"] = new List<string> { cardId, $"~/Card_Sets/{cardSetId}/{cardId}.png?time={cacheBuster}" };
+            }
+
+            return RedirectToAction("Edit/" + cardSetId);
         }
     }
 }
