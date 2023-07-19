@@ -1,0 +1,43 @@
+﻿@model CollectionSwap.Models.IndexViewModel
+@{
+    ViewBag.Title = "Admin Dashboard";
+}
+
+<main aria-labelledby="title">
+    <h2 id="title">@ViewBag.Title</h2>
+
+    <p class="text-success">@ViewBag.StatusMessage</p>
+    <div>
+        <hr />
+        @*<dl class="dl-horizontal">
+            <dt>Password:</dt>
+            <dd>
+                [
+                @if (Model.HasPassword)
+                {
+                    @Html.ActionLink("Change your password", "ChangePassword")
+                }
+                else
+                {
+                    @Html.ActionLink("Create", "SetPassword")
+                }
+                ]
+            </dd>
+            
+        </dl>*@
+    </div>
+
+    <div>
+        <h4>Manage Card Sets</h4>
+        <hr />
+        <div class="d-flex gap-5">
+
+            @foreach (var cardSet in Model.CardSets)
+            {
+                @Html.ActionLink(@cardSet.card_set_name, "Edit", "CardSets", new { id = cardSet.card_set_id }, new { @class = "card-set" })
+            }
+
+            @Html.ActionLink("Add New", "Create", "CardSets", null, new { @class = "card-set" })
+        </div>
+    </div>
+</main>

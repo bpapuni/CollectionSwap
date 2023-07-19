@@ -1,0 +1,34 @@
+﻿@model CollectionSwap.Models.CardSet
+@{
+    ViewBag.Title = "Edit";
+    string statusMessage = ViewBag.Status;
+    IEnumerable<string> cardSet = ViewBag.Cards;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@using (Html.BeginForm("Edit", "CardSets", FormMethod.Post, new { role = "form", @class = "d-flex flex-column align-items-center mt-5 mb-5" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group d-flex flex-row justify-content-center">
+        @Html.Hidden("card_set_id", Model.card_set_id)
+        @Html.EditorFor(model => model.card_set_name, new { htmlAttributes = new { @class = "form-control" } })
+        <input class="btn btn-primary mx-1" type="submit" value="Update Card Set Name" />
+    </div>
+    <span class="text-success">@statusMessage</span>
+}
+
+<div class="d-flex gap-5 flex-wrap">
+    @foreach (var card in cardSet.Select((value, i) => new { i, value }))
+    {
+        <div class="d-flex flex-column align-items-center">
+            <img src="~/Card_Sets/@Model.card_set_id/@card.value" />
+            @(card.i + 1)
+        </div>
+    }
+</div>
+
+<div>
+    @Html.ActionLink("Back to List", "Index", "Manage")
+</div>
