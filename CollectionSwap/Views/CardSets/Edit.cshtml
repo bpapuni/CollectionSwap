@@ -36,11 +36,11 @@
                 <img src="~/Card_Sets/@Model.card_set_id/@card.value" />
             }
             <div class="d-flex gap-3">
-                @using (Html.BeginForm("ChangeCard", "CardSets", new { cardSetId = @Model.card_set_id, cardId = @card.i + 1 }, FormMethod.Post, new { enctype = "multipart/form-data", role = "form", @class = "mt-3" }))
+                @using (Html.BeginForm("ChangeCard", "CardSets", new { cardSetId = @Model.card_set_id, cardId = card.i + 1 }, FormMethod.Post, new { enctype = "multipart/form-data", role = "form", @class = "mt-3" }))
                 {
                     @Html.AntiForgeryToken()
-                    <label for="fileInput" class="button-icon button-icon-upload"><i class="fa fa-upload"></i></label>
-                    <input class="d-none" type="file" id="fileInput" name="fileInput">
+                    <label for="fileInput@(card.i + 1)" class="button-icon button-icon-upload"><i class="fa fa-upload"></i></label>
+                    <input class="d-none" type="file" id="fileInput@(card.i + 1)" name="fileInput">
                 }
                 @using (Html.BeginForm("DeleteCard", "CardSets", new { cardSetId = @Model.card_set_id, cardId = @card.value }, FormMethod.Post, new { role = "form", @class = "mt-3" }))
                 {
@@ -60,10 +60,10 @@
 
 @section scripts {
     <script>
-        $(document).ready(function () {
-            $("#fileInput").on("change", function () {
+        $(document).ready(function() {
+            $("[name=fileInput]").on("change", function() {
                 $(this).closest("form").submit();
-            });
+            })
         });
     </script>
 }

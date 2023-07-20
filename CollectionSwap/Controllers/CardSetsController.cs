@@ -127,7 +127,7 @@ namespace CollectionSwap.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ChangeCard(int? cardSetId, string cardId, HttpPostedFileBase fileInput)
+        public ActionResult ChangeCard(int? cardSetId, int cardId, HttpPostedFileBase fileInput)
         {
             if (fileInput != null && fileInput.ContentLength > 0)
             {
@@ -138,7 +138,7 @@ namespace CollectionSwap.Controllers
                 fileInput.SaveAs(filePath);
 
                 string cacheBuster = DateTime.UtcNow.Ticks.ToString();
-                TempData["ImageUrl"] = new List<string> { cardId, $"~/Card_Sets/{cardSetId}/{cardId}.png?time={cacheBuster}" };
+                TempData["ImageUrl"] = new List<string> { cardId.ToString(), $"~/Card_Sets/{cardSetId}/{cardId}.png?time={cacheBuster}" };
             }
 
             return RedirectToAction("Edit/" + cardSetId);

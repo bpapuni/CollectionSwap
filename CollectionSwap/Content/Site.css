@@ -50,6 +50,15 @@ textarea {
     color: green;
 }
 
+.btn-primary {
+    background-color: var(--primary);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: var(--accent);
+}
+
 .button-icon {
     font-size: 1.5rem;
     width: 2.5rem;
