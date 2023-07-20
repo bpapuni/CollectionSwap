@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Web;
@@ -53,7 +54,7 @@ namespace CollectionSwap.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (cardSet.FileInput != null && cardSet.FileInput.ContentLength > 0)
+                if (cardSet.fileInput != null && cardSet.fileInput.ContentLength > 0)
                 {
                     // Save the cardSet to the database so it is allocated an Id
                     CardSet newCardSet = new CardSet()
@@ -64,29 +65,42 @@ namespace CollectionSwap.Controllers
                     db.SaveChanges();
 
                     // Get the file name and file extension
-                    string fileName = Path.GetFileName(cardSet.FileInput.FileName);
+                    string fileName = Path.GetFileName(cardSet.fileInput.FileName);
                     string fileExtension = Path.GetExtension(fileName);
 
                     // Generate a unique file name to prevent overwriting files with the same name
                     string uniqueFileName = Guid.NewGuid().ToString() + fileExtension;
 
                     // Specify the path where you want to save the uploaded file on the server
-                    string uploadPath = Server.MapPath("~/Card_Sets/" + newCardSet.card_set_id); // Update the path as needed
+                    string tempPath = Server.MapPath("~/temp/");
+                    string extractPath = Server.MapPath("~/Card_Sets/" + newCardSet.card_set_id);
 
                     // Ensure the target directory exists; create it if it doesn't
-                    if (!Directory.Exists(uploadPath))
+                    if (!Directory.Exists(extractPath))
                     {
-                        Directory.CreateDirectory(uploadPath);
+                        Directory.CreateDirectory(extractPath);
                     }
 
-                    // Save the file to the server
-                    string filePath = Path.Combine(uploadPath, uniqueFileName);
-                    cardSet.FileInput.SaveAs(filePath);
+                    string zipFilePath = Path.Combine(tempPath, Path.GetFileName(cardSet.fileInput.FileName));
+                    cardSet.fileInput.SaveAs(zipFilePath);
 
-                    // Optionally, you can save the file name or file path to your database
-                    // Depending on your application's requirements.
+                    // Extract the contents of the zip file
+                    using (ZipArchive zipArchive = ZipFile.OpenRead(zipFilePath))
+                    {
+                        int fileCounter = 1;
 
-                    // ... Continue with your logic for saving the card set ...
+                        foreach (ZipArchiveEntry entry in zipArchive.Entries)
+                        {
+                            // Ensure that the entry is a file, not a directory
+                            if (!string.IsNullOrEmpty(entry.Name))
+                            {
+                                string extractedFilePath = Path.Combine(extractPath, fileCounter.ToString() + Path.GetExtension(entry.Name));
+                                entry.ExtractToFile(extractedFilePath, true);
+
+                                fileCounter++;
+                            }
+                        }
+                    }
 
                     return RedirectToAction("Index", "Manage");
                 }
