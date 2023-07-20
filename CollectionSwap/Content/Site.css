@@ -1,5 +1,6 @@
 ﻿/* Set padding to keep content from hitting the edges */
 .body-content {
+    font-family: 'Inter', sans-serif;
     margin-top: 15px;
     padding-left: 15px;
     padding-right: 15px;
@@ -37,8 +38,12 @@ textarea {
 }
 
 .card-set {
+    font-weight: bold;
     display: flex;
-    padding: 2rem;
+    justify-content: center;
+    align-items: center;
+    height: 5rem;
+    aspect-ratio: 1.5/1;
     color: var(--text);
     text-decoration: none;
     cursor: pointer;
@@ -78,4 +83,28 @@ textarea {
 
 .button-icon-trash:hover {
     background: var(--danger);
+}
+
+.fa-plus {
+    font-size: 2rem;
+}
+
+.add-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 2rem;
+    right: 5rem;
+    width: 5rem;
+    aspect-ratio: 1/1;
+    color: var(--bg);
+    background: var(--primary);
+    border-radius: 100%;
+    border: none;
+    cursor: pointer;
+}
+
+.add-card:hover {
+    background: var(--accent);
 }

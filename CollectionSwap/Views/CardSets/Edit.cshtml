@@ -54,15 +54,26 @@
 </div>
 
 <div>
+    <br />
     @Html.ActionLink("Back to List", "Index", "Manage")
+</div>
+
+<div>
+    @using (Html.BeginForm("AddCard", "CardSets", new { cardSetId = @Model.card_set_id }, FormMethod.Post, new { enctype = "multipart/form-data", role = "form", @class = "mt-3" }))
+    {
+        @Html.AntiForgeryToken()
+        <label for="cardCreateInput" class="add-card"><i class="fa fa-plus"></i></label>
+        <input class="d-none" type="file" accept = ".png, .jpg" id="cardCreateInput" name="fileInput">
+    }
 </div>
 
 
 @section scripts {
     <script>
         $(document).ready(function() {
-            $("[name=fileInput]").on("change", function() {
+            $("input[type='file']").on("change", function() {
                 $(this).closest("form").submit();
+                //console.log($(this).closest("form"));
             })
         });
     </script>

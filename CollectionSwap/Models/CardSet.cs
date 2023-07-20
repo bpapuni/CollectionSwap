@@ -19,6 +19,7 @@ namespace CollectionSwap.Models
         [Required(ErrorMessage = "Please enter a card set name.")]
         public string card_set_name { get; set; }
 
+        [ZipFile(ErrorMessage = "Please select a zip file containing card images.")]
         [Required(ErrorMessage = "Please select a zip file containing card images.")]
         public HttpPostedFileBase FileInput { get; set; }
     }

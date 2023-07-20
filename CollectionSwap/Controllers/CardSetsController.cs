@@ -143,5 +143,23 @@ namespace CollectionSwap.Controllers
 
             return RedirectToAction("Edit/" + cardSetId);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddCard(int? cardSetId, HttpPostedFileBase fileInput)
+        {
+            if (fileInput != null && fileInput.ContentLength > 0)
+            {
+                // Process the uploaded file
+                // For example, save the file to a specific location on the server
+
+                string directoryPath = Server.MapPath("~/Card_Sets/" + cardSetId);
+                string[] items = Directory.GetFileSystemEntries(directoryPath);
+                string filePath = directoryPath + '/' + (items.Length + 1) + ".png";
+                fileInput.SaveAs(filePath);
+            }
+
+            return RedirectToAction("Edit/" + cardSetId);
+        }
     }
 }
