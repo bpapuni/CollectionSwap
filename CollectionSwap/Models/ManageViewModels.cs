@@ -13,6 +13,7 @@ namespace CollectionSwap.Models
         public bool TwoFactor { get; set; }
         public bool BrowserRemembered { get; set; }
         public List<CardSet> CardSets { get; set; }
+        public List<CardSet> UserCardSets { get; set; }
     }
 
     public class ManageLoginsViewModel

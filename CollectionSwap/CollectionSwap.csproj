@@ -186,6 +186,10 @@
     <Compile Include="Migrations\202307190323530_CardSetNameRequired.designer.cs">
       <DependentUpon>202307190323530_CardSetNameRequired.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202307202028435_AddRolesAtRegister.cs" />
+    <Compile Include="Migrations\202307202028435_AddRolesAtRegister.designer.cs">
+      <DependentUpon>202307202028435_AddRolesAtRegister.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CardSet.cs" />
@@ -274,11 +278,14 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\CardSets\Edit.cshtml" />
     <Content Include="Views\CardSets\Create.cshtml" />
+    <Content Include="Views\Manage\_AdminIndex.cshtml" />
+    <Content Include="Views\Manage\_UserIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Card_Sets\" />
     <Folder Include="temp\" />
+    <Folder Include="Views\Admin\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
@@ -313,6 +320,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202307190323530_CardSetNameRequired.resx">
       <DependentUpon>202307190323530_CardSetNameRequired.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202307202028435_AddRolesAtRegister.resx">
+      <DependentUpon>202307202028435_AddRolesAtRegister.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

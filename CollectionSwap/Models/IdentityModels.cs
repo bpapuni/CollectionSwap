@@ -32,4 +32,10 @@ namespace CollectionSwap.Models
 
         public DbSet<CardSet> CardSets { get; set; }
     }
+
+    public class ApplicationRole : IdentityRole
+    {
+        public ApplicationRole() : base() { }
+        public ApplicationRole(string name) : base(name) { }
+    }
 }

@@ -15,8 +15,20 @@ namespace CollectionSwap.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        public ActionResult Index()
+        {
+            return RedirectToAction("Index", "Manage");
+        }
+
+
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
+            if (id == null)
+            {
+                return RedirectToAction("Index", "Manage");
+            }
+
             CardSet cardSet = db.CardSets.Find(id);
 
             string path = Server.MapPath("~/Card_Sets/" + cardSet.card_set_id);
@@ -31,6 +43,7 @@ namespace CollectionSwap.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(CardSet cardSet) 
         {
             if (ModelState.IsValid)
@@ -43,6 +56,7 @@ namespace CollectionSwap.Controllers
             return View(cardSet);
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
@@ -50,6 +64,7 @@ namespace CollectionSwap.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create(CreateCardSet cardSet)
         {
             if (ModelState.IsValid)
@@ -102,6 +117,8 @@ namespace CollectionSwap.Controllers
                         }
                     }
 
+                    System.IO.File.Delete(zipFilePath);
+
                     return RedirectToAction("Index", "Manage");
                 }
             }
@@ -110,6 +127,7 @@ namespace CollectionSwap.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? cardSetId)
         {
             CardSet cardSet = db.CardSets.Find(cardSetId);
@@ -128,6 +146,7 @@ namespace CollectionSwap.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteCard(int? cardSetId, string cardId)
         {
             string filePath = Server.MapPath("~/Card_Sets/" + cardSetId + '/' + cardId);
@@ -141,6 +160,7 @@ namespace CollectionSwap.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult ChangeCard(int? cardSetId, int cardId, HttpPostedFileBase fileInput)
         {
             if (fileInput != null && fileInput.ContentLength > 0)
@@ -160,6 +180,7 @@ namespace CollectionSwap.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult AddCard(int? cardSetId, HttpPostedFileBase fileInput)
         {
             if (fileInput != null && fileInput.ContentLength > 0)

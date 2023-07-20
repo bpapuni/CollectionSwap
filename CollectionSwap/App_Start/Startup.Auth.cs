@@ -63,6 +63,7 @@ namespace CollectionSwap
             //    ClientId = "",
             //    ClientSecret = ""
             //});
+            app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
         }
     }
 }
