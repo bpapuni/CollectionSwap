@@ -74,7 +74,7 @@ namespace CollectionSwap.Controllers
             };
             using (var db = new ApplicationDbContext())
             {
-                model.CardSets = db.CardSets.ToList();
+                model.Collections = db.Collections.ToList();
                 //model.UserCardSets = 
             }
             return View(model);

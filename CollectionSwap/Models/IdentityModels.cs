@@ -30,7 +30,8 @@ namespace CollectionSwap.Models
             return new ApplicationDbContext();
         }
 
-        public DbSet<CardSet> CardSets { get; set; }
+        public DbSet<Collection> Collections { get; set; }
+        public DbSet<UserCollection> UserCollections { get; set; }
     }
 
     public class ApplicationRole : IdentityRole

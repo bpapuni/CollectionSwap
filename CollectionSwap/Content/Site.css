@@ -89,7 +89,7 @@ textarea {
     font-size: 2rem;
 }
 
-.add-card {
+.add-item {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -105,6 +105,6 @@ textarea {
     cursor: pointer;
 }
 
-.add-card:hover {
+.add-item:hover {
     background: var(--accent);
 }

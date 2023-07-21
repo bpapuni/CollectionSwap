@@ -171,7 +171,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\CardSetsController.cs" />
+    <Compile Include="Controllers\CollectionsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Custom_Validations\ZipFileAttribute.cs" />
@@ -190,9 +190,21 @@
     <Compile Include="Migrations\202307202028435_AddRolesAtRegister.designer.cs">
       <DependentUpon>202307202028435_AddRolesAtRegister.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202307202347345_RenamedCardSetsToCollections.cs" />
+    <Compile Include="Migrations\202307202347345_RenamedCardSetsToCollections.designer.cs">
+      <DependentUpon>202307202347345_RenamedCardSetsToCollections.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202307210000449_RefactoringForCollections.cs" />
+    <Compile Include="Migrations\202307210000449_RefactoringForCollections.designer.cs">
+      <DependentUpon>202307210000449_RefactoringForCollections.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202307210139192_UpdateCollectionCreateUserCollection.cs" />
+    <Compile Include="Migrations\202307210139192_UpdateCollectionCreateUserCollection.designer.cs">
+      <DependentUpon>202307210139192_UpdateCollectionCreateUserCollection.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\CardSet.cs" />
+    <Compile Include="Models\CollectionModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -276,16 +288,14 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\CardSets\Edit.cshtml" />
-    <Content Include="Views\CardSets\Create.cshtml" />
+    <Content Include="Views\Collections\Edit.cshtml" />
+    <Content Include="Views\Collections\Create.cshtml" />
     <Content Include="Views\Manage\_AdminIndex.cshtml" />
     <Content Include="Views\Manage\_UserIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Card_Sets\" />
     <Folder Include="temp\" />
-    <Folder Include="Views\Admin\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
@@ -323,6 +333,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202307202028435_AddRolesAtRegister.resx">
       <DependentUpon>202307202028435_AddRolesAtRegister.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202307202347345_RenamedCardSetsToCollections.resx">
+      <DependentUpon>202307202347345_RenamedCardSetsToCollections.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202307210000449_RefactoringForCollections.resx">
+      <DependentUpon>202307210000449_RefactoringForCollections.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202307210139192_UpdateCollectionCreateUserCollection.resx">
+      <DependentUpon>202307210139192_UpdateCollectionCreateUserCollection.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
