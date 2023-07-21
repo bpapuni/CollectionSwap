@@ -4,7 +4,7 @@
     <hr />
     <div class="d-flex gap-5">
 
-        @foreach (var collection in Model.Collections)
+        @foreach (var collection in Model.UserCollections)
         {
             <div class="d-flex flex-column align-items-center">
                 @Html.ActionLink(@collection.Name, "Edit", "Collections", new { id = collection.Id }, new { @class = "card-set" })
@@ -17,6 +17,6 @@
             </div>
         }
 
-        <a class="card-set align-self-baseline" href="/Collections/Create"><i class="fa fa-plus"></i></a>
+        <a class="card-set align-self-baseline" href="/UserCollections/Create"><i class="fa fa-plus"></i></a>
     </div>
 </div>

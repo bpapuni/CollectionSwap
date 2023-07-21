@@ -1,0 +1,29 @@
+﻿@model CollectionSwap.Models.UserCollection
+@using CollectionSwap.Models
+@{
+    ViewBag.Title = "Create";
+    var selectedCollection = ViewBag.SelectedCollection as Collection;
+    var availableCollections = ViewBag.Collections as List<Collection>;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex flex-column">
+    <h4>Select a Collection to Start Creating</h4>
+    <hr />
+    <div class="d-flex flex-row  gap-5">
+        @foreach (var collection in availableCollections)
+        {
+            @Html.ActionLink(@collection.Name, "Create", "UserCollections", new { id = collection.Id }, new { @class = "card-set" })
+        }
+    </div>
+
+    @if (selectedCollection != null)
+    {
+        @Html.Partial("_Items", selectedCollection)
+    }
+</div>
+
+<div>
+    <br />
+    <a class="back-link" href="/Manage/Index"><i class="fa fa-arrow-circle-left"></i>&nbsp; Back to Dashboard</a>
+</div>

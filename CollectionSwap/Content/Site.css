@@ -108,3 +108,13 @@ textarea {
 .add-item:hover {
     background: var(--accent);
 }
+
+.back-link {
+    font-size: 1.5rem;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.back-link:hover {
+    color: var(--accent);
+}

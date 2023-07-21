@@ -1,0 +1,23 @@
+﻿@model CollectionSwap.Models.Collection
+
+<br />
+<br />
+<h5>Select Which Items You Own</h5>
+<hr />
+<div id="items" class="d-flex gap-5 flex-wrap">
+    @for (int i = 1; i <= Model.Size; i++)
+    {
+        var imagePath = $"~/Collections/{Model.Id}/{i}";
+        <div class="d-flex flex-column align-items-center">
+
+        @if (System.IO.File.Exists(Server.MapPath(imagePath + ".png")))
+        {
+            <img class="item" src="@Url.Content(imagePath + ".png")" alt="Image @i" />
+        }
+        else if (System.IO.File.Exists(Server.MapPath(imagePath + ".jpg")))
+        {
+            <img class="item" src="@Url.Content(imagePath + ".jpg")" alt="Image @i" />
+        }
+        </div>
+    }
+</div>

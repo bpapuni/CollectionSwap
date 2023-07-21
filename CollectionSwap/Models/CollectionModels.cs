@@ -30,8 +30,10 @@ namespace CollectionSwap.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required(ErrorMessage = "Please enter a name for this collection.")]
+        public string Name { get; set; }
         [Required]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         [Required]
         public int CollectionId { get; set; }
         public string ItemIdsJSON { get; set; }
