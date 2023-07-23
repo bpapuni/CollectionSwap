@@ -38,4 +38,9 @@ namespace CollectionSwap.Models
         public int CollectionId { get; set; }
         public string ItemIdsJSON { get; set; }
     }
+
+    public class SwapViewModel
+    {
+        public List<UserCollection> UserCollections { get; set; }
+    }
 }
