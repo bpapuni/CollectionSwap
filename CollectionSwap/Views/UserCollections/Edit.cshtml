@@ -4,8 +4,8 @@
 @{
     ViewBag.Title = "Edit";
     string statusMessage = ViewBag.Status;
-    IEnumerable<string> collection = ViewBag.Items;
-    Layout = "~/Views/Shared/_Layout.cshtml";
+IEnumerable<string> collection = ViewBag.Items;
+Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="d-flex flex-column">
@@ -118,9 +118,6 @@
                     //console.log(result.message)
                 },
                 error: function (xhr, status, error) {
-                    if (xhr.responseText) {
-                        console.log("Server error message: " + xhr.responseText);
-                    }
                 }
             })
         }
