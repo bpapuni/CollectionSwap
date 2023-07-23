@@ -294,6 +294,7 @@
     <Content Include="Fonts\fontawesome-webfont.ttf" />
     <Content Include="Fonts\fontawesome-webfont.eot" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <Content Include="Scripts\user-collection-ui.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
@@ -346,6 +347,7 @@
     <Content Include="Views\Manage\_UserIndex.cshtml" />
     <Content Include="Views\UserCollections\Create.cshtml" />
     <Content Include="Views\UserCollections\_Items.cshtml" />
+    <Content Include="Views\UserCollections\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -27,13 +27,11 @@
         </dl>
     </div>
 
+    <br />
     @if (User.IsInRole("Admin"))
     {
         @Html.Partial("_AdminIndex")
-
     }
-    else
-    {
-        @Html.Partial("_UserIndex")
-    }
+    <br />
+    @Html.Partial("_UserIndex")
 </main>

@@ -1,0 +1,109 @@
+﻿@model CollectionSwap.Models.UserCollection
+@using CollectionSwap.Models
+@using Newtonsoft.Json;
+@{
+    ViewBag.Title = "Edit";
+IEnumerable<string> collection = ViewBag.Items;
+Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex flex-column">
+    <h4>Edit Your Collection</h4>
+    <hr />
+
+    <div id="collection-items" class="d-flex gap-5 flex-wrap" style="display: none;">
+        @foreach (var item in collection.Select((value, i) => new { i, value }))
+        {
+            var imagePath = $"~/Collections/{Model.CollectionId}";
+            int[] userItems = JsonConvert.DeserializeObject<int[]>(Model.ItemIdsJSON);
+
+            <div class="d-flex flex-column align-items-center">
+                @if (userItems[item.i] >= 1)
+                {
+                    <div class="d-flex flex-column align-items-center item item-selected">
+                        <img src="@Url.Content(imagePath)/@item.value" />
+                    </div>
+                    <div class="item-quantity d-flex flex-column align-items-center">
+                        Quantity:
+                        <div class="d-flex flex-row gap-3 align-items-center">
+                            <button class="counter counter-add"><i class="fa fa-plus-circle"></i></button>
+                            <input type="number" id="@item.i" name="quantity" min="0" max="999" value="@userItems[item.i]" />
+                            <button class="counter counter-minus"><i class="fa fa-minus-circle"></i></button>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex flex-column align-items-center item">
+                        <img src="@Url.Content(imagePath)/@item.value" />
+                    </div>
+                    <div class="item-quantity visually-hidden d-flex flex-column align-items-center">
+                        Quantity:
+                        <div class="d-flex flex-row gap-3 align-items-center">
+                            <button class="counter counter-add"><i class="fa fa-plus-circle"></i></button>
+                            <input type="number" id="@item.i" name="quantity" min="0" max="999" value="@userItems[item.i]" />
+                            <button class="counter counter-minus"><i class="fa fa-minus-circle"></i></button>
+                        </div>
+                    </div>
+                }
+
+
+            </div>
+        }
+    </div>
+</div>
+
+<div>
+    <br />
+    <a class="back-link" href="/Manage/Index"><i class="fa fa-arrow-circle-left"></i>&nbsp; Back to Dashboard</a>
+</div>
+
+
+@section scripts {
+    <script src="~/Scripts/user-collection-ui.js"></script>
+    <script>
+        $(".counter-add, .counter-minus").on("click", function () {
+            let input = $(this).parent().find("[type='number']");
+            let itemId = input.prop("id");
+            let quantity = +input.val();
+
+            UpdateUserCollection(itemId, quantity);
+        })
+
+        $("[type='number']").on("input", function () {
+            let input = $(this);
+            let itemId = input.prop("id");
+            let quantity = +input.val();
+
+            UpdateUserCollection(itemId, quantity);
+        });
+
+        var userCollection = @Html.Raw(Model.ItemIdsJSON);
+
+        function UpdateUserCollection(itemId, quantity) {
+            
+            userCollection[itemId] = quantity;
+
+            var userCollectionData = {
+                Id: @Model.Id,
+                Name: "@Model.Name",
+                UserId: "@Model.UserId",
+                CollectionId:@Model.CollectionId,
+                ItemIdsJSON: JSON.stringify(userCollection)
+            }
+
+            $.ajax({
+                url: "/UserCollections/Edit",
+                type: "POST",
+                data: userCollectionData,
+                dataType: "json",
+                success: function (result) {
+                    //console.log(result.message)
+                },
+                error: function (xhr, status, error) {
+
+                }
+            })
+        }
+    </script>
+}
