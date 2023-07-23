@@ -1,5 +1,5 @@
 ﻿@model CollectionSwap.Models.Collection
-
+@using System.IO
 <br />
 <br />
 <h5>Select Which Items You Own</h5>
@@ -8,19 +8,13 @@
 <div id="collection-items" class="d-flex gap-5 flex-wrap" style="display: none;">
     @for (int i = 1; i <= Model.Size; i++)
     {
-        var imagePath = $"~/Collections/{Model.Id}/{i}";
+        var imagePath = $"~/Collections/{Model.Id}/";
         var quantityId = $"quantity{i}";
+        string fileName = Path.GetFileName(Directory.GetFiles(Server.MapPath(imagePath), i + ".*")[0]);
 
         <div class="d-flex flex-column align-items-center">
             <div class="item">
-                @if (System.IO.File.Exists(Server.MapPath(imagePath + ".png")))
-                {
-                    <img src="@Url.Content(imagePath + ".png")" alt="item @i" />
-                }
-                else if (System.IO.File.Exists(Server.MapPath(imagePath + ".jpg")))
-                {
-                    <img src="@Url.Content(imagePath + ".jpg")" alt="item @i" />
-                }
+                <img src="@Url.Content(imagePath + fileName)" alt="item @i" />
             </div>
             <div class="item-quantity visually-hidden d-flex flex-column align-items-center">
                 Quantity:

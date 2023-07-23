@@ -12,27 +12,31 @@ namespace CollectionSwap.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        [Authorize]
         public ActionResult Index()
         {
-            string UserId = User.Identity.GetUserId();
-            SwapViewModel swapViewModel = new SwapViewModel
-            {
-                UserCollections = db.UserCollections.Where(uc => uc.UserId == UserId).ToList()
-            };
-
-            return View(swapViewModel);
+            return View();
         }
+        //[Authorize]
+        //public ActionResult Collection()
+        //{
+        //    string UserId = User.Identity.GetUserId();
+        //    SwapViewModel swapViewModel = new SwapViewModel
+        //    {
+        //        UserCollections = db.UserCollections.Where(uc => uc.UserId == UserId).ToList()
+        //    };
+
+        //    return View(swapViewModel);
+        //}
 
 
         [Authorize]
-        [HttpPost]
-        public ActionResult Index(int id)
+        public ActionResult UserCollection(int? id)
         {
-            //Collection selectedCollection = db.Collections.Find(id);
+            string UserId = User.Identity.GetUserId();
+            UserCollection selectedCollection = db.UserCollections.Find(id);
 
-            //ViewBag.SelectedCollection = selectedCollection;
-            //ViewBag.Collections = db.Collections.ToList();
+            ViewBag.SelectedCollection = selectedCollection;
+            ViewBag.Collections = db.UserCollections.Where(uc => uc.UserId == UserId).ToList();
             return View();
         }
     }

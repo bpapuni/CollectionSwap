@@ -348,7 +348,8 @@
     <Content Include="Views\UserCollections\Create.cshtml" />
     <Content Include="Views\UserCollections\_Items.cshtml" />
     <Content Include="Views\UserCollections\Edit.cshtml" />
-    <Content Include="Views\Swap\Index.cshtml" />
+    <Content Include="Views\Swap\UserCollection.cshtml" />
+    <Content Include="Views\Swap\_Items.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
