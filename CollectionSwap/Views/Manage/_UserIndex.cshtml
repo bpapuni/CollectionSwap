@@ -4,11 +4,11 @@
     <hr />
     <div class="d-flex gap-5">
 
-        @foreach (var collection in Model.UserCollections)
+        @foreach (var userCollection in Model.UserCollections)
         {
             <div class="d-flex flex-column align-items-center">
-                @Html.ActionLink(@collection.Name, "Edit", "Collections", new { id = collection.Id }, new { @class = "card-set" })
-                @using (Html.BeginForm("Delete", "Collections", new { collectionId = @collection.Id }, FormMethod.Post, new { role = "form", @class = "mt-3" }))
+                @Html.ActionLink(userCollection.Name, "Edit", "UserCollections", new { id = userCollection.Id }, new { @class = "collection" })
+                @using (Html.BeginForm("Delete", "UserCollections", new { userCollectionId = userCollection.Id }, FormMethod.Post, new { role = "form", @class = "mt-3" }))
                 {
                     @Html.AntiForgeryToken()
 
@@ -17,6 +17,6 @@
             </div>
         }
 
-        <a class="card-set align-self-baseline" href="/UserCollections/Create"><i class="fa fa-plus"></i></a>
+        <a class="collection align-self-baseline" href="/UserCollections/Create"><i class="fa fa-plus"></i></a>
     </div>
 </div>

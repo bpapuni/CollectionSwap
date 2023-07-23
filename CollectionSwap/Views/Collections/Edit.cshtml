@@ -29,6 +29,8 @@
 <div id="items" class="d-flex gap-5 flex-wrap">
     @foreach (var item in collection.Select((value, i) => new { i, value }))
     {
+        var imagePath = $"~/Collections/{Model.Id}";
+
         <div class="d-flex flex-column align-items-center">
             @(item.i + 1)
             @if (imageUrlList != null && Int32.Parse(imageId) == (item.i + 1))
@@ -37,7 +39,7 @@
             }
             else
             {
-                <img class="item" src="~/Collections/@Model.Id/@item.value" />
+                <img class="item" src="@Url.Content(imagePath)/@item.value" />
             }
             <div class="d-flex gap-3">
                 @using (Html.BeginForm("EditItem", "Collections", new { collectionId = @Model.Id, itemId = @item.i + 1, fileName = @item.value }, FormMethod.Post, new { enctype = "multipart/form-data", role = "form", @class = "mt-3" }))
@@ -62,11 +64,11 @@
 </div>
 
 <div>
-    @using (Html.BeginForm("AddItem", "Collections", new { collectionId = @Model.Id }, FormMethod.Post, new { enctype = "multipart/form-data", role = "form", @class = "mt-3" }))
+    @using (Html.BeginForm("CreateItem", "Collections", new { collectionId = @Model.Id }, FormMethod.Post, new { enctype = "multipart/form-data", role = "form", @class = "mt-3" }))
     {
         @Html.AntiForgeryToken()
-        <label for="addItemInput" class="add-item"><i class="fa fa-plus"></i></label>
-        <input class="d-none" type="file" accept = ".png, .jpg" id="addItemInput" name="fileInput">
+        <label for="createItemInput" class="create-item"><i class="fa fa-plus"></i></label>
+        <input class="d-none" type="file" accept = ".png, .jpg" id="createItemInput" name="fileInput">
     }
 </div>
 

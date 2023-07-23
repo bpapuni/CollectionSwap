@@ -1,9 +1,19 @@
-﻿/* Set padding to keep content from hitting the edges */
+﻿html body {
+    overflow-x: hidden;
+    width: 100vw;
+    scrollbar-gutter: stable both-edges;
+}
+
 .body-content {
     font-family: 'Inter', sans-serif;
-    margin-top: 15px;
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-top: 5rem;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    z-index: 100;
 }
 
 /* Override the default bootstrap behavior where horizontal description lists 
@@ -37,7 +47,7 @@ textarea {
     margin: 3rem 0 3rem 0;
 }
 
-.card-set {
+.collection {
     font-weight: bold;
     display: flex;
     justify-content: center;
@@ -89,7 +99,7 @@ textarea {
     font-size: 2rem;
 }
 
-.add-item {
+.create-item {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -105,7 +115,7 @@ textarea {
     cursor: pointer;
 }
 
-.add-item:hover {
+.create-item:hover {
     background: var(--accent);
 }
 
@@ -117,4 +127,83 @@ textarea {
 
 .back-link:hover {
     color: var(--accent);
+}
+
+.user-collection {
+    position: relative;
+    cursor: pointer;
+}
+
+.user-collection::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: #FFFFFFBB;
+    pointer-events: none;
+}
+
+.user-collection-selected::after {
+    background: none;
+}
+
+.item {
+    position: relative;
+    cursor: pointer;
+}
+
+.item::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: #FFFFFFBB;
+    pointer-events: none;
+}
+
+.item-selected::after {
+    background: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    border: none;
+    border-radius: 2px;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+    width: 2.5rem;
+    text-align: center;
+    border: 2px solid black;
+    border-radius: 8px;
+}
+
+.item-quantity {
+    position: relative;
+}
+
+
+.counter {
+    color: var(--primary);
+    font-size: 2rem;
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
+}
+
+.counter-add:hover {
+    color: var(--accent);
+}
+
+.counter-minus:hover {
+    color: var(--danger);
 }

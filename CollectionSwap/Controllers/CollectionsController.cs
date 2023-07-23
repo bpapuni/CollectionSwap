@@ -24,42 +24,6 @@ namespace CollectionSwap.Controllers
             return RedirectToAction("Index", "Manage");
         }
 
-
-        [Authorize(Roles = "Admin")]
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return RedirectToAction("Index", "Manage");
-            }
-
-            Collection collection = db.Collections.Find(id);
-
-            string path = Server.MapPath("~/Collections/" + collection.Id);
-            string[] files = Directory.GetFiles(path);
-            files = files.Select(fileName => Path.GetFileName(fileName)).ToArray();
-
-            ViewBag.Items = files.OrderBy(f => f.Length);
-            ViewBag.Status = TempData["Success"];
-            ViewBag.ImageUrl = TempData["ImageUrl"];
-            return View(collection);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public ActionResult Edit(Collection collection) 
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(collection).State = EntityState.Modified;
-                db.SaveChanges();
-                TempData["Success"] = "Collection name updated successfully.";
-                return RedirectToAction("Edit");
-            }
-            return View(collection);
-        }
-
         [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
@@ -117,6 +81,41 @@ namespace CollectionSwap.Controllers
             return View(collection);
         }
 
+        [Authorize(Roles = "Admin")]
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction("Index", "Manage");
+            }
+
+            Collection collection = db.Collections.Find(id);
+
+            string path = Server.MapPath("~/Collections/" + collection.Id);
+            string[] files = Directory.GetFiles(path);
+            files = files.Select(fileName => Path.GetFileName(fileName)).ToArray();
+
+            ViewBag.Items = files.OrderBy(f => f.Length);
+            ViewBag.Status = TempData["Success"];
+            ViewBag.ImageUrl = TempData["ImageUrl"];
+            return View(collection);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public ActionResult Edit(Collection collection)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Entry(collection).State = EntityState.Modified;
+                db.SaveChanges();
+                TempData["Success"] = "Collection name updated successfully.";
+                return RedirectToAction("Edit");
+            }
+            return View(collection);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -139,12 +138,16 @@ namespace CollectionSwap.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public ActionResult DeleteItem(int? collectionId, string fileName)
+        public ActionResult CreateItem(int? collectionId, HttpPostedFileBase fileInput)
         {
-            string filePath = Server.MapPath("~/Collections/" + collectionId + '/' + fileName);
-            if (System.IO.File.Exists(filePath))
+            if (fileInput != null && fileInput.ContentLength > 0)
             {
-                System.IO.File.Delete(filePath);
+                string directoryPath = Server.MapPath("~/Collections/" + collectionId);
+                string[] items = Directory.GetFileSystemEntries(directoryPath);
+                string filePath = directoryPath + '/' + (items.Length + 1) + ".jpg";
+
+                Image img = Image.FromStream(fileInput.InputStream);
+                img.Save(filePath, ImageFormat.Jpeg);
             }
 
             return RedirectToAction("Edit/" + collectionId);
@@ -170,16 +173,12 @@ namespace CollectionSwap.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public ActionResult AddItem(int? collectionId, HttpPostedFileBase fileInput)
+        public ActionResult DeleteItem(int? collectionId, string fileName)
         {
-            if (fileInput != null && fileInput.ContentLength > 0)
+            string filePath = Server.MapPath("~/Collections/" + collectionId + '/' + fileName);
+            if (System.IO.File.Exists(filePath))
             {
-                string directoryPath = Server.MapPath("~/Collections/" + collectionId);
-                string[] items = Directory.GetFileSystemEntries(directoryPath);
-                string filePath = directoryPath + '/' + (items.Length + 1) + ".jpg";
-
-                Image img = Image.FromStream(fileInput.InputStream);
-                img.Save(filePath, ImageFormat.Jpeg);
+                System.IO.File.Delete(filePath);
             }
 
             return RedirectToAction("Edit/" + collectionId);

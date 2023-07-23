@@ -6,7 +6,6 @@
 <main aria-labelledby="title">
     <h2 id="title">@ViewBag.Title</h2>
 
-    <p class="text-success">@ViewBag.StatusMessage</p>
     <div>
         <hr />
         <dl class="dl-horizontal">
@@ -27,13 +26,11 @@
         </dl>
     </div>
 
+    <br />
     @if (User.IsInRole("Admin"))
     {
         @Html.Partial("_AdminIndex")
-
     }
-    else
-    {
-        @Html.Partial("_UserIndex")
-    }
+    <br />
+    @Html.Partial("_UserIndex")
 </main>
