@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Drawing;
@@ -11,7 +12,9 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using CollectionSwap.Models;
+using Newtonsoft.Json;
 
 namespace CollectionSwap.Controllers
 {
@@ -42,11 +45,22 @@ namespace CollectionSwap.Controllers
                     // Access the contents of the zip file
                     using (ZipArchive archive = new ZipArchive(collection.fileInput.InputStream, ZipArchiveMode.Read))
                     {
+                        List<string> fileNames = new List<string>();
+
+                        // Loop through the entries in the archive and add file names to the list
+                        foreach (ZipArchiveEntry entry in archive.Entries)
+                        {
+                            fileNames.Add(entry.FullName);
+                        }
+
+                        JavaScriptSerializer serializer = new JavaScriptSerializer();
+                        string jsonFileNames = serializer.Serialize(fileNames);
+
                         // Save the collection to the database so it is allocated an Id
                         Collection newCollection = new Collection()
                         {
                             Name = collection.Name,
-                            Size = archive.Entries.Count
+                            ItemListJSON = jsonFileNames
                         };
                         db.Collections.Add(newCollection);
                         db.SaveChanges();
@@ -89,15 +103,16 @@ namespace CollectionSwap.Controllers
                 return RedirectToAction("Index", "Manage");
             }
 
-            Collection collection = db.Collections.Find(id);
-
-            string path = Server.MapPath("~/Collections/" + collection.Id);
+            string path = Server.MapPath("~/Collections/" + id);
             string[] files = Directory.GetFiles(path);
             files = files.Select(fileName => Path.GetFileName(fileName)).ToArray();
+            var sortedFiles = files.OrderBy(f => f.Length);
 
-            ViewBag.Items = files.OrderBy(f => f.Length);
+            Collection collection = db.Collections.Find(id);
+            collection.ItemListJSON = JsonConvert.SerializeObject(sortedFiles);
+            db.SaveChanges();
+
             ViewBag.Status = TempData["Success"];
-            ViewBag.ImageUrl = TempData["ImageUrl"];
             return View(collection);
         }
 
@@ -142,12 +157,15 @@ namespace CollectionSwap.Controllers
         {
             if (fileInput != null && fileInput.ContentLength > 0)
             {
-                string directoryPath = Server.MapPath("~/Collections/" + collectionId);
-                string[] items = Directory.GetFileSystemEntries(directoryPath);
-                string filePath = directoryPath + '/' + (items.Length + 1) + ".jpg";
+                string path = Server.MapPath("~/Collections/" + collectionId);
+                string[] files = Directory.GetFiles(path);
+                files = files.Select(file => Path.GetFileNameWithoutExtension(file)).ToArray();
+                var sortedFiles = files.OrderBy(f => f.Length);
+                int newFileName = Int32.Parse(sortedFiles.Last()) + 1;
+                string filePath = path + '/' + newFileName.ToString() + ".png";
 
                 Image img = Image.FromStream(fileInput.InputStream);
-                img.Save(filePath, ImageFormat.Jpeg);
+                img.Save(filePath, ImageFormat.Png);  
             }
 
             return RedirectToAction("Edit/" + collectionId);
@@ -164,7 +182,14 @@ namespace CollectionSwap.Controllers
                 fileInput.SaveAs(filePath);
 
                 string cacheBuster = DateTime.UtcNow.Ticks.ToString();
-                TempData["ImageUrl"] = new List<string> { itemId.ToString(), $"~/Collections/{collectionId}/{fileName}?time={cacheBuster}" };
+                List<string> updatedItemList = JsonConvert.DeserializeObject<List<string>>(db.Collections.Find(collectionId).ItemListJSON);
+                updatedItemList[itemId] = fileName + $"?time={cacheBuster}";
+
+                Collection updatedCollection = new Collection
+                {
+                    Name = db.Collections.Find(collectionId).Name,
+                    ItemListJSON = JsonConvert.SerializeObject(updatedItemList)
+                };
             }
 
             return RedirectToAction("Edit/" + collectionId);
@@ -178,12 +203,7 @@ namespace CollectionSwap.Controllers
             string filePath = Server.MapPath("~/Collections/" + collectionId + '/' + fileName);
             if (System.IO.File.Exists(filePath))
             {
-                Collection collection = db.Collections.Find(collectionId);
-                collection.Size -= 1;
-                db.SaveChanges();
-
                 System.IO.File.Delete(filePath);
-
             }
 
             return RedirectToAction("Edit/" + collectionId);

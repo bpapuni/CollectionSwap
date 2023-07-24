@@ -13,7 +13,7 @@ namespace CollectionSwap.Models
         public int Id { get; set; }
         [Required(ErrorMessage = "Please enter a name for this collection.")]
         public string Name { get; set; }
-        public int Size { get; set; }
+        public string ItemListJSON { get; set; }
     }
 
     public class CreateCollection
@@ -36,6 +36,12 @@ namespace CollectionSwap.Models
         public string UserId { get; set; }
         [Required]
         public int CollectionId { get; set; }
-        public string ItemIdsJSON { get; set; }
+        public string ItemCountJSON { get; set; }
+    }
+
+    public class UserCollectionEditViewModel
+    {
+        public Collection collection { get; set; }
+        public UserCollection userCollection { get; set; }
     }
 }

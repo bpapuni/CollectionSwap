@@ -1,45 +1,46 @@
-﻿@model CollectionSwap.Models.UserCollection
+﻿@model CollectionSwap.Models.UserCollectionEditViewModel
 @using CollectionSwap.Models
 @using Newtonsoft.Json;
 @{
     ViewBag.Title = "Edit";
+    List<string> items = JsonConvert.DeserializeObject<List<string>>(Model.collection.ItemListJSON);
+    int[] userItems = JsonConvert.DeserializeObject<int[]>(Model.userCollection.ItemCountJSON);
     string statusMessage = ViewBag.Status;
-IEnumerable<string> collection = ViewBag.Items;
-Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="d-flex flex-column">
     <h4>Edit Your Collection</h4>
     <hr />
-    @using (Html.BeginForm("Edit", "UserCollections", new { Id = Model.Id, UserId = Model.UserId, CollectionId = Model.CollectionId, ItemIdsJSON = Model.ItemIdsJSON }, FormMethod.Post, new { role = "form", @class = "d-flex flex-column align-items-center mt-5 mb-5" }))
+    @using (Html.BeginForm("Edit", "UserCollections", new { Id = Model.userCollection.Id, UserId = Model.userCollection.UserId, CollectionId = Model.userCollection.CollectionId, ItemCountJSON = Model.userCollection.ItemCountJSON }, FormMethod.Post, new { role = "form", @class = "d-flex flex-column align-items-center mt-5 mb-5" }))
     {
         @Html.AntiForgeryToken()
 
         <div class="form-group d-flex flex-row justify-content-center">
             @Html.Hidden("propertyChanged", "name")
-            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.EditorFor(model => model.userCollection.Name, new { htmlAttributes = new { @class = "form-control" } })
             <input class="btn btn-primary mx-1" type="submit" value="Update Collection Name" />
         </div>
         <span class="text-success">@statusMessage</span>
     }
 
     <div id="collection-items" class="d-flex gap-5 flex-wrap" style="display: none;">
-        @foreach (var item in collection.Select((value, i) => new { i, value }))
+        @foreach (var item in items)
         {
-            var imagePath = $"~/Collections/{Model.CollectionId}";
-            int[] userItems = JsonConvert.DeserializeObject<int[]>(Model.ItemIdsJSON);
+            var imagePath = $"~/Collections/{Model.userCollection.CollectionId}";
+            var itemId = items.IndexOf(item) + 1;
 
             <div class="d-flex flex-column align-items-center">
-                @if (userItems[item.i] >= 1)
+                @if (userItems[itemId - 1] >= 1)
                 {
                     <div class="d-flex flex-column align-items-center item item-selected">
-                        <img src="@Url.Content(imagePath)/@item.value" />
+                        <img src="@Url.Content(imagePath)/@item" />
                     </div>
                     <div class="item-quantity d-flex flex-column align-items-center">
                         Quantity:
                         <div class="d-flex flex-row gap-3 align-items-center">
                             <button class="counter counter-add"><i class="fa fa-plus-circle"></i></button>
-                            <input type="number" id="@item.i" name="quantity" min="0" max="999" value="@userItems[item.i]" />
+                            <input type="number" id="@itemId" name="quantity" min="0" max="999" value="@userItems[itemId - 1]" />
                             <button class="counter counter-minus"><i class="fa fa-minus-circle"></i></button>
                         </div>
                     </div>
@@ -47,13 +48,13 @@ Layout = "~/Views/Shared/_Layout.cshtml";
                 else
                 {
                     <div class="d-flex flex-column align-items-center item">
-                        <img src="@Url.Content(imagePath)/@item.value" />
+                        <img src="@Url.Content(imagePath)/@item" />
                     </div>
                     <div class="item-quantity visually-hidden d-flex flex-column align-items-center">
                         Quantity:
                         <div class="d-flex flex-row gap-3 align-items-center">
                             <button class="counter counter-add"><i class="fa fa-plus-circle"></i></button>
-                            <input type="number" id="@item.i" name="quantity" min="0" max="999" value="@userItems[item.i]" />
+                            <input type="number" id="@itemId" name="quantity" min="0" max="999" value="@userItems[itemId - 1]" />
                             <button class="counter counter-minus"><i class="fa fa-minus-circle"></i></button>
                         </div>
                     </div>
@@ -90,21 +91,17 @@ Layout = "~/Views/Shared/_Layout.cshtml";
             UpdateUserCollection(itemId, quantity);
         });
 
-        var userCollection = @Html.Raw(Model.ItemIdsJSON);
+        var userCollection = @Html.Raw(Model.userCollection.ItemCountJSON);
 
         function UpdateUserCollection(itemId, quantity) {
-            
-            userCollection[itemId] = quantity;
-
+            userCollection[itemId-1] = quantity;
             var userCollectionData = {
-                Id: @Model.Id,
-                Name: "@Model.Name",
-                UserId: "@Model.UserId",
-                CollectionId:@Model.CollectionId,
-                ItemIdsJSON: JSON.stringify(userCollection)
+                Id: @Model.userCollection.Id,
+                Name: "@Model.userCollection.Name",
+                UserId: "@Model.userCollection.UserId",
+                CollectionId:@Model.userCollection.CollectionId,
+                ItemCountJSON: JSON.stringify(userCollection)
             }
-
-            var token = $('[name="__RequestVerificationToken"]').val();
 
             $.ajax({
                 url: "/UserCollections/Edit",

@@ -28,7 +28,7 @@ namespace CollectionSwap.Controllers
             Collection selectedCollection = db.Collections.Find(id);
 
             ViewBag.SelectedCollection = selectedCollection;
-            ViewBag.Collections = db.Collections.ToList();
+            ViewBag.AvailableCollections = db.Collections.ToList();
             return View();
         }
 
@@ -43,7 +43,7 @@ namespace CollectionSwap.Controllers
                     Name = db.Collections.Find(id).Name,
                     UserId = User.Identity.GetUserId(),
                     CollectionId = id,
-                    ItemIdsJSON = JsonConvert.SerializeObject(quantity)
+                    ItemCountJSON = JsonConvert.SerializeObject(quantity)
                 };
                 db.UserCollections.Add(newUserCollection);
                 db.SaveChanges();
@@ -68,13 +68,14 @@ namespace CollectionSwap.Controllers
                 return RedirectToAction("Index", "Manage");
             }
 
-            string path = Server.MapPath("~/Collections/" + userCollection.CollectionId);
-            string[] files = Directory.GetFiles(path);
-            files = files.Select(fileName => Path.GetFileName(fileName)).ToArray();
+            UserCollectionEditViewModel model = new UserCollectionEditViewModel
+            {
+                collection = db.Collections.Find(userCollection.CollectionId),
+                userCollection = userCollection
+            };
 
-            ViewBag.Items = files.OrderBy(f => f.Length);
             ViewBag.Status = TempData["Success"];
-            return View(userCollection);
+            return View(model);
         }
 
         [HttpPost]
