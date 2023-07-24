@@ -12,13 +12,17 @@
 <div class="d-flex flex-column">
     <h4>Edit Your Collection</h4>
     <hr />
-    @using (Html.BeginForm("Edit", "UserCollections", new { Id = Model.UserCollection.Id, UserId = Model.UserCollection.UserId, CollectionId = Model.UserCollection.CollectionId, ItemCountJSON = Model.UserCollection.ItemCountJSON }, FormMethod.Post, new { role = "form", @class = "d-flex flex-column align-items-center mt-5 mb-5" }))
+    @using (Html.BeginForm("Edit", "UserCollections", FormMethod.Post, new { role = "form", @class = "d-flex flex-column align-items-center mt-5 mb-5" }))
     {
         @Html.AntiForgeryToken()
 
         <div class="form-group d-flex flex-row justify-content-center">
-            @Html.Hidden("propertyChanged", "name")
+            @Html.HiddenFor(model => model.UserCollection.Id)
+            @Html.HiddenFor(model => model.UserCollection.UserId)
+            @Html.HiddenFor(model => model.UserCollection.CollectionId)
+            @Html.HiddenFor(model => model.UserCollection.ItemCountJSON)
             @Html.EditorFor(model => model.UserCollection.Name, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.Hidden("propertyChanged", "name")
             <input class="btn btn-primary mx-1" type="submit" value="Update Collection Name" />
         </div>
         <span class="text-success">@statusMessage</span>
