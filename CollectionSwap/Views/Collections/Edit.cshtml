@@ -32,7 +32,7 @@
         var imagePath = $"~/Collections/{Model.Id}";
 
         <div class="d-flex flex-column align-items-center">
-            @(item.i + 1)
+            @(item.value)
             @if (imageUrlList != null && Int32.Parse(imageId) == (item.i + 1))
             {
                 <img class="item" src="@Url.Content(imageUrl)" />

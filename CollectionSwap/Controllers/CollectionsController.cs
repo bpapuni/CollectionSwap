@@ -178,7 +178,12 @@ namespace CollectionSwap.Controllers
             string filePath = Server.MapPath("~/Collections/" + collectionId + '/' + fileName);
             if (System.IO.File.Exists(filePath))
             {
+                Collection collection = db.Collections.Find(collectionId);
+                collection.Size -= 1;
+                db.SaveChanges();
+
                 System.IO.File.Delete(filePath);
+
             }
 
             return RedirectToAction("Edit/" + collectionId);
