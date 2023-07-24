@@ -1,0 +1,41 @@
+﻿@model CollectionSwap.Models.SwapViewModel
+@using CollectionSwap.Models
+@{
+    ViewBag.Title = "Find Swaps";
+    var selectedCollection = ViewBag.SelectedCollection as UserCollection;
+    var availableCollections = ViewBag.Collections as List<UserCollection>;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<main aria-labelledby="title">
+    <h2 id="title">@ViewBag.Title</h2>
+    <hr />
+    <div>
+        <h5>Select a collection to find swaps for:</h5>
+        <hr />
+        <div class="d-flex gap-5">
+
+            @foreach (var userCollection in availableCollections)
+            {
+                <div class="d-flex flex-column align-items-center">
+                    @Html.ActionLink(userCollection.Name, "UserCollection", "Swap", new { id = userCollection.Id }, new { @class = "collection user-collection" })
+                </div>
+            }
+        </div>
+
+        @if (selectedCollection != null)
+        {
+            @Html.Partial("_Items", selectedCollection)
+        }
+    </div>
+</main>
+
+@section scripts {
+    <script>
+        var id = window.location.href.split("UserCollection/")[1];
+        var selectedCollection = $(`[href='/Swap/UserCollection/${id}']`);
+
+        if (selectedCollection.length) {
+            selectedCollection.addClass("user-collection-selected")
+        }
+    </script>
+}
