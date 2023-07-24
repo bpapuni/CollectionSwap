@@ -2,8 +2,7 @@
 @using CollectionSwap.Models
 @{
     ViewBag.Title = "Find Swaps";
-    var selectedCollection = ViewBag.SelectedCollection as UserCollection;
-    var availableCollections = ViewBag.Collections as List<UserCollection>;
+    UserCollection selectedCollection = ViewBag.SelectedCollection;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <main aria-labelledby="title">
@@ -14,7 +13,7 @@
         <hr />
         <div class="d-flex gap-5">
 
-            @foreach (var userCollection in availableCollections)
+            @foreach (UserCollection userCollection in Model.UserCollections)
             {
                 <div class="d-flex flex-column align-items-center">
                     @Html.ActionLink(userCollection.Name, "UserCollection", "Swap", new { id = userCollection.Id }, new { @class = "collection user-collection" })

@@ -70,8 +70,8 @@ namespace CollectionSwap.Controllers
 
             UserCollectionEditViewModel model = new UserCollectionEditViewModel
             {
-                collection = db.Collections.Find(userCollection.CollectionId),
-                userCollection = userCollection
+                Collection = db.Collections.Find(userCollection.CollectionId),
+                UserCollection = userCollection
             };
 
             ViewBag.Status = TempData["Success"];

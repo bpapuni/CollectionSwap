@@ -16,18 +16,6 @@ namespace CollectionSwap.Controllers
         {
             return View();
         }
-        //[Authorize]
-        //public ActionResult Collection()
-        //{
-        //    string UserId = User.Identity.GetUserId();
-        //    SwapViewModel swapViewModel = new SwapViewModel
-        //    {
-        //        UserCollections = db.UserCollections.Where(uc => uc.UserId == UserId).ToList()
-        //    };
-
-        //    return View(swapViewModel);
-        //}
-
 
         [Authorize]
         public ActionResult UserCollection(int? id)
@@ -35,9 +23,14 @@ namespace CollectionSwap.Controllers
             string UserId = User.Identity.GetUserId();
             UserCollection selectedCollection = db.UserCollections.Find(id);
 
+            SwapViewModel model = new SwapViewModel
+            {
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == UserId).ToList()
+            };
+
             ViewBag.SelectedCollection = selectedCollection;
-            ViewBag.Collections = db.UserCollections.Where(uc => uc.UserId == UserId).ToList();
-            return View();
+            return View(model);
         }
     }
 }

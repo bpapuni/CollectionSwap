@@ -41,12 +41,13 @@ namespace CollectionSwap.Models
 
     public class UserCollectionEditViewModel
     {
-        public Collection collection { get; set; }
-        public UserCollection userCollection { get; set; }
+        public Collection Collection { get; set; }
+        public UserCollection UserCollection { get; set; }
     }
 
     public class SwapViewModel
     {
+        public List<Collection> Collections { get; set; }
         public List<UserCollection> UserCollections { get; set; }
     }
 }

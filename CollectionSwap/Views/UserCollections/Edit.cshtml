@@ -3,8 +3,8 @@
 @using Newtonsoft.Json;
 @{
     ViewBag.Title = "Edit";
-    List<string> items = JsonConvert.DeserializeObject<List<string>>(Model.collection.ItemListJSON);
-    int[] userItems = JsonConvert.DeserializeObject<int[]>(Model.userCollection.ItemCountJSON);
+    List<string> items = JsonConvert.DeserializeObject<List<string>>(Model.Collection.ItemListJSON);
+    int[] userItems = JsonConvert.DeserializeObject<int[]>(Model.UserCollection.ItemCountJSON);
     string statusMessage = ViewBag.Status;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -12,13 +12,13 @@
 <div class="d-flex flex-column">
     <h4>Edit Your Collection</h4>
     <hr />
-    @using (Html.BeginForm("Edit", "UserCollections", new { Id = Model.userCollection.Id, UserId = Model.userCollection.UserId, CollectionId = Model.userCollection.CollectionId, ItemCountJSON = Model.userCollection.ItemCountJSON }, FormMethod.Post, new { role = "form", @class = "d-flex flex-column align-items-center mt-5 mb-5" }))
+    @using (Html.BeginForm("Edit", "UserCollections", new { Id = Model.UserCollection.Id, UserId = Model.UserCollection.UserId, CollectionId = Model.UserCollection.CollectionId, ItemCountJSON = Model.UserCollection.ItemCountJSON }, FormMethod.Post, new { role = "form", @class = "d-flex flex-column align-items-center mt-5 mb-5" }))
     {
         @Html.AntiForgeryToken()
 
         <div class="form-group d-flex flex-row justify-content-center">
             @Html.Hidden("propertyChanged", "name")
-            @Html.EditorFor(model => model.userCollection.Name, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.EditorFor(model => model.UserCollection.Name, new { htmlAttributes = new { @class = "form-control" } })
             <input class="btn btn-primary mx-1" type="submit" value="Update Collection Name" />
         </div>
         <span class="text-success">@statusMessage</span>
@@ -27,7 +27,7 @@
     <div id="collection-items" class="d-flex gap-5 flex-wrap" style="display: none;">
         @foreach (var item in items)
         {
-            var imagePath = $"~/Collections/{Model.userCollection.CollectionId}";
+            var imagePath = $"~/Collections/{Model.UserCollection.CollectionId}";
             var itemId = items.IndexOf(item) + 1;
 
             <div class="d-flex flex-column align-items-center">
@@ -91,15 +91,15 @@
             UpdateUserCollection(itemId, quantity);
         });
 
-        var userCollection = @Html.Raw(Model.userCollection.ItemCountJSON);
+        var userCollection = @Html.Raw(Model.UserCollection.ItemCountJSON);
 
         function UpdateUserCollection(itemId, quantity) {
             userCollection[itemId-1] = quantity;
             var userCollectionData = {
-                Id: @Model.userCollection.Id,
-                Name: "@Model.userCollection.Name",
-                UserId: "@Model.userCollection.UserId",
-                CollectionId:@Model.userCollection.CollectionId,
+                Id: @Model.UserCollection.Id,
+                Name: "@Model.UserCollection.Name",
+                UserId: "@Model.UserCollection.UserId",
+                CollectionId:@Model.UserCollection.CollectionId,
                 ItemCountJSON: JSON.stringify(userCollection)
             }
 

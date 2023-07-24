@@ -12,7 +12,6 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
 using CollectionSwap.Models;
 using Newtonsoft.Json;
 
@@ -45,22 +44,13 @@ namespace CollectionSwap.Controllers
                     // Access the contents of the zip file
                     using (ZipArchive archive = new ZipArchive(collection.fileInput.InputStream, ZipArchiveMode.Read))
                     {
-                        List<string> fileNames = new List<string>();
-
-                        // Loop through the entries in the archive and add file names to the list
-                        foreach (ZipArchiveEntry entry in archive.Entries)
-                        {
-                            fileNames.Add(entry.FullName);
-                        }
-
-                        JavaScriptSerializer serializer = new JavaScriptSerializer();
-                        string jsonFileNames = serializer.Serialize(fileNames);
+                        var entryList = archive.Entries.ToList();
+                        entryList = entryList.OrderBy(entry => entry.Name.Length).ToList();
 
                         // Save the collection to the database so it is allocated an Id
                         Collection newCollection = new Collection()
                         {
-                            Name = collection.Name,
-                            ItemListJSON = jsonFileNames
+                            Name = collection.Name
                         };
                         db.Collections.Add(newCollection);
                         db.SaveChanges();
@@ -75,10 +65,9 @@ namespace CollectionSwap.Controllers
                         }
 
                         int i = 1;
-
-                        foreach (ZipArchiveEntry entry in archive.Entries)
+                        // Loop through the entries in the archive and add file names to the list
+                        foreach (ZipArchiveEntry entry in entryList)
                         {
-                            // Ensure that the entry is a file, not a directory
                             if (!string.IsNullOrEmpty(entry.Name))
                             {
                                 string extractedFilePath = Path.Combine(extractPath, i.ToString() + Path.GetExtension(entry.Name));
@@ -86,7 +75,7 @@ namespace CollectionSwap.Controllers
 
                                 i++;
                             }
-                        }
+                        }                        
                     }
 
                     return RedirectToAction("Index", "Manage");
