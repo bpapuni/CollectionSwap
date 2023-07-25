@@ -64,18 +64,26 @@ namespace CollectionSwap.Controllers
                             Directory.CreateDirectory(extractPath);
                         }
 
+                        List<string> fileNames = new List<string>();
                         int i = 1;
                         // Loop through the entries in the archive and add file names to the list
                         foreach (ZipArchiveEntry entry in entryList)
                         {
                             if (!string.IsNullOrEmpty(entry.Name))
                             {
-                                string extractedFilePath = Path.Combine(extractPath, i.ToString() + Path.GetExtension(entry.Name));
+                                string fileName = i.ToString() + Path.GetExtension(entry.Name);
+                                string extractedFilePath = Path.Combine(extractPath, fileName);
                                 entry.ExtractToFile(extractedFilePath, true);
 
+                                fileNames.Add(fileName);
                                 i++;
                             }
-                        }                        
+                        }
+
+                        var orderedFiles = fileNames.OrderBy(f => f.Length);
+                        newCollection.ItemListJSON = JsonConvert.SerializeObject(orderedFiles);
+                        db.Entry(newCollection).State = EntityState.Modified;
+                        db.SaveChanges();
                     }
 
                     return RedirectToAction("Index", "Manage");
@@ -95,10 +103,11 @@ namespace CollectionSwap.Controllers
             string path = Server.MapPath("~/Collections/" + id);
             string[] files = Directory.GetFiles(path);
             files = files.Select(fileName => Path.GetFileName(fileName)).ToArray();
-            var sortedFiles = files.OrderBy(f => f.Length);
+            var orderedFiles = files.OrderBy(f => f.Length);
 
             Collection collection = db.Collections.Find(id);
-            collection.ItemListJSON = JsonConvert.SerializeObject(sortedFiles);
+
+            collection.ItemListJSON = JsonConvert.SerializeObject(orderedFiles);
             db.SaveChanges();
 
             ViewBag.Status = TempData["Success"];

@@ -1,8 +1,10 @@
 ﻿@model CollectionSwap.Models.SwapViewModel
 @using CollectionSwap.Models
+@using Newtonsoft.Json;
 @{
     ViewBag.Title = "Find Swaps";
     UserCollection selectedCollection = ViewBag.SelectedCollection;
+    List<(string, List<int>, List<int>, List<List<int>>)> potentialSwappers = ViewBag.PotentialSwappers;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <main aria-labelledby="title">
@@ -20,11 +22,33 @@
                 </div>
             }
         </div>
-
-        @if (selectedCollection != null)
+        <br />
+        @if (ViewBag.PotentialSwappers != null && ViewBag.PotentialSwappers.Count > 0)
+        {
+            <h4>Potential Swappers:</h4>
+            foreach (var potentialSwapper in ViewBag.PotentialSwappers)
+            {
+                <h5>User: @potentialSwapper.Item1</h5>
+                <p>Items you can swap: @string.Join(", ", potentialSwapper.Item2)</p>
+                <p>Items the other user can swap: @string.Join(", ", potentialSwapper.Item3)</p>
+                <p>Potential Trades:</p>
+                foreach (var combination in potentialSwapper.Item4)
+                {
+                    int halfCount = combination.Count / 2;
+                    var firstHalf = combination.GetRange(0, halfCount);
+                    var secondHalf = combination.GetRange(halfCount, combination.Count - halfCount);
+                    <p>@string.Join(", ", firstHalf) for @string.Join(", ", secondHalf)</p>
+                }
+            }
+        }
+        else
+        {
+            <h5>No potential swappers found.</h5>
+        }
+        @*@if (selectedCollection != null)
         {
             @Html.Partial("_Items", selectedCollection)
-        }
+        }*@
     </div>
 </main>
 
