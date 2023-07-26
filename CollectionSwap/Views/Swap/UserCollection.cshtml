@@ -4,17 +4,17 @@
 @{
     ViewBag.Title = "Find Swaps";
     UserCollection selectedCollection = ViewBag.SelectedCollection;
-    List<(string, List<int>, List<int>, List<List<int>>)> potentialSwappers = ViewBag.PotentialSwappers;
+    List<(string, List<List<int>>, List<List<int>>)> potentialSwappers = ViewBag.PotentialSwappers;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <main aria-labelledby="title">
     <h2 id="title">@ViewBag.Title</h2>
     <hr />
-    <div>
+    <div class="secondary-container">
         <h5>Select a collection to find swaps for:</h5>
-        <hr />
+        @*<hr />*@
+        @*User Collection Select*@
         <div class="d-flex gap-5">
-
             @foreach (UserCollection userCollection in Model.UserCollections)
             {
                 <div class="d-flex flex-column align-items-center">
@@ -22,34 +22,67 @@
                 </div>
             }
         </div>
-        <br />
-        @if (ViewBag.PotentialSwappers != null && ViewBag.PotentialSwappers.Count > 0)
+    </div>
+    <br />
+
+    @*Available Swaps*@
+    @if (potentialSwappers != null)
+    {
+        if (potentialSwappers.Count > 0)
         {
-            <h4>Potential Swappers:</h4>
-            foreach (var potentialSwapper in ViewBag.PotentialSwappers)
-            {
-                <h5>User: @potentialSwapper.Item1</h5>
-                <p>Items you can swap: @string.Join(", ", potentialSwapper.Item2)</p>
-                <p>Items the other user can swap: @string.Join(", ", potentialSwapper.Item3)</p>
-                <p>Potential Trades:</p>
-                foreach (var combination in potentialSwapper.Item4)
+            <div class="d-flex flex-column secondary-container ">
+                <h4>Available Swaps You Need:</h4>
+                <h6>(Best swaps first)</h6>
+                @foreach (var potentialSwapper in potentialSwappers)
                 {
-                    int halfCount = combination.Count / 2;
-                    var firstHalf = combination.GetRange(0, halfCount);
-                    var secondHalf = combination.GetRange(halfCount, combination.Count - halfCount);
-                    <p>@string.Join(", ", firstHalf) for @string.Join(", ", secondHalf)</p>
+                    var collection = Model.Collections.Where(col => col.Id == selectedCollection.CollectionId).FirstOrDefault();
+                    var itemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON);
+                    <div class="d-flex flex-column gap-4 mt-5">
+                        <h5>User: @potentialSwapper.Item1</h5>
+                        @* Your Swaps *@
+                        @*@foreach (var potentialSwap in potentialSwapper.Item2)
+                        {
+                            <div class="d-flex flex-row">
+                                @foreach (var item in potentialSwap)
+                                {
+                                    var fileName = itemList[item];
+                                    var imagePath = $"~/Collections/{selectedCollection.CollectionId}/{fileName}";
+                                    <div class="d-flex flex-column align-items-center">
+                                        @(item + 1)
+                                        <img class="item" src="@Url.Content(imagePath)" />
+                                    </div>
+                                }
+                            </div>
+                        }*@
+
+                        @* Their Swaps *@
+                        @foreach (var potentialSwap in potentialSwapper.Item3)
+                        {
+                            <div class="d-flex flex-column swap tertiary-container">
+                                <h6>Swap @(potentialSwapper.Item3.IndexOf(potentialSwap) + 1)</h6>
+                                <hr />
+                                <div class="d-flex flex-row gap-3">
+                                    @foreach (var item in potentialSwap)
+                                    {
+                                        var fileName = itemList[item];
+                                        var imagePath = $"~/Collections/{selectedCollection.CollectionId}/{fileName}";
+                                        <div class="d-flex flex-column align-items-center gap-1">
+                                            @(item + 1)
+                                            <img class="item" src="@Url.Content(imagePath)" />
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
                 }
-            }
+            </div>
         }
         else
         {
-            <h5>No potential swappers found.</h5>
+            <h5> No potential swappers found.</h5>
         }
-        @*@if (selectedCollection != null)
-        {
-            @Html.Partial("_Items", selectedCollection)
-        }*@
-    </div>
+    }
 </main>
 
 @section scripts {
@@ -60,5 +93,10 @@
         if (selectedCollection.length) {
             selectedCollection.addClass("user-collection-selected")
         }
+
+        $(".swap").on("click", function () {
+            $(".swap-selected").not(this).removeClass("swap-selected");
+            $(this).toggleClass("swap-selected");
+        })
     </script>
 }

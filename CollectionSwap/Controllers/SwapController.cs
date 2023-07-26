@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 
 namespace CollectionSwap.Controllers
 {
@@ -24,13 +25,20 @@ namespace CollectionSwap.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            var currentUserId = User.Identity.GetUserId();
+            SwapViewModel model = new SwapViewModel
+            {
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == currentUserId).ToList()
+            };
+            return View(model);
         }
 
         [Authorize]
         public ActionResult UserCollection(int? id)
         {
             var currentUserId = User.Identity.GetUserId();
+            
             UserCollection selectedCollection = db.UserCollections.Find(id);
 
             SwapViewModel model = new SwapViewModel
@@ -80,43 +88,41 @@ namespace CollectionSwap.Controllers
             }
 
             var potentialSwappers = FindPotentialSwappers(currentUserId, swapperList);
-            ViewBag.SelectedCollection = selectedCollection;
             ViewBag.PotentialSwappers = potentialSwappers;
+            ViewBag.SelectedCollection = selectedCollection;
 
             return View(model);
         }
 
-        private List<(string, List<int>, List<int>, List<List<int>>)> FindPotentialSwappers(string currentUserId, List<Swapper> users)
+        private List<(string, List<List<int>>, List<List<int>>)> FindPotentialSwappers(string currentUserId, List<Swapper> users)
         {
             var currentUser = users.FirstOrDefault(u => u.UserId == currentUserId);
             if (currentUser == null)
             {
-                return new List<(string, List<int>, List<int>, List<List<int>>)>(); // User not found.
+                return new List<(string, List<List<int>>, List<List<int>>)>(); // User not found.
             }
 
             var potentialSwappers = users
                 .Where(u => u.UserId != currentUserId && CanSwapWithCurrentUser(currentUser, u))
                 .Select(u =>
                 {
-                    var (currentUserSwaps, otherUserSwaps, swaps) = GetPotentialSwaps(currentUser, u);
-                    var largestTradeSize = swaps.Count > 0 ? swaps.Max(combo => combo.Count) : 0;
-                    var largestTrades = swaps.Where(combo => combo.Count == largestTradeSize).ToList();
-                    return (u.UserId, currentUserSwaps, otherUserSwaps, largestTrades);
+                    var (currentUserCombos, otherUserCombos) = GetPotentialSwaps(currentUser, u);
+                    return (u.UserId, currentUserCombos, otherUserCombos);
                 })
                 .ToList();
 
-            potentialSwappers.Sort((a, b) => b.Item4.Max(combo => combo.Count).CompareTo(a.Item4.Max(combo => combo.Count)));
+            potentialSwappers.Sort((a, b) => b.Item3.Max(combo => combo.Count).CompareTo(a.Item3.Max(combo => combo.Count)));
 
             return potentialSwappers;
         }
 
 
 
-        private (List<int>, List<int>, List<List<int>>) GetPotentialSwaps(Swapper currentUser, Swapper otherUser)
+        private (List<List<int>>, List<List<int>>) GetPotentialSwaps(Swapper currentUser, Swapper otherUser)
         {
             List<int> currentUserSwaps = new List<int>();
             List<int> otherUserSwaps = new List<int>();
-            List<List<int>> swaps = new List<List<int>>();
+            List<List<int>> proposedSwaps = new List<List<int>>();
 
             foreach (var currentKvp in currentUser.DuplicateItems)
             {
@@ -148,10 +154,10 @@ namespace CollectionSwap.Controllers
                 }
             }
 
-            // Find all possible combinations of largest trade size
-            int largestTradeSize = Math.Min(currentUserSwaps.Count, otherUserSwaps.Count);
-            var currentUserCombos = GetCombinations(currentUserSwaps, largestTradeSize);
-            var otherUserCombos = GetCombinations(otherUserSwaps, largestTradeSize);
+            // Find all possible combinations of largest swap size
+            int largestSwapSize = Math.Min(currentUserSwaps.Count, otherUserSwaps.Count);
+            var currentUserCombos = GetCombinations(currentUserSwaps, largestSwapSize);
+            var otherUserCombos = GetCombinations(otherUserSwaps, largestSwapSize);
 
             // Find all possible swaps between currentUserCombos and otherUserCombos
             foreach (var currentUserCombo in currentUserCombos)
@@ -161,23 +167,23 @@ namespace CollectionSwap.Controllers
                     var swap = new List<int>();
                     swap.AddRange(currentUserCombo);
                     swap.AddRange(otherUserCombo);
-                    swaps.Add(swap);
+                    proposedSwaps.Add(swap);
                 }
             }
 
-            return (currentUserSwaps, otherUserSwaps, swaps);
+            return (currentUserCombos, otherUserCombos);
         }
 
-        private List<List<int>> GetCombinations(List<int> items, int tradeSize)
+        private List<List<int>> GetCombinations(List<int> items, int swapSize)
         {
             List<List<int>> combinations = new List<List<int>>();
-            GetCombinationsHelper(items, tradeSize, 0, new List<int>(), combinations);
+            GetCombinationsHelper(items, swapSize, 0, new List<int>(), combinations);
             return combinations;
         }
 
-        private void GetCombinationsHelper(List<int> items, int tradeSize, int index, List<int> current, List<List<int>> combinations)
+        private void GetCombinationsHelper(List<int> items, int swapSize, int index, List<int> current, List<List<int>> combinations)
         {
-            if (current.Count == tradeSize)
+            if (current.Count == swapSize)
             {
                 combinations.Add(new List<int>(current));
                 return;
@@ -186,7 +192,7 @@ namespace CollectionSwap.Controllers
             for (int i = index; i < items.Count; i++)
             {
                 current.Add(items[i]);
-                GetCombinationsHelper(items, tradeSize, i + 1, current, combinations);
+                GetCombinationsHelper(items, swapSize, i + 1, current, combinations);
                 current.RemoveAt(current.Count - 1);
             }
         }
