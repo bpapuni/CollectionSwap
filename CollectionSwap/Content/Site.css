@@ -272,10 +272,16 @@ input[type=number] {
     width: 30%;
     height: 100%;
     padding: 1rem;
-    background: var(--steel-blue-50);
+    background: var(--steel-blue-100);
     border-radius: 0 1rem 1rem 0;
     overflow-y: scroll;
     scrollbar-gutter: stable both-edges;
+}
+
+.swap-feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .swap {
@@ -286,7 +292,7 @@ input[type=number] {
     flex-shrink: 0;
     gap: 0.5rem;
     height: 11rem;
-    background: white;
+    background: var(--steel-blue-50);
     border-radius: 1rem;
     border: 1px solid var(--steel-blue-700);
     overflow: hidden;
@@ -300,6 +306,7 @@ input[type=number] {
 }
 
 .swap-resize img {
+    max-width: 90%;
     max-height: 9rem;
 }
 

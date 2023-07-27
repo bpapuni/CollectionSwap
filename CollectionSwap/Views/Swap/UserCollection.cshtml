@@ -54,8 +54,8 @@
                                     {
                                         var fileName = itemList[item];
                                         var imagePath = $"~/Collections/{selectedCollection.CollectionId}/{fileName}";
-                                        <div class="d-flex flex-column align-items-center">
-                                            @(item + 1)
+                                        <div class="swap-feature-item">
+                                            <span class="swap-item-name">@(item + 1)</span>
                                             <img class="item" src="@Url.Content(imagePath)" />
                                         </div>
                                     }
@@ -77,7 +77,7 @@
                                             var fileName = itemList[item];
                                             var imagePath = $"~/Collections/{selectedCollection.CollectionId}/{fileName}";
                                             <div class="swap-resize">
-                                                @(item + 1)
+                                                <span class="swap-item-name">@(item + 1)</span>
                                                 <img class="item" src="@Url.Content(imagePath)" />
                                             </div>
                                         }
@@ -91,7 +91,7 @@
                                             var fileName = itemList[item];
                                             var imagePath = $"~/Collections/{selectedCollection.CollectionId}/{fileName}";
                                             <div class="swap-resize">
-                                                @(item + 1)
+                                                <span class="swap-item-name">@(item + 1)</span>
                                                 <img class="item" src="@Url.Content(imagePath)" />
                                             </div>
                                         }
@@ -112,16 +112,37 @@
 
 @section scripts {
     <script>
-        var id = window.location.href.split("UserCollection/")[1];
-        var selectedCollection = $(`[href='/Swap/UserCollection/${id}']`);
+        const id = window.location.href.split("UserCollection/")[1];
+        const selectedCollection = $(`[href='/Swap/UserCollection/${id}']`);
 
         if (selectedCollection.length) {
             selectedCollection.addClass("user-collection-selected")
         }
 
         $(".swap").on("click", function () {
-            $(".swap-selected").not(this).removeClass("swap-selected");
-            $(this).toggleClass("swap-selected");
+            const potentialSwappers = @Html.Raw(JsonConvert.SerializeObject(potentialSwappers));
+            const swapperIndex =$(".swap-container").index($(this).closest(".swap-container"));
+            const swapIndex = $(this).index();
+            //potentialSwappers[swapperIndex].Item3[swapIndex]
+
+            const featuredItems = $(".swap-container").eq(swapperIndex).find(".swap-feature-item");
+
+            featuredItems.each(function (i, e) {
+                let regex = /\/(\d+)\./;
+                let newSrc = $(this).find("img").attr("src");
+                const replaceStr = newSrc.match(regex)[0];
+                const fileName = potentialSwappers[swapperIndex].Item3[swapIndex][i] + 1;
+                newSrc = newSrc.replace(replaceStr, `/${fileName}.`)
+
+                $(e).fadeOut(400, function (i) {
+                    $(this).find(".swap-item-name").text(fileName);
+                    $(this).find("img").attr("src", newSrc);
+                    $(e).fadeIn();
+                });
+            });
+
+            $(".swap-container").eq(swapperIndex).find(".swap").not(this).removeClass("swap-selected");
+            $(this).addClass("swap-selected");
         })
     </script>
 }
