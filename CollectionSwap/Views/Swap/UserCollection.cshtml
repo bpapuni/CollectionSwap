@@ -30,50 +30,75 @@
     {
         if (potentialSwappers.Count > 0)
         {
-            <div class="d-flex flex-column secondary-container ">
-                <h4>Available Swaps You Need:</h4>
-                <h6>(Best swaps first)</h6>
+            <div class="d-flex flex-column gap-3">
+                <div>
+                    <h4>Available Swaps You Need:</h4>
+                    <h6>(Highest rated first)</h6>
+                </div>
+
                 @foreach (var potentialSwapper in potentialSwappers)
                 {
                     var collection = Model.Collections.Where(col => col.Id == selectedCollection.CollectionId).FirstOrDefault();
                     var itemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON);
-                    <div class="d-flex flex-column gap-4 mt-5">
-                        <h5>User: @potentialSwapper.Item1</h5>
-                        @* Your Swaps *@
-                        @*@foreach (var potentialSwap in potentialSwapper.Item2)
-                        {
-                            <div class="d-flex flex-row">
-                                @foreach (var item in potentialSwap)
-                                {
-                                    var fileName = itemList[item];
-                                    var imagePath = $"~/Collections/{selectedCollection.CollectionId}/{fileName}";
-                                    <div class="d-flex flex-column align-items-center">
-                                        @(item + 1)
-                                        <img class="item" src="@Url.Content(imagePath)" />
-                                    </div>
-                                }
-                            </div>
-                        }*@
 
-                        @* Their Swaps *@
+                    <h5>User: @potentialSwapper.Item1</h5>
+                    <div class="swap-container">
                         @foreach (var potentialSwap in potentialSwapper.Item3)
                         {
-                            <div class="d-flex flex-column swap tertiary-container">
-                                <h6>Swap @(potentialSwapper.Item3.IndexOf(potentialSwap) + 1)</h6>
-                                <hr />
-                                <div class="d-flex flex-row gap-3">
+                            var swapIndex = potentialSwapper.Item3.IndexOf(potentialSwap);
+
+                            if (swapIndex == 0)
+                            {
+                                <div class="swap-container-main">
                                     @foreach (var item in potentialSwap)
                                     {
                                         var fileName = itemList[item];
                                         var imagePath = $"~/Collections/{selectedCollection.CollectionId}/{fileName}";
-                                        <div class="d-flex flex-column align-items-center gap-1">
+                                        <div class="d-flex flex-column align-items-center">
                                             @(item + 1)
                                             <img class="item" src="@Url.Content(imagePath)" />
                                         </div>
                                     }
                                 </div>
-                            </div>
+                            }
                         }
+
+
+                        <div class="swap-container-sub">
+                            @foreach (var potentialSwap in potentialSwapper.Item3)
+                            {
+                                var swapIndex = potentialSwapper.Item3.IndexOf(potentialSwap);
+
+                                if (swapIndex == 0)
+                                {
+                                    <div class="swap swap-selected">
+                                        @foreach (var item in potentialSwap)
+                                        {
+                                            var fileName = itemList[item];
+                                            var imagePath = $"~/Collections/{selectedCollection.CollectionId}/{fileName}";
+                                            <div class="swap-resize">
+                                                @(item + 1)
+                                                <img class="item" src="@Url.Content(imagePath)" />
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="swap">
+                                        @foreach (var item in potentialSwap)
+                                        {
+                                            var fileName = itemList[item];
+                                            var imagePath = $"~/Collections/{selectedCollection.CollectionId}/{fileName}";
+                                            <div class="swap-resize">
+                                                @(item + 1)
+                                                <img class="item" src="@Url.Content(imagePath)" />
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            }
+                        </div>
                     </div>
                 }
             </div>
