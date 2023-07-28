@@ -255,7 +255,6 @@ input[type=number] {
     border-radius: 1rem;
     box-shadow: 0 2px 5px #888;
     overflow: hidden;
-    cursor: pointer;
 }
 
 .swap-container-header {
@@ -263,9 +262,10 @@ input[type=number] {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    height: 20%;
+    height: 8rem;
     padding: 1rem;
     background: var(--steel-blue-50);
+    z-index: 99;
     /*border: 1px solid black;*/
 }
 
@@ -323,61 +323,153 @@ input[type=number] {
 }
 
 .swap-container-main {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 3rem;
-    width: 75%;
+    gap: 1rem;
+    width: 63rem;
     height: 100%;
     color: var(--steel-blue-100);
     background: var(--steel-blue-800);
     /*border-radius: 1rem 0 0 1rem;*/
 }
 
-.swap-container-sub {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 25%;
+.swap-container-main::after {
+    visibility: hidden;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
     height: 100%;
-    padding: 1rem;
-    background: var(--steel-blue-200);
-    /*border-radius: 0 1rem 1rem 0;*/
-    overflow-y: scroll;
-    scrollbar-gutter: stable both-edges;
+    content: "";
+    background-color: #151010dd;
 }
 
-.swap-feature-item {
+.swap-container-main.dim::after {
+    visibility: visible;
+}
+
+.swap-featured-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
+    gap: 1rem;
+}
+
+.swap-featured-item {
+    position: relative;
+    cursor: pointer;
+}
+
+.swap-featured-item img {
+    max-width: 8rem;
+    height: 11rem;
+    object-fit: contain;
+    border-radius: 1rem;
+    box-shadow: 0 2px 5px #000;
+}
+
+.swap-pool-container {
+    display: flex;
+    align-content: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+    width: 18rem;
+    height: 34rem;
+    padding: 1rem;
+    background: var(--steel-blue-200);
+    overflow-y: scroll;
+    scrollbar-gutter: stable both-edges;
+    transition: transform 0.3s ease-in-out;
+}
+
+.swap-pool-container.highlight {
+    transform: scale(105%);
+}
+
+.swap-pool-item {
+    cursor: pointer;
+}
+
+.swap-pool-item img {
+    max-width: 8rem;
+    height: 10rem;
+    object-fit: contain;
+    border-radius: 1rem;
+    box-shadow: 0 2px 5px #000;
+}
+
+/* Your cards */
+.swap-yours ~ .swap-featured-container .swap-featured-item::after {
+    position: absolute;
+    left: -1px;
+    top: -1px;
+    width: 102%;
+    height: 101%;
+    text-align: center;
+    line-height: 11rem;
+    content: "Example";
+    color: var(--steel-blue-50);
+    font-weight: 100;
+    font-size: 1rem;
+    border-radius: 1rem;
+    background-color: #333333DD;
+}
+
+/* Their cards */
+.swap-theirs ~ .swap-featured-container .swap-featured-item::after {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    line-height: 11rem;
+    content: "\f055";
+    color: var(--steel-blue-700);
+    font-family: "FontAwesome";
+    font-size: 4rem;
+    border-radius: 1rem;
+    border-style: dashed;
+    background-color: #D9D9D9;
+}
+
+.swap-theirs ~ .swap-featured-container .swap-featured-item.selected::after {
+    content: "";
+    width: 0;
+    height: 0;
+}
+
+.swap-theirs ~ .swap-featured-container .swap-featured-item.selecting::after {
+    z-index: 999;
 }
 
 .swap {
     display: flex;
     flex-direction: column;
+    width: 80%;
+    font-size: 0.8rem;
+    line-height: 1.2rem;
 }
 
-.swap-resize {
+.swap-heading {
+    font-weight: 400;
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+}
+
+.swap-yours {
+    font-weight: 200;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
 
-.swap-resize img {
-    max-width: 90%;
-    max-height: 9rem;
-}
-
-.swap:hover {
-    box-shadow: 0 2px 5px #888;
-}
-
-.swap-selected {
-    border: 2px solid #0071e3;
-    box-shadow: 0 2px 5px #888;
+.swap-theirs {
+    font-weight: 200;
+    display: flex;
+    flex-direction: column;
 }
 
 .user-collection-selected {
