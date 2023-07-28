@@ -87,19 +87,19 @@ namespace CollectionSwap.Controllers
                 swapperList.Add(newSwapper);
             }
 
-            var potentialSwappers = FindPotentialSwappers(currentUserId, swapperList);
+            List<(string Email, List<int> yourItems, List<int> theirItems)> potentialSwappers = FindPotentialSwappers(currentUserId, swapperList);
             ViewBag.PotentialSwappers = potentialSwappers;
             ViewBag.SelectedCollection = selectedCollection;
 
             return View(model);
         }
 
-        private List<(string, List<List<int>>, List<List<int>>)> FindPotentialSwappers(string currentUserId, List<Swapper> users)
+        private List<(string, List<int>, List<int>)> FindPotentialSwappers(string currentUserId, List<Swapper> users)
         {
             var currentUser = users.FirstOrDefault(u => u.UserId == currentUserId);
             if (currentUser == null)
             {
-                return new List<(string, List<List<int>>, List<List<int>>)>(); // User not found.
+                return new List<(string, List<int>, List<int>)>(); // User not found.
             }
 
             var potentialSwappers = users
@@ -107,18 +107,18 @@ namespace CollectionSwap.Controllers
                 .Select(u =>
                 {
                     var (currentUserCombos, otherUserCombos) = GetPotentialSwaps(currentUser, u);
-                    return (u.UserId, currentUserCombos, otherUserCombos);
+                    return (u.UserName, currentUserCombos, otherUserCombos);
                 })
                 .ToList();
 
-            potentialSwappers.Sort((a, b) => b.Item3.Max(combo => combo.Count).CompareTo(a.Item3.Max(combo => combo.Count)));
+            potentialSwappers.Sort((a, b) => b.Item3.Count.CompareTo(a.Item3.Count));
 
             return potentialSwappers;
         }
 
 
 
-        private (List<List<int>>, List<List<int>>) GetPotentialSwaps(Swapper currentUser, Swapper otherUser)
+        private (List<int>, List<int>) GetPotentialSwaps(Swapper currentUser, Swapper otherUser)
         {
             List<int> currentUserSwaps = new List<int>();
             List<int> otherUserSwaps = new List<int>();
@@ -171,7 +171,8 @@ namespace CollectionSwap.Controllers
                 }
             }
 
-            return (currentUserCombos, otherUserCombos);
+            return (currentUserSwaps, otherUserSwaps);
+            //return (currentUserCombos, otherUserCombos);
         }
 
         private List<List<int>> GetCombinations(List<int> items, int swapSize)
