@@ -40,6 +40,7 @@
                 {
                     var collection = Model.Collections.Where(col => col.Id == selectedCollection.CollectionId).FirstOrDefault();
                     var itemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON);
+                    var imagePath = $"~/Collections/{selectedCollection.CollectionId}";
                     var swapSize = Math.Min(potentialSwapper.yourItems.Count, potentialSwapper.theirItems.Count);
 
                     <div class="swap-container">
@@ -67,17 +68,50 @@
                                 <div class="swap">
                                     <div class="swap-yours">
                                         <span class="swap-heading">Your Swap</span>
-                                        <span>(Brent will be offered @swapSize of your duplicates)</span>
+                                        <span>Brent will be asked to select @swapSize of your duplicates to swap for.</span>
+                                    </div>
+                                    <div class="swap-featured-container">
+                                        @for (var i = 0; i < swapSize; i++)
+                                        {
+                                            var fileName = itemList[potentialSwapper.yourItems[i]];
+                                            <div class="swap-featured-item">
+                                                <img src="@Url.Content(imagePath)/@fileName" alt="">
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                                 <div class="swap">
                                     <div class="swap-theirs">
                                         <span class="swap-heading">Brent's' Swap</span>
-                                        <span>(The items you'll receive)</span>
+                                        <span>The items you'll receive.</span>
+                                    </div>
+                                    <div class="swap-featured-container">
+                                        @for (var i = 0; i < swapSize; i++)
+                                        {
+                                            var fileName = itemList[potentialSwapper.theirItems[i]];
+                                            <div class="swap-featured-item" onclick="selectItem(this)">
+                                                <img src="@Url.Content(imagePath)/@fileName" alt="">
+                                            </div>
+                                        }
                                     </div>
                                 </div>
+                                <button class="create create-swap visually-hidden" onclick="proposeSwap(this)">Swap</button>
                             </div>
-                            <div class="swap-container-sub"></div>
+                            <div class="swap-pool-container">
+                                <div class="swap-pool-header">
+                                    <span class="swap-heading">Swap Pool</span><br />
+                                    <span>Select @(swapSize == 1 ? "an item" : swapSize + " items") you'd like.</span>
+                                </div>
+
+                                @foreach (var item in potentialSwapper.theirItems)
+                                {
+                                    var fileName = itemList[item];
+                                    <div class="swap-pool-item" onclick="selectPoolItem(this)">
+                                        <img src="@Url.Content(imagePath)/@fileName" alt="@item">
+                                    </div>
+                                }
+                                @*<button class="create create-swap" type="submit">Swap</button>*@
+                            </div>
                         </div>
                     </div>
                 }
@@ -99,32 +133,88 @@
             selectedCollection.addClass("user-collection-selected")
         }
 
-        console.log(@Html.Raw(JsonConvert.SerializeObject(potentialSwappers)));
+        function selectItem(e) {
+            const self = $(e);
+            const mainContainer = self.closest(".swap-container-main");
+            const poolContainer = mainContainer.next(".swap-pool-container");
+            const itemExists = self.hasClass("selected");
 
-        $(".swap").on("click", function () {
-            const potentialSwappers = @Html.Raw(JsonConvert.SerializeObject(potentialSwappers));
-            const swapperIndex =$(".swap-container").index($(this).closest(".swap-container"));
-            const swapIndex = $(this).index();
-            //potentialSwappers[swapperIndex].Item3[swapIndex]
+            self.removeClass("selected");
+            self.toggleClass("selecting");
+            mainContainer.toggleClass("dim");
 
-            const featuredItems = $(".swap-container").eq(swapperIndex).find(".swap-feature-item");
+            if (mainContainer.hasClass("dim")) {
+                if (itemExists) {
+                    const src = self.find("img").attr("src");
+                    poolContainer.find(`[src="${src}"]`).parent().show();
+                    updatedPoolText(mainContainer, poolContainer);
 
-            featuredItems.each(function (i, e) {
-                let regex = /\/(\d+)\./;
-                let newSrc = $(this).find("img").attr("src");
-                const replaceStr = newSrc.match(regex)[0];
-                const fileName = potentialSwappers[swapperIndex].Item3[swapIndex][i] + 1;
-                newSrc = newSrc.replace(replaceStr, `/${fileName}.`)
-
-                $(e).fadeOut(400, function (i) {
-                    $(this).find(".swap-item-name").text(fileName);
-                    $(this).find("img").attr("src", newSrc);
-                    $(e).fadeIn();
+                }
+                poolContainer.toggleClass("highlight", () => {
+                    setTimeout(() => {
+                        poolContainer.toggleClass("highlight");
+                    }, 200);
                 });
-            });
+            }
+        }
 
-            $(".swap-container").eq(swapperIndex).find(".swap").not(this).removeClass("swap-selected");
-            $(this).addClass("swap-selected");
-        })
+        function selectPoolItem(e) {
+            const poolItem = $(e);
+            const poolContainer = poolItem.closest(".swap-pool-container");
+            const mainContainer = poolContainer.prev(".swap-container-main");
+            const featuredItem = mainContainer.find(".swap-featured-item.selecting");
+
+            featuredItem.toggleClass("selecting");
+
+            if (mainContainer.hasClass("dim")) {
+                const newSrc = poolItem.find("img").attr("src");
+                const newAlt = poolItem.find("img").attr("alt");
+
+                mainContainer.removeClass("dim");
+                featuredItem.addClass("selected");
+                featuredItem.find("img").attr("src", newSrc);
+                featuredItem.find("img").attr("alt", newAlt);
+                poolItem.hide();
+            }
+
+            updatedPoolText(mainContainer, poolContainer);
+        }
+
+        function updatedPoolText(mainContainer, poolContainer) {
+            const swapperIndex = $(".swap-container-main").index(mainContainer);
+            const swapper = @Html.Raw(JsonConvert.SerializeObject(potentialSwappers));
+            const swapSize = mainContainer.closest(".swap-container").find(".swap-size").text();
+
+            const itemsSelected = mainContainer.find(".swap-featured-item.selected").length;
+            const remainingSelections = swapSize - itemsSelected;
+            const poolText = poolContainer.find("span").eq(1);
+            const swapButton = mainContainer.find(".create-swap");
+
+            console.log(remainingSelections)
+            switch (remainingSelections) {
+                case 1:
+                    poolText.text(`Select ${remainingSelections} item you'd like.`);
+                    swapButton.addClass("visually-hidden");
+                    break;
+                case 0:
+                    poolText.text("All selections made.");
+                    swapButton.removeClass("visually-hidden");
+                    swapButton.toggleClass("highlight", () => {
+                        setTimeout(() => {
+                            swapButton.toggleClass("highlight");
+                        }, 200);
+                    });
+                    break;
+                default:
+                    poolText.text(`Select ${remainingSelections} items you'd like.`);
+                    swapButton.addClass("visually-hidden");
+                    break;
+            }
+        }
+
+        function proposeSwap(e) {
+            const swapButton = $(e);
+            console.log(swapButton);
+        }
     </script>
 }

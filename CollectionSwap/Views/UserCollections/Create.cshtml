@@ -22,7 +22,7 @@
         using (Html.BeginForm("Create", "UserCollections", new { id = selectedCollection.Id }, FormMethod.Post, new { role = "form", @class = "mt-3" }))
         {
             @Html.Partial("_Items", selectedCollection)
-            <button class="create-item" type="submit">Create</button>
+            <button class="create create-item" type="submit">Create</button>
         }
     }
 </div>

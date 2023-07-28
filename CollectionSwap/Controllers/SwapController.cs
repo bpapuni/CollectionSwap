@@ -111,7 +111,7 @@ namespace CollectionSwap.Controllers
                 })
                 .ToList();
 
-            potentialSwappers.Sort((a, b) => b.Item3.Count.CompareTo(a.Item3.Count));
+            potentialSwappers.Sort((a, b) => Math.Min(b.Item2.Count, b.Item3.Count).CompareTo(Math.Min(a.Item2.Count, a.Item3.Count)));
 
             return potentialSwappers;
         }
