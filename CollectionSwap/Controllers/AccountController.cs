@@ -166,7 +166,18 @@ namespace CollectionSwap.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var role = new ApplicationRole { Name = "User" };
+                var role = new ApplicationRole { };
+                using (var db = new ApplicationDbContext())
+                {
+                    if (db.Users.Count() == 0)
+                    {
+                        role.Name = "Admin";
+                    }
+                    else
+                    {
+                        role.Name = "User";
+                    }
+                }
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
