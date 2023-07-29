@@ -216,11 +216,20 @@
     <Compile Include="Migrations\202307240221028_ChangeCollectionModelToStoreItemList.designer.cs">
       <DependentUpon>202307240221028_ChangeCollectionModelToStoreItemList.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202307282210157_CreateSwapsTable.cs" />
+    <Compile Include="Migrations\202307282210157_CreateSwapsTable.designer.cs">
+      <DependentUpon>202307282210157_CreateSwapsTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202307282213183_CreateSwapsTable1.cs" />
+    <Compile Include="Migrations\202307282213183_CreateSwapsTable1.designer.cs">
+      <DependentUpon>202307282213183_CreateSwapsTable1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CollectionModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\SwapModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -413,6 +422,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202307240221028_ChangeCollectionModelToStoreItemList.resx">
       <DependentUpon>202307240221028_ChangeCollectionModelToStoreItemList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202307282210157_CreateSwapsTable.resx">
+      <DependentUpon>202307282210157_CreateSwapsTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202307282213183_CreateSwapsTable1.resx">
+      <DependentUpon>202307282213183_CreateSwapsTable1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

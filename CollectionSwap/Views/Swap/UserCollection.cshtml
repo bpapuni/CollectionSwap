@@ -4,7 +4,7 @@
 @{
     ViewBag.Title = "Find Swaps";
     UserCollection selectedCollection = ViewBag.SelectedCollection;
-    List<(string Email, List<int> yourItems, List<int> theirItems)> potentialSwappers = ViewBag.PotentialSwappers;
+    var matchingSwaps = ViewBag.MatchingSwaps;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <main aria-labelledby="title">
@@ -26,9 +26,9 @@
     <br />
 
     @*Available Swaps*@
-    @if (potentialSwappers != null)
+    @if (matchingSwaps != null)
     {
-        if (potentialSwappers.Count > 0)
+        if (matchingSwaps.Count > 0)
         {
             <div class="d-flex flex-column gap-3">
                 <div>
@@ -36,19 +36,19 @@
                     <h6>(Highest rated first)</h6>
                 </div>
 
-                @foreach (var potentialSwapper in potentialSwappers)
+                @foreach (var matchingSwap in matchingSwaps)
                 {
                     var collection = Model.Collections.Where(col => col.Id == selectedCollection.CollectionId).FirstOrDefault();
                     var itemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON);
                     var imagePath = $"~/Collections/{selectedCollection.CollectionId}";
-                    var swapSize = Math.Min(potentialSwapper.yourItems.Count, potentialSwapper.theirItems.Count);
+                    var swapSize = Math.Min(matchingSwap.CurrentUserNeededItems.Count, matchingSwap.OtherUserNeededItems.Count);
 
                     <div class="swap-container">
                         <div class="swap-container-header">
                             <div class="swap-profile">
                                 <div class="swap-portrait">Pic</div>
                                 <div>
-                                    User: @potentialSwapper.Email<br />
+                                    User: @matchingSwap.UserName<br />
                                     <span class="swap-rating">
                                         <i class="fa fa-star"></i>
                                         <i class="fa fa-star"></i>
@@ -68,12 +68,12 @@
                                 <div class="swap">
                                     <div class="swap-yours">
                                         <span class="swap-heading">Your Swap</span>
-                                        <span>Brent will be asked to select @swapSize of your duplicates to swap for.</span>
+                                        <span>@(matchingSwap.UserName.Split('@')[0]) will be asked to select @swapSize of your duplicates to swap for.</span>
                                     </div>
                                     <div class="swap-featured-container">
                                         @for (var i = 0; i < swapSize; i++)
                                         {
-                                            var fileName = itemList[potentialSwapper.yourItems[i]];
+                                            var fileName = itemList[matchingSwap.OtherUserNeededItems[i]];
                                             <div class="swap-featured-item">
                                                 <img src="@Url.Content(imagePath)/@fileName" alt="">
                                             </div>
@@ -82,13 +82,13 @@
                                 </div>
                                 <div class="swap">
                                     <div class="swap-theirs">
-                                        <span class="swap-heading">Brent's' Swap</span>
+                                        <span class="swap-heading">@(matchingSwap.UserName.Split('@')[0])'s Swap</span>
                                         <span>The items you'll receive.</span>
                                     </div>
                                     <div class="swap-featured-container">
                                         @for (var i = 0; i < swapSize; i++)
                                         {
-                                            var fileName = itemList[potentialSwapper.theirItems[i]];
+                                            var fileName = itemList[matchingSwap.CurrentUserNeededItems[i]];
                                             <div class="swap-featured-item" onclick="selectItem(this)">
                                                 <img src="@Url.Content(imagePath)/@fileName" alt="">
                                             </div>
@@ -103,14 +103,13 @@
                                     <span>Select @(swapSize == 1 ? "an item" : swapSize + " items") you'd like.</span>
                                 </div>
 
-                                @foreach (var item in potentialSwapper.theirItems)
+                                @foreach (var item in matchingSwap.CurrentUserNeededItems)
                                 {
                                     var fileName = itemList[item];
                                     <div class="swap-pool-item" onclick="selectPoolItem(this)">
                                         <img src="@Url.Content(imagePath)/@fileName" alt="@item">
                                     </div>
                                 }
-                                @*<button class="create create-swap" type="submit">Swap</button>*@
                             </div>
                         </div>
                     </div>
@@ -132,6 +131,8 @@
         if (selectedCollection.length) {
             selectedCollection.addClass("user-collection-selected")
         }
+
+        console.log(@Html.Raw(JsonConvert.SerializeObject(matchingSwaps)));
 
         function selectItem(e) {
             const self = $(e);
@@ -182,7 +183,7 @@
 
         function updatedPoolText(mainContainer, poolContainer) {
             const swapperIndex = $(".swap-container-main").index(mainContainer);
-            const swapper = @Html.Raw(JsonConvert.SerializeObject(potentialSwappers));
+            const matchingSwaps = @Html.Raw(JsonConvert.SerializeObject(matchingSwaps));
             const swapSize = mainContainer.closest(".swap-container").find(".swap-size").text();
 
             const itemsSelected = mainContainer.find(".swap-featured-item.selected").length;
@@ -213,7 +214,9 @@
 
         function proposeSwap(e) {
             const swapButton = $(e);
-            
+            const swapperIndex = $(".create-swap").index(swapButton);
+            const matchingSwaps = @Html.Raw(JsonConvert.SerializeObject(matchingSwaps));
+            console.log(matchingSwaps);
         }
     </script>
 }

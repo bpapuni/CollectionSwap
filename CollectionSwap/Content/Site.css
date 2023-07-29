@@ -385,7 +385,7 @@ input[type=number] {
     height: 34rem;
     padding: 1rem;
     background: var(--steel-blue-200);
-    overflow-y: hidden;
+    overflow-y: scroll;
     scrollbar-gutter: stable both-edges;
     transition: transform 0.3s ease-in-out;
 }
