@@ -165,7 +165,7 @@ namespace CollectionSwap.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
                 var role = new ApplicationRole { };
                 using (var db = new ApplicationDbContext())
                 {

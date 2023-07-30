@@ -1,4 +1,4 @@
-﻿@model CollectionSwap.Models.SwapViewModel
+﻿@model CollectionSwap.Models.FindSwapsViewModel
 @using CollectionSwap.Models
 @using Newtonsoft.Json;
 @{
@@ -10,6 +10,16 @@
 <main aria-labelledby="title">
     <h2 id="title">@ViewBag.Title</h2>
     <hr />
+    @if (Model.AcceptedSwaps != null && Model.AcceptedSwaps.Any())
+    {
+        <a href="/Swap/Offers"><h6>You have @(Model.AcceptedSwaps.Count == 1 ? "1 accepted offer" : Model.AcceptedSwaps.Count + " accepted offers")</h6></a>
+
+    }
+    @if (Model.OfferedSwaps != null && Model.OfferedSwaps.Any())
+    {
+        <a href="/Swap/Offers"><h6>You have @(Model.OfferedSwaps.Count == 1 ? "1 swap offer" : Model.OfferedSwaps.Count + " swap offers")</h6></a>
+
+    }
     <div class="secondary-container">
         <h5>Select a collection to find swaps for:</h5>
         @*<hr />*@
@@ -39,80 +49,22 @@
                 @foreach (var matchingSwap in matchingSwaps)
                 {
                     var collection = Model.Collections.Where(col => col.Id == selectedCollection.CollectionId).FirstOrDefault();
-                    var itemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON);
-                    var imagePath = $"~/Collections/{selectedCollection.CollectionId}";
-                    var swapSize = Math.Min(matchingSwap.CurrentUserNeededItems.Count, matchingSwap.OtherUserNeededItems.Count);
+                    var senderItemIds = matchingSwap.SenderItemIds;
+                    var receiverItemIds = matchingSwap.ReceiverItemIds;
+                    var swapSize = Math.Min(matchingSwap.SenderItemIds.Count, matchingSwap.ReceiverItemIds.Count);
 
-                    <div class="swap-container">
-                        <div class="swap-container-header">
-                            <div class="swap-profile">
-                                <div class="swap-portrait">Pic</div>
-                                <div>
-                                    User: @matchingSwap.UserName<br />
-                                    <span class="swap-rating">
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                        <i class="fa fa-star"></i>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="swap-info">
-                                Swap <br /> @swapSize for
-                                <span class="swap-size">@swapSize</span>
-                            </div>
-                        </div>
-                        <div class="swap-container-body">
-                            <div class="swap-container-main">
-                                <div class="swap">
-                                    <div class="swap-yours">
-                                        <span class="swap-heading">Your Swap</span>
-                                        <span>@(matchingSwap.UserName.Split('@')[0]) will be asked to select @swapSize of your duplicates to swap for.</span>
-                                    </div>
-                                    <div class="swap-featured-container">
-                                        @for (var i = 0; i < swapSize; i++)
-                                        {
-                                            var fileName = itemList[matchingSwap.OtherUserNeededItems[i]];
-                                            <div class="swap-featured-item">
-                                                <img src="@Url.Content(imagePath)/@fileName" alt="">
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                                <div class="swap">
-                                    <div class="swap-theirs">
-                                        <span class="swap-heading">@(matchingSwap.UserName.Split('@')[0])'s Swap</span>
-                                        <span>The items you'll receive.</span>
-                                    </div>
-                                    <div class="swap-featured-container">
-                                        @for (var i = 0; i < swapSize; i++)
-                                        {
-                                            var fileName = itemList[matchingSwap.CurrentUserNeededItems[i]];
-                                            <div class="swap-featured-item" onclick="selectItem(this)">
-                                                <img src="@Url.Content(imagePath)/@fileName" alt="">
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                                <button class="create create-swap visually-hidden" onclick="proposeSwap(this)">Swap</button>
-                            </div>
-                            <div class="swap-pool-container">
-                                <div class="swap-pool-header">
-                                    <span class="swap-heading">Swap Pool</span><br />
-                                    <span>Select @(swapSize == 1 ? "an item" : swapSize + " items") you'd like.</span>
-                                </div>
+                    SwapViewModel model = new SwapViewModel
+                    {
+                        UserName = matchingSwap.UserName,
+                        ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON),
+                        ImagePath = $"~/Collections/{selectedCollection.CollectionId}",
+                        SenderItemIds = senderItemIds,
+                        ReceiverItemIds = receiverItemIds,
+                        SwapSize = swapSize,
+                        Type = "swap"
+                    };
 
-                                @foreach (var item in matchingSwap.CurrentUserNeededItems)
-                                {
-                                    var fileName = itemList[item];
-                                    <div class="swap-pool-item" onclick="selectPoolItem(this)">
-                                        <img src="@Url.Content(imagePath)/@fileName" alt="@item">
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </div>
+                    @Html.Partial("_Swap", model);
                 }
             </div>
         }
@@ -125,98 +77,8 @@
 
 @section scripts {
     <script>
-        const id = window.location.href.split("UserCollection/")[1];
-        const selectedCollection = $(`[href='/Swap/UserCollection/${id}']`);
-
-        if (selectedCollection.length) {
-            selectedCollection.addClass("user-collection-selected")
-        }
-
-        console.log(@Html.Raw(JsonConvert.SerializeObject(matchingSwaps)));
-
-        function selectItem(e) {
-            const self = $(e);
-            const mainContainer = self.closest(".swap-container-main");
-            const poolContainer = mainContainer.next(".swap-pool-container");
-            const itemExists = self.hasClass("selected");
-
-            self.removeClass("selected");
-            self.toggleClass("selecting");
-            mainContainer.toggleClass("dim");
-
-            if (mainContainer.hasClass("dim")) {
-                if (itemExists) {
-                    const src = self.find("img").attr("src");
-                    poolContainer.find(`[src="${src}"]`).parent().show();
-                    updatedPoolText(mainContainer, poolContainer);
-
-                }
-                poolContainer.toggleClass("highlight", () => {
-                    setTimeout(() => {
-                        poolContainer.toggleClass("highlight");
-                    }, 200);
-                });
-            }
-        }
-
-        function selectPoolItem(e) {
-            const poolItem = $(e);
-            const poolContainer = poolItem.closest(".swap-pool-container");
-            const mainContainer = poolContainer.prev(".swap-container-main");
-            const featuredItem = mainContainer.find(".swap-featured-item.selecting");
-
-            featuredItem.toggleClass("selecting");
-
-            if (mainContainer.hasClass("dim")) {
-                const newSrc = poolItem.find("img").attr("src");
-                const newAlt = poolItem.find("img").attr("alt");
-
-                mainContainer.removeClass("dim");
-                featuredItem.addClass("selected");
-                featuredItem.find("img").attr("src", newSrc);
-                featuredItem.find("img").attr("alt", newAlt);
-                poolItem.hide();
-            }
-
-            updatedPoolText(mainContainer, poolContainer);
-        }
-
-        function updatedPoolText(mainContainer, poolContainer) {
-            const swapperIndex = $(".swap-container-main").index(mainContainer);
-            const matchingSwaps = @Html.Raw(JsonConvert.SerializeObject(matchingSwaps));
-            const swapSize = mainContainer.closest(".swap-container").find(".swap-size").text();
-
-            const itemsSelected = mainContainer.find(".swap-featured-item.selected").length;
-            const remainingSelections = swapSize - itemsSelected;
-            const poolText = poolContainer.find("span").eq(1);
-            const swapButton = mainContainer.find(".create-swap");
-
-            switch (remainingSelections) {
-                case 1:
-                    poolText.text(`Select ${remainingSelections} item you'd like.`);
-                    swapButton.addClass("visually-hidden");
-                    break;
-                case 0:
-                    poolText.text("All selections made.");
-                    swapButton.removeClass("visually-hidden");
-                    swapButton.toggleClass("highlight", () => {
-                        setTimeout(() => {
-                            swapButton.toggleClass("highlight");
-                        }, 200);
-                    });
-                    break;
-                default:
-                    poolText.text(`Select ${remainingSelections} items you'd like.`);
-                    swapButton.addClass("visually-hidden");
-                    break;
-            }
-        }
-
-        function proposeSwap(e) {
-            const swapButton = $(e);
-            const swapperIndex = $(".create-swap").index(swapButton);
-            const matchingSwaps = @Html.Raw(JsonConvert.SerializeObject(matchingSwaps));
-            console.log(matchingSwaps);
-        }
+        const serializedMatchingSwaps = @Html.Raw(JsonConvert.SerializeObject(matchingSwaps));
+        const serializedSelectedCollection = @Html.Raw(JsonConvert.SerializeObject(selectedCollection));
     </script>
+    <script src="~/Scripts/swap-ui.js"></script>
 }

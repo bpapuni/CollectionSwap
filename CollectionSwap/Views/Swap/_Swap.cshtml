@@ -1,0 +1,133 @@
+﻿@model CollectionSwap.Models.SwapViewModel
+@{
+    var userName = Model.UserName;
+    var itemList = Model.ItemList;
+    var imagePath = Model.ImagePath;
+    var senderItemIds = Model.SenderItemIds;
+    var receiverItemIds = Model.ReceiverItemIds;
+    var swapSize = Model.SwapSize;
+    var swapType = Model.Type;
+}
+
+<div class="swap-container">
+    <div class="swap-container-header">
+        <div class="swap-profile">
+            <div class="swap-portrait">Pic</div>
+            <div>
+                User: @userName<br />
+                <span class="swap-rating">
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                    <i class="fa fa-star"></i>
+                </span>
+            </div>
+        </div>
+        <div class="swap-info">
+            Swap <br /> @swapSize for
+            <span class="swap-size">@swapSize</span>
+        </div>
+    </div>
+    <div class="swap-container-body">
+        <div class="swap-container-main">
+            <div class="swap">
+                <div class="swap-yours">
+                    <span class="swap-heading">You'll Send</span>
+                    @switch (swapType)
+                    {
+                        case "swap":
+                            <span>@userName will be asked to select @swapSize of your duplicates to swap for.</span>
+                            break;
+                        case "offered":
+                            <span>@userName has requested the following items.</span>
+                            break;
+                        case "accepted":
+                            <span>@userName has requested the following items.</span>
+                            break;
+                        default:
+                            break;
+                    }
+                </div>
+                <div class="swap-featured-container">
+                    @for (var i = 0; i < swapSize; i++)
+                    {
+                        var itemIndex = receiverItemIds[i];
+                        var fileName = itemList[itemIndex];
+                        <div class="swap-featured-item">
+                            <img src="@Url.Content(imagePath)/@fileName" alt="@itemIndex">
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="swap">
+                <div class="swap-theirs">
+                    <span class="swap-heading">You'll Receive</span>
+                    <span>The items you'll receive.</span>
+                </div>
+                <div class="swap-featured-container">
+                    @for (var i = 0; i < swapSize; i++)
+                    {
+                        var itemIndex = senderItemIds[i];
+                        var fileName = itemList[itemIndex];
+                        switch (swapType)
+                        {
+                            case "swap":
+                            case "offered":
+                                <div class="swap-featured-item" onclick="selectItem(this)">
+                                    <img src="@Url.Content(imagePath)/@fileName" alt="@itemIndex">
+                                </div>
+                                break;
+                            case "accepted":
+                                <div class="swap-featured-item selected">
+                                    <img src="@Url.Content(imagePath)/@fileName" alt="@itemIndex">
+                                </div>
+                                break;
+                            default:
+                                break;
+                        }
+
+                    }
+                </div>
+            </div>
+            @switch (swapType)
+            {
+                case "swap":
+                    <button class="create create-swap visually-hidden" onclick="offerSwap(this)">Swap</button>
+                    break;
+                case "offered":
+                    <button class="create create-swap visually-hidden" onclick="acceptSwap(this)">Accept</button>
+                    break;
+                case "accepted":
+                    <button class="create create-swap" onclick="confirmSwap(this)">Confirm</button>
+                    break;
+                default:
+                    break;
+            }
+        </div>
+        @switch (swapType)
+        {
+            case "swap":
+            case "offered":
+                <div class="swap-pool-container">
+                    <div class="swap-pool-header">
+                        <span class="swap-heading">Swap Pool</span><br />
+                        <span>Select @(swapSize == 1 ? "an item" : swapSize + " items") you'd like.</span>
+                    </div>
+
+                    @foreach (var item in senderItemIds)
+                    {
+                        var itemIndex = item;
+                        var fileName = itemList[itemIndex];
+                        <div class="swap-pool-item" onclick="selectPoolItem(this)">
+                            <img src="@Url.Content(imagePath)/@fileName" alt="@itemIndex">
+                        </div>
+                    }
+                </div>
+                break;
+            default:
+                break;
+        }
+        
+    </div>
+</div>

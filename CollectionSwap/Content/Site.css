@@ -332,7 +332,8 @@ input[type=number] {
     justify-content: center;
     align-items: center;
     gap: 1rem;
-    width: 63rem;
+    flex-grow: 1;
+    /*width: 63rem;*/
     height: 100%;
     color: var(--steel-blue-100);
     background: var(--steel-blue-800);

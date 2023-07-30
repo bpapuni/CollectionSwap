@@ -44,10 +44,4 @@ namespace CollectionSwap.Models
         public Collection Collection { get; set; }
         public UserCollection UserCollection { get; set; }
     }
-
-    public class SwapViewModel
-    {
-        public List<Collection> Collections { get; set; }
-        public List<UserCollection> UserCollections { get; set; }
-    }
 }

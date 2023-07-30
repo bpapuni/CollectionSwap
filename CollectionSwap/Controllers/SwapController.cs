@@ -3,6 +3,7 @@ using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
@@ -23,12 +24,13 @@ namespace CollectionSwap.Controllers
 
     public class MatchingSwap
     {
-        public string UserId { get; set; }
+        public string SenderId { get; set; }
+        public string ReceiverId { get; set; }
         public string UserName { get; set; }
         public int CollectionId { get; set; }
         public int UserCollectionId { get; set; }
-        public List<int> CurrentUserNeededItems { get; set; }
-        public List<int> OtherUserNeededItems { get; set; }
+        public List<int> SenderItemIds { get; set; }
+        public List<int> ReceiverItemIds { get; set; }
     }
 
     public class SwapController : Controller
@@ -38,10 +40,12 @@ namespace CollectionSwap.Controllers
         public ActionResult Index()
         {
             var currentUserId = User.Identity.GetUserId();
-            SwapViewModel model = new SwapViewModel
+            FindSwapsViewModel model = new FindSwapsViewModel
             {
                 Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.Where(uc => uc.UserId == currentUserId).ToList()
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == currentUserId).ToList(),
+                OfferedSwaps = db.Swaps.Where(swap => swap.ReceiverId == currentUserId && swap.Status == "offered").ToList(),
+                AcceptedSwaps = db.Swaps.Where(swap => swap.SenderId == currentUserId && swap.Status == "accepted").ToList()
             };
             return View(model);
         }
@@ -53,10 +57,12 @@ namespace CollectionSwap.Controllers
             
             UserCollection selectedCollection = db.UserCollections.Find(id);
 
-            SwapViewModel model = new SwapViewModel
+            FindSwapsViewModel model = new FindSwapsViewModel
             {
                 Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.Where(uc => uc.UserId == currentUserId).ToList()
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == currentUserId).ToList(),
+                OfferedSwaps = db.Swaps.Where(swap => swap.ReceiverId == currentUserId && swap.Status == "offered").ToList(),
+                AcceptedSwaps = db.Swaps.Where(swap => swap.SenderId == currentUserId && swap.Status == "accepted").ToList()
             };
 
             if (id == null)
@@ -136,12 +142,13 @@ namespace CollectionSwap.Controllers
                 {
                     MatchingSwap matchingSwap = new MatchingSwap
                     {
-                        UserId = potentialSwap.UserId,
+                        SenderId = currentUserId,
+                        ReceiverId = potentialSwap.UserId,
                         UserName = potentialSwap.UserName,
                         CollectionId = potentialSwap.CollectionId,
                         UserCollectionId = potentialSwap.UserCollectionId,
-                        CurrentUserNeededItems = currentUserNeededItems,
-                        OtherUserNeededItems = otherUserNeededItems
+                        SenderItemIds = currentUserNeededItems,
+                        ReceiverItemIds = otherUserNeededItems
                     };
 
                     matchingSwaps.Add(matchingSwap);
@@ -149,11 +156,54 @@ namespace CollectionSwap.Controllers
             }
 
             matchingSwaps = matchingSwaps
-            .OrderByDescending(swap => Math.Min(swap.CurrentUserNeededItems.Count(), swap.OtherUserNeededItems.Count()))
-            .ThenByDescending(swap => swap.CurrentUserNeededItems.Count())
+            .OrderByDescending(swap => Math.Min(swap.SenderItemIds.Count(), swap.ReceiverItemIds.Count()))
+            .ThenByDescending(swap => swap.SenderItemIds.Count())
             .ToList();
 
             return matchingSwaps;
+        }
+
+        [Authorize]
+        public ActionResult HandleSwap(Swap swap)
+        {
+            if (ModelState.IsValid)
+            {
+                switch (swap.Status)
+                {
+                    case "offered":
+                        db.Swaps.Add(swap);
+                        db.SaveChanges();
+                        Response.Cookies["swapSuccessMessage"].Value = "Offer made, waiting for user to accept.";
+                        break;
+                    case "accepted":
+                        db.Entry(swap).State = EntityState.Modified;
+                        db.SaveChanges();
+                        Response.Cookies["swapSuccessMessage"].Value = "Offer accepted, waiting for user to confirm.";
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return Json(new { reloadPage = true });
+        }
+
+        [Authorize]
+        public ActionResult Offers()
+        {
+            //string acceptedSuccess = Request.Cookies["acceptedSuccess"]?.Value;
+            //acceptedSuccess = acceptedSuccess != null ? HttpUtility.UrlDecode(acceptedSuccess) : null;
+            var currentUserId = User.Identity.GetUserId();
+            FindSwapsViewModel model = new FindSwapsViewModel
+            {
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == currentUserId).ToList(),
+                OfferedSwaps = db.Swaps.Where(swap => swap.ReceiverId == currentUserId && swap.Status == "offered").ToList(),
+                AcceptedSwaps = db.Swaps.Where(swap => swap.SenderId == currentUserId && swap.Status == "accepted").ToList()
+            };
+
+            //ViewBag.AcceptedSuccess = acceptedSuccess;
+            return View(model);
         }
     }
 }

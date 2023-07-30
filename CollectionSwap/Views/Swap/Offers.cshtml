@@ -1,0 +1,79 @@
+﻿@model CollectionSwap.Models.FindSwapsViewModel
+@using CollectionSwap.Models
+@using Newtonsoft.Json;
+@{
+    ViewBag.Title = "Offers";
+    var offeredSwaps = Model.OfferedSwaps;
+    var acceptedSwaps = Model.AcceptedSwaps;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<span class="text-success"></span>
+
+@if (offeredSwaps != null)
+{
+    if (offeredSwaps.Count > 0)
+    {
+        foreach (var offeredSwap in offeredSwaps)
+        {
+            var collection = Model.Collections.Where(col => col.Id == offeredSwap.CollectionId).FirstOrDefault();
+            var senderItemIds = JsonConvert.DeserializeObject<List<int>>(offeredSwap.SenderItemIdsJSON);
+            var receiverItemIds = JsonConvert.DeserializeObject<List<int>>(offeredSwap.ReceiverItemIdsJSON);
+            var swapSize = senderItemIds.Count();
+
+            SwapViewModel model = new SwapViewModel
+            {
+                UserName = offeredSwap.SenderId,
+                ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON),
+                ImagePath = $"~/Collections/{offeredSwap.CollectionId}",
+                SenderItemIds = senderItemIds,
+                ReceiverItemIds = receiverItemIds,
+                SwapSize = swapSize,
+                Type = "offered"
+            };
+
+            @Html.Partial("_Swap", model);
+        }
+    }
+}
+
+@if (acceptedSwaps != null)
+{
+    if (acceptedSwaps.Count > 0)
+    {
+        foreach (var acceptedSwap in acceptedSwaps)
+        {
+            var collection = Model.Collections.Where(col => col.Id == acceptedSwap.CollectionId).FirstOrDefault();
+            var senderItemIds = JsonConvert.DeserializeObject<List<int>>(acceptedSwap.ReceiverItemIdsJSON);
+            var receiverItemIds = JsonConvert.DeserializeObject<List<int>>(acceptedSwap.SenderItemIdsJSON);
+            var swapSize = senderItemIds.Count();
+
+            SwapViewModel model = new SwapViewModel
+            {
+                UserName = acceptedSwap.SenderId,
+                ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON),
+                ImagePath = $"~/Collections/{acceptedSwap.CollectionId}",
+                SenderItemIds = senderItemIds,
+                ReceiverItemIds = receiverItemIds,
+                SwapSize = swapSize,
+                Type = "accepted"
+            };
+
+            @Html.Partial("_Swap", model);
+        }
+    }
+}
+else
+{
+    <h5> No offered/accepted swaps found.</h5>
+}
+
+@section scripts {
+    <script>
+        const serializedOfferedSwaps = @Html.Raw(JsonConvert.SerializeObject(offeredSwaps));
+        const serializedAcceptedSwaps = @Html.Raw(JsonConvert.SerializeObject(acceptedSwaps));
+
+        console.log(serializedAcceptedSwaps);
+    </script>
+    <script src="~/Scripts/swap-ui.js"></script>
+}
