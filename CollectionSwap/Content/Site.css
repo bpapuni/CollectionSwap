@@ -109,6 +109,12 @@ textarea {
     background-color: var(--steel-blue-100);
 }
 
+.user-collection-selected {
+    border: 2px solid #0071e3;
+    box-shadow: 0 2px 5px #888;
+    background-color: var(--steel-blue-100);
+}
+
 .status {
     color: green;
 }
@@ -492,8 +498,56 @@ input[type=number] {
     transform: scale(105%);
 }
 
-.user-collection-selected {
-    border: 2px solid #0071e3;
-    box-shadow: 0 2px 5px #888;
+.swap-offers, .swap-accepted {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.register-form-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 40rem;
+    font-weight: 300;
+    overflow: hidden;
+    border-radius: 2rem;
+}
+
+.register-form-container-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 100%;
+    color: var(--steel-blue-100);
+    background-color: var(--steel-blue-700);
+}
+
+.register-form-container-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 100%;
+    color: var(--steel-blue-700);
     background-color: var(--steel-blue-100);
+}
+
+.register-form-container form {
+    /*display: flex;
+    flex-direction: column;*/
+    /*gap: 1rem;*/
+}
+
+.register-form-container .form-control {
+    font-size: 1rem;
+    width: 100%;
+}
+
+.register-form-container-left .btn {
+    margin-top: 1rem;
+    font-weight: 200;
+    color: var(--steel-blue-100);
+    border-color: var(--steel-blue-100);
 }

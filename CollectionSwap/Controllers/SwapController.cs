@@ -42,6 +42,7 @@ namespace CollectionSwap.Controllers
             var currentUserId = User.Identity.GetUserId();
             FindSwapsViewModel model = new FindSwapsViewModel
             {
+                Users = db.Users.ToList(),
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.UserId == currentUserId).ToList(),
                 OfferedSwaps = db.Swaps.Where(swap => swap.ReceiverId == currentUserId && swap.Status == "offered").ToList(),
@@ -59,6 +60,7 @@ namespace CollectionSwap.Controllers
 
             FindSwapsViewModel model = new FindSwapsViewModel
             {
+                Users = db.Users.ToList(),
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.UserId == currentUserId).ToList(),
                 OfferedSwaps = db.Swaps.Where(swap => swap.ReceiverId == currentUserId && swap.Status == "offered").ToList(),
@@ -196,6 +198,7 @@ namespace CollectionSwap.Controllers
             var currentUserId = User.Identity.GetUserId();
             FindSwapsViewModel model = new FindSwapsViewModel
             {
+                Users = db.Users.ToList(),
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.UserId == currentUserId).ToList(),
                 OfferedSwaps = db.Swaps.Where(swap => swap.ReceiverId == currentUserId && swap.Status == "offered").ToList(),

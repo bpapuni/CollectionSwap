@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using CollectionSwap.Models;
+using System.Web.UI.WebControls;
 
 namespace CollectionSwap.Controllers
 {
@@ -80,16 +81,24 @@ namespace CollectionSwap.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public async Task<ActionResult> Login(AccountViewModel avModel, string returnUrl)
         {
+            LoginViewModel model = avModel.LoginViewModel;
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View(avModel);
+            }
+
+            string userName;
+            using (var db = new ApplicationDbContext())
+            {
+                userName = db.Users.Where(user => user.Email == model.Email)
+                                    .Select(user => user.UserName).FirstOrDefault();
             }
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var result = await SignInManager.PasswordSignInAsync(userName, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -101,7 +110,7 @@ namespace CollectionSwap.Controllers
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
-                    return View(model);
+                    return View(avModel);
             }
         }
 
@@ -161,8 +170,9 @@ namespace CollectionSwap.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<ActionResult> Register(AccountViewModel avModel)
         {
+            RegisterViewModel model = avModel.RegisterViewModel;
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
@@ -194,11 +204,14 @@ namespace CollectionSwap.Controllers
 
                     return RedirectToAction("Index", "Home");
                 }
-                AddErrors(result);
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("RegisterViewModel", error);
+                }
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return View(avModel);
         }
 
         //

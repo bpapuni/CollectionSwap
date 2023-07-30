@@ -85,6 +85,12 @@ namespace CollectionSwap.Models
         public string ConfirmPassword { get; set; }
     }
 
+    public class AccountViewModel
+    {
+        public LoginViewModel LoginViewModel { get; set; }
+        public RegisterViewModel RegisterViewModel { get; set; }
+    }
+
     public class ResetPasswordViewModel
     {
         [Required]

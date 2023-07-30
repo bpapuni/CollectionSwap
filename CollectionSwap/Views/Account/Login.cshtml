@@ -1,62 +1,72 @@
-﻿@using CollectionSwap.Models
-@model LoginViewModel
+﻿@model CollectionSwap.Models.AccountViewModel
 @{
-    ViewBag.Title = "Log in";
+    ViewBag.Title = "Login";
 }
 
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <div class="row">
-        <div class="col-md-8">
-            <section id="loginForm">
-                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
-                {
-                    @Html.AntiForgeryToken()
-                    <hr />
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    <div class="row">
-                        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-10">
-                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="row">
-                        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 col-form-label" })
-                        <div class="col-md-10">
-                            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="offset-md-2 col-md-10">
-                            <div class="checkbox">
-                                @Html.CheckBoxFor(m => m.RememberMe)
-                                @Html.LabelFor(m => m.RememberMe)
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="offset-md-2 col-md-10">
-                            <input type="submit" value="Log in" class="btn btn-outline-dark" />
-                        </div>
-                    </div>
-                    <p>
-                        @Html.ActionLink("Register as a new user", "Register")
-                    </p>
-                    @* Enable this once you have account confirmation enabled for password reset functionality
-                        <p>
-                            @Html.ActionLink("Forgot your password?", "ForgotPassword")
-                        </p>*@
-                }
-            </section>
-        </div>
-        @*<div class="col-md-4">
-            <section id="socialLoginForm">
-                @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
-            </section>
-        </div>*@
+<main class="register-form-container" aria-labelledby="title">
+    <div class="register-form-container-left">
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <h4>Register your account</h4>
+            <hr />
+            @*@Html.ValidationSummary("", new { @class = "text-danger" })*@
+            <div class="column">
+                @Html.LabelFor(m => m.RegisterViewModel.Username, new { @class = "col-form-label" })
+                @Html.TextBoxFor(m => m.RegisterViewModel.Username, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.RegisterViewModel.Username, "", new { @class = "text-danger" })
+            </div>
+            <div class="column">
+                @Html.LabelFor(m => m.RegisterViewModel.Email, new { @class = "col-form-label" })
+                @Html.TextBoxFor(m => m.RegisterViewModel.Email, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.RegisterViewModel.Email, "", new { @class = "text-danger" })
+            </div>
+            <div class="column">
+                @Html.LabelFor(m => m.RegisterViewModel.Password, new { @class = "col-form-label" })
+                @Html.PasswordFor(m => m.RegisterViewModel.Password, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.RegisterViewModel.Password, "", new { @class = "text-danger" })
+            </div>
+            <div class="column">
+                @Html.LabelFor(m => m.RegisterViewModel.ConfirmPassword, new { @class = "col-form-label" })
+                @Html.PasswordFor(m => m.RegisterViewModel.ConfirmPassword, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.RegisterViewModel.ConfirmPassword, "", new { @class = "text-danger" })
+            </div>
+            <div class="column">
+                <input type="submit" value="Register" class="btn btn-outline-dark" />
+            </div>
+        }
     </div>
+    <div class="register-form-container-right">
+        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <h4>Login</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="column">
+                @Html.LabelFor(m => m.LoginViewModel.Email, new { @class = "col-form-label" })
+                @Html.TextBoxFor(m => m.LoginViewModel.Email, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.LoginViewModel.Email, "", new { @class = "text-danger" })
+            </div>
+            <div class="column">
+                @Html.LabelFor(m => m.LoginViewModel.Password, new { @class = "col-form-label" })
+                @Html.PasswordFor(m => m.LoginViewModel.Password, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.LoginViewModel.Password, "", new { @class = "text-danger" })
+            </div>
+            <div class="column">
+                @Html.CheckBoxFor(m => m.LoginViewModel.RememberMe)
+                    @Html.LabelFor(m => m.LoginViewModel.RememberMe)
+            </div>
+            <div class="column">
+                <input type="submit" value="Log in" class="btn btn-outline-dark" />
+            </div>
+            @* Enable this once you have account confirmation enabled for password reset functionality
+                <p>
+                    @Html.ActionLink("Forgot your password?", "ForgotPassword")
+                </p>*@
+        }
+    </div>
+
 </main>
 
 @section Scripts {
