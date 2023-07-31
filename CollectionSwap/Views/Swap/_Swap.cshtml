@@ -90,20 +90,6 @@
                     }
                 </div>
             </div>
-            @switch (swapType)
-            {
-                case "swap":
-                    <button class="create create-swap visually-hidden" onclick="offerSwap(this)">Swap</button>
-                    break;
-                case "offered":
-                    <button class="create create-swap visually-hidden" onclick="acceptSwap(this)">Accept</button>
-                    break;
-                case "accepted":
-                    <button class="create create-swap" onclick="confirmSwap(this)">Confirm</button>
-                    break;
-                default:
-                    break;
-            }
         </div>
         @switch (swapType)
         {
@@ -111,8 +97,8 @@
             case "offered":
                 <div class="swap-pool-container">
                     <div class="swap-pool-header">
-                        <span class="swap-heading">Swap Pool</span><br />
-                        <span>Select @(swapSize == 1 ? "an item" : swapSize + " items") you'd like.</span>
+                        <span class="swap-heading">@(userName)'s Items</span><br />
+                        <span>Select @swapSize you'd like</span>
                     </div>
 
                     @foreach (var item in senderItemIds)
@@ -128,6 +114,28 @@
             default:
                 break;
         }
-        
+
+        @switch (swapType)
+        {
+            case "swap":
+                <div class="swap-offered-buttons">
+                    <button class="create accept-swap visually-hidden" onclick="offerSwap(this)">Request Swap</button>
+                </div>
+                break;
+            case "offered":
+                <div class="swap-offered-buttons">
+                    <button class="create accept-swap visually-hidden" onclick="acceptSwap(this)">Accept Swap</button>
+                    <button class="create decline-swap" onclick="declineSwap(this)">Decline Swap</button>
+                </div>
+                break;
+            case "accepted":
+                <div class="swap-offered-buttons">
+                    <button class="create confirm-swap" onclick="confirmSwap(this)">Confirm Swap</button>
+                    <button class="create decline-swap" onclick="declineSwap(this)">Decline Swap</button>
+                </div>
+                break;
+            default:
+                break;
+        }
     </div>
 </div>

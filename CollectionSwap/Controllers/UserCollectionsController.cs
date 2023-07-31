@@ -41,7 +41,7 @@ namespace CollectionSwap.Controllers
                 UserCollection newUserCollection = new UserCollection()
                 {
                     Name = db.Collections.Find(id).Name,
-                    UserId = User.Identity.GetUserId(),
+                    User = db.Users.Find(User.Identity.GetUserId()),
                     CollectionId = id,
                     ItemCountJSON = JsonConvert.SerializeObject(quantity)
                 };
@@ -63,7 +63,7 @@ namespace CollectionSwap.Controllers
 
             UserCollection userCollection = db.UserCollections.Find(id);
 
-            if (User.Identity.GetUserId() != userCollection.UserId)
+            if (User.Identity.GetUserId() != userCollection.User.Id)
             {
                 return RedirectToAction("Index", "Manage");
             }

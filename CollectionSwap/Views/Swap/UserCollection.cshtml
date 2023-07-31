@@ -10,6 +10,7 @@
 <main aria-labelledby="title">
     <h2 id="title">@ViewBag.Title</h2>
     <hr />
+    <span class="text-success"></span>
     @if (Model.AcceptedSwaps != null && Model.AcceptedSwaps.Any())
     {
         <a href="/Swap/Offers"><h6>You have @(Model.AcceptedSwaps.Count == 1 ? "1 accepted offer" : Model.AcceptedSwaps.Count + " accepted offers")</h6></a>
@@ -55,7 +56,7 @@
 
                     SwapViewModel model = new SwapViewModel
                     {
-                        UserName = matchingSwap.UserName,
+                        UserName = matchingSwap.Receiver.UserName,
                         ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON),
                         ImagePath = $"~/Collections/{selectedCollection.CollectionId}",
                         SenderItemIds = senderItemIds,

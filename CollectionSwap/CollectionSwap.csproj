@@ -240,6 +240,18 @@
     <Compile Include="Migrations\202307290431461_ChangeEndDateToNullable.designer.cs">
       <DependentUpon>202307290431461_ChangeEndDateToNullable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202307310351441_CreateHeldItems.cs" />
+    <Compile Include="Migrations\202307310351441_CreateHeldItems.designer.cs">
+      <DependentUpon>202307310351441_CreateHeldItems.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202307310455002_RefactoredModels.cs" />
+    <Compile Include="Migrations\202307310455002_RefactoredModels.designer.cs">
+      <DependentUpon>202307310455002_RefactoredModels.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202307310535323_RefactoredSwapModel.cs" />
+    <Compile Include="Migrations\202307310535323_RefactoredSwapModel.designer.cs">
+      <DependentUpon>202307310535323_RefactoredSwapModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CollectionModels.cs" />
@@ -458,6 +470,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202307290431461_ChangeEndDateToNullable.resx">
       <DependentUpon>202307290431461_ChangeEndDateToNullable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202307310351441_CreateHeldItems.resx">
+      <DependentUpon>202307310351441_CreateHeldItems.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202307310455002_RefactoredModels.resx">
+      <DependentUpon>202307310455002_RefactoredModels.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202307310535323_RefactoredSwapModel.resx">
+      <DependentUpon>202307310535323_RefactoredSwapModel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

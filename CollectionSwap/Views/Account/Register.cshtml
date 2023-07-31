@@ -36,36 +36,6 @@
             </div>
         }
     </div>
-    <div class="register-form-container-right">
-        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
-        {
-            @Html.AntiForgeryToken()
-            <h4>Login</h4>
-            <hr />
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            <div class="column">
-                @Html.LabelFor(m => m.LoginViewModel.Email, new { @class = "col-form-label" })
-                @Html.TextBoxFor(m => m.LoginViewModel.Email, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.LoginViewModel.Email, "", new { @class = "text-danger" })
-            </div>
-            <div class="column">
-                @Html.LabelFor(m => m.LoginViewModel.Password, new { @class = "col-form-label" })
-                @Html.PasswordFor(m => m.LoginViewModel.Password, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.LoginViewModel.Password, "", new { @class = "text-danger" })
-            </div>
-            <div class="column">
-                @*@Html.CheckBoxFor(m => m.RememberMe)
-                @Html.LabelFor(m => m.RememberMe)*@
-            </div>
-            <div class="column">
-                <input type="submit" value="Log in" class="btn btn-outline-dark" />
-            </div>
-            @* Enable this once you have account confirmation enabled for password reset functionality
-            <p>
-                @Html.ActionLink("Forgot your password?", "ForgotPassword")
-            </p>*@
-        }
-    </div>
 
 </main>
 

@@ -33,6 +33,7 @@ namespace CollectionSwap.Models
         public DbSet<Collection> Collections { get; set; }
         public DbSet<UserCollection> UserCollections { get; set; }
         public DbSet<Swap> Swaps { get; set; }
+        public DbSet<HeldItems> HeldItems { get; set; }
     }
 
     public class ApplicationRole : IdentityRole

@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using CollectionSwap.Models;
 using System.Web.UI.WebControls;
+using System.Data.Entity.Infrastructure;
 
 namespace CollectionSwap.Controllers
 {
@@ -89,12 +90,15 @@ namespace CollectionSwap.Controllers
                 return View(avModel);
             }
 
+            // Identity by default passes Email to PasswordSignInAsync but checks Username
+            // Since our Username and Email are different we must send Username as a parameter not the default Email
             string userName;
             using (var db = new ApplicationDbContext())
             {
                 userName = db.Users.Where(user => user.Email == model.Email)
-                                    .Select(user => user.UserName).FirstOrDefault();
+                                   .Select(user => user.UserName).FirstOrDefault();
             }
+            userName = String.IsNullOrEmpty(userName) ? "" : userName;
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
@@ -102,14 +106,14 @@ namespace CollectionSwap.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToLocal(String.IsNullOrEmpty(returnUrl) ? "/Manage" : returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
+                    ModelState.AddModelError("LoginError", "Invalid login attempt.");
                     return View(avModel);
             }
         }
@@ -162,7 +166,8 @@ namespace CollectionSwap.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            return View();
+            return View("Login");
+
         }
 
         //
@@ -202,16 +207,19 @@ namespace CollectionSwap.Controllers
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToLocal("Manage");
                 }
+
+                var errorCounter = 0;
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError("RegisterViewModel", error);
+                    ModelState.AddModelError(errorCounter == 0 ? "UsernameTaken" : "EmailTaken", error);
+                    errorCounter++;
                 }
             }
 
             // If we got this far, something failed, redisplay form
-            return View(avModel);
+            return View("Login", avModel);
         }
 
         //

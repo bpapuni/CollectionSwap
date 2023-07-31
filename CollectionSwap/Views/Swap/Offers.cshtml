@@ -24,7 +24,7 @@
 
                 SwapViewModel model = new SwapViewModel
                 {
-                    UserName = Model.Users.Where(user => user.Id == offeredSwap.SenderId).Select(user => user.UserName).FirstOrDefault(),
+                    UserName = offeredSwap.Sender.UserName,
                     ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON),
                     ImagePath = $"~/Collections/{offeredSwap.CollectionId}",
                     SenderItemIds = senderItemIds,
@@ -53,7 +53,7 @@
 
                 SwapViewModel model = new SwapViewModel
                 {
-                    UserName = Model.Users.Where(user => user.Id == acceptedSwap.ReceiverId).Select(user => user.UserName).FirstOrDefault(),
+                    UserName = acceptedSwap.Receiver.UserName,
                     ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON),
                     ImagePath = $"~/Collections/{acceptedSwap.CollectionId}",
                     SenderItemIds = senderItemIds,
@@ -76,8 +76,6 @@ else
     <script>
         const serializedOfferedSwaps = @Html.Raw(JsonConvert.SerializeObject(offeredSwaps));
         const serializedAcceptedSwaps = @Html.Raw(JsonConvert.SerializeObject(acceptedSwaps));
-
-        console.log(serializedAcceptedSwaps);
     </script>
     <script src="~/Scripts/swap-ui.js"></script>
 }

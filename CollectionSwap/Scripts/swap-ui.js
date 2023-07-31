@@ -77,28 +77,18 @@ function selectPoolItem(e) {
 
 function updatedPoolText(mainContainer, poolContainer) {
     const swapSize = mainContainer.closest(".swap-container").find(".swap-size").text();
-
     const itemsSelected = mainContainer.find(".swap-featured-item.selected").length;
     const remainingSelections = swapSize - itemsSelected;
     const poolText = poolContainer.find("span").eq(1);
-    const swapButton = mainContainer.find(".create-swap");
+    const swapButton = mainContainer.closest(".swap-container-body").find(".accept-swap");
 
     switch (remainingSelections) {
-        case 1:
-            poolText.text(`Select ${remainingSelections} item you'd like.`);
-            swapButton.addClass("visually-hidden");
-            break;
         case 0:
             poolText.text("All selections made.");
             swapButton.removeClass("visually-hidden");
-            swapButton.toggleClass("highlight", () => {
-                setTimeout(() => {
-                    swapButton.toggleClass("highlight");
-                }, 200);
-            });
             break;
         default:
-            poolText.text(`Select ${remainingSelections} items you'd like.`);
+            poolText.text(`Select ${remainingSelections} you'd like.`);
             swapButton.addClass("visually-hidden");
             break;
     }
@@ -106,7 +96,7 @@ function updatedPoolText(mainContainer, poolContainer) {
 
 function offerSwap(e) {
     const swapButton = $(e);
-    const swapIndex = $(".create-swap").index(swapButton);
+    const swapIndex = $(".accept-swap").index(swapButton);
     const matchingSwaps = serializedMatchingSwaps;
     const offeredSwapItems = $(".swap-featured-item.selected img").map(function () {
         return +$(this).attr("alt");
@@ -114,10 +104,9 @@ function offerSwap(e) {
     const selectedCollection = serializedSelectedCollection;
 
     if (selectedCollection != null) {
-
         var swapData = {
-            SenderId: matchingSwaps[swapIndex].SenderId,
-            ReceiverId: matchingSwaps[swapIndex].ReceiverId,
+            SenderId: matchingSwaps[swapIndex].Sender.Id,
+            ReceiverId: matchingSwaps[swapIndex].Receiver.Id,
             CollectionId: matchingSwaps[swapIndex].CollectionId,
             SenderUserCollectionId: selectedCollection.Id,
             ReceiverUserCollectionId: matchingSwaps[swapIndex].UserCollectionId,
@@ -146,7 +135,7 @@ function offerSwap(e) {
 
 function acceptSwap(e) {
     const swapButton = $(e);
-    const swapIndex = $(".create-swap").index(swapButton);
+    const swapIndex = $(".accept-swap").index(swapButton);
     const offeredSwaps = serializedOfferedSwaps;
     const offeredSwapItems = $(".swap-featured-item.selected img").map(function () {
         return +$(this).attr("alt");
@@ -154,8 +143,8 @@ function acceptSwap(e) {
 
     var swapData = {
         Id: offeredSwaps[swapIndex].Id,
-        SenderId: offeredSwaps[swapIndex].SenderId,
-        ReceiverId: offeredSwaps[swapIndex].ReceiverId,
+        SenderId: offeredSwaps[swapIndex].Sender.Id,
+        ReceiverId: offeredSwaps[swapIndex].Receiver.Id,
         CollectionId: offeredSwaps[swapIndex].CollectionId,
         SenderUserCollectionId: offeredSwaps[swapIndex].SenderUserCollectionId,
         ReceiverUserCollectionId: offeredSwaps[swapIndex].ReceiverUserCollectionId,
@@ -166,7 +155,39 @@ function acceptSwap(e) {
         Status: "accepted"
     }
 
-    console.log(swapData);
+    $.ajax({
+        url: "/Swap/HandleSwap",
+        type: "POST",
+        data: swapData,
+        dataType: "json",
+        success: function (response) {
+            if (response.reloadPage) {
+                location.reload();
+            }
+        },
+        error: function (xhr, status, error) {
+        }
+    })
+}
+
+function confirmSwap(e) {
+    const swapButton = $(e);
+    const swapIndex = $(".accept-swap").index(swapButton);
+    const acceptedSwaps = serializedAcceptedSwaps;
+
+    var swapData = {
+        Id: acceptedSwaps[swapIndex].Id,
+        SenderId: acceptedSwaps[swapIndex].Sender.Id,
+        ReceiverId: acceptedSwaps[swapIndex].Receiver.Id,
+        CollectionId: acceptedSwaps[swapIndex].CollectionId,
+        SenderUserCollectionId: acceptedSwaps[swapIndex].SenderUserCollectionId,
+        ReceiverUserCollectionId: acceptedSwaps[swapIndex].ReceiverUserCollectionId,
+        SenderItemIdsJSON: acceptedSwaps[swapIndex].SenderItemIdsJSON,
+        ReceiverItemIdsJSON: acceptedSwaps[swapIndex].ReceiverItemIdsJSON,
+        StartDate: offeredSwaps[swapIndex].StartDate,
+        EndDate: new Date().toISOString(),
+        Status: "confirmed"
+    }
 
     $.ajax({
         url: "/Swap/HandleSwap",

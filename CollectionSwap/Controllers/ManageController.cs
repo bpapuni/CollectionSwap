@@ -75,7 +75,7 @@ namespace CollectionSwap.Controllers
             using (var db = new ApplicationDbContext())
             {
                 model.Collections = db.Collections.ToList();
-                model.UserCollections = db.UserCollections.Where(collection => collection.UserId == userId).ToList();
+                model.UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList();
             }
             return View(model);
         }

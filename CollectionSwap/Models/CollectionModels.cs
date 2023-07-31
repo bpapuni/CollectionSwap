@@ -33,7 +33,7 @@ namespace CollectionSwap.Models
         [Required(ErrorMessage = "Please enter a name for this collection.")]
         public string Name { get; set; }
         [Required]
-        public string UserId { get; set; }
+        public ApplicationUser User { get; set; }
         [Required]
         public int CollectionId { get; set; }
         public string ItemCountJSON { get; set; }
@@ -43,5 +43,14 @@ namespace CollectionSwap.Models
     {
         public Collection Collection { get; set; }
         public UserCollection UserCollection { get; set; }
+    }
+
+    public class HeldItems
+    {
+        [Key]
+        public int Id { get; set; }
+        public UserCollection UserCollection { get; set; }
+        public string ItemListJSON { get; set; }
+
     }
 }
