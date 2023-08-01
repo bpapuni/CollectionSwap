@@ -1,11 +1,4 @@
-﻿const id = window.location.href.split("UserCollection/")[1];
-const selectedCollection = $(`[href='/Swap/UserCollection/${id}']`);
-
-if (selectedCollection.length) {
-    selectedCollection.addClass("user-collection-selected")
-}
-
-function getAndClearCookie(name) {
+﻿function getAndClearCookie(name) {
     const decodedCookie = decodeURIComponent(document.cookie);
     const cookieParts = decodedCookie.split(';');
     for (let i = 0; i < cookieParts.length; i++) {
@@ -118,7 +111,7 @@ function offerSwap(e) {
         }
 
         $.ajax({
-            url: "/Swap/HandleSwap",
+            url: "/Swap/ProcessSwap",
             type: "POST",
             data: swapData,
             dataType: "json",
@@ -156,7 +149,7 @@ function acceptSwap(e) {
     }
 
     $.ajax({
-        url: "/Swap/HandleSwap",
+        url: "/Swap/ProcessSwap",
         type: "POST",
         data: swapData,
         dataType: "json",
@@ -190,7 +183,7 @@ function confirmSwap(e) {
     }
 
     $.ajax({
-        url: "/Swap/HandleSwap",
+        url: "/Swap/ProcessSwap",
         type: "POST",
         data: swapData,
         dataType: "json",
@@ -227,7 +220,7 @@ function declineSwap(e) {
     }
 
     $.ajax({
-        url: "/Swap/HandleSwap",
+        url: "/Swap/ProcessSwap",
         type: "POST",
         data: swapData,
         dataType: "json",

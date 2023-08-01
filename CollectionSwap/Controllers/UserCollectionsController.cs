@@ -38,17 +38,9 @@ namespace CollectionSwap.Controllers
         {
             if (ModelState.IsValid)
             {
-                UserCollection newUserCollection = new UserCollection()
-                {
-                    Name = db.Collections.Find(id).Name,
-                    User = db.Users.Find(User.Identity.GetUserId()),
-                    CollectionId = id,
-                    ItemCountJSON = JsonConvert.SerializeObject(quantity)
-                };
-                db.UserCollections.Add(newUserCollection);
-                db.SaveChanges();
+                string userId = User.Identity.GetUserId();
+                UserCollection.Create(id, quantity, db, userId);
             }
-            
 
             return RedirectToAction("Index", "Manage");
         }
@@ -84,18 +76,8 @@ namespace CollectionSwap.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(userCollection).State = EntityState.Modified;
-                db.SaveChanges();
-                switch (propertyChanged)
-                {
-                    case "name":
-                        TempData["Success"] = "Collection name updated successfully.";
-                        break;
-                    default:
-                        break;
-                }
+                TempData["Success"] = userCollection.Update(db, propertyChanged);
                 return RedirectToAction("Edit");
-
             }
 
             return RedirectToAction("Index", "Manage");
@@ -106,9 +88,8 @@ namespace CollectionSwap.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int? userCollectionId)
         {
-            UserCollection userCollection = db.UserCollections.Find(userCollectionId);
-            db.UserCollections.Remove(userCollection);
-            db.SaveChanges();
+            var userCollection = db.UserCollections.Find(userCollectionId);
+            TempData["Success"] = userCollection.Delete(db);
             return RedirectToAction("Index", "Manage");
         }
     }

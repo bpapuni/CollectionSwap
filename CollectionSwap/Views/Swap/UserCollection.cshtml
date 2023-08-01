@@ -78,6 +78,13 @@
 
 @section scripts {
     <script>
+        const id = window.location.href.split("UserCollection/")[1];
+        const selectedCollection = $(`[href='/Swap/UserCollection/${id}']`);
+
+        if (selectedCollection.length) {
+            selectedCollection.addClass("user-collection-selected")
+        }
+
         const serializedMatchingSwaps = @Html.Raw(JsonConvert.SerializeObject(matchingSwaps));
         const serializedSelectedCollection = @Html.Raw(JsonConvert.SerializeObject(selectedCollection));
     </script>

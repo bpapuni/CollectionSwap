@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -39,55 +40,8 @@ namespace CollectionSwap.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (collection.fileInput != null && collection.fileInput.ContentLength > 0)
-                {
-                    // Access the contents of the zip file
-                    using (ZipArchive archive = new ZipArchive(collection.fileInput.InputStream, ZipArchiveMode.Read))
-                    {
-                        var entryList = archive.Entries.ToList();
-                        entryList = entryList.OrderBy(entry => entry.Name.Length).ToList();
-
-                        // Save the collection to the database so it is allocated an Id
-                        Collection newCollection = new Collection()
-                        {
-                            Name = collection.Name
-                        };
-                        db.Collections.Add(newCollection);
-                        db.SaveChanges();
-
-                        // Specify the path where to save the uploaded file on the server
-                        string extractPath = Server.MapPath("~/Collections/" + newCollection.Id);
-
-                        // Ensure the target directory exists; create it if it doesn't
-                        if (!Directory.Exists(extractPath))
-                        {
-                            Directory.CreateDirectory(extractPath);
-                        }
-
-                        List<string> fileNames = new List<string>();
-                        int i = 1;
-                        // Loop through the entries in the archive and add file names to the list
-                        foreach (ZipArchiveEntry entry in entryList)
-                        {
-                            if (!string.IsNullOrEmpty(entry.Name))
-                            {
-                                string fileName = i.ToString() + Path.GetExtension(entry.Name);
-                                string extractedFilePath = Path.Combine(extractPath, fileName);
-                                entry.ExtractToFile(extractedFilePath, true);
-
-                                fileNames.Add(fileName);
-                                i++;
-                            }
-                        }
-
-                        var orderedFiles = fileNames.OrderBy(f => f.Length);
-                        newCollection.ItemListJSON = JsonConvert.SerializeObject(orderedFiles);
-                        db.Entry(newCollection).State = EntityState.Modified;
-                        db.SaveChanges();
-                    }
-
-                    return RedirectToAction("Index", "Manage");
-                }
+                Collection.Create(collection, db);
+                return RedirectToAction("Index", "Manage");
             }
             return View(collection);
         }
@@ -100,15 +54,7 @@ namespace CollectionSwap.Controllers
                 return RedirectToAction("Index", "Manage");
             }
 
-            string path = Server.MapPath("~/Collections/" + id);
-            string[] files = Directory.GetFiles(path);
-            files = files.Select(fileName => Path.GetFileName(fileName)).ToArray();
-            var orderedFiles = files.OrderBy(f => f.Length);
-
             Collection collection = db.Collections.Find(id);
-
-            collection.ItemListJSON = JsonConvert.SerializeObject(orderedFiles);
-            db.SaveChanges();
 
             ViewBag.Status = TempData["Success"];
             return View(collection);
@@ -121,8 +67,7 @@ namespace CollectionSwap.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(collection).State = EntityState.Modified;
-                db.SaveChanges();
+                collection.Update(db);
                 TempData["Success"] = "Collection name updated successfully.";
                 return RedirectToAction("Edit");
             }
@@ -135,15 +80,7 @@ namespace CollectionSwap.Controllers
         public ActionResult Delete(int? collectionId)
         {
             Collection collection = db.Collections.Find(collectionId);
-            db.Collections.Remove(collection);
-            db.SaveChanges();
-
-            string directoryPath = Server.MapPath("~/Collections/" + collectionId);
-            if (Directory.Exists(directoryPath))
-            {
-                // Delete the directory and its content (recursive: true)
-                Directory.Delete(directoryPath, recursive: true);
-            }
+            collection.Delete(db);
 
             return RedirectToAction("Index", "Manage");
         }
@@ -151,20 +88,10 @@ namespace CollectionSwap.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public ActionResult CreateItem(int? collectionId, HttpPostedFileBase fileInput)
+        public ActionResult CreateItem(int collectionId, HttpPostedFileBase fileInput)
         {
-            if (fileInput != null && fileInput.ContentLength > 0)
-            {
-                string path = Server.MapPath("~/Collections/" + collectionId);
-                string[] files = Directory.GetFiles(path);
-                files = files.Select(file => Path.GetFileNameWithoutExtension(file)).ToArray();
-                var sortedFiles = files.OrderBy(f => f.Length);
-                int newFileName = Int32.Parse(sortedFiles.Last()) + 1;
-                string filePath = path + '/' + newFileName.ToString() + ".png";
-
-                Image img = Image.FromStream(fileInput.InputStream);
-                img.Save(filePath, ImageFormat.Png);  
-            }
+            var collection = db.Collections.Find(collectionId);
+            collection.AddItem(fileInput, db);
 
             return RedirectToAction("Edit/" + collectionId);
         }
@@ -172,23 +99,10 @@ namespace CollectionSwap.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public ActionResult EditItem(int? collectionId, int itemId, string fileName, HttpPostedFileBase fileInput)
+        public ActionResult EditItem(int collectionId, int itemId, string fileName, HttpPostedFileBase fileInput)
         {
-            if (fileInput != null && fileInput.ContentLength > 0)
-            {
-                string filePath = Server.MapPath("~/Collections/" + collectionId + '/' + fileName);
-                fileInput.SaveAs(filePath);
-
-                string cacheBuster = DateTime.UtcNow.Ticks.ToString();
-                List<string> updatedItemList = JsonConvert.DeserializeObject<List<string>>(db.Collections.Find(collectionId).ItemListJSON);
-                updatedItemList[itemId] = fileName + $"?time={cacheBuster}";
-
-                Collection updatedCollection = new Collection
-                {
-                    Name = db.Collections.Find(collectionId).Name,
-                    ItemListJSON = JsonConvert.SerializeObject(updatedItemList)
-                };
-            }
+            var collection = db.Collections.Find(collectionId);
+            collection.EditItem(itemId, fileName, fileInput, db);
 
             return RedirectToAction("Edit/" + collectionId);
         }
@@ -198,13 +112,18 @@ namespace CollectionSwap.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult DeleteItem(int? collectionId, string fileName)
         {
-            string filePath = Server.MapPath("~/Collections/" + collectionId + '/' + fileName);
-            if (System.IO.File.Exists(filePath))
-            {
-                System.IO.File.Delete(filePath);
-            }
+            var collection = db.Collections.Find(collectionId);
+            collection.DeleteItem(fileName, db);
 
             return RedirectToAction("Edit/" + collectionId);
         }
+
+        //[HttpPost]
+        //[Authorize(Roles = "Admin")]
+        //public void Refresh(int id)
+        //{
+        //    Collection collection = db.Collections.Find(id);
+        //    collection.Refresh(db);
+        //}
     }
 }

@@ -4,9 +4,9 @@
     ViewBag.Title = "Edit";
     string statusMessage = ViewBag.Status;
     List<string> items = JsonConvert.DeserializeObject<List<string>>(Model.ItemListJSON);
-    var imageUrlList = ViewBag.ImageUrl as List<string>;
-    var imageId = imageUrlList?[0];
-    var imageUrl = imageUrlList?[1];
+    //var imageUrlList = ViewBag.ImageUrl as List<string>;
+    //var imageId = imageUrlList?[0];
+    //var imageUrl = imageUrlList?[1];
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -34,15 +34,8 @@
         var itemId = items.IndexOf(item) + 1;
 
         <div class="d-flex flex-column align-items-center">
-            @(item)
-            @if (imageUrlList != null && Int32.Parse(imageId) == (+1))
-            {
-                <img class="item" src="@Url.Content(imageUrl)" />
-            }
-            else
-            {
-                <img class="item" src="@Url.Content(imagePath)/@item" />
-            }
+            @(item.Split('?')[0])
+            <img class="item" src="@Url.Content(imagePath)/@item" />
             <div class="d-flex gap-3">
                 @using (Html.BeginForm("EditItem", "Collections", new { collectionId = @Model.Id, itemId = @itemId - 1, fileName = @item }, FormMethod.Post, new { enctype = "multipart/form-data", role = "form", @class = "mt-3" }))
                 {
@@ -77,20 +70,32 @@
 
 @section scripts {
     <script>
-        $(document).ready(function () {
-            $("input[type='file']").on("change", function () {
-                $(this).closest("form").submit();
-            })
+        const collectionId = window.location.href.split("Collections/Edit/")[1];
 
-            $("#items").sortable({
-                update: function (event, ui) {
-                    // Called when the order changes after dragging
-                    // You can handle the reordering logic here, e.g., send the new order to the server
-                    // For this example, we will just log the new order
-                    const newOrder = $(this).sortable("toArray", { attribute: "data-id" });
-                    console.log(newOrder);
-                }
-            });
-        });
+        $("input[type='file']").on("change", function () {
+            $(this).closest("form").submit();
+        })
+
+        //$.ajax({
+        //    url: "/Collections/Refresh",
+        //    type: "POST",
+        //    data: { id: collectionId },
+        //    dataType: "json",
+        //    success: function (response) {
+        //        console.log("Success");
+        //    },
+        //    error: function (xhr, status, error) {
+        //    }
+        //})
+
+        //$("#items").sortable({
+        //    update: function (event, ui) {
+        //        // Called when the order changes after dragging
+        //        // You can handle the reordering logic here, e.g., send the new order to the server
+        //        // For this example, we will just log the new order
+        //        const newOrder = $(this).sortable("toArray", { attribute: "data-id" });
+        //        console.log(newOrder);
+        //    }
+        //});
     </script>
 }
