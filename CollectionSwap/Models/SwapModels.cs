@@ -55,5 +55,7 @@ namespace CollectionSwap.Models
         public ApplicationUser Sender { get; set; }
         [ForeignKey("ReceiverId")]
         public ApplicationUser Receiver { get; set; }
+        [ForeignKey("CollectionId")]
+        public Collection Collection { get; set; }
     }
 }

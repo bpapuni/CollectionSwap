@@ -252,6 +252,18 @@
     <Compile Include="Migrations\202307310535323_RefactoredSwapModel.designer.cs">
       <DependentUpon>202307310535323_RefactoredSwapModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202307312111049_UpdateUCModel.cs" />
+    <Compile Include="Migrations\202307312111049_UpdateUCModel.designer.cs">
+      <DependentUpon>202307312111049_UpdateUCModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202307312120371_UpdateHIModel.cs" />
+    <Compile Include="Migrations\202307312120371_UpdateHIModel.designer.cs">
+      <DependentUpon>202307312120371_UpdateHIModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202307312220172_UpdateSwapModel.cs" />
+    <Compile Include="Migrations\202307312220172_UpdateSwapModel.designer.cs">
+      <DependentUpon>202307312220172_UpdateSwapModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CollectionModels.cs" />
@@ -393,6 +405,8 @@
     <Content Include="Views\Swap\UserCollection.cshtml" />
     <Content Include="Views\Swap\_Swap.cshtml" />
     <Content Include="Views\Swap\Offers.cshtml" />
+    <Content Include="Views\Swap\History.cshtml" />
+    <Content Include="Views\Swap\_PastSwap.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -479,6 +493,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202307310535323_RefactoredSwapModel.resx">
       <DependentUpon>202307310535323_RefactoredSwapModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202307312111049_UpdateUCModel.resx">
+      <DependentUpon>202307312111049_UpdateUCModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202307312120371_UpdateHIModel.resx">
+      <DependentUpon>202307312120371_UpdateHIModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202307312220172_UpdateSwapModel.resx">
+      <DependentUpon>202307312220172_UpdateSwapModel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

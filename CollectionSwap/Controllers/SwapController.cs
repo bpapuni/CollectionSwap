@@ -185,14 +185,25 @@ namespace CollectionSwap.Controllers
                         break;
                     case "accepted":
                         var receiverItems = db.UserCollections.Find(swap.ReceiverUserCollectionId);
-                        
-                        HoldItems(swap.ReceiverItemIdsJSON, receiverItems);
-                        db.Entry(swap).State = EntityState.Modified;                        
+
+                        db.Entry(swap).State = EntityState.Modified;             
+                        HoldItems(swap.ReceiverItemIdsJSON, receiverItems, swap);
                         db.SaveChanges();
 
                         Response.Cookies["swapSuccessMessage"].Value = $"Offer accepted, waiting for {swap.Sender.UserName} to confirm.";
                         break;
                     case "confirmed":
+                        var senderItems = db.UserCollections.Find(swap.SenderUserCollectionId);
+
+                        db.Entry(swap).State = EntityState.Modified;
+                        HoldItems(swap.SenderItemIdsJSON, senderItems, swap);
+                        db.SaveChanges();
+
+                        Response.Cookies["swapSuccessMessage"].Value = $"Swap confirmed.";
+                        break;
+                    case "declined":
+                        ReleaseItems(swap);
+                        
                         break;
                     default:
                         break;
@@ -203,7 +214,7 @@ namespace CollectionSwap.Controllers
             return Json(new { reloadPage = false });
         }
 
-        private void HoldItems(string itemListJSON, UserCollection userCollection)
+        private void HoldItems(string itemListJSON, UserCollection userCollection, Swap swap)
         {
             var deserializedReceiverItems = JsonConvert.DeserializeObject<List<int>>(userCollection.ItemCountJSON);
             var deserializedSwapItems = JsonConvert.DeserializeObject<List<int>>(itemListJSON);
@@ -217,7 +228,8 @@ namespace CollectionSwap.Controllers
             HeldItems heldItems = new HeldItems
             {
                 ItemListJSON = itemListJSON,
-                UserCollection = userCollection
+                UserCollection = userCollection,
+                Swap = swap
             };
 
             db.Entry(userCollection).State = EntityState.Modified;
@@ -225,14 +237,52 @@ namespace CollectionSwap.Controllers
             db.SaveChanges();
         }
 
-        private void ReleaseItems()
+        private void ReleaseItems(Swap swap)
         {
+            var heldItems = db.HeldItems.Include("UserCollection").Where(hi => hi.Swap.Id == swap.Id).ToList();
 
+            foreach (var item in heldItems)
+            {
+                var userCollection = db.UserCollections.Find(item.UserCollection.Id);
+                var deserializedReleaseItems = JsonConvert.DeserializeObject<List<int>>(item.ItemListJSON);
+                var deserializedItems = JsonConvert.DeserializeObject<List<int>>(userCollection.ItemCountJSON);
+
+                foreach (var deserializedItem in deserializedReleaseItems)
+                {
+                    deserializedItems[deserializedItem] = deserializedItems[deserializedItem] + 1;
+                }
+
+                db.Entry(userCollection).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            db.HeldItems.RemoveRange(heldItems);
+            db.SaveChanges();
         }
 
-        private void SwapItems()
+        private void SwapItems(Swap swap)
         {
+            var heldItems = db.HeldItems.Include("UserCollection").Where(hi => hi.Swap.Id == swap.Id).ToList();
 
+            for (var i = 0; i <= 1; i++)
+            {
+                var index = i == 0 ? 1 : 0;
+                var userCollection = db.UserCollections.Find(heldItems[index].UserCollection.Id);
+                var deserializedSwapItems = JsonConvert.DeserializeObject<List<int>>(heldItems[i].ItemListJSON);
+                var deserializedItems = JsonConvert.DeserializeObject<List<int>>(userCollection.ItemCountJSON);
+
+                foreach (var deserializedItem in deserializedSwapItems)
+                {
+                    deserializedItems[deserializedItem] = deserializedItems[deserializedItem] + 1;
+                }
+
+                userCollection.ItemCountJSON = JsonConvert.SerializeObject(deserializedItems);
+                db.Entry(userCollection).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            db.HeldItems.RemoveRange(heldItems);
+            db.SaveChanges();
         }
 
         [Authorize]
@@ -252,6 +302,21 @@ namespace CollectionSwap.Controllers
 
             //ViewBag.AcceptedSuccess = acceptedSuccess;
             return View(model);
+        }
+
+        [Authorize]
+        public ActionResult History()
+        {
+            var currentUserId = User.Identity.GetUserId();
+            List<Swap> userSwaps = db.Swaps
+                                    .Include(s => s.Sender) // Eagerly load the Sender property
+                                    .Include(s => s.Receiver) // Eagerly load the Receiver property
+                                    .Include(s => s.Collection) // Eagerly load the Collection property
+                                    .Where(swap => swap.Sender.Id == currentUserId || swap.Receiver.Id == currentUserId)
+                                    .ToList();
+
+            ViewBag.UserSwaps = userSwaps;
+            return View();
         }
     }
 }

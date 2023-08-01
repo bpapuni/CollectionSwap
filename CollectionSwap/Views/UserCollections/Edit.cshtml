@@ -12,7 +12,7 @@
 <div class="d-flex flex-column">
     <h4>Edit Your Collection</h4>
     <hr />
-    @using (Html.BeginForm("Edit", "UserCollections", new { Id = Model.UserCollection.Id, UserId = Model.UserCollection.UserId, CollectionId = Model.UserCollection.CollectionId, ItemCountJSON = Model.UserCollection.ItemCountJSON }, FormMethod.Post, new { role = "form", @class = "d-flex flex-column align-items-center mt-5 mb-5" }))
+    @using (Html.BeginForm("Edit", "UserCollections", new { Id = Model.UserCollection.Id, User = Model.UserCollection.User, CollectionId = Model.UserCollection.CollectionId, ItemCountJSON = Model.UserCollection.ItemCountJSON }, FormMethod.Post, new { role = "form", @class = "d-flex flex-column align-items-center mt-5 mb-5" }))
     {
         @Html.AntiForgeryToken()
 
@@ -98,7 +98,7 @@
             var userCollectionData = {
                 Id: @Model.UserCollection.Id,
                 Name: "@Model.UserCollection.Name",
-                UserId: "@Model.UserCollection.UserId",
+                UserId: "@Model.UserCollection.User.Id",
                 CollectionId:@Model.UserCollection.CollectionId,
                 ItemCountJSON: JSON.stringify(userCollection)
             }

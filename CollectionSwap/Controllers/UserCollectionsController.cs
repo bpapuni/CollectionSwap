@@ -61,7 +61,7 @@ namespace CollectionSwap.Controllers
                 return RedirectToAction("Index", "Manage");
             }
 
-            UserCollection userCollection = db.UserCollections.Find(id);
+            UserCollection userCollection = db.UserCollections.Include("User").FirstOrDefault(uc => uc.Id == id);
 
             if (User.Identity.GetUserId() != userCollection.User.Id)
             {

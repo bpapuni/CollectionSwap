@@ -172,7 +172,7 @@ function acceptSwap(e) {
 
 function confirmSwap(e) {
     const swapButton = $(e);
-    const swapIndex = $(".accept-swap").index(swapButton);
+    const swapIndex = $(".confirm-swap").index(swapButton);
     const acceptedSwaps = serializedAcceptedSwaps;
 
     var swapData = {
@@ -184,9 +184,46 @@ function confirmSwap(e) {
         ReceiverUserCollectionId: acceptedSwaps[swapIndex].ReceiverUserCollectionId,
         SenderItemIdsJSON: acceptedSwaps[swapIndex].SenderItemIdsJSON,
         ReceiverItemIdsJSON: acceptedSwaps[swapIndex].ReceiverItemIdsJSON,
-        StartDate: offeredSwaps[swapIndex].StartDate,
+        StartDate: acceptedSwaps[swapIndex].StartDate,
         EndDate: new Date().toISOString(),
         Status: "confirmed"
+    }
+
+    $.ajax({
+        url: "/Swap/HandleSwap",
+        type: "POST",
+        data: swapData,
+        dataType: "json",
+        success: function (response) {
+            if (response.reloadPage) {
+                location.reload();
+            }
+        },
+        error: function (xhr, status, error) {
+        }
+    })
+}
+
+function declineSwap(e) {
+    const swapButton = $(e);
+    const swapIndex = $(".decline-swap").index(swapButton);
+    const offeredSwaps = serializedOfferedSwaps;
+    const offeredSwapItems = $(".swap-featured-item.selected img").map(function () {
+        return +$(this).attr("alt");
+    }).get();
+
+    var swapData = {
+        Id: offeredSwaps[swapIndex].Id,
+        SenderId: offeredSwaps[swapIndex].Sender.Id,
+        ReceiverId: offeredSwaps[swapIndex].Receiver.Id,
+        CollectionId: offeredSwaps[swapIndex].CollectionId,
+        SenderUserCollectionId: offeredSwaps[swapIndex].SenderUserCollectionId,
+        ReceiverUserCollectionId: offeredSwaps[swapIndex].ReceiverUserCollectionId,
+        SenderItemIdsJSON: JSON.stringify(offeredSwapItems),
+        ReceiverItemIdsJSON: offeredSwaps[swapIndex].ReceiverItemIdsJSON,
+        StartDate: offeredSwaps[swapIndex].StartDate,
+        EndDate: null,
+        Status: "declined"
     }
 
     $.ajax({
