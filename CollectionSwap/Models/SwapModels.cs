@@ -17,6 +17,7 @@ namespace CollectionSwap.Models
         public List<UserCollection> UserCollections { get; set; }
         public List<Swap> OfferedSwaps { get; set; }
         public List<Swap> AcceptedSwaps { get; set; }
+        public List<Swap> ConfirmedSwaps { get; set; }
         public static FindSwapsViewModel Create(string currentUserId, ApplicationDbContext db)
         {
             FindSwapsViewModel model = new FindSwapsViewModel
@@ -25,7 +26,8 @@ namespace CollectionSwap.Models
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.User.Id == currentUserId).ToList(),
                 OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == currentUserId && swap.Status == "offered").ToList(),
-                AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == currentUserId && swap.Status == "accepted").ToList()
+                AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == currentUserId && swap.Status == "accepted").ToList(),
+                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == currentUserId && swap.Status == "confirmed").ToList()
             };
 
             return model;
@@ -34,6 +36,7 @@ namespace CollectionSwap.Models
 
     public class SwapViewModel
     {
+        public int Id { get; set; }
         public string UserName { get; set; }
         public List<string> ItemList { get; set; }
         public string ImagePath { get; set; }
@@ -109,6 +112,10 @@ namespace CollectionSwap.Models
                 case "declined":
                     ReleaseItems(this, db);
 
+                    db.Entry(this).State = EntityState.Modified;
+                    db.Swaps.Remove(this);
+                    db.SaveChanges();
+
                     response = $"Swap declined.";
                     break;
                 default:
@@ -117,7 +124,6 @@ namespace CollectionSwap.Models
 
             return response;
         }
-
         private void HoldItems(string itemListJSON, UserCollection userCollection, Swap swap, ApplicationDbContext db)
         {
             var deserializedReceiverItems = JsonConvert.DeserializeObject<List<int>>(userCollection.ItemCountJSON);
@@ -140,7 +146,6 @@ namespace CollectionSwap.Models
             db.HeldItems.Add(heldItems);
             db.SaveChanges();
         }
-
         private void ReleaseItems(Swap swap, ApplicationDbContext db)
         {
             var heldItems = db.HeldItems.Include("UserCollection").Where(hi => hi.Swap.Id == swap.Id).ToList();
@@ -156,6 +161,7 @@ namespace CollectionSwap.Models
                     deserializedItems[deserializedItem] = deserializedItems[deserializedItem] + 1;
                 }
 
+                userCollection.ItemCountJSON = JsonConvert.SerializeObject(deserializedItems);
                 db.Entry(userCollection).State = EntityState.Modified;
                 db.SaveChanges();
             }
@@ -163,7 +169,6 @@ namespace CollectionSwap.Models
             db.HeldItems.RemoveRange(heldItems);
             db.SaveChanges();
         }
-
         private void SwapItems(Swap swap, ApplicationDbContext db)
         {
             var heldItems = db.HeldItems.Include("UserCollection").Where(hi => hi.Swap.Id == swap.Id).ToList();

@@ -259,7 +259,8 @@ input[type=number] {
     display: flex;
     flex-direction: column;
     /*align-items: flex-end;*/
-    height: 40rem;
+    width: 100%;
+    min-height: 40rem;
     color: var(--steel-blue-700);
     border-radius: 1rem;
     box-shadow: 0 2px 5px #888;
@@ -271,7 +272,8 @@ input[type=number] {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    height: 8rem;
+    flex-shrink: 0;
+    height: 6rem;
     padding: 1rem;
     background: var(--steel-blue-50);
     z-index: 99;
@@ -329,7 +331,7 @@ input[type=number] {
 .swap-container-body {
     position: relative;
     display: flex;
-    height: 100%;
+    flex-grow: 1;
     background: var(--steel-blue-200);
 }
 
@@ -337,25 +339,23 @@ input[type=number] {
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    gap: 1rem;
+    justify-content: space-between;
     flex-grow: 1;
-    /*width: 63rem;*/
-    height: 100%;
+    gap: 1.5rem;
+    padding: 1rem;
     color: var(--steel-blue-100);
     background: var(--steel-blue-800);
-    /*border-radius: 1rem 0 0 1rem;*/
 }
 
 .swap-container-main::after {
+    content: "";
     visibility: hidden;
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    content: "";
     background-color: #151010dd;
 }
 
@@ -367,7 +367,11 @@ input[type=number] {
     position: relative;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: flex-start;
+    flex-grow: 0;
+    padding: 0.5rem;
     gap: 1rem;
 }
 
@@ -389,21 +393,26 @@ input[type=number] {
     align-content: flex-start;
     gap: 1rem;
     flex-wrap: wrap;
+    flex-shrink: 0;
     width: 18rem;
     height: 28rem;
     padding: 1rem;
     background: var(--steel-blue-200);
     overflow-y: scroll;
     scrollbar-gutter: stable both-edges;
-    transition: transform 0.3s ease-in-out;
 }
 
-.swap-pool-container.highlight {
-    transform: scale(105%);
+.swap-pool-header {
+    width: 100%;
 }
 
 .swap-pool-item {
+    transition: transform 0.3s ease-in-out;
     cursor: pointer;
+}
+
+.swap-pool-item.highlight {
+    transform: scale(105%);
 }
 
 .swap-pool-item img {
@@ -416,22 +425,57 @@ input[type=number] {
 
 /* Your cards */
 .swap-yours ~ .swap-featured-container::after {
+    content: "Your Items";
+    font-size: 2rem;
+    font-weight: 600;
     position: absolute;
-    left: -1px;
-    top: -1px;
-    width: 102%;
-    height: 101%;
-    text-align: center;
-    line-height: 11rem;
-    /*content: "Example";*/
-    color: var(--steel-blue-50);
-    font-weight: 100;
-    font-size: 1rem;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-radius: 1rem;
-    background-color: #333333DD;
+    background-color: #222222ee;
+    cursor: pointer;
+}
+.swap-yours ~ .swap-featured-container:hover::after {
+    background-color: #222222dd;
+    border: 1px solid white;
+}
+
+.swap-yours ~ .swap-featured-container.expanded {
+    border-radius: 1rem;
+    background-color: #222222dd;
+}
+
+.swap-yours ~ .swap-featured-container.offered {
+    border-radius: 1rem;
+    background: none;
+}
+
+.swap-yours ~ .swap-featured-container.expanded::after {
+    content: "";
+    background: none;
+}
+
+.swap-yours ~ .swap-featured-container.offered::after {
+    content: "";
+    background: none;
+}
+
+.swap-yours ~ .swap-featured-container.expanded:hover::after {
+    border: 1px solid white;
+}
+
+.swap-yours ~ .swap-featured-container.offered:hover::after {
+    border: none;
+    cursor: inherit;
 }
 
 /* Their cards */
+/*.swap-yours ~ .swap-featured-container .swap-featured-item::after, */
 .swap-theirs ~ .swap-featured-container .swap-featured-item::after {
     position: absolute;
     left: 0;
@@ -462,6 +506,8 @@ input[type=number] {
 .swap {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
     width: 80%;
     font-size: 0.8rem;
     line-height: 1.2rem;
@@ -585,6 +631,8 @@ input[type=number] {
 
 .tertiary-container {
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 2rem;
 }
 

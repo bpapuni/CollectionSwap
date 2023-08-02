@@ -17,8 +17,7 @@
 // Get the success message from the cookie after page reload and display it
 const reloadPageMessage = getAndClearCookie('swapSuccessMessage');
 if (reloadPageMessage) {
-    const successMessageElement = $(".text-success").text(reloadPageMessage);
-    //$("#successMessageContainer").empty().append(successMessageElement).show();
+    $(".text-success").text(reloadPageMessage);
 }
 
 function selectItem(e) {
@@ -33,16 +32,15 @@ function selectItem(e) {
 
     if (mainContainer.hasClass("dim")) {
         if (itemExists) {
-            const src = self.find("img").attr("src");
+            const src = self.find("img").attr("src").split('?')[0];
             poolContainer.find(`[src="${src}"]`).parent().show();
             updatedPoolText(mainContainer, poolContainer);
 
         }
-        poolContainer.toggleClass("highlight", () => {
-            setTimeout(() => {
-                poolContainer.toggleClass("highlight");
-            }, 200);
-        });
+        $(".swap-pool-item").toggleClass("highlight");
+        setTimeout(() => {
+            $(".swap-pool-item").toggleClass("highlight");
+        }, 200);
     }
 }
 
@@ -87,7 +85,7 @@ function updatedPoolText(mainContainer, poolContainer) {
     }
 }
 
-function offerSwap(e) {
+function offerSwap(e, swapType, id) {
     const swapButton = $(e);
     const swapIndex = $(".accept-swap").index(swapButton);
     const matchingSwaps = serializedMatchingSwaps;
@@ -126,24 +124,24 @@ function offerSwap(e) {
     }
 }
 
-function acceptSwap(e) {
+function acceptSwap(e, swapType, id) {
     const swapButton = $(e);
     const swapIndex = $(".accept-swap").index(swapButton);
-    const offeredSwaps = serializedOfferedSwaps;
-    const offeredSwapItems = $(".swap-featured-item.selected img").map(function () {
+    const offeredSwap = serializedOfferedSwaps.find(swap => swap.Id === id);
+    const offeredSwapItems = $(".swap-container-main").eq(swapIndex).find(".swap-featured-item.selected img").map(function () {
         return +$(this).attr("alt");
     }).get();
 
     var swapData = {
-        Id: offeredSwaps[swapIndex].Id,
-        SenderId: offeredSwaps[swapIndex].Sender.Id,
-        ReceiverId: offeredSwaps[swapIndex].Receiver.Id,
-        CollectionId: offeredSwaps[swapIndex].CollectionId,
-        SenderUserCollectionId: offeredSwaps[swapIndex].SenderUserCollectionId,
-        ReceiverUserCollectionId: offeredSwaps[swapIndex].ReceiverUserCollectionId,
+        Id: offeredSwap.Id,
+        SenderId: offeredSwap.Sender.Id,
+        ReceiverId: offeredSwap.Receiver.Id,
+        CollectionId: offeredSwap.CollectionId,
+        SenderUserCollectionId: offeredSwap.SenderUserCollectionId,
+        ReceiverUserCollectionId: offeredSwap.ReceiverUserCollectionId,
         SenderItemIdsJSON: JSON.stringify(offeredSwapItems),
-        ReceiverItemIdsJSON: offeredSwaps[swapIndex].ReceiverItemIdsJSON,
-        StartDate: offeredSwaps[swapIndex].StartDate,
+        ReceiverItemIdsJSON: offeredSwap.ReceiverItemIdsJSON,
+        StartDate: offeredSwap.StartDate,
         EndDate: null,
         Status: "accepted"
     }
@@ -163,21 +161,20 @@ function acceptSwap(e) {
     })
 }
 
-function confirmSwap(e) {
+function confirmSwap(e, swapType, id) {
     const swapButton = $(e);
-    const swapIndex = $(".confirm-swap").index(swapButton);
-    const acceptedSwaps = serializedAcceptedSwaps;
+    const acceptedSwap = serializedAcceptedSwaps.find(swap => swap.Id === id);
 
     var swapData = {
-        Id: acceptedSwaps[swapIndex].Id,
-        SenderId: acceptedSwaps[swapIndex].Sender.Id,
-        ReceiverId: acceptedSwaps[swapIndex].Receiver.Id,
-        CollectionId: acceptedSwaps[swapIndex].CollectionId,
-        SenderUserCollectionId: acceptedSwaps[swapIndex].SenderUserCollectionId,
-        ReceiverUserCollectionId: acceptedSwaps[swapIndex].ReceiverUserCollectionId,
-        SenderItemIdsJSON: acceptedSwaps[swapIndex].SenderItemIdsJSON,
-        ReceiverItemIdsJSON: acceptedSwaps[swapIndex].ReceiverItemIdsJSON,
-        StartDate: acceptedSwaps[swapIndex].StartDate,
+        Id: acceptedSwap.Id,
+        SenderId: acceptedSwap.Sender.Id,
+        ReceiverId: acceptedSwap.Receiver.Id,
+        CollectionId: acceptedSwap.CollectionId,
+        SenderUserCollectionId: acceptedSwap.SenderUserCollectionId,
+        ReceiverUserCollectionId: acceptedSwap.ReceiverUserCollectionId,
+        SenderItemIdsJSON: acceptedSwap.SenderItemIdsJSON,
+        ReceiverItemIdsJSON: acceptedSwap.ReceiverItemIdsJSON,
+        StartDate: acceptedSwap.StartDate,
         EndDate: new Date().toISOString(),
         Status: "confirmed"
     }
@@ -197,24 +194,21 @@ function confirmSwap(e) {
     })
 }
 
-function declineSwap(e) {
+function declineSwap(e, swapType, id) {
     const swapButton = $(e);
     const swapIndex = $(".decline-swap").index(swapButton);
-    const offeredSwaps = serializedOfferedSwaps;
-    const offeredSwapItems = $(".swap-featured-item.selected img").map(function () {
-        return +$(this).attr("alt");
-    }).get();
+    const declinedSwap = swapType == "offered" ? serializedOfferedSwaps.find(swap => swap.Id === id) : serializedAcceptedSwaps.find(swap => swap.Id === id);
 
     var swapData = {
-        Id: offeredSwaps[swapIndex].Id,
-        SenderId: offeredSwaps[swapIndex].Sender.Id,
-        ReceiverId: offeredSwaps[swapIndex].Receiver.Id,
-        CollectionId: offeredSwaps[swapIndex].CollectionId,
-        SenderUserCollectionId: offeredSwaps[swapIndex].SenderUserCollectionId,
-        ReceiverUserCollectionId: offeredSwaps[swapIndex].ReceiverUserCollectionId,
-        SenderItemIdsJSON: JSON.stringify(offeredSwapItems),
-        ReceiverItemIdsJSON: offeredSwaps[swapIndex].ReceiverItemIdsJSON,
-        StartDate: offeredSwaps[swapIndex].StartDate,
+        Id: declinedSwap.Id,
+        SenderId: declinedSwap.Sender.Id,
+        ReceiverId: declinedSwap.Receiver.Id,
+        CollectionId: declinedSwap.CollectionId,
+        SenderUserCollectionId: declinedSwap.SenderUserCollectionId,
+        ReceiverUserCollectionId: declinedSwap.ReceiverUserCollectionId,
+        SenderItemIdsJSON: declinedSwap.SenderItemIdsJSON,
+        ReceiverItemIdsJSON: declinedSwap.ReceiverItemIdsJSON,
+        StartDate: declinedSwap.StartDate,
         EndDate: null,
         Status: "declined"
     }
@@ -232,4 +226,17 @@ function declineSwap(e) {
         error: function (xhr, status, error) {
         }
     })
+}
+
+function toggleYourItems(e) {
+    const yourItems = $(e);
+    const yourItemsMessage = $(".swap-yours").find("span").not(".swap-heading");
+    const toggledItems = yourItems.find(".swap-featured-item").not(".swap-example");
+
+    yourItems.toggleClass("expanded");
+    toggledItems.toggleClass("visually-hidden");
+    const message = yourItems.hasClass("expanded") ?
+        yourItemsMessage.text().replace("duplicates", "following duplicates") :
+        yourItemsMessage.text().replace("following duplicates", "duplicates");
+    yourItemsMessage.text(message);
 }

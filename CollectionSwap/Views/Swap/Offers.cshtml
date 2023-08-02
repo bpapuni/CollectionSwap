@@ -5,6 +5,7 @@
     ViewBag.Title = "Offers";
     var offeredSwaps = Model.OfferedSwaps;
     var acceptedSwaps = Model.AcceptedSwaps;
+    var confirmedSwaps = Model.ConfirmedSwaps;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -24,6 +25,7 @@
 
                 SwapViewModel model = new SwapViewModel
                 {
+                    Id = offeredSwap.Id,
                     UserName = offeredSwap.Sender.UserName,
                     ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON),
                     ImagePath = $"~/Collections/{offeredSwap.CollectionId}",
@@ -53,6 +55,7 @@
 
                 SwapViewModel model = new SwapViewModel
                 {
+                    Id = acceptedSwap.Id,
                     UserName = acceptedSwap.Receiver.UserName,
                     ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON),
                     ImagePath = $"~/Collections/{acceptedSwap.CollectionId}",
@@ -76,6 +79,9 @@ else
     <script>
         const serializedOfferedSwaps = @Html.Raw(JsonConvert.SerializeObject(offeredSwaps));
         const serializedAcceptedSwaps = @Html.Raw(JsonConvert.SerializeObject(acceptedSwaps));
+        const serializedConfirmedSwaps = @Html.Raw(JsonConvert.SerializeObject(confirmedSwaps));
+
+        console.log(serializedOfferedSwaps);
     </script>
     <script src="~/Scripts/swap-ui.js"></script>
 }

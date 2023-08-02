@@ -102,13 +102,11 @@ namespace CollectionSwap.Models
             this.ItemListJSON = JsonConvert.SerializeObject(orderedFiles);
             db.SaveChanges();
         }
-
         public void Update(ApplicationDbContext db)
         {
             db.Entry(this).State = EntityState.Modified;
             db.SaveChanges();
         }
-
         public void Delete(ApplicationDbContext db)
         {
             db.Collections.Remove(this);
@@ -236,7 +234,6 @@ namespace CollectionSwap.Models
 
             return "User Collection deleted successfully.";
         }
-
         public List<MatchingSwap> FindMatchingSwaps(ApplicationDbContext db)
         {
             var currentUserId = this.User.Id;
@@ -291,7 +288,6 @@ namespace CollectionSwap.Models
 
             return matchingSwaps;
         }
-
         private List<PotentialSwap> FindPotentialSwaps(UserCollection selectedCollection, ApplicationDbContext db)
         {
             var swappers = db.Users.ToList();
