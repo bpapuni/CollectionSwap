@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using CollectionSwap.Models;
+using Newtonsoft.Json;
 
 namespace CollectionSwap.Controllers
 {
@@ -74,10 +75,23 @@ namespace CollectionSwap.Controllers
             };
             using (var db = new ApplicationDbContext())
             {
+                model.Email = db.Users.Find(userId).Email;
                 model.Collections = db.Collections.ToList();
                 model.UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList();
             }
             return View(model);
+        }
+
+        public ActionResult LoadPartial(string partialName)
+        {
+            var model = new ManageViewModel { };
+            using (var db = new ApplicationDbContext())
+            {
+                model.Email = db.Users.Find(User.Identity.GetUserId()).Email;
+                model.Collections = db.Collections.ToList();
+            }
+
+            return PartialView(partialName, model);
         }
 
         //

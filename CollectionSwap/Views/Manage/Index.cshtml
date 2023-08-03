@@ -1,33 +1,72 @@
 ﻿@model CollectionSwap.Models.IndexViewModel
+@using CollectionSwap.Models
+@using Newtonsoft.Json;
 @{
+    var email = Model.Email;
     ViewBag.Title = "Your Dashboard";
 }
 
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title</h2>
-
-    <div>
-        <hr />
-        <dl class="dl-horizontal">
-            <dt>Password:</dt>
-            <dd>
-                [
-                @if (Model.HasPassword)
-                {
-                    @Html.ActionLink("Change your password", "ChangePassword")
-                }
-                else
-                {
-                    @Html.ActionLink("Create", "SetPassword")
-                }
-                ]
-            </dd>
-        </dl>
+<main class="manage-container">
+    <div class="manage-container-nav">
+        <ul class="selected-1">
+            <li class="">@Html.ActionLink("Swapper", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })</li>
+            <li>Account</li>
+            <li>Manage Collections</li>
+            <li>User Collections</li>
+            <li>Swap History</li>
+        </ul>
     </div>
-    @if (User.IsInRole("Admin"))
-    {
-        @Html.Partial("_AdminIndex")
-    }
-    <br />
-    @Html.Partial("_UserIndex")
+    <div class="manage-container-main">
+        @{
+            var model = new ManageViewModel { Email = Model.Email };
+        }
+        @Html.Partial("_Account", model)
+    </div>
 </main>
+
+@section scripts {
+    <link href="~/Content/Manage.css" rel="stylesheet" />
+    <script>
+        $(".manage-container ul li").on("click", function (e) {
+            LoadPage(this);
+        });
+
+        function LoadPage(e) {
+            const targetLi = $(e);
+            const liIndex = $(".manage-container ul li").index(e);
+            const partialName = `_${targetLi.text().replace(' ', '')}`;
+
+            targetLi.closest("ul").removeClass("selected-1 selected-2 selected-3 selected-4");
+            targetLi.closest("ul").addClass(`selected-${liIndex}`);
+
+            if (false) {
+                $('.manage-container-main').children().fadeOut("fast", () => {
+                    $.ajax({
+                        url: '@Url.Action("LoadPartial", "Manage")',
+                        data: { partialName: partialName },
+                        type: 'GET',
+                        success: function (result) {
+                            $('.manage-container-main').html(result).children().hide();
+                            $('.manage-container-main').children().fadeIn("slow");
+                        },
+                        error: function () {
+                            //alert('Error loading partial view.');
+                        }
+                    });
+                });
+            } else {
+                $.ajax({
+                    url: '@Url.Action("LoadPartial", "Manage")',
+                    data: { partialName: partialName},
+                    type: 'GET',
+                    success: function (result) {
+                        $('.manage-container-main').html(result);
+                    },
+                    error: function () {
+                        //alert('Error loading partial view.');
+                    }
+                });
+            }
+        }
+    </script>
+}

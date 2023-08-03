@@ -1,0 +1,117 @@
+﻿@model CollectionSwap.Models.ManageViewModel
+<div class="secondary-container">
+
+    <div class="secondary-container-header">
+        <p>Account Settings</p>
+    </div>
+
+    <div class="secondary-container-row">
+        <form class="account-form">
+            <div class="account-form-row">
+                <div class="account-form-column">
+                    <label>Current Email</label>
+                    <input type="text" disabled value="@Model.Email" />
+                </div>
+            </div>
+            <div class="account-form-row">
+                <div class="account-form-column">
+                    <label>New Email</label>
+                    <input type="text" />
+                </div>
+            </div>
+            <div class="account-form-row">
+                <div class="account-form-column">
+                    <label>Confirm New Email</label>
+                    <input type="text" />
+                </div>
+            </div>
+            @*<div class="account-form-row">
+                    <div class="account-form-column">
+                        <label>Password</label>
+                        <input type="password" />
+                    </div>
+                </div>*@
+            <div class="account-form-row">
+                <div class="account-form-column">
+                    <input type="submit" value="Update Email" />
+                </div>
+            </div>
+        </form>
+        <form class="account-form">
+            <div class="account-form-row">
+                <div class="account-form-column">
+                    <label>Current Password</label>
+                    <input type="password" />
+                </div>
+            </div>
+            <div class="account-form-row">
+                <div class="account-form-column">
+                    <label>New Password</label>
+                    <input type="password" />
+                </div>
+            </div>
+            <div class="account-form-row">
+                <div class="account-form-column">
+                    <label>Confirm New Password</label>
+                    <input type="password" />
+                </div>
+            </div>
+            <div class="account-form-row">
+                <div class="account-form-column">
+                    <input type="submit" value="Update Password" />
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <br />
+    <div class="secondary-container-header">
+        <p>Mailing Address</p>
+    </div>
+
+    <form class="account-form">
+        <div class="account-form-row">
+            <div class="account-form-column">
+                <span>
+                    <strong>Keep it Safe:</strong>
+                    Consider using a business address or P.O. box for mailing collectibles, ensuring your home address remains private.
+                </span>
+            </div>
+        </div>
+        <div class="account-form-row">
+            <div class="account-form-column">
+                <label>Full Name</label>
+                <input type="text" />
+            </div>
+            <div class="account-form-column">
+                <label>Company Name (optional)</label>
+                <input type="text" />
+            </div>
+        </div>
+        <div class="account-form-row">
+            <div class="account-form-column">
+                <label>Address Line 1</label>
+                <input type="text" />
+            </div>
+            <div class="account-form-column">
+                <label>Address Line 2</label>
+                <input type="text" />
+            </div>
+        </div>
+        <div class="account-form-row">
+            <div class="account-form-column">
+                <label>Post Code</label>
+                <input type="text" />
+            </div>
+            <div class="account-form-column">
+                <label>City</label>
+                <input type="text" />
+            </div>
+        </div>
+        <div class="account-form-row">
+            <div class="account-form-column">
+                <input type="submit" value="Update Address" />
+            </div>
+        </div>
+    </form>
+</div>

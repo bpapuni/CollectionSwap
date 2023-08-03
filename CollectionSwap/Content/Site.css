@@ -60,24 +60,21 @@ textarea {
 }
 
 :root {
-    --bg: #FBFCFE;
-    --text: #2E3841;
-    --steel-blue-50: #f4f7fb;
-    --steel-blue-100: #e8eef6;
-    --steel-blue-200: #ccdbeb;
-    --steel-blue-300: #9ebcdb;
-    --steel-blue-400: #6b9ac5;
-    --steel-blue-500: #4a81b5;
-    --steel-blue-600: #366393;
-    --steel-blue-700: #2d5077;
-    --steel-blue-800: #284464;
-    --steel-blue-900: #263b54;
-    --steel-blue-950: #192738;
-    --danger-50: #fcf5f4;
-    --danger-100: #f9ecea;
-    --danger-200: #f3dbd8;
-    --danger-500: #b64a4a;
-    --accent: #4C6883;
+    --base-hue: 130; /* Example hue value */
+    --base-saturation: 19%; /* Example saturation value */
+    --base-lightness: 74%; /* Example lightness value */
+}
+
+/* Calculate different shades */
+:root {
+    --lightest-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 20%));
+    --lighterer-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 18%));
+    --lighter-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 15%));
+    --light-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 10%));
+    --neautral-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness)));
+    --dark-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 30%));
+    --darker-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 40%));
+    --darkest-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 50%));
 }
 
 .create-form {
@@ -591,8 +588,8 @@ input[type=number] {
     justify-content: center;
     width: 50%;
     height: 100%;
-    color: var(--steel-blue-100);
-    background-color: var(--steel-blue-700);
+    color: var(--light-shade);
+    background-color: var(--darkest-shade);
 }
 
 .register-form-container-right {
@@ -601,8 +598,8 @@ input[type=number] {
     justify-content: center;
     width: 50%;
     height: 100%;
-    color: var(--steel-blue-700);
-    background-color: var(--steel-blue-100);
+    color: var(--darkest-shade);
+    background-color: var(--lighter-shade);
 }
 
 .register-form-container form {
@@ -627,13 +624,6 @@ input[type=number] {
     font-weight: 400;
     color: var(--steel-blue-700);
     background-color: var(--steel-blue-100);
-}
-
-.tertiary-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2rem;
 }
 
 .past-swap-container {
