@@ -1,0 +1,16 @@
+﻿@model CollectionSwap.Models.ManageViewModel
+<div class="secondary-container">
+    <div class="secondary-container-header">
+        <p>Manage Collections</p>
+    </div>
+
+    <div class="tertiary-container">
+        @foreach (var collection in Model.Collections)
+        {
+            <div class="collection">@collection.Name</div>
+        }
+    </div>
+    
+
+    @*<a class="collection" href="/Collections/Create"><i class="fa fa-plus"></i></a>*@
+</div>

@@ -1,33 +1,99 @@
 ﻿@model CollectionSwap.Models.IndexViewModel
+@using CollectionSwap.Models
+@using Newtonsoft.Json;
 @{
+    var email = Model.Email;
     ViewBag.Title = "Your Dashboard";
 }
 
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title</h2>
-
-    <div>
-        <hr />
-        <dl class="dl-horizontal">
-            <dt>Password:</dt>
-            <dd>
-                [
-                @if (Model.HasPassword)
-                {
-                    @Html.ActionLink("Change your password", "ChangePassword")
-                }
-                else
-                {
-                    @Html.ActionLink("Create", "SetPassword")
-                }
-                ]
-            </dd>
-        </dl>
+<main class="manage-container">
+    <div class="manage-container-nav">
+        <ul class="selected-1">
+            <li class="">@Html.ActionLink("Swapper", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })</li>
+            <li>Account</li>
+            <li>Manage Collections</li>
+            <li>User Collections</li>
+            <li>Swap History</li>
+        </ul>
     </div>
-    @if (User.IsInRole("Admin"))
-    {
-        @Html.Partial("_AdminIndex")
-    }
-    <br />
-    @Html.Partial("_UserIndex")
+    <div class="manage-container-main">
+        @{
+            var model = new ManageViewModel { Email = Model.Email };
+        }
+        @Html.Partial("_Account", model)
+    </div>
 </main>
+
+@section scripts {
+    <link href="~/Content/Manage.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.1/chroma.min.js"></script>
+    <script>
+        $(".manage-container ul li").on("click", function (e) {
+            LoadPage(this);
+        });
+
+        function LoadPage(e) {
+            const targetLi = $(e);
+            const liIndex = $(".manage-container ul li").index(e);
+            const partialName = `_${targetLi.text().replace(' ', '')}`;
+
+            targetLi.closest("ul").removeClass("selected-1 selected-2 selected-3 selected-4");
+            targetLi.closest("ul").addClass(`selected-${liIndex}`);
+
+            if (false) {
+                $('.manage-container-main').children().fadeOut("fast", () => {
+                    $.ajax({
+                        url: '@Url.Action("LoadPartial", "Manage")',
+                        data: { partialName: partialName },
+                        type: 'GET',
+                        success: function (result) {
+                            $('.manage-container-main').html(result).children().hide();
+                            $('.manage-container-main').children().fadeIn("slow");
+                        },
+                        error: function () {
+                            //alert('Error loading partial view.');
+                        }
+                    });
+                });
+            } else {
+                $.ajax({
+                    url: '@Url.Action("LoadPartial", "Manage")',
+                    data: { partialName: partialName},
+                    type: 'GET',
+                    success: function (result) {
+                        $('.manage-container-main').html(result);
+                        //ColourButtons();
+                    },
+                    error: function () {
+                        //alert('Error loading partial view.');
+                    }
+                });
+            }
+        }
+
+        function ColourButtons() {
+            const buttons = $('input[type="submit"]');
+
+            buttons.each(function () {
+                const baseHue = Math.random() * 360;
+                const vibrantColor = chroma.hsl(baseHue, 30, 74); // Adjust saturation and lightness as needed
+                const buttonColor = vibrantColor.hex(); // Convert Chroma color to HEX format
+                const textColor = chroma.contrast(buttonColor, 'white') > 4.5 ? 'white' : 'black';
+                $(this).css('background-color', buttonColor);
+                $(this).css('color', textColor);
+            });
+        }
+
+        const paintBlotches = document.querySelector('.paint-blotches');
+        const numBlotches = 100; // Adjust the number of blotches as needed
+
+        //for (let i = 0; i < numBlotches; i++) {
+        //    const blotch = document.createElement('div');
+        //    blotch.classList.add('paint-blotch');
+        //    blotch.style.left = `${Math.random() * 100}%`;
+        //    blotch.style.top = `${Math.random() * 100}%`;
+        //    blotch.style.animation = `animateBlotches ${(Math.random() * 3 + 2).toFixed(1)}s ${(Math.random() * 3).toFixed(1)}s infinite alternate`;
+        //    paintBlotches.appendChild(blotch);
+        //}
+    </script>
+}

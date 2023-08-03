@@ -4,9 +4,6 @@
     ViewBag.Title = "Edit";
     string statusMessage = ViewBag.Status;
     List<string> items = JsonConvert.DeserializeObject<List<string>>(Model.ItemListJSON);
-    //var imageUrlList = ViewBag.ImageUrl as List<string>;
-    //var imageId = imageUrlList?[0];
-    //var imageUrl = imageUrlList?[1];
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 

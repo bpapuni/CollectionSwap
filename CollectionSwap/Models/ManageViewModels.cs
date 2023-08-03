@@ -12,8 +12,15 @@ namespace CollectionSwap.Models
         public string PhoneNumber { get; set; }
         public bool TwoFactor { get; set; }
         public bool BrowserRemembered { get; set; }
+        public string Email { get; set; }
         public List<Collection> Collections { get; set; }
         public List<UserCollection> UserCollections { get; set; }
+    }
+
+    public class ManageViewModel
+    {
+        public string Email { get; set; }
+        public List<Collection> Collections { get; set; }
     }
 
     public class ManageLoginsViewModel
