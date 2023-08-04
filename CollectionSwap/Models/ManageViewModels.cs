@@ -17,12 +17,6 @@ namespace CollectionSwap.Models
         public List<UserCollection> UserCollections { get; set; }
     }
 
-    public class ManageViewModel
-    {
-        public string Email { get; set; }
-        public List<Collection> Collections { get; set; }
-    }
-
     public class ManageLoginsViewModel
     {
         public IList<UserLoginInfo> CurrentLogins { get; set; }

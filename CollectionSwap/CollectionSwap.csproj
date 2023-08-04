@@ -410,6 +410,9 @@
     <Content Include="Views\Swap\_PastSwap.cshtml" />
     <Content Include="Views\Manage\_Account.cshtml" />
     <Content Include="Views\Manage\_ManageCollections.cshtml" />
+    <Content Include="Views\Manage\_YourCollections.cshtml" />
+    <Content Include="Views\Manage\_CreateCollection.cshtml" />
+    <Content Include="Views\Manage\_EditCollection.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,43 @@
+﻿@model CollectionSwap.Models.CreateCollection
+
+<div class="secondary-container-header">
+    <p>Create Collection</p>
+</div>
+<div class="secondary-container-row">
+    @using (Html.BeginForm("Create", "Collections", FormMethod.Post, new { role = "form", @class = "account-form", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="account-form-column">
+            @Html.TextBoxFor(model => model.Name, new { @class = "", @placeholder = "Collection Name" })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+
+            @Html.TextBoxFor(model => model.fileInput, new { type = "file", accept = ".zip", @class = "" })
+            @Html.ValidationMessageFor(model => model.fileInput, "", new { @class = "text-danger" })
+            <input type="submit" value="Create Collection" />
+        </div>
+    }
+</div>
+
+<script>
+    $("form").submit(function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Serialize the form data
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: '@Url.Action("Create", "Collections")',
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (result) {
+                $(".secondary-container.partial").html(result.PartialView);
+            },
+            error: function () {
+                // Handle error
+            }
+        });
+    });
+</script>

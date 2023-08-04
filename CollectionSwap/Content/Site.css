@@ -79,14 +79,16 @@
 }
 
 /* Set width on the form input elements since they're 100% wide by default */
-input,
-select,
-textarea {
-    max-width: 280px;
+input:focus {
+    color: #212529;
+    background-color: #fff;
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
 :root {
-    --base-hue: 130; /* Example hue value */
+    --base-hue: 180; /* Example hue value */
     --base-saturation: 20%; /* Example saturation value */
     --base-lightness: 77%; /* Example lightness value */
 }
@@ -97,7 +99,7 @@ textarea {
     --lighterer-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 18%));
     --lighter-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 15%));
     --light-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 10%));
-    --neautral-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness)));
+    --neutral-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness)));
     --dark-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 30%));
     --darker-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 40%));
     --darkest-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 50%));
@@ -615,7 +617,7 @@ input[type=number] {
     margin: 0 -2rem 5rem 0;
     color: var(--light-shade);
     background-color: var(--darkest-shade);
-    box-shadow: 2px 4px 5px var(--neautral-shade);
+    box-shadow: 2px 4px 5px var(--neutral-shade);
     border-radius: 2rem 0 0 2rem;
     transition: z-index 0.5s ease;
     z-index: 1;
@@ -631,7 +633,7 @@ input[type=number] {
     margin: 5rem 0 0 -2rem;
     color: var(--darkest-shade);
     background-color: var(--lighter-shade);
-    box-shadow: 2px 4px 5px var(--neautral-shade);
+    box-shadow: 2px 4px 5px var(--neutral-shade);
     border-radius: 0 2rem 2rem 0;
     transition: z-index 0.5s ease;
     z-index: 2;
@@ -652,7 +654,7 @@ input[type=number] {
 
 .register-container-right form {
     background-color: var(--lightest-shade);
-    box-shadow: 0 2px 5px var(--neautral-shade);
+    box-shadow: 0 2px 5px var(--neutral-shade);
 }
 
 .register-container form input {

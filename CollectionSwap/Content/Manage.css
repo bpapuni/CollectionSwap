@@ -16,8 +16,9 @@
 }
 
 .manage-container-main {
+    position:relative;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     flex-grow: 1;
     flex-shrink: 1;
@@ -25,6 +26,7 @@
     background-color: var(--lighter-shade);
     border-radius: 2rem;
     scrollbar-gutter: stable both-edges;
+    overflow: hidden;
 }
 
 .manage-container ul {
@@ -35,6 +37,11 @@
     line-height: 2.5rem;
     font-weight: 400;
     list-style: none;
+}
+
+.manage-container ul a {
+    color: var(--darkest-shade);
+    text-decoration: none;
 }
 
 .manage-container ul::after {
@@ -106,21 +113,25 @@
     flex-direction: column;
     flex-grow: 1;
     gap: 1rem;
-    margin: 1rem 0;
     padding: 1rem 2rem;
     background-color: var(--lightest-shade);
-    box-shadow: 0 2px 5px var(--neautral-shade);
+    box-shadow: 0 2px 5px var(--neutral-shade);
     border-radius: 1rem;
-    border: 1px solid var(--neautral-shade);
+    border: 1px solid var(--neutral-shade);
+    z-index: 1;
 }
 
 .secondary-container-row,
 .account-form-row {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: flex-start;
     flex-wrap: wrap;
-    gap: 4rem;
+    gap: 2rem 4rem;
+}
+
+.account-form-row {
+    gap: 1rem 4rem;
 }
 
 .account-form-column span {
@@ -144,17 +155,41 @@
     font-weight: 600;
 }
 
+.account-form-column ::-webkit-file-upload-button {
+    padding: 0.375rem 0.75rem;
+    margin: -0.375rem -0.375rem;
+    -webkit-margin-end: 0.75rem;
+    margin-inline-end: 0.75rem;
+    color: #212529;
+    background-color: var(--neutral-shade);
+    pointer-events: none;
+    border-color: inherit;
+    border-style: solid;
+    border-width: 0;
+    border-inline-end-width: 1px;
+    border-radius: 0.5rem;
+    -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.account-form-column input[type=file] {
+    cursor: pointer;
+}
+
 .account-form-column input[type=text],
+.account-form-column input[type=file],
 .account-form-column input[type=password],
-.account-form-column input[type=submit] {
+.account-form-column input[type=submit],
+.tertiary-container input[type=submit] {
     padding: 0.5rem;
     min-width: 100%;
     background-color: var(--lighterer-shade);
     border-radius: 0.5rem;
-    border: 1px solid var(--lighter-shade)
+    border: 1px solid var(--lighter-shade);
 }
 
-.account-form-column input[type=submit] {
+.account-form-column input[type=submit],
+.tertiary-container input[type=submit] {
     min-width: 10rem;
     width: clamp(10rem, 10rem, 100%);
     margin-top: 1rem;
@@ -166,16 +201,21 @@
 .collection:hover, 
 .account-form-column input[type=submit]:hover {
     color: var(--darkest-shade);
-    background-color: var(--neautral-shade);
+    background-color: var(--neutral-shade);
 }
 
 .tertiary-container {
     display: flex;
     flex-direction: row;
+    flex-grow: 1;
+    flex-wrap: wrap;
     gap: 2rem;
+    margin-bottom: 1rem;
     padding: 2rem;
     background-color: var(--lighterer-shade);
+    box-shadow: 0 2px 5px var(--neutral-shade);
     border-radius: 1rem;
+    border: 1px solid var(--neutral-shade);
 }
 
 .collection {
@@ -192,13 +232,14 @@
     height: 100%;
     /*background-color: #f7f7f7;*/ /* Set a base color for the background */
     pointer-events: none; /* Make sure the blotches don't interfere with interactions */
+
 }
 
 .paint-blotch {
     position: absolute;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    border-radius: 52% 48% 70% 30% / 40% 30% 70% 60%;
     background-color: #ff7f50; /* Set the paint blotch color */
     opacity: 0.7; /* Adjust the opacity as needed */
     transform: translate(-50%, -50%);

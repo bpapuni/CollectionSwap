@@ -81,17 +81,49 @@ namespace CollectionSwap.Controllers
             }
             return View(model);
         }
-
-        public ActionResult LoadPartial(string partialName)
+        //[HttpPost]
+        public ActionResult LoadPartial(int? id, string partialName)
         {
-            var model = new ManageViewModel { };
-            using (var db = new ApplicationDbContext())
-            {
-                model.Email = db.Users.Find(User.Identity.GetUserId()).Email;
-                model.Collections = db.Collections.ToList();
-            }
+            var userId = User.Identity.GetUserId();
 
-            return PartialView(partialName, model);
+            switch (partialName)
+            {
+                case "_CreateCollection":
+                    return PartialView(partialName);
+                case "_EditCollection":
+                    if (id.HasValue)
+                    {
+                        using (var db = new ApplicationDbContext())
+                        {
+                            var collectionModel = db.Collections.Find(id);
+                            return PartialView(partialName, collectionModel);
+                        }
+                    }
+                    break;
+                case "_Account":
+                case "_ManageCollections":
+                case "_YourCollections":
+                case "_SwapHistory":                
+                    var model = new IndexViewModel { };
+                    using (var db = new ApplicationDbContext())
+                    {
+                        model.Email = db.Users.Find(userId).Email;
+                        model.Collections = db.Collections.ToList();
+                        model.UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList();
+                    }
+                    return PartialView(partialName, model);
+                default:
+                    var accountModel = new IndexViewModel { };
+                    using (var db = new ApplicationDbContext())
+                    {
+                        accountModel.Email = db.Users.Find(userId).Email;
+                        accountModel.Collections = db.Collections.ToList();
+                        accountModel.UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList();
+                    }
+                    return PartialView("_Account", accountModel);
+
+            }
+            return RedirectToAction("Index");
         }
 
         //
