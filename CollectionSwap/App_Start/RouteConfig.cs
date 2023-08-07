@@ -13,16 +13,34 @@ namespace CollectionSwap
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            //routes.MapRoute(
+            //    name: "LoadPartial",
+            //    url: "Manage/LoadPartial/{id}",
+            //    defaults: new { controller = "Manage", action = "LoadPartial", id = UrlParameter.Optional }
+            //);
+
             routes.MapRoute(
-                name: "LoadPartial",
-                url: "Manage/LoadPartial/{id}",
-                defaults: new { controller = "Manage", action = "LoadPartial", id = UrlParameter.Optional }
+                name: "Account",
+                url: "Manage/Account",
+                defaults: new { controller = "Manage", action = "Index" }
             );
 
             routes.MapRoute(
-                name: "Redirect",
-                url: "Manage/{id}",
-                defaults: new { controller = "Manage", action = "Index", id = UrlParameter.Optional }
+                name: "ManageCollections",
+                url: "Manage/ManageCollections",
+                defaults: new { controller = "Manage", action = "Index" }
+            );
+
+            routes.MapRoute(
+                name: "YourCollections",
+                url: "Manage/YourCollections",
+                defaults: new { controller = "Manage", action = "Index" }
+            );
+
+            routes.MapRoute(
+                name: "SwapHistory",
+                url: "Manage/SwapHistory",
+                defaults: new { controller = "Manage", action = "Index" }
             );
 
             routes.MapRoute(

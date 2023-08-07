@@ -176,7 +176,8 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\SwapController.cs" />
     <Compile Include="Controllers\UserCollectionsController.cs" />
-    <Compile Include="Custom_Validations\ZipFileAttribute.cs" />
+    <Compile Include="Helpers\Helper.cs" />
+    <Compile Include="Helpers\ZipFileAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -388,7 +389,6 @@
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
     <Content Include="Views\Account\SendCode.cshtml" />
     <Content Include="Views\Account\VerifyCode.cshtml" />
-    <Content Include="Views\Manage\AddPhoneNumber.cshtml" />
     <Content Include="Views\Manage\ChangePassword.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
     <Content Include="Views\Manage\ManageLogins.cshtml" />
@@ -398,8 +398,6 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Collections\Edit.cshtml" />
     <Content Include="Views\Collections\Create.cshtml" />
-    <Content Include="Views\Manage\_AdminIndex.cshtml" />
-    <Content Include="Views\Manage\_UserIndex.cshtml" />
     <Content Include="Views\UserCollections\Create.cshtml" />
     <Content Include="Views\UserCollections\_Items.cshtml" />
     <Content Include="Views\UserCollections\Edit.cshtml" />

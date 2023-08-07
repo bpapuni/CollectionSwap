@@ -8,6 +8,8 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using CollectionSwap.Models;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using CollectionSwap.Helpers;
 
 namespace CollectionSwap.Controllers
 {
@@ -81,6 +83,31 @@ namespace CollectionSwap.Controllers
             }
             return View(model);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public ActionResult EditCollection(int Id, string Name)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Json(new { success = false, Errors = ModelState.Values.SelectMany((v, index) => v.Errors.Select(e => new { Index = index, Error = e.ErrorMessage })) });
+
+            }
+            using (var db = new ApplicationDbContext())
+            {
+                Collection collection = db.Collections.Find(Id);
+                collection.Update(Name, db);
+
+                ManageCollectionsViewModel model = new ManageCollectionsViewModel
+                {
+                    Collections = db.Collections.ToList()
+                };
+
+                return PartialView("~/Views/Manage/_ManageCollections.cshtml", model);
+            } 
+        }
+
         //[HttpPost]
         public ActionResult LoadPartial(int? id, string partialName)
         {
@@ -100,8 +127,14 @@ namespace CollectionSwap.Controllers
                         }
                     }
                     break;
-                case "_Account":
                 case "_ManageCollections":
+                    var mcModel = new ManageCollectionsViewModel { };
+                    using (var db = new ApplicationDbContext())
+                    {
+                        mcModel.Collections = db.Collections.ToList();
+                    }
+                    return PartialView(partialName, mcModel);
+                case "_Account":
                 case "_YourCollections":
                 case "_SwapHistory":                
                     var model = new IndexViewModel { };
@@ -265,21 +298,14 @@ namespace CollectionSwap.Controllers
         }
 
         //
-        // GET: /Manage/ChangePassword
-        public ActionResult ChangePassword()
-        {
-            return View();
-        }
-
-        //
         // POST: /Manage/ChangePassword
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
+        public async Task<ActionResult> ChangePassword([Bind(Prefix = "ChangePassword")] ChangePasswordViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return Json(new { success = false, Errors = ModelState.Values.SelectMany((v, index) => v.Errors.Select(e => new { Index = index, Error = e.ErrorMessage })) });
             }
             var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
             if (result.Succeeded)
@@ -290,9 +316,11 @@ namespace CollectionSwap.Controllers
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                 }
                 return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
+
             }
-            AddErrors(result);
-            return View(model);
+
+            return Json(new { success = false, Errors = ModelState.Values.SelectMany((v, index) => v.Errors.Select(e => new { Index = index, Error = e.ErrorMessage })) });
+
         }
 
         //

@@ -14,6 +14,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Web;
 using System.Web.Mvc;
 using CollectionSwap.Models;
+using CollectionSwap.Helpers;
 using Newtonsoft.Json;
 
 namespace CollectionSwap.Controllers
@@ -36,48 +37,43 @@ namespace CollectionSwap.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public ActionResult Create(CreateCollection collection)
+        public ActionResult Create(ManageCollectionsViewModel model)
         {
             if (ModelState.IsValid)
             {
-                Collection.Create(collection, db);
-                return RedirectToAction("Index", "Manage");
+                Collection.Create(model.NewCollection, db);
+                //return RedirectToAction("LoadPartial", "Manage", new { partialName = "_ManageCollections" });
+                return Json(new { Success = true, Reload = true });
             }
 
-            string viewHtml = RenderViewToString(ControllerContext, "~/Views/Manage/_CreateCollection.cshtml", collection, true);
+            string viewHtml = Helper.RenderViewToString(ControllerContext, "~/Views/Manage/_CreateCollection.cshtml", model, true);
             var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
 
             return Json(new { Success = false, Errors = errors, PartialView = viewHtml });
-
         }
 
-        [Authorize(Roles = "Admin")]
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return RedirectToAction("Index", "Manage");
-            }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        //public ActionResult Edit(int collectionId)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return Json(new { success = false, Errors = ModelState.Values.SelectMany((v, index) => v.Errors.Select(e => new { Index = index, Error = e.ErrorMessage })) });
+                
+        //    }
 
-            Collection collection = db.Collections.Find(id);
+        //    Collection collection = db.Collections.Find(collectionId);
+        //    collection.Update(db);
 
-            ViewBag.Status = TempData["Success"];
-            return PartialView("~/Views/Manage/_ManageCollections", collection);
-        }
+        //    var model = new ManageCollectionsViewModel
+        //    {
+        //        Collections = db.Collections.ToList(),
+        //        NewCollection = new CreateCollection { }
+        //    };
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public ActionResult Edit(Collection collection)
-        {
-            if (ModelState.IsValid)
-            {
-                collection.Update(db);
-                TempData["Success"] = "Collection name updated successfully.";
-                return RedirectToAction("Edit");
-            }
-            return View(collection);
-        }
+        //    return PartialView("~/Views/Manage/_ManageCollections.cshtml", model);
+        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -131,32 +127,6 @@ namespace CollectionSwap.Controllers
         //    collection.Refresh(db);
         //}
 
-        static string RenderViewToString(ControllerContext context, string viewPath, object model = null, bool partial = false)
-        {
-            // first find the ViewEngine for this view
-            ViewEngineResult viewEngineResult = null;
-            if (partial)
-                viewEngineResult = ViewEngines.Engines.FindPartialView(context, viewPath);
-            else
-                viewEngineResult = ViewEngines.Engines.FindView(context, viewPath, null);
-
-            if (viewEngineResult == null)
-                throw new FileNotFoundException("View cannot be found.");
-
-            // get the view and attach the model to view data
-            var view = viewEngineResult.View;
-            context.Controller.ViewData.Model = model;
-
-            string result = null;
-
-            using (var sw = new StringWriter())
-            {
-                var ctx = new ViewContext(context, view, context.Controller.ViewData, context.Controller.TempData, sw);
-                view.Render(ctx, sw);
-                result = sw.ToString();
-            }
-
-            return result;
-        }
     }
+
 }

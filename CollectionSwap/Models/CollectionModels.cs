@@ -102,8 +102,9 @@ namespace CollectionSwap.Models
             this.ItemListJSON = JsonConvert.SerializeObject(orderedFiles);
             db.SaveChanges();
         }
-        public void Update(ApplicationDbContext db)
+        public void Update(string Name, ApplicationDbContext db)
         {
+            this.Name = Name;
             db.Entry(this).State = EntityState.Modified;
             db.SaveChanges();
         }

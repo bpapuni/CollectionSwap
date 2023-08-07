@@ -13,8 +13,23 @@ namespace CollectionSwap.Models
         public bool TwoFactor { get; set; }
         public bool BrowserRemembered { get; set; }
         public string Email { get; set; }
+        public ChangePasswordViewModel ChangePassword { get; set; }
         public List<Collection> Collections { get; set; }
         public List<UserCollection> UserCollections { get; set; }
+        //public static IndexViewModel Create()
+        //{
+        //    IndexViewModel indexViewModel = new IndexViewModel
+        //    {
+
+        //    }
+        //    return 
+        //}
+    }
+
+    public class ManageCollectionsViewModel
+    {
+        public List<Collection> Collections { get; set; }
+        public CreateCollection NewCollection { get; set; }
     }
 
     public class ManageLoginsViewModel

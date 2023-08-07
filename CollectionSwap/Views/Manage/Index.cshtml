@@ -17,6 +17,7 @@
         </ul>
     </div>
     <div class="manage-container-main">
+        @*@Html.Partial("_Account", Model)*@
     </div>
 </main>
 
@@ -24,124 +25,156 @@
     <link href="~/Content/Manage.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.1/chroma.min.js"></script>
     <script>
-        const navUl = $(".manage-container-nav ul");
+        //$(document).ready(function () {
+            const navUl = $(".manage-container-nav ul");
 
-        // Map the values of our navbar links to an array
-        const navLinks = navUl.find("li").map(function () {
-            return $(this).text().replace(' ', '');
-        }).get();
+            // Map the values of our navbar links to an array
+            const navLinks = navUl.find("li").map(function () {
+                return $(this).text().replace(' ', '');
+            }).get();
 
-        let partialName = location.pathname.split("/Manage/")[1];
+            let partialName = location.pathname.split("/Manage/")[1];
 
-        // If user has navigated to a page not within our navLinks default them to the account partial
-        if (!navLinks.includes(partialName)) {
-            partialName = "Account";
-        }
-
-        const index = navUl.find("li").index($(`[data-partial="${partialName}"]`));
-
-        navUl.removeClass("selected-1 selected-2 selected-3 selected-4");
-        navUl.addClass(`selected-${index}`);
-        LoadNavPartial(partialName);
-
-        $(".manage-container-nav li").on("click", function (e) {
-            var partialName = $(this).data("partial");
-
-            if (partialName) {
-                LoadNavPartial(partialName);
-            }
-        });
-
-        $(window).on("popstate", function (e) {
-            if (e.originalEvent.state) {
-                LoadNavPartial(e.originalEvent.state.partialName, true)
-            } else {
-                LoadNavPartial("Account", true)
-            }
-        });
-
-        function LoadPartial(collectionId, partialName, url) {
-            const partialLoaded = $(".secondary-container.partial").is(":visible");
-
-            const partialData = {
-                id: collectionId != 0 ? collectionId : null,
-                partialName: `_${partialName}`
+            // If user has navigated to a page not within our navLinks default them to the account partial
+            if (!navLinks.includes(partialName)) {
+                partialName = "Account";
             }
 
-            console.log(partialData);
-            $.ajax({
-                url: '@Url.Action("LoadPartial", "Manage")',
-                data: partialData,
-                type: "POST",
-                success: function (result) {
-                    $(".secondary-container.partial").html(result);
-                    $(".secondary-container.partial").slideDown();
-                },
-                error: function () {
-                    //alert('Error loading partial view.');
+            const index = navUl.find("li").index($(`[data-partial="${partialName}"]`));
+
+            navUl.removeClass("selected-1 selected-2 selected-3 selected-4");
+            navUl.addClass(`selected-${index}`);
+
+            if (location.pathname.split("/Manage/")[1] != "Account" && location.pathname.split("/Manage/")[1] != "ChangePassword") {
+            }
+            LoadNavPartial(partialName);
+
+            $(".manage-container-nav li").on("click", function (e) {
+                var partialName = $(this).data("partial");
+
+                if (partialName) {
+                    LoadNavPartial(partialName);
                 }
             });
 
-            //if (partialLoaded) {
-            //    $('.secondary-container.partial').slideUp();
-            //} else {
+            $(window).on("popstate", function (e) {
+                alert();
+                if (e.originalEvent.state) {
+                    LoadNavPartial(e.originalEvent.state.partialName, true)
+                } else {
+                    LoadNavPartial("Account", true)
+                }
+            });
 
+            function LoadPartial(collectionId, partialName, url) {
+                const partialLoaded = $(".secondary-container.partial").is(":visible");
+
+                const partialData = {
+                    id: collectionId != 0 ? collectionId : null,
+                    partialName: `_${partialName}`
+                }
+
+                $.ajax({
+                    url: '@Url.Action("LoadPartial", "Manage")',
+                    data: partialData,
+                    type: "POST",
+                    success: function (result) {
+                        $(".secondary-container.partial").html(result);
+                        $(".secondary-container.partial").slideDown();
+                    },
+                    error: function () {
+                        //alert('Error loading partial view.');
+                    }
+                });
+
+                //if (partialLoaded) {
+                //    $('.secondary-container.partial').slideUp();
+                //} else {
+
+                //}
+            }
+
+
+            function LoadNavPartial(partialName, popped = false) {
+                const liIndex = $(".manage-container ul li").index($(`[data-partial='${partialName}']`));
+
+                $(".manage-container-nav ul").removeClass("selected-1 selected-2 selected-3 selected-4");
+                $(".manage-container-nav ul").addClass(`selected-${liIndex}`);
+
+                if (!popped) {
+                    history.pushState({ partialName: partialName }, null, `/Manage/${partialName}`);
+                }
+
+                $.ajax({
+                    url: "/Manage/LoadPartial",
+                    data: { partialName: `_${partialName}` },
+                    type: 'GET',
+                    success: function (result) {
+                        $('.manage-container-main').html(result);
+                    },
+                    error: function () {
+                        // Handle error
+                    }
+                });
+            }
+
+            function ColourButtons() {
+                const buttons = $('input[type="submit"]');
+
+                buttons.each(function () {
+                    const baseHue = Math.random() * 360;
+                    const vibrantColor = chroma.hsl(baseHue, 30, 74); // Adjust saturation and lightness as needed
+                    const buttonColor = vibrantColor.hex(); // Convert Chroma color to HEX format
+                    const textColor = chroma.contrast(buttonColor, 'white') > 4.5 ? 'white' : 'black';
+                    $(this).css('background-color', buttonColor);
+                    $(this).css('color', textColor);
+                });
+            }
+
+            $(document).on("submit", "#update-password", function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: '@Url.Action("ChangePassword", "Manage")',
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (result) {
+                        var validationSummary = $(".text-danger");
+                        validationSummary.empty();
+                        validationSummary.css({ display: "none" });
+
+                        $.each(result.Errors, function (index, error) {
+                            validationSummary.eq(error.Index).css({ display: "block" });
+                            validationSummary.eq(error.Index).html('<li>' + error.Error + '</li>');
+                        });
+                    },
+                    error: function () {
+                        // Handle error
+                    }
+                });
+            });
+            //const paintBlotches = document.querySelector('.manage-container-main');
+            //const numBlotches = 30; // Adjust the number of blotches as needed
+
+            //for (let i = 0; i < numBlotches; i++) {
+            //    const blotch = document.createElement('div');
+            //    const baseHue = Math.random() * 360;
+            //    const vibrantColor = chroma.hsl(baseHue, 30, 74); // Adjust saturation and lightness as needed
+
+            //    blotch.classList.add('paint-blotch');
+            //    blotch.style.left = `${Math.random() * 100}%`;
+            //    blotch.style.top = `${Math.random() * 100}%`;
+            //    blotch.style.scale = `${Math.random() * 100}%`;
+            //    blotch.style.backgroundColor = vibrantColor;
+            //    //blotch.style.borderRadius = `${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% / ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100 }%`
+            //    //blotch.style.animation = `animateBlotches ${(Math.random() * 3 + 2).toFixed(1)}s ${(Math.random() * 3).toFixed(1)}s infinite alternate`;
+            //    paintBlotches.appendChild(blotch);
             //}
-        }
-
-
-        function LoadNavPartial(partialName, popped = false) {
-            const liIndex = $(".manage-container ul li").index($(`[data-partial='${partialName}']`));
-
-            $(".manage-container-nav ul").removeClass("selected-1 selected-2 selected-3 selected-4");
-            $(".manage-container-nav ul").addClass(`selected-${liIndex}`);
-
-            if (!popped) {
-                history.pushState({ partialName: partialName }, null, `/Manage/${partialName}`);
-            }
-
-            $.ajax({
-                url: "/Manage/LoadPartial",
-                data: { partialName: `_${partialName}` },
-                type: 'GET',
-                success: function (result) {
-                    $('.manage-container-main').html(result);
-                },
-                error: function () {
-                    // Handle error
-                }
-            });
-        }
-
-        function ColourButtons() {
-            const buttons = $('input[type="submit"]');
-
-            buttons.each(function () {
-                const baseHue = Math.random() * 360;
-                const vibrantColor = chroma.hsl(baseHue, 30, 74); // Adjust saturation and lightness as needed
-                const buttonColor = vibrantColor.hex(); // Convert Chroma color to HEX format
-                const textColor = chroma.contrast(buttonColor, 'white') > 4.5 ? 'white' : 'black';
-                $(this).css('background-color', buttonColor);
-                $(this).css('color', textColor);
-            });
-        }
-
-        //const paintBlotches = document.querySelector('.manage-container-main');
-        //const numBlotches = 30; // Adjust the number of blotches as needed
-
-        //for (let i = 0; i < numBlotches; i++) {
-        //    const blotch = document.createElement('div');
-        //    const baseHue = Math.random() * 360;
-        //    const vibrantColor = chroma.hsl(baseHue, 30, 74); // Adjust saturation and lightness as needed
-
-        //    blotch.classList.add('paint-blotch');
-        //    blotch.style.left = `${Math.random() * 100}%`;
-        //    blotch.style.top = `${Math.random() * 100}%`;
-        //    blotch.style.scale = `${Math.random() * 100}%`;
-        //    blotch.style.backgroundColor = vibrantColor;
-        //    //blotch.style.borderRadius = `${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% / ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100 }%`
-        //    //blotch.style.animation = `animateBlotches ${(Math.random() * 3 + 2).toFixed(1)}s ${(Math.random() * 3).toFixed(1)}s infinite alternate`;
-        //    paintBlotches.appendChild(blotch);
-        //}
+        /*});*/
     </script>
+    @Scripts.Render("~/bundles/jqueryval")
 }

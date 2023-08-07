@@ -26,34 +26,40 @@
                 </div>
             </div>
             @*<div class="account-form-row">
-                <div class="account-form-column">
-                    <label>Password</label>
-                    <input type="password" />
-                </div>
-            </div>*@
+                    <div class="account-form-column">
+                        <label>Password</label>
+                        <input type="password" />
+                    </div>
+                </div>*@
             <div class="account-form-row">
                 <div class="account-form-column">
                     <input type="submit" value="Update Email" />
                 </div>
             </div>
         </form>
-        <form class="account-form">
+        @using (Html.BeginForm("ChangePassword", "Manage", FormMethod.Post, new { id = "update-password", role = "form", @class = "account-form" }))
+        {
+            @Html.AntiForgeryToken()
+            @*@Html.ValidationSummary("", new { @class = "text-danger" })*@
             <div class="account-form-row">
                 <div class="account-form-column">
                     <label>Current Password</label>
-                    <input type="password" />
+                    @Html.PasswordFor(m => m.ChangePassword.OldPassword, new { @class = "" })
+                    <span class="text-danger" style="display: none"></span>
                 </div>
             </div>
             <div class="account-form-row">
                 <div class="account-form-column">
                     <label>New Password</label>
-                    <input type="password" />
+                    @Html.PasswordFor(m => m.ChangePassword.NewPassword, new { @class = "" })
+                    <span class="text-danger" style="display: none"></span>
                 </div>
             </div>
             <div class="account-form-row">
                 <div class="account-form-column">
                     <label>Confirm New Password</label>
-                    <input type="password" />
+                    @Html.PasswordFor(m => m.ChangePassword.ConfirmPassword, new { @class = "" })
+                    <span class="text-danger" style="display: none"></span>
                 </div>
             </div>
             <div class="account-form-row">
@@ -61,7 +67,7 @@
                     <input type="submit" value="Update Password" />
                 </div>
             </div>
-        </form>
+        }
     </div>
 
     <br />

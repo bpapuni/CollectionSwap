@@ -7,7 +7,7 @@
     var matchingSwaps = ViewBag.MatchingSwaps;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<main aria-labelledby="title">
+<div class="find-swaps-container">
     <h2 id="title">@ViewBag.Title</h2>
     <hr />
     <span class="text-success"></span>
@@ -74,7 +74,7 @@
             <h5> No potential swappers found.</h5>
         }
     }
-</main>
+</div>
 
 @section scripts {
     <script>
