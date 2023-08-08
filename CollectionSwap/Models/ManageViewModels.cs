@@ -12,7 +12,7 @@ namespace CollectionSwap.Models
         public string PhoneNumber { get; set; }
         public bool TwoFactor { get; set; }
         public bool BrowserRemembered { get; set; }
-        public string Email { get; set; }
+        public ChangeEmailViewModel ChangeEmail { get; set; }
         public ChangePasswordViewModel ChangePassword { get; set; }
         public List<Collection> Collections { get; set; }
         public List<UserCollection> UserCollections { get; set; }
@@ -57,21 +57,40 @@ namespace CollectionSwap.Models
         public string ConfirmPassword { get; set; }
     }
 
+    public class ChangeEmailViewModel
+    {
+        [Required(ErrorMessage = "This field is required.")]
+        [Display(Name = "Current Email")]
+        public string OldEmail { get; set; }
+
+        [Required(ErrorMessage = "This field is required.")]
+        [EmailAddress]
+        [Display(Name = "New Email")]
+        public string NewEmail { get; set; }
+
+        [Required(ErrorMessage = "This field is required.")]
+        [EmailAddress]
+        [Display(Name = "Confirm new Email")]
+        [Compare("NewEmail", ErrorMessage = "The new email and confirmation email do not match.")]
+        public string ConfirmEmail { get; set; }
+    }
+
     public class ChangePasswordViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "This field is required.")]
         [DataType(DataType.Password)]
         [Display(Name = "Current password")]
         public string OldPassword { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "This field is required.")]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "New password")]
+        [Display(Name = "New Password")]
         public string NewPassword { get; set; }
 
+        [Required(ErrorMessage = "This field is required.")]
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm new password")]
+        [Display(Name = "Confirm New Password")]
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }

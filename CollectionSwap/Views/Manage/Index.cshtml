@@ -2,11 +2,10 @@
 @using CollectionSwap.Models
 @using Newtonsoft.Json;
 @{
-    var email = Model.Email;
     ViewBag.Title = "Your Dashboard";
 }
 
-<main class="manage-container">
+<div class="manage-container">
     <div class="manage-container-nav">
         <ul class="selected-1">
             <li>@Html.ActionLink("Swapper", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })</li>
@@ -17,9 +16,8 @@
         </ul>
     </div>
     <div class="manage-container-main">
-        @*@Html.Partial("_Account", Model)*@
     </div>
-</main>
+</div>
 
 @section scripts {
     <link href="~/Content/Manage.css" rel="stylesheet" />
@@ -58,42 +56,12 @@
             });
 
             $(window).on("popstate", function (e) {
-                alert();
                 if (e.originalEvent.state) {
                     LoadNavPartial(e.originalEvent.state.partialName, true)
                 } else {
                     LoadNavPartial("Account", true)
                 }
             });
-
-            function LoadPartial(collectionId, partialName, url) {
-                const partialLoaded = $(".secondary-container.partial").is(":visible");
-
-                const partialData = {
-                    id: collectionId != 0 ? collectionId : null,
-                    partialName: `_${partialName}`
-                }
-
-                $.ajax({
-                    url: '@Url.Action("LoadPartial", "Manage")',
-                    data: partialData,
-                    type: "POST",
-                    success: function (result) {
-                        $(".secondary-container.partial").html(result);
-                        $(".secondary-container.partial").slideDown();
-                    },
-                    error: function () {
-                        //alert('Error loading partial view.');
-                    }
-                });
-
-                //if (partialLoaded) {
-                //    $('.secondary-container.partial').slideUp();
-                //} else {
-
-                //}
-            }
-
 
             function LoadNavPartial(partialName, popped = false) {
                 const liIndex = $(".manage-container ul li").index($(`[data-partial='${partialName}']`));
@@ -118,6 +86,35 @@
                 });
             }
 
+            $(document).on("change", "input[type='file']", function () {
+                $(this).closest("form").submit();
+            });
+
+        $(document).on("submit", ".manage-container-main form", function (event) {
+                event.preventDefault();
+
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: $(this).attr("action"),
+                    type: $(this).attr("method"),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (result) {
+                        if (result.reload) {
+                            document.location.reload();
+                        }
+                        console.log($(result));
+                        var targetId = $(result)[0].id;
+                        $(`#${targetId}`).prop('outerHTML', result);
+                    },
+                    error: function () {
+                        // Handle error
+                    }
+                });
+            });
+
             function ColourButtons() {
                 const buttons = $('input[type="submit"]');
 
@@ -131,7 +128,7 @@
                 });
             }
 
-            $(document).on("submit", "#update-password", function (event) {
+            @*$(document).on("submit", "#update-password", function (event) {
                 event.preventDefault(); // Prevent the default form submission
 
                 var formData = new FormData(this);
@@ -156,7 +153,7 @@
                         // Handle error
                     }
                 });
-            });
+            });*@
             //const paintBlotches = document.querySelector('.manage-container-main');
             //const numBlotches = 30; // Adjust the number of blotches as needed
 

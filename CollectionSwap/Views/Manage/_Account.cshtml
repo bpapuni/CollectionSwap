@@ -1,69 +1,82 @@
 ﻿@model CollectionSwap.Models.IndexViewModel
-<div class="secondary-container">
+<div id="account-container" class="secondary-container">
     <div class="secondary-container-header">
         <p>Account Settings</p>
     </div>
 
     <div class="secondary-container-row">
         <div class="paint-blotches"></div>
-        <form class="account-form">
+
+        @using (Html.BeginForm("ChangeEmail", "Manage", FormMethod.Post, new { @class = "account-form" }))
+        {
+            @Html.AntiForgeryToken()
             <div class="account-form-row">
                 <div class="account-form-column">
-                    <label>Current Email</label>
-                    <input type="text" disabled value="@Model.Email" />
+                    @Html.LabelFor(m => m.ChangeEmail.OldEmail)
+                    @Html.TextBoxFor(m => m.ChangeEmail.OldEmail)
+                    @Html.ValidationMessageFor(m => m.ChangeEmail.OldEmail)
                 </div>
             </div>
             <div class="account-form-row">
                 <div class="account-form-column">
-                    <label>New Email</label>
-                    <input type="text" />
+                    @Html.LabelFor(m => m.ChangeEmail.NewEmail)
+                    @Html.TextBoxFor(m => m.ChangeEmail.NewEmail)
+                    @Html.ValidationMessageFor(m => m.ChangeEmail.NewEmail)
                 </div>
             </div>
             <div class="account-form-row">
                 <div class="account-form-column">
-                    <label>Confirm New Email</label>
-                    <input type="text" />
+                    @Html.LabelFor(m => m.ChangeEmail.ConfirmEmail)
+                    @Html.TextBoxFor(m => m.ChangeEmail.ConfirmEmail)
+                    @Html.ValidationMessageFor(m => m.ChangeEmail.ConfirmEmail)
                 </div>
             </div>
-            @*<div class="account-form-row">
-                    <div class="account-form-column">
-                        <label>Password</label>
-                        <input type="password" />
-                    </div>
-                </div>*@
             <div class="account-form-row">
                 <div class="account-form-column">
+                    <span class="success-message">@ViewBag.ChangeEmailStatus</span>
                     <input type="submit" value="Update Email" />
                 </div>
             </div>
-        </form>
-        @using (Html.BeginForm("ChangePassword", "Manage", FormMethod.Post, new { id = "update-password", role = "form", @class = "account-form" }))
+        }
+
+        @using (Html.BeginForm("ChangePassword", "Manage", FormMethod.Post, new { @class = "account-form" }))
         {
             @Html.AntiForgeryToken()
-            @*@Html.ValidationSummary("", new { @class = "text-danger" })*@
             <div class="account-form-row">
                 <div class="account-form-column">
-                    <label>Current Password</label>
+                    @Html.LabelFor(m => m.ChangePassword.OldPassword)
                     @Html.PasswordFor(m => m.ChangePassword.OldPassword, new { @class = "" })
-                    <span class="text-danger" style="display: none"></span>
+                    @Html.ValidationMessageFor(m => m.ChangePassword.OldPassword)
                 </div>
             </div>
             <div class="account-form-row">
                 <div class="account-form-column">
-                    <label>New Password</label>
+                    @Html.LabelFor(m => m.ChangePassword.NewPassword)
                     @Html.PasswordFor(m => m.ChangePassword.NewPassword, new { @class = "" })
-                    <span class="text-danger" style="display: none"></span>
+                    @Html.ValidationMessageFor(m => m.ChangePassword.NewPassword)
                 </div>
             </div>
             <div class="account-form-row">
                 <div class="account-form-column">
-                    <label>Confirm New Password</label>
+                    @Html.LabelFor(m => m.ChangePassword.ConfirmPassword)
                     @Html.PasswordFor(m => m.ChangePassword.ConfirmPassword, new { @class = "" })
-                    <span class="text-danger" style="display: none"></span>
+                    @Html.ValidationMessageFor(m => m.ChangePassword.ConfirmPassword)
                 </div>
             </div>
             <div class="account-form-row">
                 <div class="account-form-column">
+                    @if (ViewData.ModelState.ContainsKey("ChangePassword"))
+                    {
+                        <ul>
+                            @foreach (var error in ViewData.ModelState["ChangePassword"].Errors)
+                            {
+                                <li class="text-danger">
+                                    @error.ErrorMessage
+                                </li>
+                            }
+                        </ul>
+                    }
+                    <span class="success-message">@ViewBag.ChangePasswordStatus</span>
                     <input type="submit" value="Update Password" />
                 </div>
             </div>
@@ -75,7 +88,38 @@
         <p>Mailing Address</p>
     </div>
 
-    <form class="account-form">
+    @*@using (Html.BeginForm("ChangeAddess", "Manage", FormMethod.Post, new { @class = "account-form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="account-form-row">
+            <div class="account-form-column">
+                @Html.LabelFor(m => m.ChangePassword.OldPassword)
+                @Html.PasswordFor(m => m.ChangePassword.OldPassword, new { @class = "" })
+                @Html.ValidationMessageFor(m => m.ChangePassword.OldPassword)
+            </div>
+        </div>
+        <div class="account-form-row">
+            <div class="account-form-column">
+                @Html.LabelFor(m => m.ChangePassword.NewPassword)
+                @Html.PasswordFor(m => m.ChangePassword.NewPassword, new { @class = "" })
+                @Html.ValidationMessageFor(m => m.ChangePassword.NewPassword)
+            </div>
+        </div>
+        <div class="account-form-row">
+            <div class="account-form-column">
+                @Html.LabelFor(m => m.ChangePassword.ConfirmPassword)
+                @Html.PasswordFor(m => m.ChangePassword.ConfirmPassword, new { @class = "" })
+                @Html.ValidationMessageFor(m => m.ChangePassword.ConfirmPassword)
+            </div>
+        </div>
+        <div class="account-form-row">
+            <div class="account-form-column">
+                <input type="submit" value="Update Password" />
+            </div>
+        </div>
+    }*@
+
+    @*<form class="account-form">
         <div class="account-form-row">
             <div class="account-form-column">
                 <span>
@@ -119,5 +163,5 @@
                 <input type="submit" value="Update Address" />
             </div>
         </div>
-    </form>
+    </form>*@
 </div>

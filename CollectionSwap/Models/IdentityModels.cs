@@ -1,4 +1,5 @@
 ﻿using System.Data.Entity;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -15,6 +16,25 @@ namespace CollectionSwap.Models
             var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
             // Add custom user claims here
             return userIdentity;
+        }
+
+        public string ChangeEmail(string oldEmail, string newEmail, ApplicationDbContext db)
+        {
+            var status = string.Empty;
+            if (this.Email != oldEmail)
+            {
+                status = "Incorrect email";
+            } else if (db.Users.Where(u => u.Email == newEmail).Any()) {
+                status = "This email already exists";
+            }
+            else
+            {
+                this.Email = newEmail;
+                db.Entry(this).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return status;
         }
     }
 

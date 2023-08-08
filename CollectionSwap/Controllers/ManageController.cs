@@ -18,6 +18,7 @@ namespace CollectionSwap.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext db = new ApplicationDbContext();
 
         public ManageController()
         {
@@ -75,37 +76,152 @@ namespace CollectionSwap.Controllers
                 Logins = await UserManager.GetLoginsAsync(userId),
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
             };
-            using (var db = new ApplicationDbContext())
-            {
-                model.Email = db.Users.Find(userId).Email;
-                model.Collections = db.Collections.ToList();
-                model.UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList();
-            }
+            model.Collections = db.Collections.ToList();
+            model.UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList();
+
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public ActionResult EditCollection(int Id, string Name)
+        [Authorize]
+        public ActionResult ChangeEmail(IndexViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                return Json(new { success = false, Errors = ModelState.Values.SelectMany((v, index) => v.Errors.Select(e => new { Index = index, Error = e.ErrorMessage })) });
+                return PartialView("_Account", model);
+            }
+
+            var userId = User.Identity.GetUserId();
+            var user = db.Users.Find(userId);
+            var status = user.ChangeEmail(model.ChangeEmail.OldEmail, model.ChangeEmail.NewEmail, db);
+
+            switch (status)
+            {
+                case "Incorrect email":
+                    ModelState.AddModelError("ChangeEmail.OldEmail", status);
+                    return PartialView("_Account", model);
+                case "This email already exists":
+                    ModelState.AddModelError("ChangeEmail.NewEmail", status);
+                    return PartialView("_Account", model);
+                default:
+                    break;
+            }
+
+            ViewBag.ChangeEmailStatus = "Your email has been changed.";
+            return PartialView("_Account");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<ActionResult> ChangePassword(IndexViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return PartialView("_Account", model);
+            }
+
+            var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.ChangePassword.OldPassword, model.ChangePassword.NewPassword);
+            if (!result.Succeeded)
+            {
+                string[] errorMessages = result.Errors.First().Split(new[] { ". " }, StringSplitOptions.None);
+                foreach (string message in errorMessages)
+                {
+                    switch (message)
+                    {
+                        case "Incorrect password.":
+                            ModelState.AddModelError("ChangePassword.OldPassword", message);
+                            break;
+                        default:
+                            ModelState.AddModelError("ChangePassword", message);
+                            break;
+                    } 
+                    
+                }
+
+                return PartialView("_Account", model);
+            }
+
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            if (user != null)
+            {
+                await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+            }
+
+            ViewBag.ChangePasswordStatus = "Your password has been changed.";
+            return PartialView("_Account");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public ActionResult CreateCollection(CreateCollection model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return PartialView("_CreateCollection", model);
+            }
+
+            Collection.Create(model, db);
+            var mcViewModel = new ManageCollectionsViewModel
+            {
+                Collections = db.Collections.ToList(),
+                NewCollection = new CreateCollection { }
+            };
+
+            return PartialView("_ManageCollections", mcViewModel);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult EditCollection(int id)
+        {
+            var collection = db.Collections.Find(id);
+
+            return PartialView("_EditCollection", collection);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public ActionResult EditCollection(Collection model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.ItemListJSON = db.Collections.Find(model.Id).ItemListJSON;
+                return PartialView("_EditCollection", model);
 
             }
-            using (var db = new ApplicationDbContext())
+
+            Collection collection = db.Collections.Find(model.Id);
+            collection.Update(model.Name, db);
+
+            var mcViewModel = new ManageCollectionsViewModel
             {
-                Collection collection = db.Collections.Find(Id);
-                collection.Update(Name, db);
+                Collections = db.Collections.ToList(),
+                NewCollection = new CreateCollection { }
+            };
 
-                ManageCollectionsViewModel model = new ManageCollectionsViewModel
-                {
-                    Collections = db.Collections.ToList()
-                };
+            return PartialView("_ManageCollections", mcViewModel);
+        }
 
-                return PartialView("~/Views/Manage/_ManageCollections.cshtml", model);
-            } 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public ActionResult EditItem(int collectionId, int itemId, string fileName, HttpPostedFileBase fileInput)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                var model = db.Collections.Find(collectionId);
+                return PartialView("_EditCollection", model);
+
+            }
+
+            var collection = db.Collections.Find(collectionId);
+            collection.EditItem(itemId, fileName, fileInput, db);
+
+            return PartialView("_EditCollection", collection);
         }
 
         //[HttpPost]
@@ -128,32 +244,21 @@ namespace CollectionSwap.Controllers
                     }
                     break;
                 case "_ManageCollections":
-                    var mcModel = new ManageCollectionsViewModel { };
-                    using (var db = new ApplicationDbContext())
+                    var mcModel = new ManageCollectionsViewModel
                     {
-                        mcModel.Collections = db.Collections.ToList();
-                    }
+                        Collections = db.Collections.ToList(),
+                        NewCollection = new CreateCollection { }
+                    };
                     return PartialView(partialName, mcModel);
                 case "_Account":
                 case "_YourCollections":
                 case "_SwapHistory":                
                     var model = new IndexViewModel { };
-                    using (var db = new ApplicationDbContext())
-                    {
-                        model.Email = db.Users.Find(userId).Email;
-                        model.Collections = db.Collections.ToList();
-                        model.UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList();
-                    }
+                    model.Collections = db.Collections.ToList();
+                    model.UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList();
                     return PartialView(partialName, model);
                 default:
-                    var accountModel = new IndexViewModel { };
-                    using (var db = new ApplicationDbContext())
-                    {
-                        accountModel.Email = db.Users.Find(userId).Email;
-                        accountModel.Collections = db.Collections.ToList();
-                        accountModel.UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList();
-                    }
-                    return PartialView("_Account", accountModel);
+                    break;
 
             }
             return RedirectToAction("Index");
@@ -295,32 +400,6 @@ namespace CollectionSwap.Controllers
                 await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             }
             return RedirectToAction("Index", new { Message = ManageMessageId.RemovePhoneSuccess });
-        }
-
-        //
-        // POST: /Manage/ChangePassword
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ChangePassword([Bind(Prefix = "ChangePassword")] ChangePasswordViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return Json(new { success = false, Errors = ModelState.Values.SelectMany((v, index) => v.Errors.Select(e => new { Index = index, Error = e.ErrorMessage })) });
-            }
-            var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
-            if (result.Succeeded)
-            {
-                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-                if (user != null)
-                {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-                }
-                return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
-
-            }
-
-            return Json(new { success = false, Errors = ModelState.Values.SelectMany((v, index) => v.Errors.Select(e => new { Index = index, Error = e.ErrorMessage })) });
-
         }
 
         //

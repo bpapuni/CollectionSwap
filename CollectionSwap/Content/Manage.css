@@ -17,12 +17,13 @@
 }
 
 .manage-container-main {
-    position:relative;
+    position: relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-between;
     flex-grow: 1;
-    flex-shrink: 1;
+    flex-wrap: wrap;
+    gap: 1rem 4rem;
     padding: 1rem 4rem;
     background-color: var(--lighter-shade);
     border-radius: 2rem;
@@ -82,6 +83,26 @@
     cursor: pointer;
 }
 
+#manage-collections-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    gap: 2rem 4rem;
+}
+
+#create-collection-container {
+
+}
+
+#update-name-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 20rem;
+}
+
 .secondary-container {
     display: flex;
     flex-direction: column;
@@ -129,14 +150,6 @@
 
 .account-form-row {
     gap: 1rem 4rem;
-}
-
-.account-form-column span {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 0;
-    gap: 0.2rem;
-    padding: 0 0 1rem 0;
 }
 
 .account-form-column {
@@ -219,8 +232,19 @@ input[type=submit]:hover {
     border: 1px solid var(--darkest-shade)
 }
 
-.text-danger {
-    padding: 0.5rem 0 0 0 !important;
+.field-validation-error {
+    color: red;
+    height: 0px;
+    padding: 0 0 0.5rem 0;
+}
+
+.field-validation-valid {
+    height: 0;
+    padding: 0 0 0.5rem 0;
+}
+
+.success-message {
+    color: forestgreen;
 }
 
 .paint-blotches {
@@ -231,7 +255,6 @@ input[type=submit]:hover {
     height: 100%;
     /*background-color: #f7f7f7;*/ /* Set a base color for the background */
     pointer-events: none; /* Make sure the blotches don't interfere with interactions */
-
 }
 
 .paint-blotch {

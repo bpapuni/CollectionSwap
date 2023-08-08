@@ -4,13 +4,12 @@
     string statusMessage = ViewBag.Status;
     List<string> items = JsonConvert.DeserializeObject<List<string>>(Model.ItemListJSON);
 }
+<div id="edit-collection-container" class="">
 
-<div class="secondary-container-header">
-    <p>Edit Collection</p>
-</div>
-
-<div class="secondary-container-row">
-    <div class="tertiary-container">
+    <div class="secondary-container-header">
+        <p>Edit Collection</p>
+    </div>
+    <div class="tertiary-container flex-column">
         @using (Html.BeginForm("EditCollection", "Manage", null, FormMethod.Post, new { enctype = "multipart/form-data", role = "form", id = "update-name-form", @class = "" }))
         {
             @Html.AntiForgeryToken()
@@ -21,6 +20,7 @@
             <input type="submit" value="Update Name" />
         }
         <span class="text-success">@statusMessage</span>
+
         <div id="items" class="account-form-row">
             @foreach (var item in items)
             {
@@ -31,7 +31,7 @@
                     @(item.Split('?')[0])
                     <img class="item" src="@Url.Content(imagePath)/@item" />
                     <div class="d-flex gap-3">
-                        @using (Html.BeginForm("EditItem", "Collections", new { collectionId = @Model.Id, itemId = @itemId, fileName = @item }, FormMethod.Post, new { enctype = "multipart/form-data", role = "form", @class = "mt-3" }))
+                        @using (Html.BeginForm("EditItem", "Manage", new { collectionId = @Model.Id, itemId = @itemId - 1, fileName = @item }, FormMethod.Post, new { enctype = "multipart/form-data", role = "form", @class = "mt-3" }))
                         {
                             @Html.AntiForgeryToken()
                             <label for="fileInput@(itemId)" class="button-icon button-icon-upload"><i class="fa fa-upload"></i></label>
@@ -47,26 +47,12 @@
             }
         </div>
     </div>
+    @*<div>
+            @using (Html.BeginForm("CreateItem", "Collections", new { collectionId = @Model.Id }, FormMethod.Post, new { enctype = "multipart/form-data", role = "form", @class = "mt-3" }))
+            {
+                @Html.AntiForgeryToken()
+                <label for="createItemInput" class="create-item"><i class="fa fa-plus"></i></label>
+                <input class="d-none" type="file" accept=".png, .jpg" id="createItemInput" name="fileInput">
+            }
+        </div>*@
 </div>
-
-@*<div>
-    @using (Html.BeginForm("CreateItem", "Collections", new { collectionId = @Model.Id }, FormMethod.Post, new { enctype = "multipart/form-data", role = "form", @class = "mt-3" }))
-    {
-        @Html.AntiForgeryToken()
-        <label for="createItemInput" class="create-item"><i class="fa fa-plus"></i></label>
-        <input class="d-none" type="file" accept=".png, .jpg" id="createItemInput" name="fileInput">
-    }
-</div>*@
-
-
-@section scripts {
-    <script>
-        const collectionId = window.location.href.split("Collections/Edit/")[1];
-
-        $("input[type='file']").on("change", function () {
-            $(this).closest("form").submit();
-        })
-
-        
-    </script>
-}

@@ -28,12 +28,6 @@ namespace CollectionSwap.Controllers
             return RedirectToAction("Index", "Manage");
         }
 
-        [Authorize(Roles = "Admin")]
-        public ActionResult Create()
-        {
-            return View();
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
@@ -42,14 +36,21 @@ namespace CollectionSwap.Controllers
             if (ModelState.IsValid)
             {
                 Collection.Create(model.NewCollection, db);
+                var mcViewModel = new ManageCollectionsViewModel
+                {
+                    Collections = db.Collections.ToList(),
+                    NewCollection = model.NewCollection
+                };
                 //return RedirectToAction("LoadPartial", "Manage", new { partialName = "_ManageCollections" });
-                return Json(new { Success = true, Reload = true });
+                return PartialView("~/Views/Manage/_ManageCollections.cshtml", mcViewModel);
             }
 
-            string viewHtml = Helper.RenderViewToString(ControllerContext, "~/Views/Manage/_CreateCollection.cshtml", model, true);
-            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+            //string viewHtml = Helper.RenderViewToString(ControllerContext, "~/Views/Manage/_CreateCollection.cshtml", model, true);
+            //var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
 
-            return Json(new { Success = false, Errors = errors, PartialView = viewHtml });
+            //return Json(new { Success = false, Errors = errors, PartialView = viewHtml });
+
+            return PartialView("~/Views/Manage/_ManageCollections.cshtml", model);
         }
 
         //[HttpPost]
