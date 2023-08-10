@@ -219,7 +219,7 @@ namespace CollectionSwap.Controllers
         // GET: /Manage/ManageCollections
 
         [Authorize(Roles = "Admin")]
-        public ActionResult ManageCollectionsPartial()
+        public ActionResult ManageCollectionsPartial(int? id)
         {
             var partial = String.Empty;
             var model = new ManageCollectionsViewModel
@@ -227,6 +227,11 @@ namespace CollectionSwap.Controllers
                 Collections = db.Collections.ToList(),
                 CreateCollection = new CreateCollectionModel()
             };
+
+            if (id.HasValue)
+            {
+                model.EditCollection = new EditCollectionModel { Collection = db.Collections.Find(id) };
+            }
             
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
             return Json(new { PartialView = partial });
@@ -288,7 +293,7 @@ namespace CollectionSwap.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public ActionResult ChangeCollectionName(Collection model)
+        public ActionResult ChangeCollectionName([Bind(Prefix = "Collection")] Collection model)
         {
             var partial = String.Empty;
             if (!ModelState.IsValid)
@@ -449,6 +454,27 @@ namespace CollectionSwap.Controllers
 
             partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
             return Json(new { PartialView = partial });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public ActionResult CreateUserCollection(ManageCollectionsViewModel model)
+        {
+            var partial = String.Empty;
+            if (!ModelState.IsValid)
+            {
+                model.Collections = db.Collections.ToList();
+                partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
+                return Json(new { PartialView = partial });
+            }
+
+            Collection.Create(model.CreateCollection, db);
+            model.Collections = db.Collections.ToList();
+
+            partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
+            return Json(new { PartialView = partial });
+            //return Json(new { Reload = true });
         }
 
         //[HttpPost]

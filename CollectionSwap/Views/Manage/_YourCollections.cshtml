@@ -2,6 +2,15 @@
 @using CollectionSwap.Models
 @using Newtonsoft.Json
 <div id="your-collections-container" class="secondary-container">
+    @{
+        var mcViewModel = new ManageCollectionsViewModel
+        {
+            Collections = Model.Collections
+        };
+    }
+    <div id="create-user-collection-container" style="display: none">
+        @Html.Partial("_AvailableCollections", mcViewModel)
+    </div>
     <div class="secondary-container">
         <div class="secondary-container-header">
             <p>Your Collections</p>
@@ -12,11 +21,6 @@
 
                 @foreach (var userCollection in Model.UserCollections)
                 {
-                    using (Html.BeginForm("UserCollection", "Manage", new { Id = userCollection.Id }, FormMethod.Get, new { role = "form", @class = "" }))
-                    {
-                        @Html.AntiForgeryToken()
-                    }
-
                     var collection = Model.Collections.Where(c => c.Id == userCollection.CollectionId).FirstOrDefault();
                     var deserializedItemListJSON = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON);
                     var userItemList = JsonConvert.DeserializeObject<List<int>>(userCollection.ItemCountJSON)
@@ -35,10 +39,21 @@
 
                     @Html.Partial("_CollectionButton", collectionButton)
                 }
+
+                @{
+                    var createCollectionButton = new CollectionButton
+                    {
+                        Id = 0,
+                        Name = "Create Collection",
+                        href = "/Manage/YourCollections/#",
+                        ItemList = new List<string>(),
+                        onClick = "$('#create-user-collection-container').slideDown()"
+                    };
+                }
+                @Html.Partial("_CollectionButton", createCollectionButton)
             </div>
         </div>
     </div>
-
     <div id="user-collection-container">
         @if (Model.EditCollection != null)
         {
