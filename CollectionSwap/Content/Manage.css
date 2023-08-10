@@ -1,11 +1,12 @@
 ﻿
 .manage-container {
+    position: relative;
     display: flex;
     flex-direction: row;
     justify-content: center;
     /*flex-grow: 1;*/
-    width: 100%;
     padding-bottom: 1.5rem;
+    width: 100%;
 }
 
 .manage-container-nav {
@@ -25,13 +26,15 @@
     flex-wrap: wrap;
     gap: 1rem 4rem;
     padding: 1rem 4rem;
+    width: 100%;
     background-color: var(--lighter-shade);
     border-radius: 2rem;
 }
 
 .manage-container-nav ul {
-    position: relative;
+    position: fixed;
     width: 100%;
+    max-width: 20rem;
     padding: 1rem 1.5rem 0 0;
     font-size: 1rem;
     line-height: 2.5rem;
@@ -83,17 +86,33 @@
     cursor: pointer;
 }
 
-#manage-collections-container {
+.subnav-link {
     display: flex;
-    flex-direction: row;
+}
+
+#manage-collections-container,
+#your-collections-container {
+    display: flex;
+    flex-direction: column;
     justify-content: flex-start;
     flex-wrap: wrap;
     flex-grow: 1;
     gap: 2rem 4rem;
 }
 
-#create-collection-container {
+#edit-collection-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
 
+#create-collection-container {
+    display: flex;
+    flex-direction: column;
+}
+
+#create-collection-container form {
+    width: clamp(16rem, 36rem, 100%);
 }
 
 #update-name-form {
@@ -101,6 +120,18 @@
     flex-direction: column;
     justify-content: flex-start;
     width: 20rem;
+}
+
+#create-collection-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    background-color: var(--lightest-shade);
+    box-shadow: 0 2px 5px var(--neutral-shade);
+    border-radius: 1rem;
+    border: 1px solid var(--neutral-shade);
+    z-index: 1;
 }
 
 .secondary-container {
@@ -189,7 +220,8 @@
 input[type=text],
 input[type=file],
 input[type=password],
-input[type=submit] {
+input[type=submit],
+textarea {
     padding: 0.5rem;
     min-width: 100%;
     /*background-color: var(--lighterer-shade);*/
@@ -210,6 +242,7 @@ input[type=submit] {
 input[type=submit]:hover {
     color: var(--darkest-shade);
     background-color: var(--neutral-shade);
+    box-shadow: 0 2px 5px var(--neutral-shade);
 }
 
 .tertiary-container {
@@ -234,17 +267,19 @@ input[type=submit]:hover {
 
 .field-validation-error {
     color: red;
-    height: 0px;
+    /*height: 0;*/
     padding: 0 0 0.5rem 0;
+    margin-bottom: -1rem;
 }
 
 .field-validation-valid {
-    height: 0;
+    /*height: 0;*/
     padding: 0 0 0.5rem 0;
 }
 
 .success-message {
     color: forestgreen;
+    margin-bottom: -2rem;
 }
 
 .paint-blotches {
@@ -278,4 +313,101 @@ input[type=submit]:hover {
         transform: translate(-50%, -50%) scale(1);
         opacity: 0.7;
     }
+}
+
+.new-collection {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 15rem;
+    height: 20rem;
+    padding: 0.25rem;
+    color: var(--darkest-shade);
+    text-decoration: none;
+    background: var(--lighter-shade);
+    border: 1px solid var(--neutral-shade);
+    border-radius: 1rem;
+}
+
+.new-collection:hover {
+    background: var(--lighterer-shade);
+    border: 1px solid var(--neutral-shade);
+    box-shadow: 0 2px 5px var(--neutral-shade);
+}
+
+.new-collection-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.25rem;
+    width: 100%;
+}
+
+.new-collection-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.new-collection-feature-card {
+    max-width: 32%;
+    height: 7rem;
+    border-radius: 0.5rem;
+    border: 2px solid var(--dark-shade);
+    overflow: hidden;
+    object-fit: cover;
+}
+
+.new-collection-center {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 30%;
+    aspect-ratio: 1/1;
+    color: white;
+    font-size: 2rem;
+    font-weight: 300;
+    background: var(--dark-shade);
+    margin-top: -1rem;
+}
+
+.new-collection span {
+    width: 70%;
+    text-align: center;
+}
+.item-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.item {
+    width: 8rem;
+    height: 12rem;
+    object-fit: cover;
+    border-radius: 1rem;
+}
+
+.item-not-owned::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #FFFFFFBB;
+    border-radius: 1rem;
+    pointer-events: none;
+}
+
+.navbar-brand {
+    /*font-family: Orbitron;*/
+    /*font-size: 3rem;*/
 }

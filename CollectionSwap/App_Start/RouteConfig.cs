@@ -27,14 +27,14 @@ namespace CollectionSwap
 
             routes.MapRoute(
                 name: "ManageCollections",
-                url: "Manage/ManageCollections",
-                defaults: new { controller = "Manage", action = "Index" }
+                url: "Manage/ManageCollections/{id}",
+                defaults: new { controller = "Manage", action = "Index", id = UrlParameter.Optional }
             );
 
             routes.MapRoute(
                 name: "YourCollections",
-                url: "Manage/YourCollections",
-                defaults: new { controller = "Manage", action = "Index" }
+                url: "Manage/YourCollections/{id}",
+                defaults: new { controller = "Manage", action = "Index", id = UrlParameter.Optional }
             );
 
             routes.MapRoute(

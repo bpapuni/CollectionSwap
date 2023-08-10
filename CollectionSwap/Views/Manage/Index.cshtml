@@ -7,12 +7,12 @@
 
 <div class="manage-container">
     <div class="manage-container-nav">
-        <ul class="selected-1">
+        <ul class="">
             <li>@Html.ActionLink("Swapper", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })</li>
-            <li data-partial="Account">Account</li>
-            <li data-partial="ManageCollections">Manage Collections</li>
-            <li data-partial="YourCollections">Your Collections</li>
-            <li data-partial="SwapHistory">Swap History</li>
+            <li>@Html.ActionLink("Account", "Account", "Manage", new { area = "" }, new { @class = "subnav-link" })</li>
+            <li>@Html.ActionLink("Manage Collections", "ManageCollections", "Manage", new { area = "" }, new { @class = "subnav-link" })</li>
+            <li>@Html.ActionLink("Your Collections", "YourCollections", "Manage", new { area = "" }, new { @class = "subnav-link" })</li>
+            <li>@Html.ActionLink("Swap History", "SwapHistory", "Manage", new { area = "" }, new { @class = "subnav-link" })</li>
         </ul>
     </div>
     <div class="manage-container-main">
@@ -21,157 +21,190 @@
 
 @section scripts {
     <link href="~/Content/Manage.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.1/chroma.min.js"></script>
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.1/chroma.min.js"></script>*@
     <script>
-        //$(document).ready(function () {
-            const navUl = $(".manage-container-nav ul");
+        const navUl = $(".manage-container-nav ul");
+        const subNavLinks = $(".subnav-link");
+        var scrollTop = $(window).scrollTop();
 
-            // Map the values of our navbar links to an array
-            const navLinks = navUl.find("li").map(function () {
-                return $(this).text().replace(' ', '');
-            }).get();
+        // Map the values of our partial views to an array
+        const partialNames = subNavLinks.map(function () {
+            return $(this).text().replace(' ', '');
+        }).get();
 
-            let partialName = location.pathname.split("/Manage/")[1];
+        // Get the current partial views name and id if there is one
+        var partialName = location.pathname.split("/Manage/").pop().split("/")[0];
+        var partialId = location.pathname.split("/Manage/").pop().split("/")[1];
 
-            // If user has navigated to a page not within our navLinks default them to the account partial
-            if (!navLinks.includes(partialName)) {
-                partialName = "Account";
-            }
+        // If user has navigated to a page not within our partialNames array redirect them them to the Account partial
+        if (!partialNames.includes(partialName)) {
+            partialName = "Account";
+        }
 
-            const index = navUl.find("li").index($(`[data-partial="${partialName}"]`));
+        // Find the link index of the the currently active partial view
+        var selectedNavLink = subNavLinks.parent().find(`[href='/Manage/${partialName}']`)
+        var selectedIndex = subNavLinks.index(selectedNavLink) + 1;
 
+        // Animate the link highlight to the correct position
+        navUl.removeClass("selected-1 selected-2 selected-3 selected-4");
+        navUl.addClass(`selected-${selectedIndex}`);
+
+        // Display the partial view
+        LoadPartial(partialName, `/Manage/${partialName}`)
+
+        // On back/forward navigation update the partial name and display the corresponding view
+        $(window).on("popstate", function (e) {
+            //partialName = e.originalEvent.state ? e.originalEvent.state.partialName : "Account";
+            partialName = partialName == "Index" ? "Account" : location.pathname.split("/Manage/").pop().split("/")[0]
+            partialId = location.pathname.split("/Manage/").pop().split("/")[1];
+            LoadPartial(partialName, `/Manage/${partialName}`)
+        });
+
+        // Automatically submit the form when changing an items image
+        $(document).on("change", "#items input[type='file']", function () {
+            $(this).closest("form").submit();
+        });
+
+        // Sub navbar click listeners
+        $(document).on("click", ".subnav-link, .new-collection", function (event) {
+            event.preventDefault();
+            partialName = $(this).attr("href").split("/Manage/").pop();
+            partialId = $(this).attr("href").split("/Manage/").pop().split("/")[1];
+            history.pushState({ partialName: partialName }, null, `/Manage/${partialName}`);
+            LoadPartial(partialName, $(this).attr("href"));
+        });
+
+        // Handle loading the navigation partial views
+        function LoadPartial(partialName, url) {
+            selectedNavLink = subNavLinks.parent().find(`[href='/Manage/${partialName.split("/")[0]}']`)
+            selectedIndex = subNavLinks.index(selectedNavLink) + 1;
             navUl.removeClass("selected-1 selected-2 selected-3 selected-4");
-            navUl.addClass(`selected-${index}`);
+            navUl.addClass(`selected-${selectedIndex}`);
 
-            if (location.pathname.split("/Manage/")[1] != "Account" && location.pathname.split("/Manage/")[1] != "ChangePassword") {
-            }
-            LoadNavPartial(partialName);
-
-            $(".manage-container-nav li").on("click", function (e) {
-                var partialName = $(this).data("partial");
-
-                if (partialName) {
-                    LoadNavPartial(partialName);
-                }
-            });
-
-            $(window).on("popstate", function (e) {
-                if (e.originalEvent.state) {
-                    LoadNavPartial(e.originalEvent.state.partialName, true)
-                } else {
-                    LoadNavPartial("Account", true)
-                }
-            });
-
-            function LoadNavPartial(partialName, popped = false) {
-                const liIndex = $(".manage-container ul li").index($(`[data-partial='${partialName}']`));
-
-                $(".manage-container-nav ul").removeClass("selected-1 selected-2 selected-3 selected-4");
-                $(".manage-container-nav ul").addClass(`selected-${liIndex}`);
-
-                if (!popped) {
-                    history.pushState({ partialName: partialName }, null, `/Manage/${partialName}`);
-                }
-
-                $.ajax({
-                    url: "/Manage/LoadPartial",
-                    data: { partialName: `_${partialName}` },
-                    type: 'GET',
-                    success: function (result) {
-                        $('.manage-container-main').html(result);
-                    },
-                    error: function () {
-                        // Handle error
+            $.ajax({
+                url: `${url}Partial`,
+                type: "POST",
+                success: function (result) {
+                    $('.manage-container-main').html(result.PartialView);
+                    if (partialId) {
+                        $(`[action="/Manage/EditCollection/${partialId}"]`).submit();
+                        $(`[action="/Manage/UserCollection/${partialId}"]`).submit();
                     }
-                });
-            }
-
-            $(document).on("change", "input[type='file']", function () {
-                $(this).closest("form").submit();
+                },
+                error: function () {
+                    // Handle error
+                }
             });
+        }
 
+        // Handle loading form submission partial views
         $(document).on("submit", ".manage-container-main form", function (event) {
-                event.preventDefault();
+            event.preventDefault();
+            var formData = new FormData(this);
 
-                var formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr("action"),
+                type: $(this).attr("method"),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    var reload = result.Reload;
+                    var partialView = result.PartialView;
 
-                $.ajax({
-                    url: $(this).attr("action"),
-                    type: $(this).attr("method"),
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (result) {
-                        if (result.reload) {
-                            document.location.reload();
-                        }
-                        console.log($(result));
-                        var targetId = $(result)[0].id;
-                        $(`#${targetId}`).prop('outerHTML', result);
-                    },
-                    error: function () {
-                        // Handle error
+                    //if (reload) {
+                    //    document.location = document.location.href.split(`/${partialId}`)[0];
+                    //}
+
+                    var targetId = $(partialView)[0].id;
+
+                    $(`#${targetId}`).prop("outerHTML", partialView);
+
+                    if (result.ScrollTo) {
+                        var scrollTo = $(`#${targetId}`).prop("offsetTop");
+                        setTimeout(function () {
+                            window.scrollTo(0, scrollTo);
+                        }, 100)
                     }
-                });
+                },
+                error: function () {
+                    // Handle error
+                }
             });
+        });
 
-            function ColourButtons() {
-                const buttons = $('input[type="submit"]');
+        $(document).on("click", "#user-collection-container .item-container", function () {
+            //let itemQuantity = $(this).next();
+            ////let quantity = itemQuantity.hasClass("visually-hidden") ? 1 : 0
+            //let input = itemQuantity.find("#user-collection-container [type='number']");
+            //let itemId = input.prop("id");
 
-                buttons.each(function () {
-                    const baseHue = Math.random() * 360;
-                    const vibrantColor = chroma.hsl(baseHue, 30, 74); // Adjust saturation and lightness as needed
-                    const buttonColor = vibrantColor.hex(); // Convert Chroma color to HEX format
-                    const textColor = chroma.contrast(buttonColor, 'white') > 4.5 ? 'white' : 'black';
-                    $(this).css('background-color', buttonColor);
-                    $(this).css('color', textColor);
-                });
+            ////itemQuantity.toggleClass("visually-hidden");
+            ////input.val(quantity);
+            //$(this).toggleClass("item-not-owned");
+
+            //UpdateUserCollection(itemId, quantity);
+        })
+
+        $(document).on("click", ".counter-add, .counter-minus", function () {
+            let input = $(this).parent().find("[name='quantity']");
+            let itemId = input.prop("id");
+            let change = $(this).hasClass("counter-add") ? 1 : -1;
+            let quantity = (+input.val() + change) > 0 ? +input.val() + change : 0 ;
+
+            input.val(quantity);
+            if (quantity == 0) {
+                $(this).parent().parent().prev().addClass("item-not-owned");
+                //UpdateUserCollection(itemId, quantity);
             }
+            if (quantity == 1) {
+                $(this).parent().parent().prev().removeClass("item-not-owned");
+                //UpdateUserCollection(itemId, quantity);
+            }
+        })
 
-            @*$(document).on("submit", "#update-password", function (event) {
-                event.preventDefault(); // Prevent the default form submission
+        $(document).on("input", "#user-collection-container [type='number']", function () {
+            let input = $(this);
+            let itemId = input.prop("id");
+            let quantity = +input.val()
 
-                var formData = new FormData(this);
+            if (quantity < 0) {
+                input.val(0);
+                /*$(this).parent().parent().prev().trigger("click");*/
+                //UpdateUserCollection(itemId, quantity);
+            }
+        })
 
-                $.ajax({
-                    url: '@Url.Action("ChangePassword", "Manage")',
-                    type: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (result) {
-                        var validationSummary = $(".text-danger");
-                        validationSummary.empty();
-                        validationSummary.css({ display: "none" });
+            //function ColourButtons() {
+            //    const buttons = $('input[type="submit"]');
 
-                        $.each(result.Errors, function (index, error) {
-                            validationSummary.eq(error.Index).css({ display: "block" });
-                            validationSummary.eq(error.Index).html('<li>' + error.Error + '</li>');
-                        });
-                    },
-                    error: function () {
-                        // Handle error
-                    }
-                });
-            });*@
-            //const paintBlotches = document.querySelector('.manage-container-main');
-            //const numBlotches = 30; // Adjust the number of blotches as needed
-
-            //for (let i = 0; i < numBlotches; i++) {
-            //    const blotch = document.createElement('div');
-            //    const baseHue = Math.random() * 360;
-            //    const vibrantColor = chroma.hsl(baseHue, 30, 74); // Adjust saturation and lightness as needed
-
-            //    blotch.classList.add('paint-blotch');
-            //    blotch.style.left = `${Math.random() * 100}%`;
-            //    blotch.style.top = `${Math.random() * 100}%`;
-            //    blotch.style.scale = `${Math.random() * 100}%`;
-            //    blotch.style.backgroundColor = vibrantColor;
-            //    //blotch.style.borderRadius = `${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% / ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100 }%`
-            //    //blotch.style.animation = `animateBlotches ${(Math.random() * 3 + 2).toFixed(1)}s ${(Math.random() * 3).toFixed(1)}s infinite alternate`;
-            //    paintBlotches.appendChild(blotch);
+            //    buttons.each(function () {
+            //        const baseHue = Math.random() * 360;
+            //        const vibrantColor = chroma.hsl(baseHue, 30, 74); // Adjust saturation and lightness as needed
+            //        const buttonColor = vibrantColor.hex(); // Convert Chroma color to HEX format
+            //        const textColor = chroma.contrast(buttonColor, 'white') > 4.5 ? 'white' : 'black';
+            //        $(this).css('background-color', buttonColor);
+            //        $(this).css('color', textColor);
+            //    });
             //}
-        /*});*/
+
+                //const paintBlotches = document.querySelector('.manage-container-main');
+                //const numBlotches = 30; // Adjust the number of blotches as needed
+
+                //for (let i = 0; i < numBlotches; i++) {
+                //    const blotch = document.createElement('div');
+                //    const baseHue = Math.random() * 360;
+                //    const vibrantColor = chroma.hsl(baseHue, 30, 74); // Adjust saturation and lightness as needed
+
+                //    blotch.classList.add('paint-blotch');
+                //    blotch.style.left = `${Math.random() * 100}%`;
+                //    blotch.style.top = `${Math.random() * 100}%`;
+                //    blotch.style.scale = `${Math.random() * 100}%`;
+                //    blotch.style.backgroundColor = vibrantColor;
+                //    //blotch.style.borderRadius = `${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% / ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100 }%`
+                //    //blotch.style.animation = `animateBlotches ${(Math.random() * 3 + 2).toFixed(1)}s ${(Math.random() * 3).toFixed(1)}s infinite alternate`;
+                //    paintBlotches.appendChild(blotch);
+                //}
     </script>
     @Scripts.Render("~/bundles/jqueryval")
 }

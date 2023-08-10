@@ -60,7 +60,7 @@ namespace CollectionSwap.Controllers
                 return RedirectToAction("Index", "Manage");
             }
 
-            UserCollectionEditViewModel model = new UserCollectionEditViewModel
+            UserCollectionModel model = new UserCollectionModel
             {
                 Collection = db.Collections.Find(userCollection.CollectionId),
                 UserCollection = userCollection
@@ -70,18 +70,18 @@ namespace CollectionSwap.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        [Authorize]
-        public ActionResult Edit(UserCollection userCollection, string propertyChanged)
-        {
-            if (ModelState.IsValid)
-            {
-                TempData["Success"] = userCollection.Update(db, propertyChanged);
-                return RedirectToAction("Edit");
-            }
+        //[HttpPost]
+        //[Authorize]
+        //public ActionResult Edit(UserCollection userCollection, string propertyChanged)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        TempData["Success"] = userCollection.Update(db, propertyChanged);
+        //        return RedirectToAction("Edit");
+        //    }
 
-            return RedirectToAction("Index", "Manage");
-        }
+        //    return RedirectToAction("Index", "Manage");
+        //}
 
         [Authorize]
         [HttpPost]

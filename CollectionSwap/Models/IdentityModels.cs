@@ -1,4 +1,6 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -54,6 +56,7 @@ namespace CollectionSwap.Models
         public DbSet<UserCollection> UserCollections { get; set; }
         public DbSet<Swap> Swaps { get; set; }
         public DbSet<HeldItems> HeldItems { get; set; }
+        public DbSet<Address> Addresses { get; set; }
     }
 
     public class ApplicationRole : IdentityRole

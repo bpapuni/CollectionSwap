@@ -1,0 +1,22 @@
+﻿@model CollectionSwap.Models.CollectionButton
+
+<a class="new-collection" href="@Model.href">
+    <div class="new-collection-row">
+        @for (var i = 0; i < 3; i++)
+        {
+            if (Model.ItemList.Count > i)
+            {
+                var src = Url.Content($"~/Collections/{Model.Id}/{Model.ItemList[i]}");
+                <img class="new-collection-feature-card" src="@src" />
+            }
+        }
+    </div>
+    <div class="new-collection-column">
+        <div class="new-collection-center">@Model.Name[0]</div>
+        <span><strong>@Model.Name</strong></span>
+        <span>Short description goes here</span>
+    </div>
+    <div class="new-collection-row">
+
+    </div>
+</a>

@@ -265,6 +265,18 @@
     <Compile Include="Migrations\202307312220172_UpdateSwapModel.designer.cs">
       <DependentUpon>202307312220172_UpdateSwapModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202308080144070_CreatedAddressModel.cs" />
+    <Compile Include="Migrations\202308080144070_CreatedAddressModel.designer.cs">
+      <DependentUpon>202308080144070_CreatedAddressModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202308080215480_EditAddressModel.cs" />
+    <Compile Include="Migrations\202308080215480_EditAddressModel.designer.cs">
+      <DependentUpon>202308080215480_EditAddressModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202308080223264_EditAddressModel1.cs" />
+    <Compile Include="Migrations\202308080223264_EditAddressModel1.designer.cs">
+      <DependentUpon>202308080223264_EditAddressModel1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CollectionModels.cs" />
@@ -409,8 +421,11 @@
     <Content Include="Views\Manage\_Account.cshtml" />
     <Content Include="Views\Manage\_ManageCollections.cshtml" />
     <Content Include="Views\Manage\_YourCollections.cshtml" />
-    <Content Include="Views\Manage\_CreateCollection.cshtml" />
     <Content Include="Views\Manage\_EditCollection.cshtml" />
+    <Content Include="Views\Manage\_CreateCollection.cshtml" />
+    <Content Include="Views\Manage\_AvailableCollections.cshtml" />
+    <Content Include="Views\Manage\_CollectionButton.cshtml" />
+    <Content Include="Views\Manage\_UserCollection.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -506,6 +521,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202307312220172_UpdateSwapModel.resx">
       <DependentUpon>202307312220172_UpdateSwapModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202308080144070_CreatedAddressModel.resx">
+      <DependentUpon>202308080144070_CreatedAddressModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202308080215480_EditAddressModel.resx">
+      <DependentUpon>202308080215480_EditAddressModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202308080223264_EditAddressModel1.resx">
+      <DependentUpon>202308080223264_EditAddressModel1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

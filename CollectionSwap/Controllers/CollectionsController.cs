@@ -28,30 +28,30 @@ namespace CollectionSwap.Controllers
             return RedirectToAction("Index", "Manage");
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public ActionResult Create(ManageCollectionsViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                Collection.Create(model.NewCollection, db);
-                var mcViewModel = new ManageCollectionsViewModel
-                {
-                    Collections = db.Collections.ToList(),
-                    NewCollection = model.NewCollection
-                };
-                //return RedirectToAction("LoadPartial", "Manage", new { partialName = "_ManageCollections" });
-                return PartialView("~/Views/Manage/_ManageCollections.cshtml", mcViewModel);
-            }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        //public ActionResult Create(ManageCollectionsViewModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        Collection.Create(model.CreateCollection, db);
+        //        var mcViewModel = new ManageCollectionsViewModel
+        //        {
+        //            Collections = db.Collections.ToList(),
+        //            CreateCollection = model.CreateCollection
+        //        };
+        //        //return RedirectToAction("LoadPartial", "Manage", new { partialName = "_ManageCollections" });
+        //        return PartialView("~/Views/Manage/_ManageCollections.cshtml", mcViewModel);
+        //    }
 
-            //string viewHtml = Helper.RenderViewToString(ControllerContext, "~/Views/Manage/_CreateCollection.cshtml", model, true);
-            //var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+        //    //string viewHtml = Helper.RenderViewToString(ControllerContext, "~/Views/Manage/_CreateCollection.cshtml", model, true);
+        //    //var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
 
-            //return Json(new { Success = false, Errors = errors, PartialView = viewHtml });
+        //    //return Json(new { Success = false, Errors = errors, PartialView = viewHtml });
 
-            return PartialView("~/Views/Manage/_ManageCollections.cshtml", model);
-        }
+        //    return PartialView("~/Views/Manage/_ManageCollections.cshtml", model);
+        //}
 
         //[HttpPost]
         //[ValidateAntiForgeryToken]
@@ -70,55 +70,55 @@ namespace CollectionSwap.Controllers
         //    var model = new ManageCollectionsViewModel
         //    {
         //        Collections = db.Collections.ToList(),
-        //        NewCollection = new CreateCollection { }
+        //        CreateCollection = new CreateCollection { }
         //    };
 
         //    return PartialView("~/Views/Manage/_ManageCollections.cshtml", model);
         //}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public ActionResult Delete(int? collectionId)
-        {
-            Collection collection = db.Collections.Find(collectionId);
-            collection.Delete(db);
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        //public ActionResult Delete(int? collectionId)
+        //{
+        //    Collection collection = db.Collections.Find(collectionId);
+        //    collection.Delete(db);
 
-            return RedirectToAction("Index", "Manage");
-        }
+        //    return RedirectToAction("Index", "Manage");
+        ////}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public ActionResult CreateItem(int collectionId, HttpPostedFileBase fileInput)
-        {
-            var collection = db.Collections.Find(collectionId);
-            collection.AddItem(fileInput, db);
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        //public ActionResult CreateItem(int collectionId, HttpPostedFileBase fileInput)
+        //{
+        //    var collection = db.Collections.Find(collectionId);
+        //    collection.AddItem(fileInput, db);
 
-            return RedirectToAction("Edit/" + collectionId);
-        }
+        //    return RedirectToAction("Edit/" + collectionId);
+        //}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public ActionResult EditItem(int collectionId, int itemId, string fileName, HttpPostedFileBase fileInput)
-        {
-            var collection = db.Collections.Find(collectionId);
-            collection.EditItem(itemId, fileName, fileInput, db);
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        //public ActionResult EditItem(int collectionId, int itemId, string fileName, HttpPostedFileBase fileInput)
+        //{
+        //    var collection = db.Collections.Find(collectionId);
+        //    collection.EditItem(itemId, fileName, fileInput, db);
 
-            return RedirectToAction("Edit/" + collectionId);
-        }
+        //    return RedirectToAction("Edit/" + collectionId);
+        ////}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public ActionResult DeleteItem(int? collectionId, string fileName)
-        {
-            var collection = db.Collections.Find(collectionId);
-            collection.DeleteItem(fileName, db);
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        //public ActionResult DeleteItem(int? collectionId, string fileName)
+        //{
+        //    var collection = db.Collections.Find(collectionId);
+        //    collection.DeleteItem(fileName, db);
 
-            return RedirectToAction("Edit/" + collectionId);
-        }
+        //    return RedirectToAction("Edit/" + collectionId);
+        //}
 
         //[HttpPost]
         //[Authorize(Roles = "Admin")]

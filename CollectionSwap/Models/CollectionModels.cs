@@ -43,7 +43,7 @@ namespace CollectionSwap.Models
         [Required(ErrorMessage = "Please enter a name for this collection.")]
         public string Name { get; set; }
         public string ItemListJSON { get; set; }
-        public static void Create(CreateCollection collection, ApplicationDbContext db)
+        public static void Create(CreateCollectionModel collection, ApplicationDbContext db)
         {
             if (collection.fileInput != null && collection.fileInput.ContentLength > 0)
             {
@@ -176,10 +176,21 @@ namespace CollectionSwap.Models
         }
     }
 
-    public class CreateCollection
+    public class EditCollectionModel
     {
+        public Collection Collection { get; set; }
+        [Required(ErrorMessage = "Please select an image.")]
+        [Display(Name = "Add an Item")]
+        public HttpPostedFileBase FileInput { get; set; }
+    }
+
+    public class CreateCollectionModel
+    {
+        [Display(Name = "Collection Name")]
         [Required(ErrorMessage = "Please enter a name for this collection.")]
         public string Name { get; set; }
+        [Display(Name = "Description (optional)")]
+        public string Description { get; set; }
 
         [ZipFile(ErrorMessage = "Please select a zip file containing images.")]
         [Required(ErrorMessage = "Please select a zip file containing images.")]
@@ -214,18 +225,11 @@ namespace CollectionSwap.Models
 
             return newUserCollection;
         }
-        public string Update(ApplicationDbContext db, string propertyChanged)
+        public void Update(string name, ApplicationDbContext db)
         {
+            this.Name = name;
             db.Entry(this).State = EntityState.Modified;
             db.SaveChanges();
-
-            switch (propertyChanged)
-            {
-                case "name":
-                    return "Collection name updated successfully.";
-                default:
-                    return string.Empty;
-            }
         }
         public string Delete(ApplicationDbContext db)
         {
@@ -329,7 +333,15 @@ namespace CollectionSwap.Models
         }
     }
 
-    public class UserCollectionEditViewModel
+    public class CollectionButton
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string href { get; set; }
+        public List<string> ItemList { get; set; }
+    }
+
+    public class UserCollectionModel
     {
         public Collection Collection { get; set; }
         public UserCollection UserCollection { get; set; }

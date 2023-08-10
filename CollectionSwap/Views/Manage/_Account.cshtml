@@ -31,11 +31,9 @@
                     @Html.ValidationMessageFor(m => m.ChangeEmail.ConfirmEmail)
                 </div>
             </div>
+            <span class="success-message">@ViewBag.ChangeEmailStatus</span>
             <div class="account-form-row">
-                <div class="account-form-column">
-                    <span class="success-message">@ViewBag.ChangeEmailStatus</span>
-                    <input type="submit" value="Update Email" />
-                </div>
+                <input type="submit" value="Update Email" />
             </div>
         }
 
@@ -45,40 +43,38 @@
             <div class="account-form-row">
                 <div class="account-form-column">
                     @Html.LabelFor(m => m.ChangePassword.OldPassword)
-                    @Html.PasswordFor(m => m.ChangePassword.OldPassword, new { @class = "" })
+                    @Html.PasswordFor(m => m.ChangePassword.OldPassword)
                     @Html.ValidationMessageFor(m => m.ChangePassword.OldPassword)
                 </div>
             </div>
             <div class="account-form-row">
                 <div class="account-form-column">
                     @Html.LabelFor(m => m.ChangePassword.NewPassword)
-                    @Html.PasswordFor(m => m.ChangePassword.NewPassword, new { @class = "" })
+                    @Html.PasswordFor(m => m.ChangePassword.NewPassword)
                     @Html.ValidationMessageFor(m => m.ChangePassword.NewPassword)
                 </div>
             </div>
             <div class="account-form-row">
                 <div class="account-form-column">
                     @Html.LabelFor(m => m.ChangePassword.ConfirmPassword)
-                    @Html.PasswordFor(m => m.ChangePassword.ConfirmPassword, new { @class = "" })
+                    @Html.PasswordFor(m => m.ChangePassword.ConfirmPassword)
                     @Html.ValidationMessageFor(m => m.ChangePassword.ConfirmPassword)
                 </div>
             </div>
-            <div class="account-form-row">
-                <div class="account-form-column">
-                    @if (ViewData.ModelState.ContainsKey("ChangePassword"))
+            if (ViewData.ModelState.ContainsKey("ChangePassword"))
+            {
+                <ul>
+                    @foreach (var error in ViewData.ModelState["ChangePassword"].Errors)
                     {
-                        <ul>
-                            @foreach (var error in ViewData.ModelState["ChangePassword"].Errors)
-                            {
-                                <li class="text-danger">
-                                    @error.ErrorMessage
-                                </li>
-                            }
-                        </ul>
+                        <li class="text-danger">
+                            @error.ErrorMessage
+                        </li>
                     }
-                    <span class="success-message">@ViewBag.ChangePasswordStatus</span>
-                    <input type="submit" value="Update Password" />
-                </div>
+                </ul>
+            }
+            <span class="success-message">@ViewBag.ChangePasswordStatus</span>
+            <div class="account-form-row">
+                <input type="submit" value="Update Password" />
             </div>
         }
     </div>
@@ -88,38 +84,9 @@
         <p>Mailing Address</p>
     </div>
 
-    @*@using (Html.BeginForm("ChangeAddess", "Manage", FormMethod.Post, new { @class = "account-form" }))
+    @using (Html.BeginForm("ChangeAddress", "Manage", FormMethod.Post, new { @class = "account-form" }))
     {
         @Html.AntiForgeryToken()
-        <div class="account-form-row">
-            <div class="account-form-column">
-                @Html.LabelFor(m => m.ChangePassword.OldPassword)
-                @Html.PasswordFor(m => m.ChangePassword.OldPassword, new { @class = "" })
-                @Html.ValidationMessageFor(m => m.ChangePassword.OldPassword)
-            </div>
-        </div>
-        <div class="account-form-row">
-            <div class="account-form-column">
-                @Html.LabelFor(m => m.ChangePassword.NewPassword)
-                @Html.PasswordFor(m => m.ChangePassword.NewPassword, new { @class = "" })
-                @Html.ValidationMessageFor(m => m.ChangePassword.NewPassword)
-            </div>
-        </div>
-        <div class="account-form-row">
-            <div class="account-form-column">
-                @Html.LabelFor(m => m.ChangePassword.ConfirmPassword)
-                @Html.PasswordFor(m => m.ChangePassword.ConfirmPassword, new { @class = "" })
-                @Html.ValidationMessageFor(m => m.ChangePassword.ConfirmPassword)
-            </div>
-        </div>
-        <div class="account-form-row">
-            <div class="account-form-column">
-                <input type="submit" value="Update Password" />
-            </div>
-        </div>
-    }*@
-
-    @*<form class="account-form">
         <div class="account-form-row">
             <div class="account-form-column">
                 <span>
@@ -130,38 +97,56 @@
         </div>
         <div class="account-form-row">
             <div class="account-form-column">
-                <label>Full Name</label>
-                <input type="text" />
+                @Html.LabelFor(m => m.ChangeAddress.FullName)
+                @Html.TextBoxFor(m => m.ChangeAddress.FullName)
+                @Html.ValidationMessageFor(m => m.ChangeAddress.FullName)
             </div>
             <div class="account-form-column">
-                <label>Company Name (optional)</label>
-                <input type="text" />
-            </div>
-        </div>
-        <div class="account-form-row">
-            <div class="account-form-column">
-                <label>Address Line 1</label>
-                <input type="text" />
-            </div>
-            <div class="account-form-column">
-                <label>Address Line 2</label>
-                <input type="text" />
+                @Html.LabelFor(m => m.ChangeAddress.CompanyName)
+                @Html.TextBoxFor(m => m.ChangeAddress.CompanyName)
+                @Html.ValidationMessageFor(m => m.ChangeAddress.CompanyName)
             </div>
         </div>
         <div class="account-form-row">
             <div class="account-form-column">
-                <label>Post Code</label>
-                <input type="text" />
+                @Html.LabelFor(m => m.ChangeAddress.LineOne)
+                @Html.TextBoxFor(m => m.ChangeAddress.LineOne)
+                @Html.ValidationMessageFor(m => m.ChangeAddress.LineOne)
             </div>
             <div class="account-form-column">
-                <label>City</label>
-                <input type="text" />
+                @Html.LabelFor(m => m.ChangeAddress.LineTwo)
+                @Html.TextBoxFor(m => m.ChangeAddress.LineTwo)
+                @Html.ValidationMessageFor(m => m.ChangeAddress.LineTwo)
             </div>
         </div>
         <div class="account-form-row">
             <div class="account-form-column">
+                @Html.LabelFor(m => m.ChangeAddress.PostCode)
+                @Html.TextBoxFor(m => m.ChangeAddress.PostCode)
+                @Html.ValidationMessageFor(m => m.ChangeAddress.PostCode)
+            </div>
+            <div class="account-form-column">
+                @Html.LabelFor(m => m.ChangeAddress.City)
+                @Html.TextBoxFor(m => m.ChangeAddress.City)
+                @Html.ValidationMessageFor(m => m.ChangeAddress.City)
+            </div>
+        </div>
+        <div class="account-form-row">
+            <div class="account-form-column">
+                @if (ViewData.ModelState.ContainsKey("ChangeAddress"))
+                {
+                    <ul>
+                        @foreach (var error in ViewData.ModelState["ChangeAddress"].Errors)
+                        {
+                            <li class="text-danger">
+                                @error.ErrorMessage
+                            </li>
+                        }
+                    </ul>
+                }
+                <span class="success-message">@ViewBag.ChangeAddressStatus</span>
                 <input type="submit" value="Update Address" />
             </div>
         </div>
-    </form>*@
+    }
 </div>

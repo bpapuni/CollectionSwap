@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 
@@ -14,22 +18,23 @@ namespace CollectionSwap.Models
         public bool BrowserRemembered { get; set; }
         public ChangeEmailViewModel ChangeEmail { get; set; }
         public ChangePasswordViewModel ChangePassword { get; set; }
+        public Address ChangeAddress { get; set; }
         public List<Collection> Collections { get; set; }
         public List<UserCollection> UserCollections { get; set; }
-        //public static IndexViewModel Create()
-        //{
-        //    IndexViewModel indexViewModel = new IndexViewModel
-        //    {
-
-        //    }
-        //    return 
-        //}
     }
 
     public class ManageCollectionsViewModel
     {
         public List<Collection> Collections { get; set; }
-        public CreateCollection NewCollection { get; set; }
+        public CreateCollectionModel CreateCollection { get; set; }
+        public EditCollectionModel EditCollection { get; set; }
+    }
+
+    public class YourCollectionViewModel
+    {
+        public List<Collection> Collections { get; set; }
+        public List<UserCollection> UserCollections { get; set; }
+        public UserCollectionModel EditCollection { get; set; }
     }
 
     public class ManageLoginsViewModel
@@ -93,6 +98,64 @@ namespace CollectionSwap.Models
         [Display(Name = "Confirm New Password")]
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+    }
+
+    public class Address
+    {
+        [Key]
+        public int Id { get; set; }
+        public string UserId { get; set; }
+        [Required(ErrorMessage = "This field is required.")]
+        [Display(Name = "Full Name")]
+        public string FullName { get; set; }
+        [Display(Name = "Company Name")]
+        public string CompanyName { get; set; }
+        [Required(ErrorMessage = "This field is required.")]
+        [Display(Name = "Address Line 1")]
+        public string LineOne { get; set; }
+        [Display(Name = "Address Line 2")]
+        public string LineTwo { get; set; }
+        [Required(ErrorMessage = "This field is required.")]
+        [Display(Name = "Post Code")]
+        public string PostCode { get; set; }
+        [Required(ErrorMessage = "This field is required.")]
+        public string City { get; set; }
+        [Required]
+        public DateTimeOffset Created { get; set; }
+
+        public class CreateAddressResult
+        {
+            public bool Succeeded { get; set; }
+            public string Error { get; set; }
+        }
+
+        public async Task<CreateAddressResult> CreateAddressAsync(string userId, ApplicationDbContext db)
+        {
+            try
+            {
+                var lastAddress = db.Addresses.OrderByDescending(a => a.Created)
+                                              .FirstOrDefault(a => a.UserId == userId);
+
+                if (lastAddress.FullName == this.FullName &&
+                    lastAddress.CompanyName == this.CompanyName &&
+                    lastAddress.LineOne == this.LineOne &&
+                    lastAddress.LineTwo == this.LineTwo &&
+                    lastAddress.PostCode == this.PostCode &&
+                    lastAddress.City == this.City) 
+                {
+                    return new CreateAddressResult { Succeeded = false, Error = "This is already your current address." };
+                }
+                this.UserId = userId;
+                this.Created = DateTimeOffset.UtcNow;
+                db.Addresses.Add(this);
+                await db.SaveChangesAsync();
+                return new CreateAddressResult { Succeeded = true };
+            }
+            catch (Exception ex)
+            {
+                return new CreateAddressResult { Succeeded = false, Error = ex.Message };
+            }
+        }
     }
 
     public class AddPhoneNumberViewModel

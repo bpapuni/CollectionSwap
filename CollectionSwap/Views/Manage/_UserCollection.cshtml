@@ -1,0 +1,53 @@
+﻿@model CollectionSwap.Models.UserCollectionModel
+@using CollectionSwap.Models
+@using Newtonsoft.Json;
+@{
+    List<string> items = JsonConvert.DeserializeObject<List<string>>(Model.Collection.ItemListJSON);
+    int[] userItems = JsonConvert.DeserializeObject<int[]>(Model.UserCollection.ItemCountJSON);
+    string statusMessage = ViewBag.Status;
+}
+
+<div id="user-collection-container" class="">
+    <div class="secondary-container-header">
+        <p>@Model.UserCollection.Name</p>
+    </div>
+
+    <div class="tertiary-container flex-column">
+        <span class="success-message">@ViewBag.AddItemStatus</span>
+        @using (Html.BeginForm("ChangeUserCollectionName", "Manage", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "" }))
+        {
+            <div class="account-form-column">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.UserCollection.Id)
+                @Html.HiddenFor(model => model.UserCollection.UserId)
+
+                @Html.LabelFor(model => model.UserCollection.Name)
+                @Html.TextBoxFor(model => model.UserCollection.Name, new { @class = "" })
+                @Html.ValidationMessageFor(model => model.UserCollection.Name, "", new { @class = "text-danger" })
+                <input type="submit" value="Update Name" />
+            </div>
+        }
+
+        <div id="collection-items" class="d-flex gap-5 flex-wrap" style="display: none;">
+            @foreach (var item in items)
+            {
+                var imagePath = $"~/Collections/{Model.UserCollection.CollectionId}";
+                var itemId = items.IndexOf(item) + 1;
+
+                <div class="d-flex flex-column align-items-center">
+                    <div class="item-container @(userItems[itemId - 1] < 1 ? "item-not-owned" : "")">
+                        <img class="item" src="@Url.Content(imagePath)/@item" />
+                    </div>
+                    <div class="item-quantity d-flex flex-column align-items-center">
+                        Quantity:
+                        <div class="d-flex flex-row gap-2 align-items-center">
+                            <button class="counter counter-add"><i class="fa fa-plus-circle"></i></button>
+                            <input type="number" id="@itemId" name="quantity" min="0" max="999" value="@userItems[itemId - 1]" />
+                            <button class="counter counter-minus"><i class="fa fa-minus-circle"></i></button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

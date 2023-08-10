@@ -1,20 +1,26 @@
-﻿@model CollectionSwap.Models.CreateCollection
+﻿@model CollectionSwap.Models.ManageCollectionsViewModel
+
 <div id="create-collection-container" class="secondary-container">
     <div class="secondary-container-header">
         <p>Create New Collection</p>
     </div>
 
     <div class="secondary-container-row">
-        @using (Html.BeginForm("CreateCollection", "Manage", FormMethod.Post, new { role = "form", @class = "account-form", enctype = "multipart/form-data" }))
+        @using (Html.BeginForm("CreateCollection", "Manage", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             @Html.AntiForgeryToken()
             <div class="account-form-column">
-                <label>Collection Name</label>
-                @Html.TextBoxFor(model => model.Name, new { @class = "", @placeholder = "" })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                @Html.LabelFor(model => model.CreateCollection.Name)
+                @Html.TextBoxFor(model => model.CreateCollection.Name, new { @class = "" })
+                @Html.ValidationMessageFor(model => model.CreateCollection.Name, "", new { @class = "" })
 
-                @Html.TextBoxFor(model => model.fileInput, new { type = "file", accept = ".zip", @class = "" })
-                @Html.ValidationMessageFor(model => model.fileInput, "", new { @class = "text-danger" })
+                @Html.LabelFor(model => model.CreateCollection.Description)
+                @Html.TextAreaFor(model => model.CreateCollection.Description, new { @class = "" })
+                @Html.ValidationMessageFor(model => model.CreateCollection.Description, "", new { @class = "" })
+
+                @Html.TextBoxFor(model => model.CreateCollection.fileInput, new { type = "file", accept = ".zip", @class = "" })
+                @Html.ValidationMessageFor(model => model.CreateCollection.fileInput, "", new { @class = "" })
+
                 <input type="submit" value="Create Collection" />
             </div>
         }

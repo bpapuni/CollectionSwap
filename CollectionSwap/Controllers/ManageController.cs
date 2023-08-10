@@ -10,6 +10,7 @@ using CollectionSwap.Models;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using CollectionSwap.Helpers;
+using System.Web.Services.Description;
 
 namespace CollectionSwap.Controllers
 {
@@ -74,12 +75,32 @@ namespace CollectionSwap.Controllers
                 PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
                 TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
                 Logins = await UserManager.GetLoginsAsync(userId),
-                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
+                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId),
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId).ToList(),
+                ChangeAddress = db.Addresses.Where(address => address.UserId == userId).FirstOrDefault()
             };
-            model.Collections = db.Collections.ToList();
-            model.UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList();
 
             return View(model);
+        }
+
+        //
+        // GET: /Manage/Account
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult AccountPartial()
+        {
+            var userId = User.Identity.GetUserId();
+            var model = new IndexViewModel
+            {
+                ChangeAddress = db.Addresses.Where(address => address.UserId == userId).FirstOrDefault()
+            };
+
+            var partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
+            //var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+
+            return Json(new { PartialView = partial });
+            //return PartialView("_Account", model);
         }
 
         [HttpPost]
@@ -87,12 +108,17 @@ namespace CollectionSwap.Controllers
         [Authorize]
         public ActionResult ChangeEmail(IndexViewModel model)
         {
+            var userId = User.Identity.GetUserId();
+            var partial = String.Empty;
+            model.ChangeAddress = db.Addresses.Where(address => address.UserId == userId).FirstOrDefault();
+
             if (!ModelState.IsValid)
             {
-                return PartialView("_Account", model);
+                partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
+                return Json(new { PartialView = partial });
             }
 
-            var userId = User.Identity.GetUserId();
+            
             var user = db.Users.Find(userId);
             var status = user.ChangeEmail(model.ChangeEmail.OldEmail, model.ChangeEmail.NewEmail, db);
 
@@ -100,16 +126,19 @@ namespace CollectionSwap.Controllers
             {
                 case "Incorrect email":
                     ModelState.AddModelError("ChangeEmail.OldEmail", status);
-                    return PartialView("_Account", model);
+                    partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
+                    return Json(new { PartialView = partial });
                 case "This email already exists":
                     ModelState.AddModelError("ChangeEmail.NewEmail", status);
-                    return PartialView("_Account", model);
+                    partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
+                    return Json(new { PartialView = partial });
                 default:
                     break;
             }
 
             ViewBag.ChangeEmailStatus = "Your email has been changed.";
-            return PartialView("_Account");
+            partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
+            return Json(new { PartialView = partial });
         }
 
         [HttpPost]
@@ -117,9 +146,14 @@ namespace CollectionSwap.Controllers
         [Authorize]
         public async Task<ActionResult> ChangePassword(IndexViewModel model)
         {
+            var userId = User.Identity.GetUserId();
+            var partial = String.Empty;
+            model.ChangeAddress = db.Addresses.Where(address => address.UserId == userId).FirstOrDefault();
+
             if (!ModelState.IsValid)
             {
-                return PartialView("_Account", model);
+                partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
+                return Json(new { PartialView = partial });
             }
 
             var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.ChangePassword.OldPassword, model.ChangePassword.NewPassword);
@@ -140,7 +174,9 @@ namespace CollectionSwap.Controllers
                     
                 }
 
-                return PartialView("_Account", model);
+
+                partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
+                return Json(new { PartialView = partial });
             }
 
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
@@ -150,46 +186,116 @@ namespace CollectionSwap.Controllers
             }
 
             ViewBag.ChangePasswordStatus = "Your password has been changed.";
-            return PartialView("_Account");
+            partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
+            return Json(new { PartialView = partial });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<ActionResult> ChangeAddress(IndexViewModel model)
+        {
+            var partial = String.Empty;
+            if (!ModelState.IsValid)
+            {
+                partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
+                return Json(new { PartialView = partial });
+            }
+
+            var result = await model.ChangeAddress.CreateAddressAsync(User.Identity.GetUserId(), db);
+            if (!result.Succeeded)
+            {
+                //ModelState.AddModelError("ChangeAddress", result.Error);
+                partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
+                return Json(new { PartialView = partial });
+            }
+
+            ViewBag.ChangeAddressStatus = "Your mailing address has been changed.";
+            partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
+            return Json(new { PartialView = partial });
+        }
+
+        //
+        // GET: /Manage/ManageCollections
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult ManageCollectionsPartial()
+        {
+            var partial = String.Empty;
+            var model = new ManageCollectionsViewModel
+            {
+                Collections = db.Collections.ToList(),
+                CreateCollection = new CreateCollectionModel()
+            };
+            
+            partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
+            return Json(new { PartialView = partial });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public ActionResult CreateCollection(CreateCollection model)
+        public ActionResult CreateCollection(ManageCollectionsViewModel model)
         {
+            var partial = String.Empty;
             if (!ModelState.IsValid)
             {
-                return PartialView("_CreateCollection", model);
+                model.Collections = db.Collections.ToList();
+                partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
+                return Json(new { PartialView = partial });
             }
 
-            Collection.Create(model, db);
-            var mcViewModel = new ManageCollectionsViewModel
-            {
-                Collections = db.Collections.ToList(),
-                NewCollection = new CreateCollection { }
-            };
+            Collection.Create(model.CreateCollection, db);
+            model.Collections = db.Collections.ToList();
 
-            return PartialView("_ManageCollections", mcViewModel);
+            partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
+            return Json(new { PartialView = partial });
+            //return Json(new { Reload = true });
         }
+
+        //
+        // GET: /Manage/ManageCollections/_EditCollection
 
         [Authorize(Roles = "Admin")]
         public ActionResult EditCollection(int id)
         {
-            var collection = db.Collections.Find(id);
+            var partial = String.Empty;
+            var model = new EditCollectionModel { Collection = db.Collections.Find(id) };
 
-            return PartialView("_EditCollection", collection);
+            partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", model, true);
+            return Json(new { PartialView = partial, ScrollTo = true }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public ActionResult EditCollection(Collection model)
+        public ActionResult DeleteCollection(int? collectionId)
         {
+            var partial = String.Empty;
+            Collection collection = db.Collections.Find(collectionId);
+            collection.Delete(db);
+
+            var model = new ManageCollectionsViewModel
+            {
+                Collections = db.Collections.ToList(),
+                CreateCollection = new CreateCollectionModel()
+            };
+
+            partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
+            return Json(new { PartialView = partial });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public ActionResult ChangeCollectionName(Collection model)
+        {
+            var partial = String.Empty;
             if (!ModelState.IsValid)
             {
                 model.ItemListJSON = db.Collections.Find(model.Id).ItemListJSON;
-                return PartialView("_EditCollection", model);
+                partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", model, true);
+                return Json(new { PartialView = partial });
 
             }
 
@@ -199,10 +305,36 @@ namespace CollectionSwap.Controllers
             var mcViewModel = new ManageCollectionsViewModel
             {
                 Collections = db.Collections.ToList(),
-                NewCollection = new CreateCollection { }
+                CreateCollection = new CreateCollectionModel(),
+                EditCollection = new EditCollectionModel { Collection = db.Collections.Find(model.Id) }
             };
 
-            return PartialView("_ManageCollections", mcViewModel);
+            partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcViewModel, true);
+            return Json(new { PartialView = partial });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public ActionResult AddItem(EditCollectionModel model)
+        {
+            var partial = String.Empty;
+            var collection = db.Collections.Find(model.Collection.Id);
+
+            if (!ModelState.IsValidField("FileInput"))
+            {
+                model.Collection = collection;
+                partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", model, true);
+                return Json(new { PartialView = partial });
+
+            }
+
+            collection.AddItem(model.FileInput, db);
+            model.Collection = collection;
+
+            ViewBag.EditCollectionStatus = "Item successfully added to collection.";
+            partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", model, true);
+            return Json(new { PartialView = partial });
         }
 
         [HttpPost]
@@ -210,59 +342,157 @@ namespace CollectionSwap.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult EditItem(int collectionId, int itemId, string fileName, HttpPostedFileBase fileInput)
         {
-
+            var collection = db.Collections.Find(collectionId);
+            var editCollection = new EditCollectionModel { Collection = collection };
+            var partial = String.Empty;
             if (!ModelState.IsValid)
             {
-                var model = db.Collections.Find(collectionId);
-                return PartialView("_EditCollection", model);
+                partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", editCollection, true);
+                return Json(new { PartialView = partial });
 
             }
 
-            var collection = db.Collections.Find(collectionId);
             collection.EditItem(itemId, fileName, fileInput, db);
+            var model = new ManageCollectionsViewModel
+            {
+                Collections = db.Collections.ToList(),
+                CreateCollection = new CreateCollectionModel(),
+                EditCollection = new EditCollectionModel { Collection = collection }
+            };
 
-            return PartialView("_EditCollection", collection);
+            partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
+            return Json(new { PartialView = partial });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public ActionResult DeleteItem(int? collectionId, string fileName)
+        {
+            var collection = db.Collections.Find(collectionId);
+            collection.DeleteItem(fileName, db);
+
+            var model = new ManageCollectionsViewModel
+            {
+                Collections = db.Collections.ToList(),
+                CreateCollection = new CreateCollectionModel(),
+                EditCollection = new EditCollectionModel { Collection = collection }
+            };
+
+            ViewBag.EditCollectionStatus = "Item successfully removed from collection.";
+            var partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
+            return Json(new { PartialView = partial });
+        }
+
+        //
+        // GET: /Manage/YourCollections
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult YourCollectionsPartial()
+        {
+            var userId = User.Identity.GetUserId();
+            var partial = String.Empty;
+            var model = new YourCollectionViewModel
+            {
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId).ToList(),
+            };
+
+            partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", model, true);
+            return Json(new { PartialView = partial });
+        }
+
+        //
+        // GET: /Manage/ManageCollections/_EditCollection
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult UserCollection(int id)
+        {
+            var userCollection = db.UserCollections.Find(id);
+            var model = new UserCollectionModel
+            {
+                Collection = db.Collections.Find(userCollection.CollectionId),
+                UserCollection = userCollection
+            };
+
+            var partial = Helper.RenderViewToString(ControllerContext, "_UserCollection", model, true);
+            return Json(new { PartialView = partial, ScrollTo = true }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public ActionResult ChangeUserCollectionName([Bind(Prefix = "UserCollection")] UserCollection model)
+        {
+            var userCollection = db.UserCollections.Find(model.Id);
+            
+
+            var partial = String.Empty;
+            if (!ModelState.IsValid)
+            {
+                partial = Helper.RenderViewToString(ControllerContext, "_UserCollection", model, true);
+                return Json(new { PartialView = partial });
+            }
+
+            userCollection.Update(model.Name, db);
+            var ucModel = new UserCollectionModel
+            {
+                Collection = db.Collections.Find(userCollection.CollectionId),
+                UserCollection = userCollection
+            };
+            var ycViewModel = new YourCollectionViewModel
+            {
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == model.UserId).ToList(),
+                EditCollection = ucModel
+            };
+
+            partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
+            return Json(new { PartialView = partial });
         }
 
         //[HttpPost]
-        public ActionResult LoadPartial(int? id, string partialName)
-        {
-            var userId = User.Identity.GetUserId();
+        //public ActionResult LoadPartial(int? id, string partialName)
+        //{
+        //    var userId = User.Identity.GetUserId();
 
-            switch (partialName)
-            {
-                case "_CreateCollection":
-                    return PartialView(partialName);
-                case "_EditCollection":
-                    if (id.HasValue)
-                    {
-                        using (var db = new ApplicationDbContext())
-                        {
-                            var collectionModel = db.Collections.Find(id);
-                            return PartialView(partialName, collectionModel);
-                        }
-                    }
-                    break;
-                case "_ManageCollections":
-                    var mcModel = new ManageCollectionsViewModel
-                    {
-                        Collections = db.Collections.ToList(),
-                        NewCollection = new CreateCollection { }
-                    };
-                    return PartialView(partialName, mcModel);
-                case "_Account":
-                case "_YourCollections":
-                case "_SwapHistory":                
-                    var model = new IndexViewModel { };
-                    model.Collections = db.Collections.ToList();
-                    model.UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList();
-                    return PartialView(partialName, model);
-                default:
-                    break;
+        //    switch (partialName)
+        //    {
+        //        case "_CreateCollection":
+        //            return PartialView(partialName);
+        //        case "_EditCollection":
+        //            if (id.HasValue)
+        //            {
+        //                using (var db = new ApplicationDbContext())
+        //                {
+        //                    var collectionModel = db.Collections.Find(id);
+        //                    return PartialView(partialName, collectionModel);
+        //                }
+        //            }
+        //            break;
+        //        case "_ManageCollections":
+        //            var mcModel = new ManageCollectionsViewModel
+        //            {
+        //                Collections = db.Collections.ToList(),
+        //                CreateCollection = new CreateCollection()
+        //            };
+        //            return PartialView(partialName, mcModel);
+        //        case "_Account":
+        //        case "_YourCollections":
+        //        case "_SwapHistory":                
+        //            var model = new IndexViewModel {
+        //                Collections = db.Collections.ToList(),
+        //                UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
+        //                ChangeAddress = db.Addresses.OrderByDescending(a => a.Created)
+        //                                            .FirstOrDefault(a => a.UserId == userId)
+        //            };
+        //            return PartialView(partialName, model);
+        //        default:
+        //            break;
 
-            }
-            return RedirectToAction("Index");
-        }
+        //    }
+        //    return RedirectToAction("Index");
+        //}
 
         //
         // POST: /Manage/RemoveLogin
