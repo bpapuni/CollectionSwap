@@ -10,7 +10,10 @@
         <ul class="">
             <li>@Html.ActionLink("Swapper", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })</li>
             <li>@Html.ActionLink("Account", "Account", "Manage", new { area = "" }, new { @class = "subnav-link" })</li>
-            <li>@Html.ActionLink("Manage Collections", "ManageCollections", "Manage", new { area = "" }, new { @class = "subnav-link" })</li>
+            @if (User.IsInRole("Admin"))
+            {
+                <li>@Html.ActionLink("Manage Collections", "ManageCollections", "Manage", new { area = "" }, new { @class = "subnav-link" })</li>
+            }
             <li>@Html.ActionLink("Your Collections", "YourCollections", "Manage", new { area = "" }, new { @class = "subnav-link" })</li>
             <li>@Html.ActionLink("Swap History", "SwapHistory", "Manage", new { area = "" }, new { @class = "subnav-link" })</li>
         </ul>
@@ -81,6 +84,7 @@
             navUl.removeClass("selected-1 selected-2 selected-3 selected-4");
             navUl.addClass(`selected-${selectedIndex}`);
 
+                    console.log(1);
             $.ajax({
                 url: `${url}Partial`,
                 type: "POST",

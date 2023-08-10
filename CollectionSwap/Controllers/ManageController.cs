@@ -87,7 +87,7 @@ namespace CollectionSwap.Controllers
         //
         // GET: /Manage/Account
 
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public ActionResult AccountPartial()
         {
             var userId = User.Identity.GetUserId();
@@ -387,7 +387,7 @@ namespace CollectionSwap.Controllers
         //
         // GET: /Manage/YourCollections
 
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public ActionResult YourCollectionsPartial()
         {
             var userId = User.Identity.GetUserId();
@@ -405,7 +405,7 @@ namespace CollectionSwap.Controllers
         //
         // GET: /Manage/ManageCollections/_EditCollection
 
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public ActionResult UserCollection(int id)
         {
             var userCollection = db.UserCollections.Find(id);
@@ -421,7 +421,7 @@ namespace CollectionSwap.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public ActionResult ChangeUserCollectionName([Bind(Prefix = "UserCollection")] UserCollection model)
         {
             var userCollection = db.UserCollections.Find(model.Id);
