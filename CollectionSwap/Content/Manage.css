@@ -315,6 +315,12 @@ input[type=submit]:hover {
     }
 }
 
+button.collection-button,
+a.collection-button {
+    text-decoration: none;
+    border: none;
+}
+
 .new-collection {
     display: flex;
     flex-direction: column;

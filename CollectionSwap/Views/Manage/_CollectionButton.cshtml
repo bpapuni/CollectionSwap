@@ -2,7 +2,7 @@
 @{
     string onClickValue = Model.onClick ?? "";
 }
-<a class="new-collection" href="@Model.href" onclick="@onClickValue">
+<div class="new-collection">
     <div class="new-collection-row">
         @for (var i = 0; i < 3; i++)
         {
@@ -21,4 +21,4 @@
     <div class="new-collection-row">
 
     </div>
-</a>
+</div>

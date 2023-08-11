@@ -69,11 +69,14 @@
         });
 
         // Anchor click listeners
-        $(document).on("click", ".subnav-link, .new-collection", function (event) {
+        $(document).on("click", ".subnav-link, a.collection-button", function (event) {
             event.preventDefault();
-            partialName = $(this).attr("href").split("/Manage/").pop();
-            partialId = $(this).attr("href").split("/Manage/").pop().split("/")[1];
-            history.pushState({ partialName: partialName }, null, `/Manage/${partialName}`);
+            var url = $(this).attr("href").split("/Manage/").pop().split("/");
+            partialName = url[0];
+            partialId = url[1] == '#' ? '' : url[1];
+
+            var historyEntry = partialId == undefined ? partialName : `${partialName}/${partialId}`;
+            history.pushState({ partialName: historyEntry }, null, `/Manage/${historyEntry}`);
 
             LoadPartial(partialName, $(this).attr("href"));
         });
@@ -81,8 +84,7 @@
         // Form submit listeners Handle loading form submission partial views
         $(document).on("submit", ".manage-container-main form", function (event) {
             event.preventDefault();
-
-            HandleFormSubmit($(this).attr("action"), $(e).attr("method"), new FormData($(this)));
+            HandleFormSubmit($(this).attr("action"), $(this).attr("method"), new FormData(this));
         });
 
         // Handle loading the navigation partial views
@@ -99,7 +101,7 @@
                     $('.manage-container-main').html(result.PartialView);
                     if (partialId) {
                         const collection = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection");
-                        HandleFormSubmit(`/Manage/${collection}`, "GET", null);
+                        HandleFormSubmit(`/Manage/${collection}/${partialId}`, "GET", null);
                     }
                 },
                 error: function () {
@@ -116,21 +118,14 @@
                 processData: false,
                 contentType: false,
                 success: function (result) {
-                    var reload = result.Reload;
                     var partialView = result.PartialView;
-
-                    //if (reload) {
-                    //    document.location = document.location.href.split(`/${partialId}`)[0];
-                    //}
-
                     var targetId = $(partialView)[0].id;
 
                     $(`#${targetId}`).prop("outerHTML", partialView);
 
-                    if (result.ScrollTo) {
-                        var scrollTo = $(`#${targetId}`).prop("offsetTop");
+                    if (result.ScrollTarget) {
                         setTimeout(function () {
-                            window.scrollTo(0, scrollTo);
+                            window.scrollTo(0, $(result.ScrollTarget).prop("offsetTop"));
                         }, 100)
                     }
                 },

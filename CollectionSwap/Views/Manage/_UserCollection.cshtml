@@ -9,12 +9,13 @@
 
 <div id="user-collection-container" class="">
     <div class="secondary-container-header">
-        <p>@Model.UserCollection.Name</p>
+        <p>Update Your @Model.UserCollection.Name Collection</p>
     </div>
 
     <div class="tertiary-container flex-column">
         <span class="success-message">@ViewBag.AddItemStatus</span>
-        @using (Html.BeginForm("ChangeUserCollectionName", "Manage", null, FormMethod.Post, new { enctype = "multipart/form-data", @class = "" }))
+        <span><strong>Completed a swap?</strong> Place feedback about the swap in your Swap History to automatically update this collection with your new items.</span>
+        @using (Html.BeginForm("ChangeUserCollectionName", "Manage", null, FormMethod.Post, new { @class = "" }))
         {
             <div class="account-form-column">
                 @Html.AntiForgeryToken()

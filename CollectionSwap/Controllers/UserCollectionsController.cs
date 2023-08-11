@@ -32,18 +32,18 @@ namespace CollectionSwap.Controllers
             return View();
         }
 
-        [Authorize]
-        [HttpPost]
-        public ActionResult Create(int id, int[] quantity)
-        {
-            if (ModelState.IsValid)
-            {
-                string userId = User.Identity.GetUserId();
-                UserCollection.Create(id, quantity, db, userId);
-            }
+        //[Authorize]
+        //[HttpPost]
+        //public ActionResult Create(int id, int[] quantity)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        string userId = User.Identity.GetUserId();
+        //        UserCollection.Create(id, quantity, db, userId);
+        //    }
 
-            return RedirectToAction("Index", "Manage");
-        }
+        //    return RedirectToAction("Index", "Manage");
+        //}
 
         [Authorize]
         public ActionResult Edit(int? id)

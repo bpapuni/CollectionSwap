@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using CollectionSwap.Helpers;
 using System.Web.Services.Description;
+using System.Data.Entity.Infrastructure;
 
 namespace CollectionSwap.Controllers
 {
@@ -268,7 +269,7 @@ namespace CollectionSwap.Controllers
             var model = new EditCollectionModel { Collection = db.Collections.Find(id) };
 
             partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", model, true);
-            return Json(new { PartialView = partial, ScrollTo = true }, JsonRequestBehavior.AllowGet);
+            return Json(new { PartialView = partial, ScrollTarget = "#edit-collection-container" }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -411,7 +412,7 @@ namespace CollectionSwap.Controllers
         // GET: /Manage/ManageCollections/_EditCollection
 
         [Authorize]
-        public ActionResult UserCollection(int id)
+        public ActionResult UserCollection(int? id)
         {
             var userCollection = db.UserCollections.Find(id);
             var model = new UserCollectionModel
@@ -421,7 +422,7 @@ namespace CollectionSwap.Controllers
             };
 
             var partial = Helper.RenderViewToString(ControllerContext, "_UserCollection", model, true);
-            return Json(new { PartialView = partial, ScrollTo = true }, JsonRequestBehavior.AllowGet);
+            return Json(new { PartialView = partial, ScrollTarget = "#user-collection-container" }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -457,24 +458,48 @@ namespace CollectionSwap.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public ActionResult CreateUserCollection(ManageCollectionsViewModel model)
+        [Authorize]
+        public ActionResult CreateUserCollection(int id)
         {
             var partial = String.Empty;
-            if (!ModelState.IsValid)
+
+            var userId = User.Identity.GetUserId();
+            var newUserCollection = Models.UserCollection.Create(id, userId, db);
+            var ucModel = new UserCollectionModel
             {
-                model.Collections = db.Collections.ToList();
-                partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
-                return Json(new { PartialView = partial });
-            }
+                Collection = db.Collections.Find(id),
+                UserCollection = newUserCollection
+            };
 
-            Collection.Create(model.CreateCollection, db);
-            model.Collections = db.Collections.ToList();
+            var ycViewModel = new YourCollectionViewModel
+            {
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId).ToList(),
+                EditCollection = ucModel
+            };
 
-            partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
+            partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
+            return Json(new { PartialView = partial, ScrollTarget = "#user-collection-container" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public ActionResult DeleteUserCollection(int id)
+        {
+            var partial = String.Empty;
+            UserCollection userCollection = db.UserCollections.Find(id);
+            userCollection.Delete(db);
+
+            var userId = User.Identity.GetUserId();
+            var ycViewModel = new YourCollectionViewModel
+            {
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId).ToList()
+            };
+
+            partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
             return Json(new { PartialView = partial });
-            //return Json(new { Reload = true });
         }
 
         //[HttpPost]
