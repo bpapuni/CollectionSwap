@@ -11,10 +11,7 @@
 
 .manage-container-nav {
     display: flex;
-    /*flex-shrink: 0.1;*/
-    /*flex: 1 0 20rem;*/
     min-width: 20rem;
-    /*width: clamp(14rem, 20rem, 20rem);*/
 }
 
 .manage-container-main {
