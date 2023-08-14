@@ -16,7 +16,7 @@
                         FullName = c.String(nullable: false),
                         CompanyName = c.String(),
                         LineOne = c.String(nullable: false),
-                        LineTwo = c.String(nullable: false),
+                        LineTwo = c.String(nullable: true),
                         PostCode = c.String(nullable: false),
                         City = c.String(nullable: false),
                         Created = c.DateTimeOffset(nullable: false, precision: 7),
