@@ -7,12 +7,12 @@
     {
         public override void Up()
         {
-            AlterColumn("dbo.CardSets", "card_set_name", c => c.String(nullable: false));
+            //AlterColumn("dbo.CardSets", "card_set_name", c => c.String(nullable: false));
         }
         
         public override void Down()
         {
-            AlterColumn("dbo.CardSets", "card_set_name", c => c.String());
+            //AlterColumn("dbo.CardSets", "card_set_name", c => c.String());
         }
     }
 }

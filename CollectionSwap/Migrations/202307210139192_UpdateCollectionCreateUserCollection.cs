@@ -18,12 +18,12 @@
                     })
                 .PrimaryKey(t => t.Id);
             
-            AddColumn("dbo.Collections", "Size", c => c.Int(nullable: false));
+            //AddColumn("dbo.Collections", "Size", c => c.Int(nullable: false));
         }
         
         public override void Down()
         {
-            DropColumn("dbo.Collections", "Size");
+            //DropColumn("dbo.Collections", "Size");
             DropTable("dbo.UserCollections");
         }
     }

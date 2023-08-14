@@ -7,14 +7,14 @@
     {
         public override void Up()
         {
-            CreateTable(
-                "dbo.CardSets",
-                c => new
-                    {
-                        card_set_id = c.Int(nullable: false, identity: true),
-                        card_set_name = c.String(),
-                    })
-                .PrimaryKey(t => t.card_set_id);
+            //CreateTable(
+            //    "dbo.CardSets",
+            //    c => new
+            //        {
+            //            card_set_id = c.Int(nullable: false, identity: true),
+            //            card_set_name = c.String(),
+            //        })
+            //    .PrimaryKey(t => t.card_set_id);
             
             CreateTable(
                 "dbo.AspNetRoles",
@@ -103,7 +103,7 @@
             DropTable("dbo.AspNetUsers");
             DropTable("dbo.AspNetUserRoles");
             DropTable("dbo.AspNetRoles");
-            DropTable("dbo.CardSets");
+            //DropTable("dbo.CardSets");
         }
     }
 }
