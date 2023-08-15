@@ -69,6 +69,13 @@
             partialName = partialName == "Index" ? "Account" : location.pathname.split("/Manage/").pop().split("/")[0]
             partialId = location.pathname.split("/Manage/").pop().split("/")[1];
             LoadPartial(partialName, `/Manage/${partialName}`)
+            if (partialId) {
+                const formData = new FormData();
+                const collectionType = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection");
+                formData.append("id", partialId);
+
+                HandleFormSubmit(`/Manage/${collectionType}`, "POST", formData);
+            }
         });
 
         // Automatically submit the form when changing an items image
