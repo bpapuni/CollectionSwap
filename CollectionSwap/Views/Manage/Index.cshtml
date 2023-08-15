@@ -125,6 +125,9 @@
                         $.each(result.RefreshTargets, function (key, target) {
                             $(`${target}`).prop("outerHTML", $(partialView).find(target).html());
                         });
+                    } else {
+                        var target = $(result.PartialView)[0].id;
+                        $(`#${target}`).prop("outerHTML", partialView);
                     }
 
                     if (result.ScrollTarget) {
