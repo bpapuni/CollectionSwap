@@ -1,28 +1,23 @@
 ﻿@model CollectionSwap.Models.ManageCollectionsViewModel
 
-<div id="create-collection-container" class="secondary-container">
-    <div class="secondary-container-header">
-        <p>Create New Collection</p>
+@using (Html.BeginForm("CreateCollection", "Manage", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.CreateCollection.Name)
+        @Html.TextBoxFor(model => model.CreateCollection.Name)
+        @Html.ValidationMessageFor(model => model.CreateCollection.Name, "")
     </div>
-
-    <div class="secondary-container-row">
-        @using (Html.BeginForm("CreateCollection", "Manage", FormMethod.Post, new { enctype = "multipart/form-data" }))
-        {
-            @Html.AntiForgeryToken()
-            <div class="account-form-column">
-                @Html.LabelFor(model => model.CreateCollection.Name)
-                @Html.TextBoxFor(model => model.CreateCollection.Name, new { @class = "" })
-                @Html.ValidationMessageFor(model => model.CreateCollection.Name, "", new { @class = "" })
-
-                @Html.LabelFor(model => model.CreateCollection.Description)
-                @Html.TextAreaFor(model => model.CreateCollection.Description, new { @class = "" })
-                @Html.ValidationMessageFor(model => model.CreateCollection.Description, "", new { @class = "" })
-
-                @Html.TextBoxFor(model => model.CreateCollection.fileInput, new { type = "file", accept = ".zip", @class = "" })
-                @Html.ValidationMessageFor(model => model.CreateCollection.fileInput, "", new { @class = "" })
-
-                <input type="submit" value="Create Collection" />
-            </div>
-        }
+    <div class="form-group">
+        @Html.LabelFor(model => model.CreateCollection.Description)
+        @Html.TextAreaFor(model => model.CreateCollection.Description, new { rows = 5 })
+        @Html.ValidationMessageFor(model => model.CreateCollection.Description)
     </div>
-</div>
+    <div class="form-group">
+        @Html.TextBoxFor(model => model.CreateCollection.fileInput, new { type = "file", accept = ".zip" })
+        @Html.ValidationMessageFor(model => model.CreateCollection.fileInput, "")
+
+        <input type="submit" value="Create Collection" />
+    </div>
+}

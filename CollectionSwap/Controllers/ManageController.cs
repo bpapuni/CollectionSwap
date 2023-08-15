@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using CollectionSwap.Helpers;
 using System.Web.Services.Description;
 using System.Data.Entity.Infrastructure;
+using System.Reflection;
 
 namespace CollectionSwap.Controllers
 {
@@ -233,7 +234,8 @@ namespace CollectionSwap.Controllers
             {
                 model.EditCollection = new EditCollectionModel { Collection = db.Collections.Find(id) };
             }
-            
+
+            ViewBag.ShouldDisplay = true;
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
             return Json(new { PartialView = partial });
         }
@@ -247,6 +249,7 @@ namespace CollectionSwap.Controllers
             if (!ModelState.IsValid)
             {
                 model.Collections = db.Collections.ToList();
+                ViewBag.ShouldDisplay = true;
                 partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
                 return Json(new { PartialView = partial });
             }
@@ -254,9 +257,9 @@ namespace CollectionSwap.Controllers
             Collection.Create(model.CreateCollection, db);
             model.Collections = db.Collections.ToList();
 
+            ViewBag.ShouldDisplay = true;
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
             return Json(new { PartialView = partial });
-            //return Json(new { Reload = true });
         }
 
         //
@@ -268,6 +271,7 @@ namespace CollectionSwap.Controllers
             var partial = String.Empty;
             var model = new EditCollectionModel { Collection = db.Collections.Find(id) };
 
+            ViewBag.ShouldDisplay = true;
             partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", model, true);
             return Json(new { PartialView = partial, ScrollTarget = "#edit-collection-container" }, JsonRequestBehavior.AllowGet);
         }
@@ -287,6 +291,7 @@ namespace CollectionSwap.Controllers
                 CreateCollection = new CreateCollectionModel()
             };
 
+            ViewBag.ShouldDisplay = true;
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
             return Json(new { PartialView = partial });
         }
@@ -300,6 +305,7 @@ namespace CollectionSwap.Controllers
             if (!ModelState.IsValid)
             {
                 model.ItemListJSON = db.Collections.Find(model.Id).ItemListJSON;
+                ViewBag.ShouldDisplay = true;
                 partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", model, true);
                 return Json(new { PartialView = partial });
 
@@ -315,6 +321,7 @@ namespace CollectionSwap.Controllers
                 EditCollection = new EditCollectionModel { Collection = db.Collections.Find(model.Id) }
             };
 
+            ViewBag.ShouldDisplay = true;
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcViewModel, true);
             return Json(new { PartialView = partial });
         }
@@ -330,6 +337,7 @@ namespace CollectionSwap.Controllers
             if (!ModelState.IsValidField("FileInput"))
             {
                 model.Collection = collection;
+                ViewBag.ShouldDisplay = true;
                 partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", model, true);
                 return Json(new { PartialView = partial });
 
@@ -338,6 +346,7 @@ namespace CollectionSwap.Controllers
             collection.AddItem(model.FileInput, db);
             model.Collection = collection;
 
+            ViewBag.ShouldDisplay = true;
             ViewBag.EditCollectionStatus = "Item successfully added to collection.";
             partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", model, true);
             return Json(new { PartialView = partial });
@@ -353,6 +362,7 @@ namespace CollectionSwap.Controllers
             var partial = String.Empty;
             if (!ModelState.IsValid)
             {
+                ViewBag.ShouldDisplay = true;
                 partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", editCollection, true);
                 return Json(new { PartialView = partial });
 
@@ -366,6 +376,7 @@ namespace CollectionSwap.Controllers
                 EditCollection = new EditCollectionModel { Collection = collection }
             };
 
+            ViewBag.ShouldDisplay = true;
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
             return Json(new { PartialView = partial });
         }
@@ -385,6 +396,7 @@ namespace CollectionSwap.Controllers
                 EditCollection = new EditCollectionModel { Collection = collection }
             };
 
+            ViewBag.ShouldDisplay = true;
             ViewBag.EditCollectionStatus = "Item successfully removed from collection.";
             var partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
             return Json(new { PartialView = partial });
@@ -415,14 +427,24 @@ namespace CollectionSwap.Controllers
         public ActionResult UserCollection(int? id)
         {
             var userCollection = db.UserCollections.Find(id);
-            var model = new UserCollectionModel
+            var ucModel = new UserCollectionModel
             {
                 Collection = db.Collections.Find(userCollection.CollectionId),
                 UserCollection = userCollection
             };
 
-            var partial = Helper.RenderViewToString(ControllerContext, "_UserCollection", model, true);
-            return Json(new { PartialView = partial, ScrollTarget = "#user-collection-container" }, JsonRequestBehavior.AllowGet);
+            var ycModel = new YourCollectionViewModel
+            {
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.ToList(),
+                EditCollection = ucModel
+            };
+
+            //var partial = Helper.RenderViewToString(ControllerContext, "_UserCollection", ucModel, true);
+            //return Json(new { PartialView = partial, ScrollTarget = "#user-collection-container" }, JsonRequestBehavior.AllowGet);
+
+            var partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycModel, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container", second = "#user-collection-container" }, ScrollTarget = "#user-collection-container" }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -465,21 +487,8 @@ namespace CollectionSwap.Controllers
 
             var userId = User.Identity.GetUserId();
             var newUserCollection = Models.UserCollection.Create(id, userId, db);
-            var ucModel = new UserCollectionModel
-            {
-                Collection = db.Collections.Find(id),
-                UserCollection = newUserCollection
-            };
 
-            var ycViewModel = new YourCollectionViewModel
-            {
-                Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId).ToList(),
-                EditCollection = ucModel
-            };
-
-            partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
-            return Json(new { PartialView = partial, ScrollTarget = "#user-collection-container" });
+            return RedirectToAction("UserCollection", new { id = newUserCollection.Id });
         }
 
         [HttpPost]

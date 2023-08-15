@@ -1,9 +1,66 @@
 ﻿@model CollectionSwap.Models.ManageCollectionsViewModel
+@using CollectionSwap.Models
+@using Newtonsoft.Json
+@{
+    bool shouldDisplay = ViewBag.ShouldDisplay ?? false;
+    var heading = shouldDisplay ? "Available Collections" : "Create a New Collection";
+}
 
-<div id="manage-collections-container" class="secondary-container">
-    @Html.Partial("_CreateCollection", Model)
-    @Html.Partial("_AvailableCollections", Model)
-    <div id="edit-collection-container">
+<div id="manage-collections-container" class="scroll-snap-row">
+    <div class="column">
+        <span class="header">
+            @heading
+        </span>
+
+        <section class="min-width-100 gap-2">
+            @if (shouldDisplay )
+            {
+                @Html.Partial("_CreateCollection", Model)
+            }
+
+            @foreach (var collection in Model.Collections)
+            {
+                <div class="column align-items-center">
+                    @{
+                        var collectionButton = new CollectionButton
+                        {
+                            Id = collection.Id,
+                            Name = collection.Name,
+                            ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON)
+                        };
+                    }
+                    @if (shouldDisplay)
+                    {
+                        <a class="collection-button" href="@Url.Content($"/Manage/ManageCollections/{collection.Id}")">
+                            @Html.Partial("_CollectionButton", collectionButton)
+                        </a>
+                    }
+                    else
+                    {
+                        using (Html.BeginForm("CreateUserCollection", "Manage", FormMethod.Post))
+                        {
+                            @Html.Hidden("id", collection.Id);
+                            <button class="collection-button">
+                                @Html.Partial("_CollectionButton", collectionButton)
+                            </button>
+                        }
+                    }
+
+                    @* Only displays the delete button if this partial is loaded into the "Manage Collections" page *@
+                    @if (shouldDisplay)
+                    {
+                        using (Html.BeginForm("DeleteCollection", "Manage", new { collectionId = @collection.Id }, FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button class="button-icon button-icon-trash" type="submit" onclick="return confirm('Are you sure you want to delete this set?')"><i class="fa fa-trash"></i></button>
+                        }
+                    }
+                </div>
+            }
+        </section>
+    </div>
+
+    <div id="edit-collection-container" class="d-none">
         @if (Model.EditCollection != null)
         {
             @Html.Partial("_EditCollection", Model.EditCollection)
