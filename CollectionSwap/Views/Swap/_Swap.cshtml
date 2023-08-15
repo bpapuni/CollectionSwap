@@ -139,13 +139,13 @@
         @switch (swapType)
         {
             case "swap":
-                <div class="swap-offered-buttons">
-                    <button class="create accept-swap visually-hidden" onclick="offerSwap(this, '@swapType', @id)">Request Swap</button>
+                <div class="swap-offered-buttons d-none">
+                    <button class="create accept-swap" onclick="offerSwap(this, '@swapType', @id)">Request Swap</button>
                 </div>
                 break;
             case "offered":
-                <div class="swap-offered-buttons">
-                    <button class="create accept-swap visually-hidden" onclick="acceptSwap(this, '@swapType', @id)">Accept Swap</button>
+                <div class="swap-offered-buttons d-none">
+                    <button class="create accept-swap" onclick="acceptSwap(this, '@swapType', @id)">Accept Swap</button>
                     <button class="create decline-swap" onclick="declineSwap(this, '@swapType', @id)">Decline Swap</button>
                 </div>
                 break;

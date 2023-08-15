@@ -71,16 +71,16 @@ function updatedPoolText(mainContainer, poolContainer) {
     const itemsSelected = mainContainer.find(".swap-featured-item.selected").length;
     const remainingSelections = swapSize - itemsSelected;
     const poolText = poolContainer.find("span").eq(1);
-    const swapButton = mainContainer.closest(".swap-container-body").find(".accept-swap");
+    const swapButton = mainContainer.closest(".swap-container-body").find(".accept-swap").parent();
 
     switch (remainingSelections) {
         case 0:
             poolText.text("All selections made.");
-            swapButton.removeClass("visually-hidden");
+            swapButton.removeClass("d-none");
             break;
         default:
             poolText.text(`Select ${remainingSelections} you'd like.`);
-            swapButton.addClass("visually-hidden");
+            swapButton.addClass("d-none");
             break;
     }
 }

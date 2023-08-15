@@ -755,7 +755,7 @@ input[type=number] {
     flex-direction: column;
     /*align-items: flex-end;*/
     width: 100%;
-    min-height: 40rem;
+    height: 40rem;
     color: var(--darkest-shade);
     border-radius: 1rem;
     box-shadow: 0 2px 5px #888;
@@ -835,7 +835,7 @@ input[type=number] {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    /*justify-content: space-between;*/
     flex-grow: 1;
     gap: 1.5rem;
     padding: 1rem;
@@ -890,7 +890,7 @@ input[type=number] {
     flex-wrap: wrap;
     flex-shrink: 0;
     width: 18rem;
-    height: 28rem;
+    /*height: 28rem;*/
     padding: 1rem;
     background: var(--neutral-shade);
     overflow-y: scroll;
