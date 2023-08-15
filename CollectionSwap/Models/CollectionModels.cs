@@ -186,7 +186,7 @@ namespace CollectionSwap.Models
 
     public class CreateCollectionModel
     {
-        [Display(Name = "Collection Name")]
+        [Display(Name = "New Collection Name")]
         [Required(ErrorMessage = "Please enter a name for this collection.")]
         public string Name { get; set; }
         [Display(Name = "Description (optional)")]

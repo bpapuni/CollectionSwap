@@ -2,8 +2,9 @@
 @using CollectionSwap.Models
 @using Newtonsoft.Json;
 @{
-    ViewBag.Title = "Your Dashboard";
+    ViewBag.Title = "Mange Your Account";
 }
+
 
 <div class="manage-container">
     <div class="manage-container-nav">
@@ -119,14 +120,22 @@
                 contentType: false,
                 success: function (result) {
                     var partialView = result.PartialView;
-                    var targetId = $(partialView)[0].id;
 
-                    $(`#${targetId}`).prop("outerHTML", partialView);
+                    if (result.RefreshTargets) {
+                        $.each(result.RefreshTargets, function (key, target) {
+                            $(`${target}`).prop("outerHTML", $(partialView).find(target).html());
+                        });
+                    }
 
                     if (result.ScrollTarget) {
-                        setTimeout(function () {
-                            window.scrollTo(0, $(result.ScrollTarget).prop("offsetTop"));
-                        }, 100)
+                        //console.log(result.ScrollTarget);
+                        var offset = $(result.ScrollTarget).prop("offsetLeft");
+                        $(result.ScrollTarget).parent().css("scroll-snap-type", "none");
+
+                        $(result.ScrollTarget).parent().animate({ scrollLeft: offset }, 250, "swing", () => {
+                            $(document).scrollTop(0);
+                            $(result.ScrollTarget).parent().css("scroll-snap-type", "x mandatory")
+                        });
                     }
                 },
                 error: function () {

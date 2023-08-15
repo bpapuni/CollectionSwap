@@ -1,138 +1,132 @@
 ﻿@model CollectionSwap.Models.IndexViewModel
-<div id="account-container" class="secondary-container">
-    <div class="secondary-container-header">
-        <p>Account Settings</p>
-    </div>
+<div id="account-container">
+    <span class="header">Account Settings</span>
 
-    <div class="secondary-container-row">
-        <div class="paint-blotches"></div>
-
-        @using (Html.BeginForm("ChangeEmail", "Manage", FormMethod.Post, new { @class = "account-form" }))
-        {
-            @Html.AntiForgeryToken()
-            <div class="account-form-row">
-                <div class="account-form-column">
-                    @Html.LabelFor(m => m.ChangeEmail.OldEmail)
-                    @Html.TextBoxFor(m => m.ChangeEmail.OldEmail)
-                    @Html.ValidationMessageFor(m => m.ChangeEmail.OldEmail)
-                </div>
-            </div>
-            <div class="account-form-row">
-                <div class="account-form-column">
-                    @Html.LabelFor(m => m.ChangeEmail.NewEmail)
-                    @Html.TextBoxFor(m => m.ChangeEmail.NewEmail)
-                    @Html.ValidationMessageFor(m => m.ChangeEmail.NewEmail)
-                </div>
-            </div>
-            <div class="account-form-row">
-                <div class="account-form-column">
-                    @Html.LabelFor(m => m.ChangeEmail.ConfirmEmail)
-                    @Html.TextBoxFor(m => m.ChangeEmail.ConfirmEmail)
-                    @Html.ValidationMessageFor(m => m.ChangeEmail.ConfirmEmail)
-                </div>
-            </div>
-            <span class="success-message">@ViewBag.ChangeEmailStatus</span>
-            <div class="account-form-row">
-                <input type="submit" value="Update Email" />
-            </div>
-        }
-
-        @using (Html.BeginForm("ChangePassword", "Manage", FormMethod.Post, new { @class = "account-form" }))
-        {
-            @Html.AntiForgeryToken()
-            <div class="account-form-row">
-                <div class="account-form-column">
-                    @Html.LabelFor(m => m.ChangePassword.OldPassword)
-                    @Html.PasswordFor(m => m.ChangePassword.OldPassword)
-                    @Html.ValidationMessageFor(m => m.ChangePassword.OldPassword)
-                </div>
-            </div>
-            <div class="account-form-row">
-                <div class="account-form-column">
-                    @Html.LabelFor(m => m.ChangePassword.NewPassword)
-                    @Html.PasswordFor(m => m.ChangePassword.NewPassword)
-                    @Html.ValidationMessageFor(m => m.ChangePassword.NewPassword)
-                </div>
-            </div>
-            <div class="account-form-row">
-                <div class="account-form-column">
-                    @Html.LabelFor(m => m.ChangePassword.ConfirmPassword)
-                    @Html.PasswordFor(m => m.ChangePassword.ConfirmPassword)
-                    @Html.ValidationMessageFor(m => m.ChangePassword.ConfirmPassword)
-                </div>
-            </div>
-            if (ViewData.ModelState.ContainsKey("ChangePassword"))
+    <section>
+        <div class="row gap-4">
+            @using (Html.BeginForm("ChangeEmail", "Manage", FormMethod.Post))
             {
-                <ul>
-                    @foreach (var error in ViewData.ModelState["ChangePassword"].Errors)
-                    {
-                        <li class="text-danger">
-                            @error.ErrorMessage
-                        </li>
-                    }
-                </ul>
+                @Html.AntiForgeryToken()
+                <div class="row">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.ChangeEmail.OldEmail)
+                        @Html.TextBoxFor(m => m.ChangeEmail.OldEmail)
+                        @Html.ValidationMessageFor(m => m.ChangeEmail.OldEmail)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.ChangeEmail.NewEmail)
+                        @Html.TextBoxFor(m => m.ChangeEmail.NewEmail)
+                        @Html.ValidationMessageFor(m => m.ChangeEmail.NewEmail)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.ChangeEmail.ConfirmEmail)
+                        @Html.TextBoxFor(m => m.ChangeEmail.ConfirmEmail)
+                        @Html.ValidationMessageFor(m => m.ChangeEmail.ConfirmEmail)
+                    </div>
+                </div>
+                <span class="success-message">@ViewBag.ChangeEmailStatus</span>
+                <input type="submit" value="Update Email" />
             }
-            <span class="success-message">@ViewBag.ChangePasswordStatus</span>
-            <div class="account-form-row">
+
+            @using (Html.BeginForm("ChangePassword", "Manage", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div class="row">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.ChangePassword.OldPassword)
+                        @Html.PasswordFor(m => m.ChangePassword.OldPassword)
+                        @Html.ValidationMessageFor(m => m.ChangePassword.OldPassword)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.ChangePassword.NewPassword)
+                        @Html.PasswordFor(m => m.ChangePassword.NewPassword)
+                        @Html.ValidationMessageFor(m => m.ChangePassword.NewPassword)
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.ChangePassword.ConfirmPassword)
+                        @Html.PasswordFor(m => m.ChangePassword.ConfirmPassword)
+                        @Html.ValidationMessageFor(m => m.ChangePassword.ConfirmPassword)
+                    </div>
+                </div>
+                if (ViewData.ModelState.ContainsKey("ChangePassword"))
+                {
+                    <ul>
+                        @foreach (var error in ViewData.ModelState["ChangePassword"].Errors)
+                        {
+                            <li class="field-validation-error">
+                                @error.ErrorMessage
+                            </li>
+                        }
+                    </ul>
+                }
+
+                <span class="success-message">@ViewBag.ChangePasswordStatus</span>
                 <input type="submit" value="Update Password" />
-            </div>
-        }
-    </div>
+            }
+        </div>
+    </section>
 
-    <br />
-    <div class="secondary-container-header">
-        <p>Mailing Address</p>
-    </div>
+    <span class="header">
+        Mailing Address
+    </span>
 
-    @using (Html.BeginForm("ChangeAddress", "Manage", FormMethod.Post, new { @class = "account-form" }))
-    {
-        @Html.AntiForgeryToken()
-        <div class="account-form-row">
-            <div class="account-form-column">
-                <span>
-                    <strong>Keep it Safe:</strong>
-                    Consider using a business address or P.O. box for mailing collectibles, ensuring your home address remains private.
-                </span>
+    <section>
+        @using (Html.BeginForm("ChangeAddress", "Manage", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div class="form-group">
+                    <span>
+                        <strong>Keep it Safe:</strong>
+                        Consider using a business address or P.O. box for mailing collectibles, ensuring your home address remains private.
+                    </span>
+                </div>
             </div>
-        </div>
-        <div class="account-form-row">
-            <div class="account-form-column">
-                @Html.LabelFor(m => m.ChangeAddress.FullName)
-                @Html.TextBoxFor(m => m.ChangeAddress.FullName)
-                @Html.ValidationMessageFor(m => m.ChangeAddress.FullName)
+            <div class="row gap-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ChangeAddress.FullName)
+                    @Html.TextBoxFor(m => m.ChangeAddress.FullName)
+                    @Html.ValidationMessageFor(m => m.ChangeAddress.FullName)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ChangeAddress.CompanyName)
+                    @Html.TextBoxFor(m => m.ChangeAddress.CompanyName)
+                    @Html.ValidationMessageFor(m => m.ChangeAddress.CompanyName)
+                </div>
             </div>
-            <div class="account-form-column">
-                @Html.LabelFor(m => m.ChangeAddress.CompanyName)
-                @Html.TextBoxFor(m => m.ChangeAddress.CompanyName)
-                @Html.ValidationMessageFor(m => m.ChangeAddress.CompanyName)
+            <div class="row gap-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ChangeAddress.LineOne)
+                    @Html.TextBoxFor(m => m.ChangeAddress.LineOne)
+                    @Html.ValidationMessageFor(m => m.ChangeAddress.LineOne)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ChangeAddress.LineTwo)
+                    @Html.TextBoxFor(m => m.ChangeAddress.LineTwo)
+                    @Html.ValidationMessageFor(m => m.ChangeAddress.LineTwo)
+                </div>
             </div>
-        </div>
-        <div class="account-form-row">
-            <div class="account-form-column">
-                @Html.LabelFor(m => m.ChangeAddress.LineOne)
-                @Html.TextBoxFor(m => m.ChangeAddress.LineOne)
-                @Html.ValidationMessageFor(m => m.ChangeAddress.LineOne)
+            <div class="row gap-4">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ChangeAddress.PostCode)
+                    @Html.TextBoxFor(m => m.ChangeAddress.PostCode)
+                    @Html.ValidationMessageFor(m => m.ChangeAddress.PostCode)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.ChangeAddress.City)
+                    @Html.TextBoxFor(m => m.ChangeAddress.City)
+                    @Html.ValidationMessageFor(m => m.ChangeAddress.City)
+                </div>
             </div>
-            <div class="account-form-column">
-                @Html.LabelFor(m => m.ChangeAddress.LineTwo)
-                @Html.TextBoxFor(m => m.ChangeAddress.LineTwo)
-                @Html.ValidationMessageFor(m => m.ChangeAddress.LineTwo)
-            </div>
-        </div>
-        <div class="account-form-row">
-            <div class="account-form-column">
-                @Html.LabelFor(m => m.ChangeAddress.PostCode)
-                @Html.TextBoxFor(m => m.ChangeAddress.PostCode)
-                @Html.ValidationMessageFor(m => m.ChangeAddress.PostCode)
-            </div>
-            <div class="account-form-column">
-                @Html.LabelFor(m => m.ChangeAddress.City)
-                @Html.TextBoxFor(m => m.ChangeAddress.City)
-                @Html.ValidationMessageFor(m => m.ChangeAddress.City)
-            </div>
-        </div>
-        <div class="account-form-row">
-            <div class="account-form-column">
+            <div class="form-group">
                 @if (ViewData.ModelState.ContainsKey("ChangeAddress"))
                 {
                     <ul>
@@ -147,6 +141,6 @@
                 <span class="success-message">@ViewBag.ChangeAddressStatus</span>
                 <input type="submit" value="Update Address" />
             </div>
-        </div>
-    }
+        }
+    </section>
 </div>

@@ -1,46 +1,38 @@
-﻿html body {
-    padding: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    scrollbar-gutter: stable both-edges;
-    background-color: var(--light-shade);
+﻿:root {
+    --base-hue: 180; /* Example hue value */
+    --base-saturation: 20%; /* Example saturation value */
+    --base-lightness: 77%; /* Example lightness value */
 }
 
-.navbar {
-    position: fixed;
-    top: 0;
-    padding: 0 2rem;
-    max-width: 100%;
-    width: 100vw;
-    height: 5rem;
-    background-color: var(--light-shade);
-    z-index: 100;
-}
-
-.navbar-nav li {
-    padding: 0 0.75rem;
-}
-
-.container.body-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex-grow: 1;
-    padding-inline: 2rem;
-    max-width: 100%;
-    height: 100%;
-    /*flex-grow: 1;*/
-    /*height: clamp( , 100vh, );*/
-    /*overflow-y: scroll;
-    scrollbar-gutter: stable both-edges;*/
+/* Calculate different shades */
+:root {
+    --lightest-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 20%));
+    --lighterer-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 18%));
+    --lighter-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 15%));
+    --light-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 10%));
+    --neutral-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness)));
+    --dark-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 30%));
+    --darker-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 40%));
+    --darkest-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 50%));
+    --darkerest-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 60%));
+    --danger-50: #A75F5F;
+    --danger-100: #a34c4c;
+    --danger-500: #6d2929;
 }
 
 *,
 *::before,
 *::after {
     box-sizing: border-box;
+}
+
+textarea:focus,
+input:focus {
+    color: var(--darkest-shade);
+    background-color: white;
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
 *::-webkit-scrollbar {
@@ -66,48 +58,520 @@
     border-radius: 24px;
 }
 
-.body-content {
-    font-family: 'Inter', sans-serif;
-    padding-top: 5rem;
-}
-
-/* Override the default bootstrap behavior where horizontal description lists 
-   will truncate terms that are too long to fit in the left column 
-*/
-.dl-horizontal dt {
-    white-space: normal;
-}
-
-/* Set width on the form input elements since they're 100% wide by default */
-textarea:focus,
-input:focus {
+*::-webkit-file-upload-button {
+    padding: 0.375rem 0.75rem;
+    margin: -0.375rem -0.375rem;
+    -webkit-margin-end: 0.75rem;
+    margin-inline-end: 0.75rem;
     color: #212529;
-    background-color: #fff;
-    border-color: #86b7fe;
-    outline: 0;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    background-color: var(--neutral-shade);
+    pointer-events: none;
+    border-color: inherit;
+    border-style: solid;
+    border-width: 0;
+    border-inline-end-width: 1px;
+    border-radius: 0.5rem;
+    -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-:root {
-    --base-hue: 180; /* Example hue value */
-    --base-saturation: 20%; /* Example saturation value */
-    --base-lightness: 77%; /* Example lightness value */
+input[type=text],
+input[type=file],
+input[type=password],
+input[type=submit],
+textarea {
+    padding: 0.5rem;
+    min-width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid var(--lighter-shade);
 }
 
-/* Calculate different shades */
-:root {
-    --lightest-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 20%));
-    --lighterer-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 18%));
-    --lighter-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 15%));
-    --light-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 10%));
-    --neutral-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness)));
-    --dark-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 30%));
-    --darker-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 40%));
-    --darkest-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 50%));
-    --darkerest-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 60%));
-    --danger-50: #A75F5F;
-    --danger-100: #a34c4c;
-    --danger-500: #6d2929;
+input[type=submit] {
+    min-width: 10rem;
+    width: clamp(10rem, 10rem, 100%);
+    margin-top: 1rem;
+    color: var(--lightest-shade);
+    background-color: var(--dark-shade);
+    border: 1px solid var(--darkest-shade);
+    cursor: pointer;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    padding: 5rem 2rem 2rem 2rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--darkest-shade);
+    line-height: 1.75;
+    background: var(--light-shade);
+    overflow-x: hidden;
+    overflow-y: scroll;
+    scrollbar-gutter: stable both-edges;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+    padding-inline: 2rem;
+    max-width: 100%;
+    height: 100%;
+}
+
+.manage-container {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-bottom: 2rem;
+    width: 100%;
+}
+
+.manage-container-nav {
+    display: flex;
+    min-width: 20rem;
+}
+
+.manage-container-main {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    /*flex-wrap: wrap;*/
+    padding: 0 4rem 2rem;
+    width: 100%;
+    background-color: var(--lighter-shade);
+    border-radius: 2rem;
+}
+
+.manage-container-nav ul {
+    position: fixed;
+    width: 100%;
+    max-width: 20rem;
+    padding: 1rem 1.5rem 0 0;
+    font-size: 1rem;
+    line-height: 2.5rem;
+    font-weight: 400;
+    list-style: none;
+}
+
+    .manage-container-nav ul a {
+        color: var(--darkest-shade);
+        text-decoration: none;
+    }
+
+    .manage-container-nav ul::after {
+        position: absolute;
+        content: "";
+        width: 90%;
+        height: 2.5rem;
+        background-color: var(--lightest-shade);
+        border-radius: 0.7rem;
+        transition: top 0.7s;
+        z-index: -1;
+    }
+
+    .manage-container-nav ul.selected-1::after {
+        top: 5.5rem;
+    }
+
+    .manage-container-nav ul.selected-2::after {
+        top: 8rem;
+    }
+
+    .manage-container-nav ul.selected-3::after {
+        top: 10.5rem;
+    }
+
+    .manage-container-nav ul.selected-4::after {
+        top: 13rem;
+    }
+
+    .manage-container-nav ul > :first-child {
+        font-size: 2rem;
+        margin: 0 0 2rem 0;
+    }
+
+    .manage-container-nav ul li {
+        padding: 0 1rem;
+        border-radius: 0.7rem;
+        cursor: pointer;
+    }
+
+.subnav-link {
+    display: flex;
+}
+
+#your-collections-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    min-width: 100%;
+}
+
+.scroll-snap-row {
+    display: flex;
+    flex-direction: row;
+    gap: 0 4rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: auto;
+}
+
+    .scroll-snap-row > * {
+        flex: 1 0 100%;
+        scroll-snap-align: start;
+    }
+
+.scroll-snap-row::-webkit-scrollbar {
+    display: none;
+}
+
+.scroll-snap-row {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+#create-collection-container {
+    display: flex;
+    flex-direction: column;
+}
+
+    .collection:hover,
+    input[type=submit]:hover {
+        color: var(--darkest-shade);
+        background-color: var(--neutral-shade);
+        box-shadow: 0 2px 5px var(--neutral-shade);
+    }
+
+.success-message {
+    color: forestgreen;
+}
+
+.paint-blotches {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /*background-color: #f7f7f7;*/ /* Set a base color for the background */
+    pointer-events: none; /* Make sure the blotches don't interfere with interactions */
+}
+
+.paint-blotch {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 52% 48% 70% 30% / 40% 30% 70% 60%;
+    background-color: #ff7f50; /* Set the paint blotch color */
+    opacity: 0.7; /* Adjust the opacity as needed */
+    transform: translate(-50%, -50%);
+}
+
+/* Optional: Animate the blotches for a dynamic effect */
+@keyframes animateBlotches {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.7;
+    }
+}
+
+.collection-button {
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.new-collection {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 15rem;
+    height: 20rem;
+    padding: 0.25rem;
+    color: var(--darkest-shade);
+    text-decoration: none;
+    background: var(--lighter-shade);
+    border: 1px solid var(--neutral-shade);
+    border-radius: 1rem;
+}
+
+    .new-collection:hover {
+        background: var(--lighterer-shade);
+        border: 1px solid var(--neutral-shade);
+        box-shadow: 0 2px 5px var(--neutral-shade);
+    }
+
+.new-collection-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.25rem;
+    width: 100%;
+    height: 35%;
+}
+
+.new-collection-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.new-collection-feature-card {
+    max-width: 32%;
+    height: 7rem;
+    border-radius: 0.5rem;
+    border: 2px solid var(--dark-shade);
+    overflow: hidden;
+    object-fit: cover;
+}
+
+.new-collection-center {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 30%;
+    aspect-ratio: 1/1;
+    color: white;
+    font-size: 2rem;
+    font-weight: 300;
+    background: var(--dark-shade);
+    margin-top: -1rem;
+}
+
+.new-collection span {
+    width: 70%;
+    text-align: center;
+}
+
+.item-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.item {
+    width: 8rem;
+    height: 12rem;
+    object-fit: cover;
+    border-radius: 1rem;
+}
+
+.item-not-owned::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #FFFFFFBB;
+    border-radius: 1rem;
+    pointer-events: none;
+}
+
+nav {
+    position: fixed;
+    font-size: 1rem;
+    color: inherit;
+}
+
+nav ul {
+    list-style: none;
+}
+
+nav a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.main-navbar {
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 2rem;
+    width: 100%;
+    height: 5rem;
+    padding: 0 2rem;
+    background: var(--light-shade);
+    z-index: 100;
+}
+
+.main-navbar ul {
+    display: flex;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+}
+
+.main-navbar li {
+    position: relative;
+}
+
+.main-navbar li.selected::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -0.5rem;
+    width: 100%;
+    height: 3px;
+    background: var(--dark-shade);
+}
+
+.main-navbar a:hover {
+    color: var(--dark-shade);
+}
+
+#account-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.header {
+    font-size: 1.953rem;
+    margin: 3rem 0 1.38rem;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    /*flex-wrap: wrap;*/
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.gap-1 {
+    gap: 1rem 1rem;
+}
+
+.gap-2 {
+    gap: 1rem 2rem;
+}
+
+.gap-4 {
+    gap: 1rem 4rem;
+}
+
+.min-width-100 {
+    min-width: 100%;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+#account-container form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+#account-container .row:has(> form) {
+    gap: 0 4rem;
+}
+
+#manage-collections-container form {
+    display: flex;
+    flex-direction: column;
+    /*flex: 1;*/
+}
+
+#available-collections-container {
+    display: flex;
+    flex-direction: column;
+    min-width: 100%;
+}
+
+#available-collections-container section {
+    gap: 2rem;
+}
+
+#edit-collection-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+#edit-collection-container section {
+    flex-direction: column;
+}
+
+#user-collection-container {
+    display: flex;
+    flex-direction: column;
+}
+
+#items {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+section {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    padding: 2rem 2rem;
+    border-radius: 1rem;
+    background: var(--lightest-shade);
+}
+
+#collection-items {
+    flex-wrap: wrap;
+}
+
+.field-validation-error {
+    height: 1rem;
+    font-size: 0.8rem;
+    color: red;
+}
+
+.field-validation-valid {
+    height: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin: 0 0 0.375rem 0;
+}
+
+.form-group label {
+    font-weight: 500;
 }
 
 .create-form {
