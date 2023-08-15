@@ -15,8 +15,6 @@
                         Name = c.String(nullable: false),
                     })
                 .PrimaryKey(t => t.Id);
-            
-            DropTable("dbo.Collections");
         }
         
         public override void Down()
