@@ -432,11 +432,11 @@ namespace CollectionSwap.Controllers
                 Collection = db.Collections.Find(userCollection.CollectionId),
                 UserCollection = userCollection
             };
-
+            var userId = User.Identity.GetUserId();
             var ycModel = new YourCollectionViewModel
             {
                 Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId).ToList(),
                 EditCollection = ucModel
             };
 
@@ -520,16 +520,16 @@ namespace CollectionSwap.Controllers
             UserCollection userCollection = db.UserCollections.Find(ucId);
             userCollection.Update("Quantity", JsonConvert.SerializeObject(new { index, quantity }), db);
 
-            //var userId = User.Identity.GetUserId();
-            //var ycViewModel = new YourCollectionViewModel
-            //{
-            //    Collections = db.Collections.ToList(),
-            //    UserCollections = db.UserCollections.Where(uc => uc.UserId == userId).ToList()
-            //};
+            var userId = User.Identity.GetUserId();
+            var ycViewModel = new YourCollectionViewModel
+            {
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId).ToList()
+            };
 
-            //partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
-            //return Json(new { PartialView = partial });
-            return null;
+            partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container" } });
+            //return null;
         }
 
         //[HttpPost]

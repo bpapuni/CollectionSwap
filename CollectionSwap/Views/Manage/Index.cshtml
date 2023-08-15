@@ -55,6 +55,13 @@
 
         // Display the partial view
         LoadPartial(partialName, `/Manage/${partialName}`)
+        if (partialId) {
+            const formData = new FormData();
+            const collectionType = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection");
+            formData.append("id", partialId);
+
+            HandleFormSubmit(`/Manage/${collectionType}`, "POST", formData);
+        }
 
         // On back/forward navigation update the partial name and display the corresponding view
         $(window).on("popstate", function (e) {
@@ -69,17 +76,34 @@
             $(this).closest("form").submit();
         });
 
-        // Anchor click listeners
-        $(document).on("click", ".subnav-link, a.collection-button", function (event) {
+        // Subnav click listeners
+        $(document).on("click", ".subnav-link", function (event) {
             event.preventDefault();
-            var url = $(this).attr("href").split("/Manage/").pop().split("/");
+            const url = $(this).attr("href").split("/Manage/").pop().split("/");
             partialName = url[0];
             partialId = url[1] == '#' ? '' : url[1];
 
-            var historyEntry = partialId == undefined ? partialName : `${partialName}/${partialId}`;
+            const historyEntry = partialId == undefined ? partialName : `${partialName}/${partialId}`;
             history.pushState({ partialName: historyEntry }, null, `/Manage/${historyEntry}`);
 
             LoadPartial(partialName, $(this).attr("href"));
+        });
+
+        // Anchor click listeners
+        $(document).on("click", "a.collection-button", function (event) {
+            event.preventDefault();
+            const url = $(this).attr("href").split("/Manage/").pop().split("/");
+            partialName = url[0];
+            partialId = url[1] == '#' ? '' : url[1];
+
+            const historyEntry = partialId == undefined ? partialName : `${partialName}/${partialId}`;
+            history.pushState({ partialName: historyEntry }, null, `/Manage/${historyEntry}`);
+
+            const formData = new FormData();
+            formData.append("id", partialId);
+
+            const collectionType = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection");
+            HandleFormSubmit(`/Manage/${collectionType}`, "POST", formData);
         });
 
         // Form submit listeners Handle loading form submission partial views
@@ -95,15 +119,16 @@
             navUl.removeClass("selected-1 selected-2 selected-3 selected-4");
             navUl.addClass(`selected-${selectedIndex}`);
 
+            //console.log(`${url}Partial`);
             $.ajax({
                 url: `${url}Partial`,
                 type: "POST",
                 success: function (result) {
                     $('.manage-container-main').html(result.PartialView);
-                    if (partialId) {
-                        const collection = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection");
-                        HandleFormSubmit(`/Manage/${collection}/${partialId}`, "GET", null);
-                    }
+                    //if (partialId) {
+                    //    const collection = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection");
+                    //    HandleFormSubmit(`/Manage/${collection}/${partialId}`, "GET", null);
+                    //}
                 },
                 error: function () {
                     // Handle error
@@ -120,12 +145,14 @@
                 contentType: false,
                 success: function (result) {
                     var partialView = result.PartialView;
-
+                    
                     if (result.RefreshTargets) {
                         $.each(result.RefreshTargets, function (key, target) {
+                            //console.log(target);
                             $(`${target}`).prop("outerHTML", $(partialView).find(target).html());
                         });
                     } else if (partialView) {
+                        //console.log(partialView);
                         var target = $(result.PartialView)[0].id;
                         $(`#${target}`).prop("outerHTML", partialView);
                     }
