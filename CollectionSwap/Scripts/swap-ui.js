@@ -234,9 +234,9 @@ function toggleYourItems(e) {
     const toggledItems = yourItems.find(".swap-featured-item").not(".swap-example");
 
     yourItems.toggleClass("expanded");
-    toggledItems.toggleClass("visually-hidden");
-    const message = yourItems.hasClass("expanded") ?
-        yourItemsMessage.text().replace("duplicates", "following duplicates") :
-        yourItemsMessage.text().replace("following duplicates", "duplicates");
-    yourItemsMessage.text(message);
+    toggledItems.toggleClass("d-none");
+    //const message = yourItems.hasClass("expanded") ?
+    //    yourItemsMessage.text().replace("duplicates", "following duplicates") :
+    //    yourItemsMessage.text().replace("following duplicates", "duplicates");
+    //yourItemsMessage.text(message);
 }

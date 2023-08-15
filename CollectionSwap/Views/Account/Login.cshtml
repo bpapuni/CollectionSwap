@@ -3,65 +3,65 @@
     ViewBag.Title = "Login";
 }
 
-<main class="register-container" aria-labelledby="title">
+<div id="register-container">
     <div class="register-container-left">
-        @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post))
         {
-            <h4>Register your account</h4>
+            <h2>Register your account</h2>
             @Html.AntiForgeryToken()
 
-            @Html.ValidationMessageFor(m => m.RegisterViewModel.Username, "", new { @class = "text-danger" })
+            @*@Html.ValidationMessageFor(m => m.RegisterViewModel.Username, "", new { @class = "text-danger" })
             @Html.ValidationMessage("UsernameTaken", new { @class = "text-danger" })
             @Html.ValidationMessageFor(m => m.RegisterViewModel.Email, "", new { @class = "text-danger" })
             @Html.ValidationMessage("EmailTaken", new { @class = "text-danger" })
             @Html.ValidationMessageFor(m => m.RegisterViewModel.Password, "", new { @class = "text-danger" })
-            @Html.ValidationMessageFor(m => m.RegisterViewModel.ConfirmPassword, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(m => m.RegisterViewModel.ConfirmPassword, "", new { @class = "text-danger" })*@
 
-            <div class="register-container-column">
-                @Html.LabelFor(m => m.RegisterViewModel.Username, new { @class = "col-form-label" })
-                @Html.TextBoxFor(m => m.RegisterViewModel.Username, new { @class = "form-control" })
+            <div class="form-group">
+                @Html.LabelFor(m => m.RegisterViewModel.Username)
+                @Html.TextBoxFor(m => m.RegisterViewModel.Username)
             </div>
-            <div class="register-container-column">
-                @Html.LabelFor(m => m.RegisterViewModel.Email, new { @class = "col-form-label" })
-                @Html.TextBoxFor(m => m.RegisterViewModel.Email, new { @class = "form-control" })
+            <div class="form-group">
+                @Html.LabelFor(m => m.RegisterViewModel.Email)
+                @Html.TextBoxFor(m => m.RegisterViewModel.Email)
             </div>
-            <div class="register-container-column">
-                @Html.LabelFor(m => m.RegisterViewModel.Password, new { @class = "col-form-label" })
-                @Html.PasswordFor(m => m.RegisterViewModel.Password, new { @class = "form-control" })
+            <div class="form-group">
+                @Html.LabelFor(m => m.RegisterViewModel.Password)
+                @Html.PasswordFor(m => m.RegisterViewModel.Password)
             </div>
-            <div class="register-container-column">
-                @Html.LabelFor(m => m.RegisterViewModel.ConfirmPassword, new { @class = "col-form-label" })
-                @Html.PasswordFor(m => m.RegisterViewModel.ConfirmPassword, new { @class = "form-control" })
+            <div class="form-group">
+                @Html.LabelFor(m => m.RegisterViewModel.ConfirmPassword)
+                @Html.PasswordFor(m => m.RegisterViewModel.ConfirmPassword)
             </div>
-            <div class="register-container-column">
-                <input type="submit" value="Register" class="btn btn-outline-dark" />
+            <div class="form-group">
+                <input type="submit" value="Register" />
             </div>
         }
     </div>
     <div class="register-container-right">
-        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { role = "form" }))
+        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
         {
             @Html.AntiForgeryToken()
-            <h4>Login</h4>
-            @Html.ValidationMessage("LoginError", new { @class = "text-danger" })
+            <h2>Login</h2>
+            @*@Html.ValidationMessage("LoginError", new { @class = "text-danger" })
             @Html.ValidationMessageFor(m => m.LoginViewModel.Email, "", new { @class = "text-danger" })
-            @Html.ValidationMessageFor(m => m.LoginViewModel.Password, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(m => m.LoginViewModel.Password, "", new { @class = "text-danger" })*@
 
-            <div class="register-container-column">
-                @Html.LabelFor(m => m.LoginViewModel.Email, new { @class = "col-form-label" })
-                @Html.TextBoxFor(m => m.LoginViewModel.Email, new { @class = "form-control" })
+            <div class="form-group">
+                @Html.LabelFor(m => m.LoginViewModel.Email)
+                @Html.TextBoxFor(m => m.LoginViewModel.Email)
             </div>
-            <div class="register-container-column">
-                @Html.LabelFor(m => m.LoginViewModel.Password, new { @class = "col-form-label" })
-                @Html.PasswordFor(m => m.LoginViewModel.Password, new { @class = "form-control" })
+            <div class="form-group">
+                @Html.LabelFor(m => m.LoginViewModel.Password)
+                @Html.PasswordFor(m => m.LoginViewModel.Password)
             </div>
-            @*<div class="register-container-column">
+            @*<div class="form-group">
                 @Html.CheckBoxFor(m => m.LoginViewModel.RememberMe)
                 @Html.LabelFor(m => m.LoginViewModel.RememberMe)
             </div>*@
             <br />
-            <div class="register-container-column">
-                <input type="submit" value="Log in" class="btn btn-outline-dark" />
+            <div class="form-group">
+                <input type="submit" value="Login" />
             </div>
             @* Enable this once you have account confirmation enabled for password reset functionality
             <p>
@@ -69,7 +69,7 @@
             </p>*@
         }
     </div>
-</main>
+</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

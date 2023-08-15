@@ -40,18 +40,18 @@
                     </div>
                     <div class="item-quantity column align-items-center">
                         Quantity:
-                        <div class="row gap-1 align-items-center">
-                            @using (Html.BeginForm("UpdateItemCount", "Manage", null, FormMethod.Post))
-                            {
-                                @Html.AntiForgeryToken()
-                                @Html.Hidden("index", itemId)
-                                @Html.Hidden("ucId", Model.UserCollection.Id)
+                        @using (Html.BeginForm("UpdateItemCount", "Manage", null, FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("index", itemId)
+                            @Html.Hidden("ucId", Model.UserCollection.Id)
 
-                                <button class="counter counter-add" type="submit"><i class="fa fa-plus-circle"></i></button>
-                                <input type="number" id="@itemId" name="quantity" min="0" max="999" value="@userItems[itemId]" />
-                                <button class="counter counter-minus" type="submit"><i class="fa fa-minus-circle"></i></button>
-                            }
+                        <div class="row align-items-center">
+                            <button class="counter counter-add" type="submit"><i class="fa fa-plus-circle"></i></button>
+                            <input type="number" id="@itemId" name="quantity" min="0" max="999" value="@userItems[itemId]" />
+                            <button class="counter counter-minus" type="submit"><i class="fa fa-minus-circle"></i></button>
                         </div>
+                        }
                     </div>
                 </div>
             }
