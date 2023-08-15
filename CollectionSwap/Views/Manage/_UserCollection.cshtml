@@ -32,18 +32,25 @@
             @foreach (var item in items)
             {
                 var imagePath = $"~/Collections/{Model.UserCollection.CollectionId}";
-                var itemId = items.IndexOf(item) + 1;
+                var itemId = items.IndexOf(item);
 
                 <div class="column align-items-center">
-                    <div class="item-container @(userItems[itemId - 1] < 1 ? "item-not-owned" : "")">
+                    <div class="item-container @(userItems[itemId] < 1 ? "item-not-owned" : "")">
                         <img class="item" src="@Url.Content(imagePath)/@item" />
                     </div>
                     <div class="item-quantity column align-items-center">
                         Quantity:
                         <div class="row gap-1 align-items-center">
-                            <button class="counter counter-add"><i class="fa fa-plus-circle"></i></button>
-                            <input type="number" id="@itemId" name="quantity" min="0" max="999" value="@userItems[itemId - 1]" />
-                            <button class="counter counter-minus"><i class="fa fa-minus-circle"></i></button>
+                            @using (Html.BeginForm("UpdateItemCount", "Manage", null, FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("index", itemId)
+                                @Html.Hidden("ucId", Model.UserCollection.Id)
+
+                                <button class="counter counter-add" type="submit"><i class="fa fa-plus-circle"></i></button>
+                                <input type="number" id="@itemId" name="quantity" min="0" max="999" value="@userItems[itemId]" />
+                                <button class="counter counter-minus" type="submit"><i class="fa fa-minus-circle"></i></button>
+                            }
                         </div>
                     </div>
                 </div>

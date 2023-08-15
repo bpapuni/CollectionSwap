@@ -226,9 +226,24 @@ namespace CollectionSwap.Models
 
             return newUserCollection;
         }
-        public void Update(string name, ApplicationDbContext db)
+        public void Update(string property, string value, ApplicationDbContext db)
         {
-            this.Name = name;
+            switch (property)
+            {
+                case "Name":
+                    this.Name = value;
+                    break;
+                case "Quantity":
+                    var deserializedItemCount = JsonConvert.DeserializeObject<List<int>>(this.ItemCountJSON);
+                    var jsonValue = JsonConvert.DeserializeObject<dynamic>(value);
+                    int index = jsonValue.index;
+                    deserializedItemCount[index] = jsonValue.quantity;
+                    this.ItemCountJSON = JsonConvert.SerializeObject(deserializedItemCount);
+                    break;
+
+                default:
+                    break;
+            }
             db.Entry(this).State = EntityState.Modified;
             db.SaveChanges();
         }

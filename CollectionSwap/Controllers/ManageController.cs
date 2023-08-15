@@ -462,7 +462,7 @@ namespace CollectionSwap.Controllers
                 return Json(new { PartialView = partial });
             }
 
-            userCollection.Update(model.Name, db);
+            userCollection.Update("Name", model.Name, db);
             var ucModel = new UserCollectionModel
             {
                 Collection = db.Collections.Find(userCollection.CollectionId),
@@ -509,6 +509,27 @@ namespace CollectionSwap.Controllers
 
             partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
             return Json(new { PartialView = partial });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public ActionResult UpdateItemCount(int quantity, int index, int ucId)
+        {
+            var partial = String.Empty;
+            UserCollection userCollection = db.UserCollections.Find(ucId);
+            userCollection.Update("Quantity", JsonConvert.SerializeObject(new { index, quantity }), db);
+
+            //var userId = User.Identity.GetUserId();
+            //var ycViewModel = new YourCollectionViewModel
+            //{
+            //    Collections = db.Collections.ToList(),
+            //    UserCollections = db.UserCollections.Where(uc => uc.UserId == userId).ToList()
+            //};
+
+            //partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
+            //return Json(new { PartialView = partial });
+            return null;
         }
 
         //[HttpPost]

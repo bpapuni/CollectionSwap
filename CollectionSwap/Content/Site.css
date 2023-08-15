@@ -251,6 +251,7 @@ main {
     background: none;
     border: none;
     cursor: pointer;
+    outline: none;
 }
 
 #create-collection-container {
@@ -307,6 +308,7 @@ main {
     background: none;
     border: none;
     cursor: pointer;
+    outline: none;
 }
 
 .new-collection {

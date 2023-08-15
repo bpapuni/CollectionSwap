@@ -125,7 +125,7 @@
                         $.each(result.RefreshTargets, function (key, target) {
                             $(`${target}`).prop("outerHTML", $(partialView).find(target).html());
                         });
-                    } else {
+                    } else if (partialView) {
                         var target = $(result.PartialView)[0].id;
                         $(`#${target}`).prop("outerHTML", partialView);
                     }
@@ -178,12 +178,10 @@
 
             input.val(quantity);
             if (quantity == 0) {
-                $(this).parent().parent().prev().addClass("item-not-owned");
-                //UpdateUserCollection(itemId, quantity);
+                $(this).parent().parent().parent().prev().addClass("item-not-owned");
             }
             if (quantity == 1) {
-                $(this).parent().parent().prev().removeClass("item-not-owned");
-                //UpdateUserCollection(itemId, quantity);
+                $(this).parent().parent().parent().prev().removeClass("item-not-owned");
             }
         })
 
@@ -194,8 +192,7 @@
 
             if (quantity < 0) {
                 input.val(0);
-                /*$(this).parent().parent().prev().trigger("click");*/
-                //UpdateUserCollection(itemId, quantity);
+                $(this).parent().parent().parent().prev().removeClass("item-not-owned");
             }
         })
 
