@@ -147,7 +147,15 @@
             });
         }
 
-        
+        function ScrollRowBack(e) {
+            var scrollRow = $(e).closest(".scroll-snap-row");
+            scrollRow.css("scroll-snap-type", "none");
+
+            scrollRow.animate({ scrollLeft: 0 }, 250, "swing", () => {
+                $(document).scrollTop(0);
+                scrollRow.css("scroll-snap-type", "x mandatory")
+            });
+        }
 
         $(document).on("click", "#user-collection-container .item-container", function () {
             //let itemQuantity = $(this).next();

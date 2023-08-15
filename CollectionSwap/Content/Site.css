@@ -240,6 +240,19 @@ main {
     scrollbar-width: none; /* Firefox */
 }
 
+.scroll-row-button {
+    position: absolute;
+    top: 0;
+    left: 0.25rem;
+    width: 4rem;
+    aspect-ratio: 1/1;
+    font-size: 3rem;
+    color: var(--darker-shade);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
 #create-collection-container {
     display: flex;
     flex-direction: column;
@@ -518,6 +531,7 @@ nav a {
 }
 
 #edit-collection-container {
+    position: relative;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -528,6 +542,7 @@ nav a {
 }
 
 #user-collection-container {
+    position: relative;
     display: flex;
     flex-direction: column;
 }
