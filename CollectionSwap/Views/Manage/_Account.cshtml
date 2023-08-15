@@ -3,7 +3,7 @@
     <span class="header">Account Settings</span>
 
     <section>
-        <div class="row gap-4">
+        <div class="row min-width-100 gap-4">
             @using (Html.BeginForm("ChangeEmail", "Manage", FormMethod.Post))
             {
                 @Html.AntiForgeryToken()
