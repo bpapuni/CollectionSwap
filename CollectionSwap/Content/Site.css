@@ -209,6 +209,7 @@ main {
             bottom: 0;
             width: 109px;
             height: 99px;
+            pointer-events: none;
         }
 
 .manage-container {
@@ -582,6 +583,7 @@ nav a {
         bottom: 10px;
         width: 32px;
         height: 7px;
+        pointer-events: none;
     }
 
 .main-navbar li {
