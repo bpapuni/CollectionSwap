@@ -476,7 +476,7 @@ namespace CollectionSwap.Controllers
             };
 
             partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
-            return Json(new { PartialView = partial });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container" } });
         }
 
         [HttpPost]
@@ -508,7 +508,7 @@ namespace CollectionSwap.Controllers
             };
 
             partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
-            return Json(new { PartialView = partial });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container" } });
         }
 
         [HttpPost]
@@ -531,49 +531,6 @@ namespace CollectionSwap.Controllers
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container" } });
             //return null;
         }
-
-        //[HttpPost]
-        //public ActionResult LoadPartial(int? id, string partialName)
-        //{
-        //    var userId = User.Identity.GetUserId();
-
-        //    switch (partialName)
-        //    {
-        //        case "_CreateCollection":
-        //            return PartialView(partialName);
-        //        case "_EditCollection":
-        //            if (id.HasValue)
-        //            {
-        //                using (var db = new ApplicationDbContext())
-        //                {
-        //                    var collectionModel = db.Collections.Find(id);
-        //                    return PartialView(partialName, collectionModel);
-        //                }
-        //            }
-        //            break;
-        //        case "_ManageCollections":
-        //            var mcModel = new ManageCollectionsViewModel
-        //            {
-        //                Collections = db.Collections.ToList(),
-        //                CreateCollection = new CreateCollection()
-        //            };
-        //            return PartialView(partialName, mcModel);
-        //        case "_Account":
-        //        case "_YourCollections":
-        //        case "_SwapHistory":                
-        //            var model = new IndexViewModel {
-        //                Collections = db.Collections.ToList(),
-        //                UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
-        //                ChangeAddress = db.Addresses.OrderByDescending(a => a.Created)
-        //                                            .FirstOrDefault(a => a.UserId == userId)
-        //            };
-        //            return PartialView(partialName, model);
-        //        default:
-        //            break;
-
-        //    }
-        //    return RedirectToAction("Index");
-        //}
 
         //
         // POST: /Manage/RemoveLogin

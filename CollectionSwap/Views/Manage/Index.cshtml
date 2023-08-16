@@ -154,18 +154,18 @@
                     var partialView = result.PartialView;
                     
                     if (result.RefreshTargets) {
+                        console.log("refresh");
                         $.each(result.RefreshTargets, function (key, target) {
-                            //console.log(target);
-                            $(`${target}`).prop("outerHTML", $(partialView).find(target).html());
+                            $(`${target}`).prop("outerHTML", $(partialView).find(target).prop("outerHTML"));
+                            $(`${target}`).removeClass("d-none");
                         });
                     } else if (partialView) {
-                        //console.log(partialView);
+                        console.log("partial");
                         var target = $(result.PartialView)[0].id;
-                        $(`#${target}`).prop("outerHTML", partialView);
+                        $(`#${target}`).prop("outerHTML", $(partialView).find(target).prop("outerHTML"));
                     }
 
                     if (result.ScrollTarget) {
-                        //console.log(result.ScrollTarget);
                         var offset = $(result.ScrollTarget).prop("offsetLeft");
                         $(result.ScrollTarget).parent().css("scroll-snap-type", "none");
 
@@ -188,6 +188,7 @@
             scrollRow.animate({ scrollLeft: 0 }, 250, "swing", () => {
                 $(document).scrollTop(0);
                 scrollRow.css("scroll-snap-type", "x mandatory")
+                scrollRow.eq(0).children().eq(1).addClass("d-none");
             });
         }
 

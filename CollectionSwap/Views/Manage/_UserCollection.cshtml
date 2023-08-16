@@ -7,54 +7,52 @@
     string statusMessage = ViewBag.Status;
 }
 
-<div id="user-collection-container">
-    <button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-arrow-circle-o-left"></i></button>
-    <span class="header">
-        Update Your @Model.UserCollection.Name Collection
-    </span>
+<button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-arrow-circle-o-left"></i></button>
+<span class="header">
+    Update Your @Model.UserCollection.Name Collection
+</span>
 
-    <section class="column">
-        <span class="success-message">@ViewBag.AddItemStatus</span>
-        <span><strong>Completed a swap?</strong> Place feedback about the swap in your Swap History to automatically update this collection with your new items.</span>
-        @using (Html.BeginForm("ChangeUserCollectionName", "Manage", null, FormMethod.Post))
+<section class="column">
+    <span class="success-message">@ViewBag.AddItemStatus</span>
+    <span><strong>Completed a swap?</strong> Place feedback about the swap in your Swap History to automatically update this collection with your new items.</span>
+    @using (Html.BeginForm("ChangeUserCollectionName", "Manage", null, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.UserCollection.Id)
+        @Html.HiddenFor(model => model.UserCollection.UserId)
+
+        @Html.LabelFor(model => model.UserCollection.Name)
+        @Html.TextBoxFor(model => model.UserCollection.Name, new { @class = "" })
+        @Html.ValidationMessageFor(model => model.UserCollection.Name, "", new { @class = "text-danger" })
+        <input type="submit" value="Update Name" />
+    }
+    <br />
+    <div id="collection-items" class="row gap-2" style="">
+        @foreach (var item in items)
         {
-            @Html.AntiForgeryToken()
-            @Html.HiddenFor(model => model.UserCollection.Id)
-            @Html.HiddenFor(model => model.UserCollection.UserId)
+            var imagePath = $"~/Collections/{Model.UserCollection.CollectionId}";
+            var itemId = items.IndexOf(item);
 
-            @Html.LabelFor(model => model.UserCollection.Name)
-            @Html.TextBoxFor(model => model.UserCollection.Name, new { @class = "" })
-            @Html.ValidationMessageFor(model => model.UserCollection.Name, "", new { @class = "text-danger" })
-            <input type="submit" value="Update Name" />
-        }
-        <br />
-        <div id="collection-items" class="row gap-2" style="">
-            @foreach (var item in items)
-            {
-                var imagePath = $"~/Collections/{Model.UserCollection.CollectionId}";
-                var itemId = items.IndexOf(item);
-
-                <div class="column align-items-center">
-                    <div class="item-container @(userItems[itemId] < 1 ? "item-not-owned" : "")">
-                        <img class="item" src="@Url.Content(imagePath)/@item" />
-                    </div>
-                    <div class="item-quantity column align-items-center">
-                        Quantity:
-                        @using (Html.BeginForm("UpdateItemCount", "Manage", null, FormMethod.Post))
-                        {
-                            @Html.AntiForgeryToken()
-                            @Html.Hidden("index", itemId)
-                            @Html.Hidden("ucId", Model.UserCollection.Id)
+            <div class="column align-items-center">
+                <div class="item-container @(userItems[itemId] < 1 ? "item-not-owned" : "")">
+                    <img class="item" src="@Url.Content(imagePath)/@item" />
+                </div>
+                <div class="item-quantity column align-items-center">
+                    Quantity:
+                    @using (Html.BeginForm("UpdateItemCount", "Manage", null, FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.Hidden("index", itemId)
+                        @Html.Hidden("ucId", Model.UserCollection.Id)
 
                         <div class="row align-items-center">
                             <button class="counter counter-add" type="submit"><i class="fa fa-plus-circle"></i></button>
                             <input type="number" id="@itemId" name="quantity" min="0" max="999" value="@userItems[itemId]" />
                             <button class="counter counter-minus" type="submit"><i class="fa fa-minus-circle"></i></button>
                         </div>
-                        }
-                    </div>
+                    }
                 </div>
-            }
-        </div>
-    </section>
-</div>
+            </div>
+        }
+    </div>
+</section>

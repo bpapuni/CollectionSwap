@@ -23,7 +23,7 @@
         }
         <h2>Select a collection to find swaps for:</h2>
         <hr />
-        <div class="row">
+        <div class="row gap-2">
             @foreach (UserCollection userCollection in Model.UserCollections)
             {
                 @Html.ActionLink(userCollection.Name, "UserCollection", "Swap", new { id = userCollection.Id }, new { @class = "collection user-collection" })

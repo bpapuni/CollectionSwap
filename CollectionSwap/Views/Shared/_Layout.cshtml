@@ -17,7 +17,7 @@
     <nav class="main-navbar">
         <ul>
             <li class="@(currentController == "Home" ? "selected" : "")">
-                @Html.ActionLink("About", "About", "Home")
+                @Html.ActionLink("Home", "Index", "Home")
             </li>
             <li class="@(currentController == "Swap" ? "selected" : "")">
                 <a href="/Swap/UserCollection">Find Swaps</a>
