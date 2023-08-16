@@ -251,6 +251,7 @@ namespace CollectionSwap.Controllers
                 model.Collections = db.Collections.ToList();
                 ViewBag.ShouldDisplay = true;
                 partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
+                //return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container" } });
                 return Json(new { PartialView = partial });
             }
 
@@ -259,6 +260,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.ShouldDisplay = true;
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
+            //return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container" } });
             return Json(new { PartialView = partial });
         }
 
@@ -399,7 +401,7 @@ namespace CollectionSwap.Controllers
             ViewBag.ShouldDisplay = true;
             ViewBag.EditCollectionStatus = "Item successfully removed from collection.";
             var partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
-            return Json(new { PartialView = partial });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container", second = "#edit-collection-container" } });
         }
 
         //

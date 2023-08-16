@@ -7,7 +7,7 @@
     <div class="form-group">
         @Html.LabelFor(model => model.CreateCollection.Name)
         @Html.TextBoxFor(model => model.CreateCollection.Name)
-        @Html.ValidationMessageFor(model => model.CreateCollection.Name, "")
+        @Html.ValidationMessageFor(model => model.CreateCollection.Name)
     </div>
     <div class="form-group">
         @Html.LabelFor(model => model.CreateCollection.Description)
@@ -16,7 +16,7 @@
     </div>
     <div class="form-group">
         @Html.TextBoxFor(model => model.CreateCollection.fileInput, new { type = "file", accept = ".zip" })
-        @Html.ValidationMessageFor(model => model.CreateCollection.fileInput, "")
+        @Html.ValidationMessageFor(model => model.CreateCollection.fileInput)
 
         <input type="submit" value="Create Collection" />
     </div>

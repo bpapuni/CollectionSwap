@@ -154,15 +154,17 @@
                     var partialView = result.PartialView;
                     
                     if (result.RefreshTargets) {
-                        console.log("refresh");
                         $.each(result.RefreshTargets, function (key, target) {
-                            $(`${target}`).prop("outerHTML", $(partialView).find(target).prop("outerHTML"));
+                            if (`#${$(partialView)[0].id}` === target) {
+                                $(`${target}`).prop("outerHTML", $(partialView).prop("outerHTML"));
+                            } else {
+                                $(`${target}`).prop("outerHTML", $(partialView).find(target).prop("outerHTML"));
+                            }
                             $(`${target}`).removeClass("d-none");
                         });
                     } else if (partialView) {
-                        console.log("partial");
                         var target = $(result.PartialView)[0].id;
-                        $(`#${target}`).prop("outerHTML", $(partialView).find(target).prop("outerHTML"));
+                        $(`#${target}`).prop("outerHTML", $(partialView).prop("outerHTML"));
                     }
 
                     if (result.ScrollTarget) {
