@@ -359,6 +359,8 @@
     <Content Include="Fonts\fontawesome-webfont.woff" />
     <Content Include="Fonts\fontawesome-webfont.ttf" />
     <Content Include="Fonts\fontawesome-webfont.eot" />
+    <Content Include="Collections\Feelings.zip" />
+    <Content Include="Collections\Women of History.zip" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\swap-ui.js" />
     <Content Include="Scripts\user-collection-ui.js" />
