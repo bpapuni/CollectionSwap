@@ -379,6 +379,7 @@
     <Content Include="Fonts\MontserratAlternates-SemiBoldItalic.ttf" />
     <Content Include="Fonts\MontserratAlternates-Thin.ttf" />
     <Content Include="Fonts\MontserratAlternates-ThinItalic.ttf" />
+    <Content Include="Fonts\PlusJakartaSans-VariableFont_wght.ttf" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\swap-ui.js" />
     <Content Include="Scripts\user-collection-ui.js" />
