@@ -1,7 +1,4 @@
 ﻿@model CollectionSwap.Models.CollectionButton
-@{
-    string onClickValue = Model.onClick ?? "";
-}
 <div class="new-collection">
     <div class="new-collection-row">
         @for (var i = 0; i < 3; i++)
@@ -18,7 +15,37 @@
         <span><strong>@Model.Name</strong></span>
         <span>Short description goes here</span>
     </div>
-    <div class="new-collection-row">
+    @if (Model.Id != 0)
+    {
+        <div class="new-collection-row">
+            @if (Model.SetSize > 0)
+            {
+                <div class="column align-items-center">
+                    <span>@Model.ItemList.Count</span>
+                    You Own
+                </div>
+            }
 
-    </div>
+
+            <div class="column align-items-center">
+                @if (Model.SetSize > 0)
+                {
+                    <span>@Model.SetSize</span>
+                }
+                else
+                {
+                    <span>@Model.ItemList.Count</span>
+                }
+                In Full Set
+            </div>
+
+            @if (Model.SetSize > 0)
+            {
+                <div class="column align-items-center">
+                    <span>@Model.Duplicates</span>
+                    Duplicates
+                </div>
+            }
+        </div>
+    }
 </div>

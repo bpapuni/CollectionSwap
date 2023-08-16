@@ -42,12 +42,17 @@
                                                     .Where(item => item.Value > 0)
                                                     .Select(item => item.Index)
                                                     .ToList();
+                    var duplicates = JsonConvert.DeserializeObject<List<int>>(userCollection.ItemCountJSON)
+                                                    .Select(num => num > 1 ? num - 1 : 0).ToList()
+                                                    .Sum();
 
                     var collectionButton = new CollectionButton
                     {
                         Id = userCollection.CollectionId,
                         Name = userCollection.Name,
-                        ItemList = userItemList.Select(index => deserializedItemListJSON[index]).ToList()
+                        ItemList = userItemList.Select(index => deserializedItemListJSON[index]).ToList(),
+                        SetSize = deserializedItemListJSON.Count,
+                        Duplicates = duplicates
                     };
                     <div class="column align-items-center gap-1">
                         <a class="collection-button" href=@Url.Content($"/Manage/YourCollections/{userCollection.Id}")>

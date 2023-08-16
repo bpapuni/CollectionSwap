@@ -353,9 +353,9 @@ namespace CollectionSwap.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string href { get; set; }
         public List<string> ItemList { get; set; }
-        public string onClick { get; set; }
+        public int SetSize { get; set; }
+        public int Duplicates { get; set; }
     }
 
     public class UserCollectionModel
