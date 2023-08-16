@@ -5,7 +5,7 @@
 
 <div id="register-container">
     <section class="login">
-        @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+        @using (Html.BeginForm("Login", "Account", FormMethod.Post))
         {
             <h2>Welcome <em class="underline">Back</em></h2>
             @Html.AntiForgeryToken()
@@ -35,7 +35,7 @@
     </section>
 
     <section class="register">
-        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
+        @using (Html.BeginForm("Register", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
         {
             <h2>Create Account</h2>
             @Html.AntiForgeryToken()
