@@ -196,19 +196,6 @@
             });
         }
 
-        $(document).on("click", "#user-collection-container .item-container", function () {
-            //let itemQuantity = $(this).next();
-            ////let quantity = itemQuantity.hasClass("visually-hidden") ? 1 : 0
-            //let input = itemQuantity.find("#user-collection-container [type='number']");
-            //let itemId = input.prop("id");
-
-            ////itemQuantity.toggleClass("visually-hidden");
-            ////input.val(quantity);
-            //$(this).toggleClass("item-not-owned");
-
-            //UpdateUserCollection(itemId, quantity);
-        })
-
         $(document).on("click", ".counter-add, .counter-minus", function () {
             let input = $(this).parent().find("[name='quantity']");
             let itemId = input.prop("id");
