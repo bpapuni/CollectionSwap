@@ -14,7 +14,7 @@
 
 </head>
 <body>
-    <nav class="main-navbar">
+    <nav class="main-navbar @(currentController == "Account" ? "bg-split" : "")">
         <ul>
             <li>
                 @Html.ActionLink("Swapper", "Index", "Home")
@@ -31,7 +31,7 @@
         </ul>
     </nav>
 
-    <main>
+    <main class="@(currentController == "Account" ? "bg-split" : "")">
         @RenderBody()
     </main>
 

@@ -4,7 +4,7 @@
 }
 
 <div id="register-container">
-    <section class="login">
+    <section class="login exclamation squiggle">
         @using (Html.BeginForm("Login", "Account", FormMethod.Post))
         {
             <h2>Welcome <em class="underline">Back</em></h2>
@@ -34,7 +34,12 @@
         }
     </section>
 
-    <section class="register">
+    <section class="prompt exclamation squiggle">
+        <h2>New Here?</h2>
+        <button>Create Free Account</button>
+    </section>
+
+    <section class="register squiggle exclamation d-none">
         @using (Html.BeginForm("Register", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
         {
             <h2>Create Account</h2>
