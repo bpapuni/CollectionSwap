@@ -535,6 +535,19 @@ namespace CollectionSwap.Controllers
         }
 
         //
+        // GET: /Manage/SwapHistory
+
+        [Authorize]
+        public ActionResult SwapHistoryPartial()
+        {
+            var userId = User.Identity.GetUserId();
+
+            var partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", null, true);
+
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container" } });
+        }
+
+        //
         // POST: /Manage/RemoveLogin
         [HttpPost]
         [ValidateAntiForgeryToken]

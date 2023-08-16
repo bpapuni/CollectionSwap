@@ -344,7 +344,7 @@
     <Content Include="Content\themes\base\tabs.css" />
     <Content Include="Content\themes\base\theme.css" />
     <Content Include="Content\themes\base\tooltip.css" />
-    <Content Include="Content\Manage.css" />
+    <Content Include="Content\Fonts.css" />
     <Content Include="favicon.ico" />
     <Content Include="Fonts\fontawesome-webfont.svg" />
     <Content Include="Global.asax" />
@@ -361,6 +361,24 @@
     <Content Include="Fonts\fontawesome-webfont.eot" />
     <Content Include="Collections\Feelings.zip" />
     <Content Include="Collections\Women of History.zip" />
+    <Content Include="Fonts\MontserratAlternates-Black.ttf" />
+    <Content Include="Fonts\MontserratAlternates-BlackItalic.ttf" />
+    <Content Include="Fonts\MontserratAlternates-Bold.ttf" />
+    <Content Include="Fonts\MontserratAlternates-BoldItalic.ttf" />
+    <Content Include="Fonts\MontserratAlternates-ExtraBold.ttf" />
+    <Content Include="Fonts\MontserratAlternates-ExtraBoldItalic.ttf" />
+    <Content Include="Fonts\MontserratAlternates-ExtraLight.ttf" />
+    <Content Include="Fonts\MontserratAlternates-ExtraLightItalic.ttf" />
+    <Content Include="Fonts\MontserratAlternates-Italic.ttf" />
+    <Content Include="Fonts\MontserratAlternates-Light.ttf" />
+    <Content Include="Fonts\MontserratAlternates-LightItalic.ttf" />
+    <Content Include="Fonts\MontserratAlternates-Medium.ttf" />
+    <Content Include="Fonts\MontserratAlternates-MediumItalic.ttf" />
+    <Content Include="Fonts\MontserratAlternates-Regular.ttf" />
+    <Content Include="Fonts\MontserratAlternates-SemiBold.ttf" />
+    <Content Include="Fonts\MontserratAlternates-SemiBoldItalic.ttf" />
+    <Content Include="Fonts\MontserratAlternates-Thin.ttf" />
+    <Content Include="Fonts\MontserratAlternates-ThinItalic.ttf" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\swap-ui.js" />
     <Content Include="Scripts\user-collection-ui.js" />
@@ -426,6 +444,7 @@
     <Content Include="Views\Manage\_AvailableCollections.cshtml" />
     <Content Include="Views\Manage\_CollectionButton.cshtml" />
     <Content Include="Views\Manage\_UserCollection.cshtml" />
+    <Content Include="Views\Manage\_SwapHistory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

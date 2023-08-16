@@ -16,14 +16,19 @@
 <body>
     <nav class="main-navbar">
         <ul>
-            <li class="@(currentController == "Home" ? "selected" : "")">
-                @Html.ActionLink("Home", "Index", "Home")
+            <li>
+                @Html.ActionLink("Swapper", "Index", "Home")
             </li>
+        </ul>
+        <ul>
+            @*<li class="@(currentController == "Home" ? "selected" : "")">
+                @Html.ActionLink("Home", "Index", "Home")
+            </li>*@
             <li class="@(currentController == "Swap" ? "selected" : "")">
                 <a href="/Swap/UserCollection">Find Swaps</a>
             </li>
+            @Html.Partial("_LoginPartial")
         </ul>
-        @Html.Partial("_LoginPartial")
     </nav>
 
     <main>
