@@ -1229,112 +1229,45 @@ input[type=number] {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    flex-grow: 1;
-    /*height: 45rem;*/
-    font-weight: 300;
-    overflow: hidden;
-    /*border-radius: 2rem;*/
+    gap: 4rem;
+    flex: 1;
+    width: 100%;
+    font-family: 'Montserrat Alternates';
+    font-size: 1.2rem;
 }
+
+#register-container section {
+    display: flex;
+    flex-direction: column;
+    min-width: 30rem;
+}
+
+    #register-container input[type=text],
+    #register-container input[type=password] {
+        padding: 1rem;
+        border-radius: 1rem;
+        font-size: 1.2rem;
+    }
 
 #register-container h2 {
-    font-weight: 400;
+    font-size: 3rem;
 }
 
-#register-container > * {
-    height: 40rem;
-}
+    #register-container em.underline {
+        position: relative;
+        font-style: normal;
+    }
 
-.register-container-left {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 1;
-    width: clamp(25rem, 40rem, 60rem);
-    margin: 0 -2rem 5rem 0;
-    color: var(--light-shade);
-    background-color: var(--darkest-shade);
-    box-shadow: 2px 4px 5px var(--neutral-shade);
-    border-radius: 2rem 0 0 2rem;
-    transition: z-index 0.5s ease;
-    z-index: 1;
-}
+        #register-container em.underline::after {
+            content: url("data:image/svg+xml,%3Csvg width='186' height='15' viewBox='0 0 186 15' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0.172524 3.64798C0.218592 2.82778 0.583655 2.05774 1.1897 1.50226C1.79576 0.946773 2.59478 0.649887 3.41616 0.675017C26.4535 4.19812 49.6569 6.54437 72.9361 7.7047C96.2165 8.86936 119.543 8.8436 142.823 7.62746C155.835 6.94242 168.811 5.88412 181.752 4.45255C182.556 4.29856 183.389 4.4576 184.079 4.89717C184.77 5.33673 185.266 6.02355 185.466 6.81714C185.639 7.62267 185.486 8.46415 185.04 9.15814C184.595 9.85213 183.894 10.3424 183.089 10.522C159.734 13.1155 136.263 14.5209 112.768 14.7329C89.2701 14.9369 65.7789 13.9321 42.3874 11.7226C29.2491 10.4819 16.1562 8.86784 3.10846 6.88042C2.30192 6.8092 1.55208 6.43713 1.00808 5.8382C0.464094 5.23926 0.165821 4.45736 0.172524 3.64798Z' fill='%23D03F78'/%3E%3C/svg%3E%0A");
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            left: 0;
+            bottom: -35px;
+            width: 100%;
 
-.register-container-right {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 1;
-    width: clamp(25rem, 40rem, 60rem);
-    /*min-height: 40rem;*/
-    margin: 5rem 0 0 -2rem;
-    color: var(--darkest-shade);
-    background-color: var(--lighter-shade);
-    box-shadow: 2px 4px 5px var(--neutral-shade);
-    border-radius: 0 2rem 2rem 0;
-    transition: z-index 0.5s ease;
-    z-index: 2;
-}
-
-#register-container form {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    min-width: 60%;
-    padding: 1rem 4rem;
-    border-radius: 1rem;
-}
-
-#register-container .form-group {
-    min-width: 100%;
-}
-
-.register-container-left form {
-    background-color: var(--darker-shade);
-    box-shadow: 0 2px 5px var(--darkerest-shade);
-}
-
-.register-container-right form {
-    background-color: var(--lightest-shade);
-    box-shadow: 0 2px 5px var(--neutral-shade);
-}
-
-#register-container input[type=submit] {
-    color: inherit;
-    background: #00000000;
-}
-
-#register-container .form-control {
-    width: 20rem;
-    max-width: 20rem;
-}
-
-#register-container .text-danger {
-    font-size: 0.9rem;
-    font-weight: 400;
-}
-
-.register-container-left .text-danger {
-    color: #f14949 !important;
-}
-
-.register-container-right .text-danger {
-    font-weight: 500;
-    /*color: #ff8b8b !important;*/
-}
-
-.register-container-left .btn {
-    margin-top: 1rem;
-    font-weight: 200;
-    color: var(--steel-blue-100);
-    border-color: var(--steel-blue-100);
-}
-
-.register-container-left .btn:hover {
-    font-weight: 400;
-    color: var(--steel-blue-700);
-    background-color: var(--steel-blue-100);
-}
+        }
 
 .past-swap-container {
     position: relative;

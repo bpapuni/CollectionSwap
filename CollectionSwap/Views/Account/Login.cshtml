@@ -4,10 +4,40 @@
 }
 
 <div id="register-container">
-    <div class="register-container-left">
+    <section class="login">
         @using (Html.BeginForm("Register", "Account", FormMethod.Post))
         {
-            <h2>Register your account</h2>
+            <h2>Welcome <em class="underline">Back</em></h2>
+            @Html.AntiForgeryToken()
+
+            @*@Html.ValidationMessage("LoginError", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(m => m.LoginViewModel.Email, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(m => m.LoginViewModel.Password, "", new { @class = "text-danger" })*@
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.LoginViewModel.Email)
+                @Html.TextBoxFor(m => m.LoginViewModel.Email)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.LoginViewModel.Password)
+                @Html.PasswordFor(m => m.LoginViewModel.Password)
+            </div>
+            @*<div class="form-group">
+                @Html.CheckBoxFor(m => m.LoginViewModel.RememberMe)
+                @Html.LabelFor(m => m.LoginViewModel.RememberMe)
+            </div>*@
+            <button type="submit">Login</button>
+            @* Enable this once you have account confirmation enabled for password reset functionality
+            <p>
+                @Html.ActionLink("Forgot your password?", "ForgotPassword")
+            </p>*@
+        }
+    </section>
+
+    <section class="register">
+        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
+        {
+            <h2>Create Account</h2>
             @Html.AntiForgeryToken()
 
             @*@Html.ValidationMessageFor(m => m.RegisterViewModel.Username, "", new { @class = "text-danger" })
@@ -33,42 +63,9 @@
                 @Html.LabelFor(m => m.RegisterViewModel.ConfirmPassword)
                 @Html.PasswordFor(m => m.RegisterViewModel.ConfirmPassword)
             </div>
-            <div class="form-group">
-                <input type="submit" value="Register" />
-            </div>
+            <button type="submit">Create Account</button>
         }
-    </div>
-    <div class="register-container-right">
-        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
-        {
-            @Html.AntiForgeryToken()
-            <h2>Login</h2>
-            @*@Html.ValidationMessage("LoginError", new { @class = "text-danger" })
-            @Html.ValidationMessageFor(m => m.LoginViewModel.Email, "", new { @class = "text-danger" })
-            @Html.ValidationMessageFor(m => m.LoginViewModel.Password, "", new { @class = "text-danger" })*@
-
-            <div class="form-group">
-                @Html.LabelFor(m => m.LoginViewModel.Email)
-                @Html.TextBoxFor(m => m.LoginViewModel.Email)
-            </div>
-            <div class="form-group">
-                @Html.LabelFor(m => m.LoginViewModel.Password)
-                @Html.PasswordFor(m => m.LoginViewModel.Password)
-            </div>
-            @*<div class="form-group">
-                @Html.CheckBoxFor(m => m.LoginViewModel.RememberMe)
-                @Html.LabelFor(m => m.LoginViewModel.RememberMe)
-            </div>*@
-            <br />
-            <div class="form-group">
-                <input type="submit" value="Login" />
-            </div>
-            @* Enable this once you have account confirmation enabled for password reset functionality
-            <p>
-                @Html.ActionLink("Forgot your password?", "ForgotPassword")
-            </p>*@
-        }
-    </div>
+    </section>
 </div>
 
 @section Scripts {
