@@ -162,10 +162,12 @@
                             }
                             $(`${target}`).removeClass("d-none");
                         });
-                    } else if (partialView) {
-                        var target = $(result.PartialView)[0].id;
-                        $(`#${target}`).prop("outerHTML", $(partialView).prop("outerHTML"));
                     }
+                    //} else if (partialView) {
+                    //    var target = $(result.PartialView)[0].id;
+                    //    //console.log(result.PartialView);
+                    //    $(`#${target}`).prop("outerHTML", $(partialView).prop("outerHTML"));
+                    //}
 
                     if (result.ScrollTarget) {
                         var offset = $(result.ScrollTarget).prop("offsetLeft");

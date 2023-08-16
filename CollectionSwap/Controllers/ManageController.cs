@@ -101,7 +101,7 @@ namespace CollectionSwap.Controllers
             var partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
             //var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
 
-            return Json(new { PartialView = partial });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
             //return PartialView("_Account", model);
         }
 
@@ -117,7 +117,7 @@ namespace CollectionSwap.Controllers
             if (!ModelState.IsValid)
             {
                 partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-                return Json(new { PartialView = partial });
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
             }
 
             
@@ -133,14 +133,14 @@ namespace CollectionSwap.Controllers
                 case "This email already exists":
                     ModelState.AddModelError("ChangeEmail.NewEmail", status);
                     partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-                    return Json(new { PartialView = partial });
+                    return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
                 default:
                     break;
             }
 
             ViewBag.ChangeEmailStatus = "Your email has been changed.";
             partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-            return Json(new { PartialView = partial });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
         }
 
         [HttpPost]
@@ -155,7 +155,7 @@ namespace CollectionSwap.Controllers
             if (!ModelState.IsValid)
             {
                 partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-                return Json(new { PartialView = partial });
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
             }
 
             var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.ChangePassword.OldPassword, model.ChangePassword.NewPassword);
@@ -178,7 +178,7 @@ namespace CollectionSwap.Controllers
 
 
                 partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-                return Json(new { PartialView = partial });
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
             }
 
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
@@ -189,7 +189,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.ChangePasswordStatus = "Your password has been changed.";
             partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-            return Json(new { PartialView = partial });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
         }
 
         [HttpPost]
@@ -201,7 +201,7 @@ namespace CollectionSwap.Controllers
             if (!ModelState.IsValid)
             {
                 partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-                return Json(new { PartialView = partial });
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
             }
 
             var result = await model.ChangeAddress.CreateAddressAsync(User.Identity.GetUserId(), db);
@@ -209,12 +209,12 @@ namespace CollectionSwap.Controllers
             {
                 //ModelState.AddModelError("ChangeAddress", result.Error);
                 partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-                return Json(new { PartialView = partial });
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
             }
 
             ViewBag.ChangeAddressStatus = "Your mailing address has been changed.";
             partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-            return Json(new { PartialView = partial });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
         }
 
         //
@@ -251,8 +251,8 @@ namespace CollectionSwap.Controllers
                 model.Collections = db.Collections.ToList();
                 ViewBag.ShouldDisplay = true;
                 partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
-                //return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container" } });
-                return Json(new { PartialView = partial });
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container" } });
+                //return Json(new { PartialView = partial });
             }
 
             Collection.Create(model.CreateCollection, db);
@@ -260,8 +260,8 @@ namespace CollectionSwap.Controllers
 
             ViewBag.ShouldDisplay = true;
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
-            //return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container" } });
-            return Json(new { PartialView = partial });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container" } });
+            //return Json(new { PartialView = partial });
         }
 
         //
@@ -275,7 +275,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.ShouldDisplay = true;
             partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", model, true);
-            return Json(new { PartialView = partial, ScrollTarget = "#edit-collection-container" }, JsonRequestBehavior.AllowGet);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#edit-collection-container" }, ScrollTarget = "#edit-collection-container" }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -295,7 +295,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.ShouldDisplay = true;
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
-            return Json(new { PartialView = partial });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container" } });
         }
 
         [HttpPost]
@@ -325,7 +325,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.ShouldDisplay = true;
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcViewModel, true);
-            return Json(new { PartialView = partial });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container" } });
         }
 
         [HttpPost]
@@ -341,7 +341,7 @@ namespace CollectionSwap.Controllers
                 model.Collection = collection;
                 ViewBag.ShouldDisplay = true;
                 partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", model, true);
-                return Json(new { PartialView = partial });
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#edit-collection-container" } });
 
             }
 
@@ -351,7 +351,7 @@ namespace CollectionSwap.Controllers
             ViewBag.ShouldDisplay = true;
             ViewBag.EditCollectionStatus = "Item successfully added to collection.";
             partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", model, true);
-            return Json(new { PartialView = partial });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#edit-collection-container" } });
         }
 
         [HttpPost]
@@ -366,7 +366,7 @@ namespace CollectionSwap.Controllers
             {
                 ViewBag.ShouldDisplay = true;
                 partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", editCollection, true);
-                return Json(new { PartialView = partial });
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#edit-collection-container" } });
 
             }
 
@@ -380,7 +380,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.ShouldDisplay = true;
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
-            return Json(new { PartialView = partial });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#edit-collection-container" } });
         }
 
         [HttpPost]
