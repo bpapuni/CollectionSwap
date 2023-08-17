@@ -119,8 +119,8 @@ input[type=submit]:hover {
     background: var(--gray-900, #18181B);
     cursor: pointer;
 }
-
-    button:hover {
+    #register-container button:hover,
+    #home-container button:hover {
         box-shadow: 0 5px 5px #00000099;
     }
 

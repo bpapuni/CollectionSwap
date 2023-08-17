@@ -200,7 +200,6 @@
             let itemId = input.prop("id");
             let change = $(this).hasClass("counter-add") ? 1 : -1;
             let quantity = (+input.val() + change) > 0 ? (+input.val() + change) > 99 ? 99 : +input.val() + change : 0;
-            //quantity = ;
 
             input.val(quantity);
             if (quantity == 0) {
