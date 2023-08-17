@@ -4,7 +4,8 @@
 }
 
 <div id="register-container">
-    <section class="login-prompt exclamation squiggle d-none">
+    @*<section class="login-prompt exclamation squiggle d-none">*@
+    <section class="login-prompt exclamation squiggle" style="display: none">
         <h2>Have an Account?</h2>
         <button onclick="SwitchRegisterForms(this)">Login</button>
     </section>
@@ -44,7 +45,8 @@
         <button onclick="SwitchRegisterForms(this)">Create Free Account</button>
     </section>
 
-    <section class="register squiggle exclamation d-none">
+    @*<section class="register squiggle exclamation d-none">*@
+    <section class="register squiggle exclamation" style="display: none">
         @using (Html.BeginForm("Register", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
         {
             <h2>Create <em class="underline">Account</em></h2>
@@ -82,11 +84,13 @@
     @Scripts.Render("~/bundles/jqueryval")
     <script>
         function SwitchRegisterForms(e) {
-            const button = $(e);
-            const hiddenElements = $(".d-none");
-            const showingElements = $("section").not(".d-none")
-            hiddenElements.toggleClass("d-none");
-            showingElements.toggleClass("d-none");
+            let button = $(e);
+            let hiddenElements = $("section:hidden");
+            let showingElements = $("section:visible");
+
+            showingElements.fadeOut(100, () => {
+                hiddenElements.fadeIn(100);
+            });
         }
     </script>
 }
