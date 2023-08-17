@@ -20,7 +20,7 @@ namespace CollectionSwap.Controllers
             return View();
         }
 
-        public ActionResult Contact()
+        public ActionResult Support()
         {
             ViewBag.Message = "Your contact page.";
 

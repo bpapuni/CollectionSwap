@@ -449,6 +449,7 @@
     <Content Include="Views\Manage\_CollectionButton.cshtml" />
     <Content Include="Views\Manage\_UserCollection.cshtml" />
     <Content Include="Views\Manage\_SwapHistory.cshtml" />
+    <Content Include="Views\Home\Support.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

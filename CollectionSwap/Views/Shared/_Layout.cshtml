@@ -22,19 +22,22 @@
         </ul>
         <ul>
             @*<li class="@(currentController == "Home" ? "selected" : "")">
-                @Html.ActionLink("Home", "Index", "Home")
-            </li>*@
+            @Html.ActionLink("Home", "Index", "Home")
+        </li>*@
+            <li class="@(currentController == "Swap" ? "selected" : "")">
+                <a href="/Swap/UserCollection">Find Swaps</a>
+            </li>
             <li class="@(currentController == "Home" && currentAction == "About" ? "selected" : "")">
                 <a href="/Home/About">About</a>
             </li>
-            <li class="@(currentController == "Swap" ? "selected" : "")">
-                <a href="/Swap/UserCollection">Find Swaps</a>
+            <li class="@(currentController == "Home" && currentAction == "Support" ? "selected" : "")">
+                <a href="/Home/Support">Support</a>
             </li>
             @Html.Partial("_LoginPartial")
         </ul>
     </nav>
 
-    <main class="@(currentController == "Account" ? "bg-split" : "")">
+    <main class="@(currentController == "Account" ? "bg-split" : "") @(currentAction == "Support" ? "support-bg-split" : "")">
         @RenderBody()
     </main>
 
