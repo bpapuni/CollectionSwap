@@ -1,9 +1,25 @@
 ﻿@{
     ViewBag.Title = "About";
 }
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
 
-    <p>Use this area to provide additional information.</p>
-</main>
+<div id="about-container">
+    <section class="column gap-2">
+        <span class="hero-message"><em class="quote">About</em> Us</span>
+        <div class="column gap-1">
+            <p>Meet the fantastic minds behind Swapper! We are three students currently studying for our Bachelor of IT degrees at Whitireia and WelTec. This website is our Capstone project, which means it's like the grand finale of our studies! We've put our heads together to create a place where you can trade and share collectibles with fellow enthusiasts just like you. So, get ready to dive into our world of swapping fun!</p>
+        </div>
+    </section>
+
+    <section class="mugshots">
+        <div>
+            <img src="~/Content/images/brent.png" alt="Photo of one of the developers of this website" />
+        </div>
+        <div>
+            <img src="~/Content/images/nelson.png" alt="Photo of one of the developers of this website"/>
+        </div>
+        <div>
+            <img src="~/Content/images/samuel.png" alt="Photo of one of the developers of this website"/>
+        </div>
+
+    </section>
+</div>
