@@ -1,51 +1,43 @@
 ﻿@model CollectionSwap.Models.CollectionButton
 <div class="new-collection">
-    <div class="new-collection-row">
-        @for (var i = 0; i < 3; i++)
-        {
-            if (Model.ItemList.Count > i)
-            {
-                var src = Url.Content($"~/Collections/{Model.Id}/{Model.ItemList[i]}");
-                <img class="new-collection-feature-card" src="@src" />
-            }
-        }
-    </div>
-    <div class="new-collection-column">
-        <div class="new-collection-center">@Model.Name[0]</div>
-        <span><strong>@Model.Name</strong></span>
-        <span>Short description goes here</span>
-    </div>
-    @if (Model.Id != 0)
+    @if (Model.Id == 0)
+    {
+        <span class="header">@Model.Name</span>
+        @*<span>@Model.ItemList.Count</span>*@
+    }
+    else
     {
         <div class="new-collection-row">
-            @if (Model.SetSize > 0)
+            @for (var i = 0; i < 3; i++)
             {
-                <div class="column align-items-center">
-                    <span>@Model.ItemList.Count</span>
-                    You Own
-                </div>
+                if (Model.ItemList.Count > i)
+                {
+                    var src = Url.Content($"~/Collections/{Model.Id}/{Model.ItemList[i]}");
+                    <img class="new-collection-feature-card" src="@src" />
+                }
             }
+        </div>
 
+        <div class="new-collection-column">
+            <div class="new-collection-center">@Model.Name[0]</div>
+            <span><strong>@Model.Name</strong></span>
+            <span>Short description goes here</span>
+        </div>
 
+        <div class="new-collection-row">
             <div class="column align-items-center">
-                @if (Model.SetSize > 0)
-                {
-                    <span>@Model.SetSize</span>
-                }
-                else
-                {
-                    <span>@Model.ItemList.Count</span>
-                }
+                <span>@Model.ItemList.Count</span>
+                You Own
+            </div>
+            <div class="column align-items-center">
+                <span>@Model.SetSize</span>
                 In Full Set
             </div>
 
-            @if (Model.SetSize > 0)
-            {
-                <div class="column align-items-center">
-                    <span>@Model.Duplicates</span>
-                    Duplicates
-                </div>
-            }
+            <div class="column align-items-center">
+                <span>@Model.Duplicates</span>
+                Duplicates
+            </div>
         </div>
     }
 </div>

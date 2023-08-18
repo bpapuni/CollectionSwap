@@ -428,24 +428,32 @@ namespace CollectionSwap.Controllers
         [Authorize]
         public ActionResult UserCollection(int? id)
         {
+            var partial = String.Empty;
+            var userId = User.Identity.GetUserId();
+            var ycModel = new YourCollectionViewModel
+            {
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId).ToList()
+            };
+
+            if (!id.HasValue)
+            {
+                partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycModel, true);
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container" } }, JsonRequestBehavior.AllowGet);
+            }
             var userCollection = db.UserCollections.Find(id);
             var ucModel = new UserCollectionModel
             {
                 Collection = db.Collections.Find(userCollection.CollectionId),
                 UserCollection = userCollection
             };
-            var userId = User.Identity.GetUserId();
-            var ycModel = new YourCollectionViewModel
-            {
-                Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId).ToList(),
-                EditCollection = ucModel
-            };
+
+            ycModel.EditCollection = ucModel;
 
             //var partial = Helper.RenderViewToString(ControllerContext, "_UserCollection", ucModel, true);
             //return Json(new { PartialView = partial, ScrollTarget = "#user-collection-container" }, JsonRequestBehavior.AllowGet);
 
-            var partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycModel, true);
+            partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycModel, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container", second = "#user-collection-container" }, ScrollTarget = "#user-collection-container" }, JsonRequestBehavior.AllowGet);
         }
 
