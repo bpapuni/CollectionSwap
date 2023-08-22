@@ -1,9 +1,11 @@
-﻿using CollectionSwap.Models;
+﻿using CollectionSwap.Helpers;
+using CollectionSwap.Models;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;

@@ -208,7 +208,7 @@
             if (quantity == 1) {
                 $(this).parent().parent().parent().prev().removeClass("item-not-owned");
             }
-        })
+        });
 
         $(document).on("input", "#user-collection-container [type='number']", function () {
             let input = $(this);
@@ -219,7 +219,31 @@
                 input.val(0);
                 $(this).parent().parent().parent().prev().removeClass("item-not-owned");
             }
-        })
+        });
+
+        $(document).on("change", ".swap-confirm", function () {
+            if (this.checked) {
+                if ($(this).closest("td").prev().prev().find(".swap-capstone p").text() != "confirmed") {
+                    this.checked = false;
+                }
+                else
+                {
+                    const confirmed = confirm("By confirming, you acknowledge that you've received the items and this setting cannot be changed later. Are you sure?");
+                    if (!confirmed) {
+                        this.checked = false;
+                    }
+                    else
+                    {
+                        const formData = new FormData();
+                        formData.append("id", $(this).data("swap-id"));
+
+                        HandleFormSubmit("/Manage/ConfirmReceived", "POST", formData);
+                    }
+                }
+            } else {
+                //this.checked = true;
+            }
+        });
 
             //function ColourButtons() {
             //    const buttons = $('input[type="submit"]');

@@ -1,0 +1,17 @@
+﻿@model CollectionSwap.Models.Swap
+@using Microsoft.AspNet.Identity
+@{
+    var progIndex = Model.SenderId == User.Identity.GetUserId() && Model.SenderConfirmReceieved ? 3 :
+                    Model.ReceiverId == User.Identity.GetUserId() && Model.ReceiverConfirmReceieved ? 3 :
+                    Model.Status == "offered" ? 0 :
+                    Model.Status == "accepted" ? 1 :
+                    Model.Status == "confirmed" ? 2 :
+                    3;
+
+}
+<div class="swap-prog-container">
+    <div class="swap-capstone @("prog-index-" + progIndex)"><p>@Model.Status</p></div>
+    <div class="swap-prog-1 @if (progIndex >= 1) { <text>prog-index-1</text> } "></div>
+    <div class="swap-prog-2 @if (progIndex >= 2) { <text>prog-index-2</text> } "></div>
+    <div class="swap-prog-3 @if (progIndex >= 3) { <text>prog-index-3</text> } "></div>
+</div>

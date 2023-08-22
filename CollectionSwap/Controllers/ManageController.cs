@@ -13,6 +13,7 @@ using CollectionSwap.Helpers;
 using System.Web.Services.Description;
 using System.Data.Entity.Infrastructure;
 using System.Reflection;
+using System.Data.Entity;
 
 namespace CollectionSwap.Controllers
 {
@@ -549,9 +550,41 @@ namespace CollectionSwap.Controllers
         public ActionResult SwapHistoryPartial()
         {
             var userId = User.Identity.GetUserId();
+            var shModel = new SwapHistoryViewModel
+            {
+                Swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId)
+                                .Include(swap => swap.Collection)
+                                .Include(swap => swap.Sender)
+                                .Include(swap => swap.Receiver).ToList()
+            };
 
-            var partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", null, true);
+            var partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container" } });
+        }
 
+        [Authorize]
+        public ActionResult ConfirmReceived(int id)
+        {
+            var userId = User.Identity.GetUserId();
+            var swap = db.Swaps.Find(id);
+            if (userId == swap.ReceiverId)
+            {
+                swap.Confirm("receiver", db);
+            }
+            else
+            {
+                swap.Confirm("sender", db);
+            }
+
+            var shModel = new SwapHistoryViewModel
+            {
+                Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
+                                .Include(s => s.Collection)
+                                .Include(s => s.Sender)
+                                .Include(s => s.Receiver).ToList()
+            };
+
+            var partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container" } });
         }
 

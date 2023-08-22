@@ -44,7 +44,12 @@ namespace CollectionSwap.Models
         public List<int> ReceiverItemIds { get; set; }
         public int SwapSize { get; set; }
         public string Type { get; set; }
-}
+    }
+
+    public class SwapHistoryViewModel
+    {
+        public List<Swap> Swaps { get; set; }
+    }
 
     public class Swap
     {
@@ -66,6 +71,14 @@ namespace CollectionSwap.Models
         public string ReceiverItemIdsJSON { get; set; }
         [Required]
         public string Status { get; set; }
+        [Required]
+        public bool SenderConfirmSent { get; set; }
+        [Required]
+        public bool ReceiverConfirmSent { get; set; }
+        [Required]
+        public bool SenderConfirmReceieved { get; set; }
+        [Required]
+        public bool ReceiverConfirmReceieved { get; set; }
         [Required]
         public DateTimeOffset StartDate { get; set; }
         public DateTimeOffset? EndDate { get; set; }
@@ -124,6 +137,28 @@ namespace CollectionSwap.Models
 
             return response;
         }
+        public void Confirm(string userType, ApplicationDbContext db)
+        {
+            switch (userType)
+            {
+                case "sender":
+                    this.SenderConfirmReceieved = true;
+                    db.Entry(this).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    break;
+
+                case "receiver":
+                    this.ReceiverConfirmReceieved = true;
+                    db.Entry(this).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    break;
+                default:
+                    break;
+            }
+        }
+
         private void HoldItems(string itemListJSON, UserCollection userCollection, Swap swap, ApplicationDbContext db)
         {
             var deserializedReceiverItems = JsonConvert.DeserializeObject<List<int>>(userCollection.ItemCountJSON);

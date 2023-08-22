@@ -1,4 +1,6 @@
-﻿<div class="scroll-snap-row">
+﻿@model CollectionSwap.Models.SwapHistoryViewModel
+@using Microsoft.AspNet.Identity
+<div class="scroll-snap-row">
     <div id="history-container">
         <span class="header">Swap History</span>
 
@@ -6,24 +8,98 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Collection</th>
+                        <th>Collection Type</th>
                         <th>User</th>
                         <th>Status</th>
-                        <th>Date Created</th>
-                        <th>Date Completed</th>
+                        <th>Items Sent</th>
+                        <th>Items Received</th>
                         <th>Provide Feedback</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    <tr>
-                        <td>Women of History</td>
-                        <td>bpapuni</td>
-                        <td>Sent</td>
-                        <td>16/08/2023</td>
-                        <td>Outstanding</td>
-                        <td><a href="#">Please Provide</a></td>
-                    </tr>
+                        @foreach (var Swap in Model.Swaps)
+                        {
+                            <tr>
+                                <td>@Swap.Collection.Name</td>
+                                @if (Swap.SenderId == User.Identity.GetUserId())
+                                {
+                                    <td>@Swap.Receiver.UserName</td>
+                                }
+                                else
+                                {
+                                    <td>@Swap.Sender.UserName</td>
+                                }
+                                @switch (@Swap.Status)
+                                {
+                                    case "offered":
+                                        if (Swap.SenderId == User.Identity.GetUserId())
+                                        {
+                                            <td class="swap-status" title="You offered this swap, waiting for @Swap.Receiver.UserName to accept or decline.">@Html.Partial("_SwapProgress", Swap)</td>
+                                        }
+                                        else
+                                        {
+                                            <td class="swap-status" title="You've been offered this swap, waiting for you to accept or decline.">@Html.Partial("_SwapProgress", Swap)</td>
+                                        }
+                                        break;
+                                    case "accepted":
+                                        if (Swap.SenderId == User.Identity.GetUserId())
+                                        {
+                                            <td class="swap-status" title="The swap has been accepted, waiting for you to confirm.">@Html.Partial("_SwapProgress", Swap)</td>
+                                        }
+                                        else
+                                        {
+                                            <td class="swap-status" title="You've accepted this swap, waiting for @Swap.Sender.UserName to confirm.">@Html.Partial("_SwapProgress", Swap)</td>
+                                        }
+                                        break;
+                                    case "confirmed":
+                                        if (Swap.SenderId == User.Identity.GetUserId())
+                                        {
+                                            if (Swap.ReceiverConfirmSent)
+                                            {
+                                                <td class="swap-status" title="@Swap.Receiver.UserName has sent your items, please follow the provided mailing instructions.">@Html.Partial("_SwapProgress", Swap)</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="swap-status" title="You confirmed this swap, please follow the provided mailing instructions.">@Html.Partial("_SwapProgress", Swap)</td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (Swap.SenderConfirmSent)
+                                            {
+                                                <td class="swap-status" title="@Swap.Sender.UserName has sent your items, please follow the provided mailing instructions.">@Html.Partial("_SwapProgress", Swap)</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="swap-status" title="@Swap.Sender.UserName confirmed this swap, please follow the provided mailing instructions.">@Html.Partial("_SwapProgress", Swap)</td>
+                                            }
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                @if (Swap.SenderId == User.Identity.GetUserId())
+                                {
+                                    <td>
+                                        <input data-swap-id="@Swap.Id" class="swap-confirm" type="checkbox" checked="@Swap.SenderConfirmSent" />
+                                    </td>
+                                    <td>
+                                        <input data-swap-id="@Swap.Id" class="swap-confirm" type="checkbox" checked="@Swap.SenderConfirmReceieved" />
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        <input data-swap-id="@Swap.Id" class="swap-confirm" type="checkbox" checked="@Swap.ReceiverConfirmSent" />
+                                    </td>
+                                    <td>
+                                        <input data-swap-id="@Swap.Id" class="swap-confirm" type="checkbox" checked="@Swap.ReceiverConfirmReceieved" />
+                                    </td>
+                                }
+                                <td><a href="#">Please Provide</a></td>
+                            </tr>
+                        }
                 </tbody>
             </table>
         </section>
