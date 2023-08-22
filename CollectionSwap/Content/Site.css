@@ -103,6 +103,11 @@ input[type=submit]:hover {
     box-shadow: 0 2px 2px #00000033;
 }
 
+button {
+    font-family: inherit;
+    line-height: inherit;
+}
+
 #register-container button,
 #home-container button {
     display: flex;
@@ -751,7 +756,7 @@ button.close {
 .scroll-row-button {
     width: 4rem;
     aspect-ratio: 1/1;
-    margin: 2rem 0 2rem -1.2rem;
+    margin: 0.5rem 0 0 -0.5rem;
     font-size: 3rem;
     color: var(--darker-shade);
     background: none;
