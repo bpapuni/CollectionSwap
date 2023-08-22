@@ -98,6 +98,7 @@
         // Anchor click listeners
         $(document).on("click", "a.collection-button", function (event) {
             event.preventDefault();
+            $("#create-user-collection-container").addClass("d-none");
             const url = $(this).attr("href").split("/Manage/").pop().split("/");
             partialName = url[0];
             partialId = url[1] == '#' ? '' : url[1];
@@ -125,16 +126,11 @@
             navUl.removeClass("selected-1 selected-2 selected-3 selected-4");
             navUl.addClass(`selected-${selectedIndex}`);
 
-            //console.log(`${url}Partial`);
             $.ajax({
                 url: `${url}Partial`,
                 type: "POST",
                 success: function (result) {
                     $('.manage-container-main').html(result.PartialView);
-                    //if (partialId) {
-                    //    const collection = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection");
-                    //    HandleFormSubmit(`/Manage/${collection}/${partialId}`, "GET", null);
-                    //}
                 },
                 error: function () {
                     // Handle error
@@ -162,11 +158,6 @@
                             $(`${target}`).removeClass("d-none");
                         });
                     }
-                    //} else if (partialView) {
-                    //    var target = $(result.PartialView)[0].id;
-                    //    //console.log(result.PartialView);
-                    //    $(`#${target}`).prop("outerHTML", $(partialView).prop("outerHTML"));
-                    //}
 
                     if (result.ScrollTarget) {
                         var offset = $(result.ScrollTarget).prop("offsetLeft");
@@ -184,14 +175,29 @@
             });
         }
 
+        function OpenCreateUserCollection(e) {
+            console.log($("#create-user-collection-container"));
+            var scrollRow = $(e).closest(".scroll-snap-row");
+            scrollRow.css("scroll-snap-type", "none");
+            $("#create-user-collection-container").removeClass("d-none");
+            $("#user-collection-container").addClass("d-none");
+
+            scrollRow.animate({ scrollLeft: 1100 }, 200, "swing", () => {
+                $(document).scrollTop(0);
+                scrollRow.css("scroll-snap-type", "x mandatory")
+            });
+        }
+
         function ScrollRowBack(e) {
             var scrollRow = $(e).closest(".scroll-snap-row");
             scrollRow.css("scroll-snap-type", "none");
+            history.pushState({ partialName: "YourCollections" }, null, `/Manage/YourCollections`);
 
             scrollRow.animate({ scrollLeft: 0 }, 250, "swing", () => {
                 $(document).scrollTop(0);
                 scrollRow.css("scroll-snap-type", "x mandatory")
-                scrollRow.eq(0).children().eq(1).addClass("d-none");
+                $("#user-collection-container").addClass("d-none");
+                $("#create-user-collection-container").addClass("d-none");
             });
         }
 

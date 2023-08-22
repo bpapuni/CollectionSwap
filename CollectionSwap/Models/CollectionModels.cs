@@ -213,7 +213,7 @@ namespace CollectionSwap.Models
         public static UserCollection Create(int id, string userId, ApplicationDbContext db)
         {
             var collection = db.Collections.Find(id);
-            UserCollection newUserCollection = new UserCollection()
+            var newUserCollection = new UserCollection()
             {
                 Name = collection.Name,
                 UserId = userId,

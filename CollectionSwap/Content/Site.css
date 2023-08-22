@@ -522,7 +522,7 @@ button.close {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    /*min-width: 100%;*/
+    padding-inline: 0.5rem;
 }
 
 #your-collections-container {
@@ -540,6 +540,12 @@ button.close {
         content: url("data:image/svg+xml,%3Csvg width='36' height='36' viewBox='0 0 36 36' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2.7616 1.05849C7.18697 2.83797 11.6123 4.63112 15.9922 6.51983C17.185 4.66298 18.3733 2.80612 19.5571 0.949265C20.7271 -0.871185 23.1993 0.134605 23.0127 2.20992L22.3388 9.38704C26.664 11.4077 30.921 13.5741 35.0504 15.9907C35.3995 16.1889 35.6758 16.4937 35.8387 16.8605C36.0015 17.2273 36.0424 17.6366 35.9553 18.0283C35.8681 18.42 35.6576 18.7735 35.3546 19.0367C35.0515 19.2999 34.672 19.459 34.2718 19.4905C29.9057 19.9047 25.5031 20.3553 21.2462 21.4339C20.9912 24.2525 20.7347 27.0727 20.4767 29.8944C20.9092 30.6772 21.3418 31.4645 21.7652 32.2519C22.5756 33.7492 21.1915 35.1919 19.944 35.1146C19.2611 36.7985 16.2471 35.9292 16.4429 33.7811L16.7206 30.7182C15.5763 28.6338 14.4139 26.5751 13.2331 24.5423C12.3558 25.0468 11.5132 25.6094 10.7109 26.2262C8.66664 27.8054 7.02306 29.7988 4.17753 29.2937C3.07119 29.098 2.27445 27.6097 2.93006 26.6176C4.95455 23.538 6.97299 20.4508 8.98535 17.3561C6.1899 12.7412 3.30643 8.18252 0.334943 3.67994C-0.794163 2.01878 1.16355 0.416779 2.7616 1.05849ZM18.4462 11.6626L17.3853 11.1802C16.0438 13.2585 14.6992 15.3354 13.3515 17.4107C13.8068 18.1707 14.2621 18.9262 14.7174 19.6862C15.7433 19.2584 16.7844 18.8777 17.8406 18.5439C18.0379 16.2532 18.2398 13.9594 18.4462 11.6626ZM28.1801 16.4094C26.1405 15.3293 24.0795 14.2962 21.9974 13.3101L21.6149 17.5336C23.7775 17.0511 25.9811 16.6688 28.1801 16.414V16.4094ZM17.3307 24.1919C17.3808 23.6594 17.4263 23.1269 17.4764 22.5944C17.185 22.6991 16.8936 22.8129 16.6022 22.9266L17.3307 24.1919ZM10.4559 21.9163C10.6699 21.7798 10.8839 21.6432 11.1024 21.5158L11.3847 21.352L11.1161 20.8968L10.4559 21.9163ZM13.9753 9.68742C11.5577 8.64521 9.12648 7.63486 6.69071 6.63817C8.23868 9.04723 9.75629 11.4745 11.2436 13.92C12.145 12.503 13.048 11.0892 13.9525 9.67831L13.9753 9.68742Z' fill='%23231F20'/%3E%3C/svg%3E%0A");
         top: -80px;
         right: 0;
+    }
+
+    #your-collections-container section {
+        display: flex;
+        align-items: flex-start;
+        gap: 2rem;
     }
 
 #history-container {
@@ -743,11 +749,9 @@ button.close {
 }
 
 .scroll-row-button {
-    position: absolute;
-    top: 0;
-    left: 0.25rem;
     width: 4rem;
     aspect-ratio: 1/1;
+    margin: 2rem 0 2rem -1.2rem;
     font-size: 3rem;
     color: var(--darker-shade);
     background: none;
@@ -1067,7 +1071,10 @@ nav a {
     gap: 0 4rem;
 }*/
 
-#manage-collections-container {}
+#manage-collections-container {
+    display: flex;
+    flex-direction: column;
+}
 
 #manage-collections-container form {
     display: flex;
@@ -1077,7 +1084,7 @@ nav a {
 }
 
 #available-collections-container {
-    position: relative;
+    position: relative;edit-collection-container
     display: flex;
     flex-direction: column;
     min-width: 100%;
@@ -1092,6 +1099,7 @@ nav a {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    padding-inline: 0.5rem;
 }
 
 #edit-collection-container section {
@@ -1102,6 +1110,7 @@ nav a {
     position: relative;
     display: flex;
     flex-direction: column;
+    padding-inline: 0.5rem;
 }
 
 #items {

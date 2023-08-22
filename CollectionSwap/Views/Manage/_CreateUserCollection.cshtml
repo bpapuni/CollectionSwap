@@ -1,0 +1,30 @@
+﻿@model CollectionSwap.Models.YourCollectionViewModel
+@using CollectionSwap.Models
+@using Newtonsoft.Json
+
+<div class="row">
+    <button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-arrow-left"></i></button>
+
+    <span class="header">
+        Create a New Collection
+    </span>
+</div>
+
+<section class="min-width-100 gap-2">
+    @foreach (var collection in Model.Collections)
+    {
+        var collectionButton = new CollectionButton
+        {
+            Id = collection.Id,
+            Name = collection.Name,
+            ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON)
+        };
+        using (Html.BeginForm("CreateUserCollection", "Manage", FormMethod.Post))
+        {
+            @Html.Hidden("id", collection.Id);
+            <button class="collection-button">
+                @Html.Partial("_CollectionButton", collectionButton)
+            </button>
+        }
+    }
+</section>

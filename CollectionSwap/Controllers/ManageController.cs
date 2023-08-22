@@ -450,12 +450,8 @@ namespace CollectionSwap.Controllers
             };
 
             ycModel.EditCollection = ucModel;
-
-            //var partial = Helper.RenderViewToString(ControllerContext, "_UserCollection", ucModel, true);
-            //return Json(new { PartialView = partial, ScrollTarget = "#user-collection-container" }, JsonRequestBehavior.AllowGet);
-
             partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container", second = "#user-collection-container" }, ScrollTarget = "#user-collection-container" }, JsonRequestBehavior.AllowGet);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container", /*second = "#create-user-collection-container",*/ third = "#user-collection-container" }, ScrollTarget = "#user-collection-container" }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
