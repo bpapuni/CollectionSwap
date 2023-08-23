@@ -97,11 +97,18 @@
                                         <input data-swap-id="@Swap.Id" class="swap-confirm" type="checkbox" checked="@Swap.ReceiverConfirmReceieved" />
                                     </td>
                                 }
-                                <td><a href="#">Please Provide</a></td>
+                                <td><a href="SwapHistory/@Swap.Id">Please Provide</a></td>
                             </tr>
                         }
                 </tbody>
             </table>
         </section>
+    </div>
+
+    <div id="feedback-container" class="d-none">
+        @if (Model.OpenSwap != null)
+        {
+            @Html.Partial("_Feedback", Model.OpenSwap)
+        }
     </div>
 </div>

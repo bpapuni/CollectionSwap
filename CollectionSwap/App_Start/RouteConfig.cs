@@ -31,15 +31,15 @@ namespace CollectionSwap
                 defaults: new { controller = "Manage", action = "Index", id = UrlParameter.Optional }
             );
 
-            //routes.MapRoute(
-            //    name: "EditCollection",
-            //    url: "Manage/EditCollection/{id}",
-            //    defaults: new { controller = "Manage", action = "ManageCollection" }
-            //);
-
             routes.MapRoute(
                 name: "YourCollections",
                 url: "Manage/YourCollections/{id}",
+                defaults: new { controller = "Manage", action = "Index", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
+                name: "Feedback",
+                url: "Manage/SwapHistory/{id}",
                 defaults: new { controller = "Manage", action = "Index", id = UrlParameter.Optional }
             );
 

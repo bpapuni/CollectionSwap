@@ -558,6 +558,7 @@ namespace CollectionSwap.Controllers
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container" } });
         }
 
+        [HttpPost]
         [Authorize]
         public ActionResult ConfirmReceived(int id)
         {
@@ -582,6 +583,28 @@ namespace CollectionSwap.Controllers
 
             var partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container" } });
+        }
+
+        //
+        // GET: /Manage/ManageCollections/_EditCollection
+
+        [Authorize]
+        public ActionResult Feedback(int id)
+        {
+            var partial = String.Empty;
+            var userId = User.Identity.GetUserId();
+
+            var shModel = new SwapHistoryViewModel
+            {
+                Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
+                                .Include(s => s.Collection)
+                                .Include(s => s.Sender)
+                                .Include(s => s.Receiver).ToList(),
+                OpenSwap = db.Swaps.Find(id)
+            };
+
+            partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#feedback-container" }, ScrollTarget = "#feedback-container" }, JsonRequestBehavior.AllowGet);
         }
 
         //

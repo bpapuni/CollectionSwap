@@ -49,6 +49,7 @@ namespace CollectionSwap.Models
     public class SwapHistoryViewModel
     {
         public List<Swap> Swaps { get; set; }
+        public Swap OpenSwap { get; set; }
     }
 
     public class Swap

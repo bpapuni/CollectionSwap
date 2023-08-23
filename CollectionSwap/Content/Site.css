@@ -567,7 +567,8 @@ button.close {
 }
 
     #history-container table {
-        /*flex-grow: 0.5;*/
+
+        flex-grow: 1;
         text-align: left;
         background: #e8e8e8;
         border-collapse: collapse;
@@ -579,8 +580,9 @@ button.close {
         padding: 0.5rem 2rem;
     }
     
-    #history-container table tr > td:nth-child(4),
-    #history-container table tr > td:nth-child(5) {
+    #history-container table tr > *:nth-child(4),
+    #history-container table tr > *:nth-child(5) {
+        flex-grow: 0;
         text-align: center;
         line-height: 0;
     }
@@ -590,6 +592,11 @@ button.close {
         background: var(--dark-shade);
         border-radius: 1rem;
     }
+
+#feedback-container {
+    display: flex;
+    flex-direction: column;
+}
 
 .swap-status {
     text-decoration-line: underline;

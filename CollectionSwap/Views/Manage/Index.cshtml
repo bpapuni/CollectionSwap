@@ -53,10 +53,11 @@
         navUl.addClass(`selected-${selectedIndex}`);
 
         // Display the partial view
+        console.log(partialName);
         LoadPartial(partialName, `/Manage/${partialName}`)
         if (partialId) {
             const formData = new FormData();
-            const collectionType = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection");
+            const collectionType = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("SwapHistory", "Feedback");
             formData.append("id", partialId);
 
             HandleFormSubmit(`/Manage/${collectionType}`, "POST", formData);
@@ -70,7 +71,7 @@
             LoadPartial(partialName, `/Manage/${partialName}`)
             if (partialId) {
                 const formData = new FormData();
-                const collectionType = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection");
+                const collectionType = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("SwapHistory", "Feedback");
                 formData.append("id", partialId);
 
                 HandleFormSubmit(`/Manage/${collectionType}`, "POST", formData);
@@ -96,7 +97,7 @@
         });
 
         // Anchor click listeners
-        $(document).on("click", "a.collection-button", function (event) {
+        $(document).on("click", "a.collection-button, #history-container a", function (event) {
             event.preventDefault();
             $("#create-user-collection-container").addClass("d-none");
             const url = $(this).attr("href").split("/Manage/").pop().split("/");
@@ -109,7 +110,7 @@
             const formData = new FormData();
             formData.append("id", partialId);
 
-            const collectionType = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection");
+            const collectionType = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("SwapHistory", "Feedback");
             HandleFormSubmit(`/Manage/${collectionType}`, "POST", formData);
         });
 
