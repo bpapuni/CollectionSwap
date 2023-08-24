@@ -356,6 +356,7 @@ namespace CollectionSwap.Models
         public List<string> ItemList { get; set; }
         public int SetSize { get; set; }
         public int Duplicates { get; set; }
+        public string Type { get; set; }
     }
 
     public class UserCollectionModel

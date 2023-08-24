@@ -1,4 +1,5 @@
 ﻿@model CollectionSwap.Models.Swap
+@using Microsoft.AspNet.Identity
 @using CollectionSwap.Models
 @using Newtonsoft.Json
 
@@ -9,3 +10,48 @@
         Swap Feedback
     </span>
 </div>
+
+<section class="column">
+    <span>How was your swap with @(User.Identity.GetUserId() == Model.SenderId ? Model.Receiver.UserName : Model.Sender.UserName)?</span>
+    <div class="star-rating-module">
+        <button class="star-button"><i class="fa fa-star"></i></button>
+        <button class="star-button"><i class="fa fa-star"></i></button>
+        <button class="star-button"><i class="fa fa-star"></i></button>
+        <button class="star-button"><i class="fa fa-star"></i></button>
+        <button class="star-button"><i class="fa fa-star"></i></button>
+    </div>
+    <div class="feedback-module">
+        <div class="row">
+            <a href="javascript:void(0)" class="feedback-tab active-tab" onclick="OpenFeedbackTab(this);">Positive</a>
+            <a href="javascript:void(0)" class="feedback-tab" onclick="OpenFeedbackTab(this);">Neutral</a>
+            <a href="javascript:void(0)" class="feedback-tab" onclick="OpenFeedbackTab(this);">Negative</a>
+        </div>
+
+        <div class="feedback-options positive-feedback">
+            Positive
+        </div>
+        <div class="feedback-options neutral-feedback d-none">
+            Neutral
+        </div>
+        <div class="feedback-options negative-feedback d-none">
+            Negative
+        </div>
+    </div>
+</section>
+
+@*@{
+    var svModel = new SwapViewModel
+    {
+        Id = Model.Id,
+        UserName = Model.SenderId == User.Identity.GetUserId() ? Model.Receiver.UserName : Model.Sender.UserName,
+        ItemList = JsonConvert.DeserializeObject<List<string>>(Model.Collection.ItemListJSON),
+        ImagePath = $"~/Collections/{Model.CollectionId}/",
+        SenderItemIds = JsonConvert.DeserializeObject<List<int>>(Model.SenderItemIdsJSON),
+        ReceiverItemIds = JsonConvert.DeserializeObject<List<int>>(Model.ReceiverItemIdsJSON),
+        Type = "feedback"
+    };
+    svModel.SwapSize = Math.Min(svModel.SenderItemIds.Count, svModel.ReceiverItemIds.Count);
+}
+<section>
+    @Html.Partial("~/Views/Swap/_Swap.cshtml", svModel)
+</section>*@

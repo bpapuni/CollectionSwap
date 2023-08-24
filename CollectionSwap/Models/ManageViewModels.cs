@@ -90,14 +90,14 @@ namespace CollectionSwap.Models
         [Required(ErrorMessage = "This field is required.")]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[`@$!%*?&])\S{6,}$",
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[`@$!%*?&])[\x20-\x7E]{6,}$",
     ErrorMessage = "Password must be 6+ characters, include an uppercase letter, a number, a symbol, and no spaces.")]
         [Display(Name = "New Password")]
         public string NewPassword { get; set; }
 
         [Required(ErrorMessage = "This field is required.")]
         [DataType(DataType.Password)]
-        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[`@$!%*?&])\S{6,}$",
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[`@$!%*?&])[\x20-\x7E]{6,}$",
     ErrorMessage = "Password must be 6+ characters, include an uppercase letter, a number, a symbol, and no spaces.")]
         [Display(Name = "Confirm New Password")]
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]

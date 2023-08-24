@@ -608,6 +608,108 @@ button.close {
     flex-direction: column;
 }
 
+.feedback-module {
+    display: flex;
+    flex-direction: column;
+    width: 20rem;
+    padding: 0.5rem 1rem;
+    background-color: white;
+    border-radius: 1rem;
+}
+
+.feedback-module a {
+    position: relative;
+    color: black;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+    .feedback-module a.active-tab::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        width: 100%;
+        border-bottom: 2px solid hotpink;
+    }
+
+    .feedback-module .row:nth-child(1) {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #ccc;
+    }
+
+.feedback-module .row > * {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+}
+
+.star-rating-module {
+    display: flex;
+    flex-direction: row;
+    direction: rtl;
+    justify-content: center;
+    width: 20rem;
+}
+
+.star-button {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    margin-inline: 0.75rem;
+    padding: 0;
+    color: #ccc;
+    font-size: 2.5rem;
+    height: 3.5rem;
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+
+    .star-button:hover,
+    .star-button:hover ~ .star-button,
+    .selected {
+        color: gold;
+    }
+
+    .star-button::after {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        font-size: 0.8rem;
+        bottom: 0;
+        width: 100%;
+        height: 1rem;
+    }
+
+    .star-button:nth-child(5)::after {
+        content: "Terrible";
+    }
+
+    .star-button:nth-child(4)::after {
+        content: "Bad";
+    }
+
+    .star-button:nth-child(3)::after {
+        content: "Okay";
+    }
+
+    .star-button:nth-child(2)::after {
+        content: "Good";
+    }
+
+    .star-button:nth-child(1)::after {
+        content: "Great";
+    }
+
+.star-button.full {
+    color: gold;
+}
+
 .swap-status {
     text-decoration-line: underline;
     text-decoration-style: dotted;
@@ -840,10 +942,13 @@ button.close {
 }
 
     .collection-button strong {
-        position: relative;
+        width: 100%;
+        white-space: nowrap;
+        font-size: 1.1rem;
+        line-height: 1rem;
     }
 
-    .collection-button strong:nth-child(1)::after {
+   /* .collection-button strong:nth-child(1)::after {
         position: absolute;
         content: url("data:image/svg+xml,%3Csvg width='68' height='10' viewBox='0 0 68 10' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0.114457 6.00553C0.112157 5.89344 0.129863 5.78369 0.163952 5.69882C0.19804 5.61394 0.24592 5.56038 0.297773 5.54909C14.2398 2.47763 28.3381 1.1049 42.3615 0.761723C50.7162 0.631314 59.2288 1.87019 67.4767 4.79066C67.5369 4.81303 67.5913 4.88177 67.6297 4.98405C67.6681 5.08633 67.6879 5.21518 67.6855 5.34661C67.6842 5.40244 67.6728 5.45499 67.6538 5.49287C67.6347 5.53076 67.6094 5.55096 67.5835 5.54909C45.1416 4.59162 22.6679 3.03701 0.245175 6.2732C0.228793 6.27552 0.212356 6.27074 0.196848 6.25914C0.181339 6.24755 0.167072 6.22937 0.154884 6.20569C0.142696 6.18201 0.132833 6.15332 0.125889 6.1213C0.118945 6.08927 0.115061 6.05457 0.114457 6.01925V6.00553Z' fill='%23111111'/%3E%3Cpath d='M8.76247 9.34117C15.759 7.53947 22.8639 6.9389 29.894 8.21896C30.1235 8.26014 30.3005 8.65138 29.8222 8.65824C22.8894 8.73717 15.7447 9.1627 8.81348 9.75984C8.3751 9.79415 8.56161 9.38921 8.76247 9.34117Z' fill='%23111111'/%3E%3Cpath d='M31.0799 7.96845C31.5825 7.83632 32.0909 7.84324 32.5927 7.98904C32.6167 7.97115 32.6424 7.96588 32.6675 7.97367C32.6927 7.98145 32.7166 8.00207 32.7373 8.0338C32.758 8.06554 32.7749 8.10746 32.7865 8.15609C32.7982 8.20472 32.8043 8.25864 32.8043 8.31335C32.8043 8.36806 32.7982 8.42199 32.7865 8.47061C32.7749 8.51924 32.758 8.56116 32.7373 8.5929C32.7166 8.62463 32.6927 8.64525 32.6675 8.65303C32.6424 8.66082 32.6167 8.65555 32.5927 8.63766C32.0953 8.71145 31.596 8.70457 31.099 8.61707C31.0756 8.63784 31.0502 8.64629 31.025 8.64172C30.9997 8.63716 30.9754 8.61972 30.9539 8.59082C30.9324 8.56193 30.9144 8.52242 30.9014 8.47558C30.8884 8.42874 30.8808 8.37593 30.8792 8.3215C30.8776 8.26707 30.8821 8.2126 30.8922 8.1626C30.9023 8.11261 30.9178 8.06853 30.9374 8.03401C30.9571 7.9995 30.9802 7.97556 31.005 7.96416C31.0298 7.95276 31.0554 7.95423 31.0799 7.96845Z' fill='%23111111'/%3E%3C/svg%3E%0A");
         display: flex;
@@ -851,12 +956,7 @@ button.close {
         width: 100%;
         left: 0;
         bottom: -17px;
-    }
-
-.collection-button .new-collection {
-    align-items: center;
-    /*justify-content: center;*/
-}
+    }*/
 
 #your-collections-container section > .collection-button:nth-child(1)::before {
     position: absolute;
@@ -868,33 +968,45 @@ button.close {
 .new-collection {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-around;
+    align-items: center;
+    justify-content: space-between;
     width: 15rem;
     height: 18rem;
     padding: 0.25rem;
-    color: var(--darkest-shade);
+    color: black;
     text-decoration: none;
-    background: var(--lighter-shade);
-    border: 1px solid var(--neutral-shade);
+    background: #ffffffaa;
+    border: 1px solid #999;
     border-radius: 0.5rem;
 }
 
     .new-collection:hover {
-        background: var(--lighterer-shade);
-        border: 1px solid var(--neutral-shade);
+        background: #fff;
+        border: 1px solid #444;
         box-shadow: 0 2px 5px var(--neutral-shade);
     }
+
+/* Add New Collection button */
+section > .collection-button .new-collection:nth-child(1) {
+    justify-content: center;
+    /*padding-top: 2.5rem;*/
+}
 
 .new-collection-row {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-around;
-    /*flex: 1;*/
     gap: 0.25rem;
     width: 100%;
-    /*height: 35%;*/
+}
+
+    .new-collection-row:nth-child(1) {
+        height: 40%;
+    }
+
+.new-collection-row > *:not(.submit-button) {
+    flex: 1;
 }
 
 .new-collection-row span {
@@ -915,7 +1027,7 @@ button.close {
     max-width: 32%;
     height: 7rem;
     border-radius: 0.5rem;
-    border: 2px solid var(--dark-shade);
+    /*border: 2px solid var(--dark-shade);*/
     overflow: hidden;
     object-fit: cover;
 }
@@ -936,9 +1048,16 @@ button.close {
 }
 
 .new-collection span {
-    width: 70%;
+    width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
     text-align: center;
 }
+
+    .new-collection span.description {
+        text-wrap: balance;
+        line-height: 1.2;
+    }
 
 .item-container {
     position: relative;

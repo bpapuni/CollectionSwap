@@ -20,6 +20,7 @@
                             Id = collection.Id,
                             Name = collection.Name,
                             ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON),
+                            Type = "DisplayCollection"
                         };
                         collectionButton.SetSize = collectionButton.ItemList.Count;
                     }

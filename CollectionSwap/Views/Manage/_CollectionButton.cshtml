@@ -23,17 +23,17 @@
         <div class="new-collection-column">
             @*<div class="new-collection-center">@Model.Name[0]</div>*@
             <span><strong>@Model.Name</strong></span>
-            <span>Short description goes here</span>
+            <span class="description">Short description goes here</span>
         </div>
 
         @* If SetSize is 0 we're creating a new user collection, so display Add New button'*@
-        if (Model.SetSize == 0)
+        if (Model.Type == "CreateUserCollection")
         {
             <div class="new-collection-row">
                 <div class="submit-button">Add</div>
             </div>
         }
-        else if (action == "ManageCollectionsPartial")
+        else if (Model.Type == "DisplayCollection")
         {
             <div class="new-collection-row">
                 <div class="column align-items-center">

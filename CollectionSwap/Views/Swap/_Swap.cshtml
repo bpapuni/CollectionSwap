@@ -57,6 +57,7 @@
                             @for (var i = 0; i < receiverItemIds.Count; i++)
                             {
                                 var itemIndex = receiverItemIds[i];
+                                //var fileName = itemList[itemIndex];
                                 var fileName = itemList[itemIndex];
                                 <div class="swap-featured-item @(i < swapSize ? "swap-example" : "d-none")">
                                     <img src="@Url.Content(imagePath)/@fileName" alt="@itemIndex">
@@ -66,6 +67,7 @@
                         break;
                     case "accepted":
                     case "offered":
+                    case "feedback":
                         <div class="swap-featured-container offered">
                             @for (var i = 0; i < receiverItemIds.Count; i++)
                             {
@@ -100,6 +102,7 @@
                                 </div>
                                 break;
                             case "accepted":
+                            case "feedback":
                                 <div class="swap-featured-item selected">
                                     <img src="@Url.Content(imagePath)/@fileName" alt="@itemIndex">
                                 </div>
@@ -130,6 +133,14 @@
                             <img src="@Url.Content(imagePath)/@fileName" alt="@itemIndex">
                         </div>
                     }
+                </div>
+                break;
+            case "feedback":
+                <div class="swap-pool-container">
+                    <div class="swap-pool-header">
+                        <span class="swap-heading">Feedback</span><br />
+                        <span>Select all that apply</span>
+                    </div>
                 </div>
                 break;
             default:

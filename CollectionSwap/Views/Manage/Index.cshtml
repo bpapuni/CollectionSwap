@@ -260,6 +260,22 @@
             }
         });
 
+        function OpenFeedbackTab(e) {
+            const feedbackTabs = $(".feedback-tab");
+            const feedbackOptions = $(".feedback-options");
+            const index = feedbackTabs.index(e);
+
+            feedbackTabs.each((i, e) => {
+                $(e).removeClass("active-tab");
+            });
+            $(e).addClass("active-tab");
+
+            feedbackOptions.each((i, e) => {
+                $(e).addClass("d-none");
+            });
+            feedbackOptions.eq(index).removeClass("d-none");
+        }
+
             //function ColourButtons() {
             //    const buttons = $('input[type="submit"]');
 

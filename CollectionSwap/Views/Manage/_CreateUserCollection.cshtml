@@ -17,7 +17,8 @@
         {
             Id = collection.Id,
             Name = collection.Name,
-            ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON)
+            ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON),
+            Type = "CreateUserCollection"
         };
         using (Html.BeginForm("CreateUserCollection", "Manage", FormMethod.Post))
         {
