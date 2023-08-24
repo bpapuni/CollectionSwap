@@ -9,14 +9,14 @@
 <div class="manage-container">
     <div class="manage-container-nav">
         <ul class="">
-            <li>@Html.ActionLink("Swapper", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })</li>
-            <li>@Html.ActionLink("Account", "Account", "Manage", new { area = "" }, new { @class = "subnav-link" })</li>
+            @*<li>@Html.ActionLink("Swapper", "Index", "Home")</li>*@
+            <li>@Html.ActionLink("Account", "Account", "Manage")</li>
             @if (User.IsInRole("Admin"))
             {
-                <li>@Html.ActionLink("Manage Collections", "ManageCollections", "Manage", new { area = "" }, new { @class = "subnav-link" })</li>
+                <li>@Html.ActionLink("Manage Collections", "ManageCollections", "Manage")</li>
             }
-            <li>@Html.ActionLink("Your Collections", "YourCollections", "Manage", new { area = "" }, new { @class = "subnav-link" })</li>
-            <li>@Html.ActionLink("Swap History", "SwapHistory", "Manage", new { area = "" }, new { @class = "subnav-link" })</li>
+            <li>@Html.ActionLink("Your Collections", "YourCollections", "Manage")</li>
+            <li>@Html.ActionLink("Swap History", "SwapHistory", "Manage")</li>
         </ul>
     </div>
     <div class="manage-container-main">
@@ -27,7 +27,7 @@
     @*<script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.1/chroma.min.js"></script>*@
     <script>
         const navUl = $(".manage-container-nav ul");
-        const subNavLinks = $(".subnav-link");
+        const subNavLinks = navUl.find("a");
         var scrollTop = $(window).scrollTop();
 
         // Map the values of our partial views to an array

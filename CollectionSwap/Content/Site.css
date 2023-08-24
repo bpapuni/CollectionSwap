@@ -7,17 +7,13 @@
 /* Calculate different shades */
 :root {
     --background: #F5F2EE;
-    /*--background-accent: #FAFAFA;*/
-    --background-accent: #F5F2EE;
-    --lightest-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 20%));
-    --lighterer-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 18%));
-    --lighter-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 15%));
-    --light-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) + 10%));
-    --neutral-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness)));
-    --dark-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 30%));
-    --darker-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 40%));
-    --darkest-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 50%));
-    --darkerest-shade: hsl(var(--base-hue), var(--base-saturation), calc(var(--base-lightness) - 60%));
+    --brand-blue: #3666C2;
+    --brand-yellow: #F9C612;
+    --brand-red: #E84744;
+    --brand-green: #83A64F;
+    --brand-orange: #F97C3B;
+    --brand-hotpink: #FF69B4;
+    --brand-pink: #FFCCCC;
     --danger-50: #A75F5F;
     --danger-100: #a34c4c;
     --danger-500: #6d2929;
@@ -152,7 +148,7 @@ body {
     padding: 0;
     font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
     font-size: 14px;
-    color: var(--darkest-shade);
+    color: black;
     line-height: 1.75;
     background: var(--background);
     overflow-x: hidden;
@@ -444,7 +440,7 @@ section.mugshots img {
     position: fixed;
     width: 100%;
     max-width: 20rem;
-    padding: 1rem 1.5rem 0 0;
+    padding: 5rem 1.5rem 0 0;
     font-size: 1rem;
     line-height: 2.5rem;
     font-weight: 400;
@@ -495,10 +491,10 @@ section.mugshots img {
         top: 13rem;
     }*/
 
-    .manage-container-nav ul > :first-child {
+    /*.manage-container-nav ul > :first-child {
         font-size: 2rem;
         margin: 0 0 2rem 0;
-    }
+    }*/
 
     .manage-container-nav ul li {
         padding: 0 1rem;
@@ -608,50 +604,103 @@ button.close {
     flex-direction: column;
 }
 
+.feedback-swap-preview {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background-color: white;
+    border-radius: 1rem;
+}
+
 .feedback-module {
     display: flex;
     flex-direction: column;
-    width: 20rem;
+    gap: 1rem;
+    width: clamp(23rem, 26rem, 30rem);
     padding: 0.5rem 1rem;
     background-color: white;
     border-radius: 1rem;
 }
 
+.feedback-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5;
+    text-wrap: balance;
+}
+
+.feedback-list {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    padding: 0;
+    color: black;
+    list-style: none;
+}
+
+.feedback-list > li {
+    padding-inline: 0.5rem;
+    background: #eee;
+    border-radius: 1rem;
+    cursor: pointer;
+}
+
+.positive-feedback .feedback-list > li:hover {
+    background: #bfffbc;
+}
+
+.neutral-feedback .feedback-list > li:hover {
+    background: #fffda1;
+}
+
+.negative-feedback .feedback-list > li:hover {
+    background: #ff9999;
+}
+
 .feedback-module a {
     position: relative;
-    color: black;
+    color: #888;
     font-weight: 700;
     text-decoration: none;
 }
 
+    .feedback-module a.active-tab {
+        color: black;
+    }
+
     .feedback-module a.active-tab::after {
         content: "";
         position: absolute;
+        left: 0;
         bottom: -10px;
         width: 100%;
         border-bottom: 2px solid hotpink;
     }
 
-    .feedback-module .row:nth-child(1) {
-        display: flex;
-        justify-content: space-between;
-        padding-bottom: 0.5rem;
-        margin-bottom: 1rem;
-        border-bottom: 2px solid #ccc;
-    }
-
-.feedback-module .row > * {
+.feedback-tabs {
     display: flex;
     justify-content: center;
-    flex: 1;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #ccc;
 }
+
+    .feedback-tabs > * {
+        display: flex;
+        justify-content: center;
+        flex: 1;
+    }
 
 .star-rating-module {
     display: flex;
     flex-direction: row;
     direction: rtl;
     justify-content: center;
-    width: 20rem;
+    /*width: 20rem;*/
 }
 
 .star-button {
@@ -663,6 +712,7 @@ button.close {
     color: #ccc;
     font-size: 2.5rem;
     height: 3.5rem;
+    background: inherit;
     outline: none;
     border: none;
     cursor: pointer;
@@ -670,8 +720,8 @@ button.close {
 
     .star-button:hover,
     .star-button:hover ~ .star-button,
-    .selected {
-        color: gold;
+    .star-button.selected {
+        color: var(--brand-yellow);
     }
 
     .star-button::after {
@@ -705,10 +755,6 @@ button.close {
     .star-button:nth-child(1)::after {
         content: "Great";
     }
-
-.star-button.full {
-    color: gold;
-}
 
 .swap-status {
     text-decoration-line: underline;
@@ -875,15 +921,26 @@ button.close {
 .scroll-row-button {
     display: flex;
     align-items: center;
-    aspect-ratio: 1/1;
-    margin: 1rem 1rem 0 -0.5rem;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    /*margin: 2.3rem 1rem 0 0;*/
+    margin: 0.8rem 1rem 0 0;
     font-size: 3rem;
-    color: var(--darker-shade);
-    background: none;
-    border: none;
+    color: black;
+    /*background: black;*/
+    border: 1px solid black;
+    /*border: none;*/
+    border-radius: 50%;
     cursor: pointer;
     outline: none;
 }
+
+    /*.scroll-row-button:hover {
+        color: black;
+        background: white;
+        box-shadow: 0 2px 2px #00000099;
+    }*/
 
 #create-collection-container {
     display: flex;
@@ -1130,22 +1187,18 @@ nav a {
         pointer-events: none;
     }
 
-.main-navbar li {
-    position: relative;
+    .main-navbar li {
+        position: relative;
+        padding-bottom: 0.5rem;
+    }
+
+.main-navbar li.selected {
+    border-bottom: 3px solid hotpink;
 }
 
-.main-navbar li.selected::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -0.5rem;
-    width: 100%;
-    height: 3px;
-    background: var(--dark-shade);
-}
-
-.main-navbar a:hover {
-    color: var(--dark-shade);
+.main-navbar a:hover,
+.manage-container-nav a:hover {
+    color: hotpink;
 }
 
 #account-container {

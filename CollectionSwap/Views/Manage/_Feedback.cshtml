@@ -2,40 +2,67 @@
 @using Microsoft.AspNet.Identity
 @using CollectionSwap.Models
 @using Newtonsoft.Json
-
+@{ 
+    var itemList = JsonConvert.DeserializeObject<List<string>>(Model.Collection.ItemListJSON);
+}
 <div class="row">
-    <button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-arrow-left"></i></button>
+    <button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-angle-left"></i></button>
 
     <span class="header">
         Swap Feedback
     </span>
 </div>
 
-<section class="column">
-    <span>How was your swap with @(User.Identity.GetUserId() == Model.SenderId ? Model.Receiver.UserName : Model.Sender.UserName)?</span>
-    <div class="star-rating-module">
-        <button class="star-button"><i class="fa fa-star"></i></button>
-        <button class="star-button"><i class="fa fa-star"></i></button>
-        <button class="star-button"><i class="fa fa-star"></i></button>
-        <button class="star-button"><i class="fa fa-star"></i></button>
-        <button class="star-button"><i class="fa fa-star"></i></button>
-    </div>
+<section class="row gap-2">
+
     <div class="feedback-module">
-        <div class="row">
+        <span class="feedback-header">How was your swap with @(User.Identity.GetUserId() == Model.SenderId ? Model.Receiver.UserName : Model.Sender.UserName)?</span>
+        <div class="star-rating-module">
+            <button class="star-button"><i class="fa fa-star"></i></button>
+            <button class="star-button"><i class="fa fa-star"></i></button>
+            <button class="star-button"><i class="fa fa-star"></i></button>
+            <button class="star-button"><i class="fa fa-star"></i></button>
+            <button class="star-button"><i class="fa fa-star"></i></button>
+        </div>
+        <div class="feedback-tabs">
             <a href="javascript:void(0)" class="feedback-tab active-tab" onclick="OpenFeedbackTab(this);">Positive</a>
             <a href="javascript:void(0)" class="feedback-tab" onclick="OpenFeedbackTab(this);">Neutral</a>
             <a href="javascript:void(0)" class="feedback-tab" onclick="OpenFeedbackTab(this);">Negative</a>
         </div>
 
         <div class="feedback-options positive-feedback">
-            Positive
+            <ul class="feedback-list">
+                <li>Swap accepted quickly</li>
+                <li>Items arrived quickly</li>
+                <li>Items packaged well</li>
+                <li>Items in good condition</li>
+                <li>Generous swapper</li>
+                <li>Would gladly swap with again</li>
+            </ul>
         </div>
         <div class="feedback-options neutral-feedback d-none">
-            Neutral
+            <ul class="feedback-list">
+                <li>Swap accepted in reasonable time</li>
+                <li>Items arrived  in reasonable time</li>
+                <li>Items packaged okay</li>
+                <li>Items in acceptable condition</li>
+            </ul>
         </div>
         <div class="feedback-options negative-feedback d-none">
-            Negative
+            <ul class="feedback-list">
+                <li>Swap took a long time to be accepted</li>
+                <li>Items took too long to arrive</li>
+                <li>Items packaged poorly</li>
+                <li>Items in poor condition</li>
+                <li>Would not swap with again</li>
+            </ul>
         </div>
+        <button class="submit-button">Submit Feedback</button>
+    </div>
+    <div class="feedback-swap-preview">
+        @*<span class="feedback-header">Sent</span>
+            <img class="new-collection-feature-card" src="~/Collections/@Model.CollectionId/@itemList[0]" alt="" />
+            <span class="feedback-header">Received</span>*@
     </div>
 </section>
 
