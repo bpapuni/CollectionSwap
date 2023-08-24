@@ -7,13 +7,13 @@ namespace CollectionSwap.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class RefactoredSwapModel : IMigrationMetadata
+    public sealed partial class InitialSchema : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(RefactoredSwapModel));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialSchema));
         
         string IMigrationMetadata.Id
         {
-            get { return "202307310535323_RefactoredSwapModel"; }
+            get { return "202308242057559_InitialSchema"; }
         }
         
         string IMigrationMetadata.Source
