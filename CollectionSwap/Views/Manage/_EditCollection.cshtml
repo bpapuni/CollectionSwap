@@ -13,9 +13,9 @@
         </span>
     </div>
 
-    <section>
+    <section class="gap-1">
         <span class="success-message">@ViewBag.AddItemStatus</span>
-        <div class="row">
+        <div class="row gap-2">
             @using (Html.BeginForm("ChangeCollectionName", "Manage", null, FormMethod.Post, new { enctype = "multipart/form-data", role = "form", id = "update-name-form", @class = "" }))
             {
                 <div class="form-group">
@@ -25,7 +25,7 @@
                     @Html.LabelFor(model => model.Collection.Name)
                     @Html.TextBoxFor(model => model.Collection.Name, new { @class = "" })
                     @Html.ValidationMessageFor(model => model.Collection.Name, "", new { @class = "text-danger" })
-                    <input type="submit" value="Update Name" />
+                    <input class="submit-button" type="submit" value="Update Name" />
                 </div>
             }
 
@@ -39,7 +39,7 @@
                     @Html.LabelFor(model => model.FileInput)
                     @Html.TextBoxFor(model => model.FileInput, null, new { type = "file", accept = ".png, .jpg", @class = "" })
                     @Html.ValidationMessageFor(model => model.FileInput, "", new { @class = "text-danger" })
-                    <input type="submit" value="Upload" />
+                    <input class="submit-button" type="submit" value="Upload" />
                 </div>
             }
         </div>

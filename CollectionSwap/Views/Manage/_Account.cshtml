@@ -29,7 +29,7 @@
                     </div>
                 </div>
                 <span class="success-message">@ViewBag.ChangeEmailStatus</span>
-                <input type="submit" value="Update Email" />
+                <input class="submit-button" type="submit" value="Update Email" />
             }
 
             @*@using (Html.BeginForm("ChangePassword", "Manage", null, FormMethod.Post, new { id = "change-password-form" }))
@@ -70,7 +70,7 @@
                 }
 
                 <span class="success-message">@ViewBag.ChangePasswordStatus</span>
-                <input type="submit" value="Update Password" />
+                <input class="submit-button" type="submit" value="Update Password" />
             </form>
             @*}*@
         </div>
@@ -141,7 +141,7 @@
                     </ul>
                 }
                 <span class="success-message">@ViewBag.ChangeAddressStatus</span>
-                <input type="submit" value="Update Address" />
+                <input class="submit-button" type="submit" value="Update Address" />
             </div>
         }
     </section>

@@ -200,7 +200,7 @@
         function ScrollRowBack(e) {
             var scrollRow = $(e).closest(".scroll-snap-row");
             scrollRow.css("scroll-snap-type", "none");
-            history.pushState({ partialName: "YourCollections" }, null, `/Manage/YourCollections`);
+            history.pushState({ partialName: partialName }, null, `/Manage/${partialName}`);
 
             scrollRow.animate({ scrollLeft: 0 }, 250, "swing", () => {
                 $(document).scrollTop(0);

@@ -1,9 +1,11 @@
 ﻿@model CollectionSwap.Models.CollectionButton
+@{ 
+    string action = ViewContext.RouteData.Values["action"] as string;
+}
 <div class="new-collection">
     @if (Model.Id == 0)
     {
         <span class="header">@Model.Name</span>
-        @*<span>@Model.ItemList.Count</span>*@
     }
     else
     {
@@ -19,25 +21,44 @@
         </div>
 
         <div class="new-collection-column">
-            <div class="new-collection-center">@Model.Name[0]</div>
+            @*<div class="new-collection-center">@Model.Name[0]</div>*@
             <span><strong>@Model.Name</strong></span>
             <span>Short description goes here</span>
         </div>
 
-        <div class="new-collection-row">
-            <div class="column align-items-center">
-                <span>@Model.ItemList.Count</span>
-                You Own
+        @* If SetSize is 0 we're creating a new user collection, so display Add New button'*@
+        if (Model.SetSize == 0)
+        {
+            <div class="new-collection-row">
+                <div class="submit-button">Add</div>
             </div>
-            <div class="column align-items-center">
-                <span>@Model.SetSize</span>
-                In Full Set
+        }
+        else if (action == "ManageCollectionsPartial")
+        {
+            <div class="new-collection-row">
+                <div class="column align-items-center">
+                    <span>@Model.SetSize</span>
+                    In Full Set
+                </div>
             </div>
+        }
+        else
+        {
+            <div class="new-collection-row">
+                <div class="column align-items-center">
+                    <span>@Model.ItemList.Count</span>
+                    You Own
+                </div>
+                <div class="column align-items-center">
+                    <span>@Model.SetSize</span>
+                    In Full Set
+                </div>
 
-            <div class="column align-items-center">
-                <span>@Model.Duplicates</span>
-                Duplicates
+                <div class="column align-items-center">
+                    <span>@Model.Duplicates</span>
+                    Duplicates
+                </div>
             </div>
-        </div>
+        }
     }
 </div>

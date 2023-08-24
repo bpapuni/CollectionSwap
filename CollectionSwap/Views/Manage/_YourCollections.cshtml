@@ -17,9 +17,9 @@
                 };
             }
 
-            <button class="collection-button" onClick="OpenCreateUserCollection(this)" )>
+            <div class="collection-button" onClick="OpenCreateUserCollection(this)" )>
                 @Html.Partial("_CollectionButton", createCollectionButton)
-            </button>
+            </div>
 
             @foreach (var userCollection in Model.UserCollections)
             {

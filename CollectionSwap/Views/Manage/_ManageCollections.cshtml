@@ -19,8 +19,9 @@
                         {
                             Id = collection.Id,
                             Name = collection.Name,
-                            ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON)
+                            ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON),
                         };
+                        collectionButton.SetSize = collectionButton.ItemList.Count;
                     }
                     <a class="collection-button" href="@Url.Content($"/Manage/ManageCollections/{collection.Id}")">
                         @Html.Partial("_CollectionButton", collectionButton)

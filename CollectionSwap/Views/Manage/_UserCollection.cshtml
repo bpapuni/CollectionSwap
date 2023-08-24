@@ -27,7 +27,7 @@
         @Html.LabelFor(model => model.UserCollection.Name)
         @Html.TextBoxFor(model => model.UserCollection.Name, new { @class = "" })
         @Html.ValidationMessageFor(model => model.UserCollection.Name, "", new { @class = "text-danger" })
-        <input type="submit" value="Update Name" />
+        <input class="submit-button" type="submit" value="Update Name" />
     }
     <br />
     <div id="collection-items" class="row gap-2" style="">

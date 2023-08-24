@@ -112,12 +112,12 @@ namespace CollectionSwap.Models
         [Required(ErrorMessage = "This field is required.")]
         [Display(Name = "Full Name")]
         public string FullName { get; set; }
-        [Display(Name = "Company Name")]
+        [Display(Name = "Company Name (optional)")]
         public string CompanyName { get; set; }
         [Required(ErrorMessage = "This field is required.")]
         [Display(Name = "Address Line 1")]
         public string LineOne { get; set; }
-        [Display(Name = "Address Line 2")]
+        [Display(Name = "Address Line 2 (optional)")]
         public string LineTwo { get; set; }
         [Required(ErrorMessage = "This field is required.")]
         [Display(Name = "Post Code")]
