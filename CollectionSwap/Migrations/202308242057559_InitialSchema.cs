@@ -73,9 +73,9 @@
                         EndDate = c.DateTimeOffset(precision: 7),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Collections", t => t.CollectionId, cascadeDelete: true)
-                .ForeignKey("dbo.AspNetUsers", t => t.ReceiverId, cascadeDelete: true)
-                .ForeignKey("dbo.AspNetUsers", t => t.SenderId, cascadeDelete: true)
+                .ForeignKey("dbo.Collections", t => t.CollectionId, cascadeDelete: false)
+                .ForeignKey("dbo.AspNetUsers", t => t.ReceiverId, cascadeDelete: false)
+                .ForeignKey("dbo.AspNetUsers", t => t.SenderId, cascadeDelete: false)
                 .Index(t => t.CollectionId)
                 .Index(t => t.SenderId)
                 .Index(t => t.ReceiverId);
