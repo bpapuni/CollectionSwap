@@ -4,7 +4,7 @@
 
     <section>
         <div class="row min-width-100 gap-4">
-            @using (Html.BeginForm("ChangeEmail", "Manage", FormMethod.Post))
+            @using (Html.BeginForm("ChangeEmail", "Manage", null, FormMethod.Post, new { id = "change-email-form" }))
             {
                 @Html.AntiForgeryToken()
                 <div class="row">
@@ -32,31 +32,32 @@
                 <input type="submit" value="Update Email" />
             }
 
-            @using (Html.BeginForm("ChangePassword", "Manage", FormMethod.Post))
-            {
+            @*@using (Html.BeginForm("ChangePassword", "Manage", null, FormMethod.Post, new { id = "change-password-form" }))
+            {*@
+            <form action="/Manage/ChangePassword" id="change-password-form" method="post">
                 @Html.AntiForgeryToken()
                 <div class="row">
                     <div class="form-group">
                         @Html.LabelFor(m => m.ChangePassword.OldPassword)
-                        @Html.PasswordFor(m => m.ChangePassword.OldPassword)
+                        @Html.TextBoxFor(m => m.ChangePassword.OldPassword, new { type = "password" })
                         @Html.ValidationMessageFor(m => m.ChangePassword.OldPassword)
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group">
                         @Html.LabelFor(m => m.ChangePassword.NewPassword)
-                        @Html.PasswordFor(m => m.ChangePassword.NewPassword)
+                        @Html.TextBoxFor(m => m.ChangePassword.NewPassword, new { type = "password" })
                         @Html.ValidationMessageFor(m => m.ChangePassword.NewPassword)
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group">
                         @Html.LabelFor(m => m.ChangePassword.ConfirmPassword)
-                        @Html.PasswordFor(m => m.ChangePassword.ConfirmPassword)
+                        @Html.TextBoxFor(m => m.ChangePassword.ConfirmPassword, new { type = "password" })
                         @Html.ValidationMessageFor(m => m.ChangePassword.ConfirmPassword)
                     </div>
                 </div>
-                if (ViewData.ModelState.ContainsKey("ChangePassword"))
+                @if (ViewData.ModelState.ContainsKey("ChangePassword"))
                 {
                     <ul>
                         @foreach (var error in ViewData.ModelState["ChangePassword"].Errors)
@@ -70,7 +71,8 @@
 
                 <span class="success-message">@ViewBag.ChangePasswordStatus</span>
                 <input type="submit" value="Update Password" />
-            }
+            </form>
+            @*}*@
         </div>
     </section>
 

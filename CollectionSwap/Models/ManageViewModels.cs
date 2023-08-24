@@ -69,14 +69,14 @@ namespace CollectionSwap.Models
         public string OldEmail { get; set; }
 
         [Required(ErrorMessage = "This field is required.")]
-        [EmailAddress]
+        [EmailWithoutSpecialChars(ErrorMessage = "Email contains an invalid or non-english character.")]
         [Display(Name = "New Email")]
         public string NewEmail { get; set; }
 
         [Required(ErrorMessage = "This field is required.")]
-        [EmailAddress]
+        [EmailWithoutSpecialChars(ErrorMessage = "Email contains an invalid or non-english character.")]
         [Display(Name = "Confirm new Email")]
-        [Compare("NewEmail", ErrorMessage = "The new email and confirmation email do not match.")]
+        [CaseInsensitiveCompare("NewEmail", ErrorMessage = "The new email and confirmation email do not match.")]
         public string ConfirmEmail { get; set; }
     }
 
@@ -90,13 +90,15 @@ namespace CollectionSwap.Models
         [Required(ErrorMessage = "This field is required.")]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [RegularExpression(@"^[^\s]*$", ErrorMessage = "Invalid Input (no spaces allowed)")]
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[`@$!%*?&])\S{6,}$",
+    ErrorMessage = "Password must be 6+ characters, include an uppercase letter, a number, a symbol, and no spaces.")]
         [Display(Name = "New Password")]
         public string NewPassword { get; set; }
 
         [Required(ErrorMessage = "This field is required.")]
         [DataType(DataType.Password)]
-        [RegularExpression(@"^[^\s]*$", ErrorMessage = "Invalid Input (no spaces allowed)")]
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[`@$!%*?&])\S{6,}$",
+    ErrorMessage = "Password must be 6+ characters, include an uppercase letter, a number, a symbol, and no spaces.")]
         [Display(Name = "Confirm New Password")]
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }

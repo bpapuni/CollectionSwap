@@ -100,10 +100,7 @@ namespace CollectionSwap.Controllers
             };
 
             var partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-            //var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
-            //return PartialView("_Account", model);
         }
 
         [HttpPost]
@@ -130,7 +127,7 @@ namespace CollectionSwap.Controllers
                 case "Incorrect email":
                     ModelState.AddModelError("ChangeEmail.OldEmail", status);
                     partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-                    return Json(new { PartialView = partial });
+                    return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
                 case "This email already exists":
                     ModelState.AddModelError("ChangeEmail.NewEmail", status);
                     partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
@@ -141,7 +138,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.ChangeEmailStatus = "Your email has been changed.";
             partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" }, FormResetTarget = "#change-email-form" });
         }
 
         [HttpPost]
@@ -155,6 +152,13 @@ namespace CollectionSwap.Controllers
 
             if (!ModelState.IsValid)
             {
+                partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
+            }
+
+            if (model.ChangePassword.NewPassword == model.ChangePassword.OldPassword)
+            {
+                ModelState.AddModelError("ChangePassword.NewPassword", "New password must be different from your current password.");
                 partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
                 return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
             }
@@ -190,7 +194,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.ChangePasswordStatus = "Your password has been changed.";
             partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" }, FormResetTarget = "#change-password-form" });
         }
 
         [HttpPost]

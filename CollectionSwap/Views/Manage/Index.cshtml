@@ -169,6 +169,14 @@
                             $(result.ScrollTarget).parent().css("scroll-snap-type", "x mandatory")
                         });
                     }
+
+                    if (result.FormResetTarget) {
+                        $(":input", result.FormResetTarget)
+                            .not(":button, :submit, :reset, :hidden")
+                            .val("")
+                            .prop("checked", false)
+                            .prop("selected", false);
+                    }
                 },
                 error: function () {
                     // Handle error

@@ -23,15 +23,17 @@ namespace CollectionSwap.Models
         public string ChangeEmail(string oldEmail, string newEmail, ApplicationDbContext db)
         {
             var status = string.Empty;
-            if (this.Email != oldEmail)
+            if (this.Email.ToLower() != oldEmail.ToLower())
             {
                 status = "Incorrect email";
-            } else if (db.Users.Where(u => u.Email == newEmail).Any()) {
+            }
+            else if (db.Users.Where(u => u.Email.ToLower() == newEmail.ToLower()).Any()) 
+            {
                 status = "This email already exists";
             }
             else
             {
-                this.Email = newEmail;
+                this.Email = newEmail.ToLower();
                 db.Entry(this).State = EntityState.Modified;
                 db.SaveChanges();
             }

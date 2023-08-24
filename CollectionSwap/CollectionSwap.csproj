@@ -175,6 +175,8 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\SwapController.cs" />
     <Compile Include="Helpers\Helper.cs" />
+    <Compile Include="Helpers\CaseInsensitiveCompareAttribute.cs" />
+    <Compile Include="Helpers\EmailWithoutSpecialCharsAttribute.cs" />
     <Compile Include="Helpers\ZipFileAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
