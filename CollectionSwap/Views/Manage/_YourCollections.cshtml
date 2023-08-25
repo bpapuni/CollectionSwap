@@ -1,9 +1,16 @@
 ﻿@model CollectionSwap.Models.YourCollectionViewModel
 @using CollectionSwap.Models
 @using Newtonsoft.Json
+@{
+    string statusMessage = ViewBag.Status;
+}
 
 <div class="scroll-snap-row">
     <div id="your-collections-container">
+        @if (!String.IsNullOrEmpty(statusMessage))
+        {
+            <div class="status-message">@statusMessage</div>
+        }
         <span class="header">
             Your Collections
         </span>

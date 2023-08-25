@@ -709,8 +709,7 @@ button.close {
     position: relative;
     display: flex;
     align-items: flex-start;
-    margin-inline: 0.75rem;
-    padding: 0;
+    padding-inline: 0.75rem;
     color: #ccc;
     font-size: 2.5rem;
     height: 3.5rem;

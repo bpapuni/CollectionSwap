@@ -226,7 +226,7 @@ namespace CollectionSwap.Models
 
             return newUserCollection;
         }
-        public void Update(string property, string value, ApplicationDbContext db)
+        public void Update(string property, string userId, string value, ApplicationDbContext db)
         {
             switch (property)
             {

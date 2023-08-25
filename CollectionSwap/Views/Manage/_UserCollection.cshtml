@@ -16,10 +16,11 @@
 </div>
 
 <section class="column">
-    <span class="success-message">@ViewBag.AddItemStatus</span>
     <span><strong>Completed a swap?</strong> Place feedback about the swap in your Swap History to automatically update this collection with your new items.</span>
+    <br />
     @using (Html.BeginForm("ChangeUserCollectionName", "Manage", null, FormMethod.Post))
     {
+    <div class="form-group">
         @Html.AntiForgeryToken()
         @Html.HiddenFor(model => model.UserCollection.Id)
         @Html.HiddenFor(model => model.UserCollection.UserId)
@@ -28,6 +29,7 @@
         @Html.TextBoxFor(model => model.UserCollection.Name, new { @class = "" })
         @Html.ValidationMessageFor(model => model.UserCollection.Name, "", new { @class = "text-danger" })
         <input class="submit-button" type="submit" value="Update Name" />
+    </div>
     }
     <br />
     <div id="collection-items" class="row gap-2" style="">
@@ -46,6 +48,7 @@
                     {
                         @Html.AntiForgeryToken()
                         @Html.Hidden("index", itemId)
+                        @Html.Hidden("userId", Model.UserCollection.UserId)
                         @Html.Hidden("ucId", Model.UserCollection.Id)
 
                         <div class="row align-items-center">

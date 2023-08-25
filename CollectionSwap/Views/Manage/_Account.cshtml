@@ -1,5 +1,13 @@
 ﻿@model CollectionSwap.Models.IndexViewModel
+@{
+    string statusMessage = ViewBag.Status;
+}
+
 <div id="account-container">
+    @if (!String.IsNullOrEmpty(statusMessage))
+    {
+        <div class="status-message">@statusMessage</div>
+    }
     <span class="header">Account Settings</span>
 
     <section>
@@ -33,7 +41,7 @@
             }
 
             @*@using (Html.BeginForm("ChangePassword", "Manage", null, FormMethod.Post, new { id = "change-password-form" }))
-            {*@
+                {*@
             <form action="/Manage/ChangePassword" id="change-password-form" method="post">
                 @Html.AntiForgeryToken()
                 <div class="row">

@@ -7,7 +7,7 @@
     @*<section class="login-prompt exclamation squiggle d-none">*@
     <section class="login-prompt exclamation squiggle" style="display: none">
         <h2>Have an Account?</h2>
-        <button onclick="SwitchRegisterForms(this)">Login</button>
+        <button class="submit-button" onclick="SwitchRegisterForms(this)">Login</button>
     </section>
 
     <section class="login exclamation squiggle">
@@ -32,7 +32,7 @@
                     @Html.CheckBoxFor(m => m.LoginViewModel.RememberMe)
                     @Html.LabelFor(m => m.LoginViewModel.RememberMe)
                 </div>*@
-            <button type="submit">Login</button>
+            <button class="submit-button" type="submit">Login</button>
             @* Enable this once you have account confirmation enabled for password reset functionality
                 <p>
                     @Html.ActionLink("Forgot your password?", "ForgotPassword")
@@ -42,7 +42,7 @@
 
     <section class="register-prompt exclamation squiggle">
         <h2>New Here?</h2>
-        <button onclick="SwitchRegisterForms(this)">Create Free Account</button>
+        <button class="submit-button" onclick="SwitchRegisterForms(this)">Create Free Account</button>
     </section>
 
     @*<section class="register squiggle exclamation d-none">*@
@@ -75,7 +75,7 @@
                 @Html.LabelFor(m => m.RegisterViewModel.ConfirmPassword)
                 @Html.PasswordFor(m => m.RegisterViewModel.ConfirmPassword)
             </div>
-            <button type="submit">Create Account</button>
+            <button class="submit-button" type="submit">Create Account</button>
         }
     </section>
 </div>

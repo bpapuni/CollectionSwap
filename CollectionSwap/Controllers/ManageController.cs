@@ -136,7 +136,7 @@ namespace CollectionSwap.Controllers
                     break;
             }
 
-            ViewBag.ChangeEmailStatus = "Your email has been changed.";
+            ViewBag.Status = "Your email has been changed.";
             partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" }, FormResetTarget = "#change-email-form" });
         }
@@ -192,7 +192,7 @@ namespace CollectionSwap.Controllers
                 await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             }
 
-            ViewBag.ChangePasswordStatus = "Your password has been changed.";
+            ViewBag.Status = "Your password has been changed.";
             partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" }, FormResetTarget = "#change-password-form" });
         }
@@ -212,12 +212,11 @@ namespace CollectionSwap.Controllers
             var result = await model.ChangeAddress.CreateAddressAsync(User.Identity.GetUserId(), db);
             if (!result.Succeeded)
             {
-                //ModelState.AddModelError("ChangeAddress", result.Error);
                 partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
                 return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
             }
 
-            ViewBag.ChangeAddressStatus = "Your mailing address has been changed.";
+            ViewBag.Status = "Your mailing address has been changed.";
             partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
         }
@@ -257,7 +256,6 @@ namespace CollectionSwap.Controllers
                 ViewBag.ShouldDisplay = true;
                 partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
                 return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container" } });
-                //return Json(new { PartialView = partial });
             }
 
             Collection.Create(model.CreateCollection, db);
@@ -266,7 +264,6 @@ namespace CollectionSwap.Controllers
             ViewBag.ShouldDisplay = true;
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container" } });
-            //return Json(new { PartialView = partial });
         }
 
         //
@@ -468,17 +465,8 @@ namespace CollectionSwap.Controllers
         [Authorize]
         public ActionResult ChangeUserCollectionName([Bind(Prefix = "UserCollection")] UserCollection model)
         {
-            var userCollection = db.UserCollections.Find(model.Id);
-            
-
             var partial = String.Empty;
-            if (!ModelState.IsValid)
-            {
-                partial = Helper.RenderViewToString(ControllerContext, "_UserCollection", model, true);
-                return Json(new { PartialView = partial });
-            }
-
-            userCollection.Update("Name", model.Name, db);
+            var userCollection = db.UserCollections.Find(model.Id);
             var ucModel = new UserCollectionModel
             {
                 Collection = db.Collections.Find(userCollection.CollectionId),
@@ -486,13 +474,27 @@ namespace CollectionSwap.Controllers
             };
             var ycViewModel = new YourCollectionViewModel
             {
-                Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.Where(uc => uc.UserId == model.UserId).ToList(),
-                EditCollection = ucModel
+                Collections = db.Collections.ToList()
             };
 
+            if (!ModelState.IsValid)
+            {
+                ycViewModel.UserCollections = db.UserCollections.Where(uc => uc.UserId == model.UserId).ToList();
+                ycViewModel.EditCollection = ucModel;
+
+                partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#user-collection-container" } });
+            }
+
+            userCollection.Update("Name", model.UserId, model.Name, db);
+            ucModel.UserCollection = userCollection;
+
+            ycViewModel.UserCollections = db.UserCollections.Where(uc => uc.UserId == model.UserId).ToList();
+            ycViewModel.EditCollection = ucModel;
+
+            ViewBag.Status = "Collection name updated successfully";
             partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container" } });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container", second = "#user-collection-container" } });
         }
 
         [HttpPost]
@@ -530,13 +532,12 @@ namespace CollectionSwap.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult UpdateItemCount(int quantity, int index, int ucId)
+        public ActionResult UpdateItemCount(int quantity, int index, string userId, int ucId)
         {
             var partial = String.Empty;
             UserCollection userCollection = db.UserCollections.Find(ucId);
-            userCollection.Update("Quantity", JsonConvert.SerializeObject(new { index, quantity }), db);
+            userCollection.Update("Quantity", userId, JsonConvert.SerializeObject(new { index, quantity }), db);
 
-            var userId = User.Identity.GetUserId();
             var ycViewModel = new YourCollectionViewModel
             {
                 Collections = db.Collections.ToList(),
