@@ -5,7 +5,6 @@
     ViewBag.Title = "Mange Your Account";
 }
 
-
 <div class="manage-container">
     <div class="manage-container-nav">
         <ul class="">
@@ -84,7 +83,7 @@
         });
 
         // Subnav click listeners
-        $(document).on("click", ".subnav-link", function (event) {
+        $(document).on("click", ".manage-container-nav a", function (event) {
             event.preventDefault();
             const url = $(this).attr("href").split("/Manage/").pop().split("/");
             partialName = url[0];
@@ -148,7 +147,7 @@
                 contentType: false,
                 success: function (result) {
                     var partialView = result.PartialView;
-                    
+
                     if (result.RefreshTargets) {
                         $.each(result.RefreshTargets, function (key, target) {
                             if (`#${$(partialView)[0].id}` === target) {
