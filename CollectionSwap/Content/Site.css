@@ -1884,7 +1884,7 @@ input[type=number] {
 #find-swaps-container {
     display: flex;
     flex-direction: column;
-    /*width: clamp(80%, 80%, 100%);*/
+    width: clamp(70rem, 70rem, 100%);
     padding: 0 0 2rem 0;
 }
 

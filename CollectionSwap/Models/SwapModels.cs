@@ -1,10 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using CollectionSwap.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
 
@@ -144,20 +146,20 @@ namespace CollectionSwap.Models
             {
                 case "sender":
                     this.SenderConfirmReceieved = true;
-                    db.Entry(this).State = EntityState.Modified;
-                    db.SaveChanges();
 
                     break;
 
                 case "receiver":
                     this.ReceiverConfirmReceieved = true;
-                    db.Entry(this).State = EntityState.Modified;
-                    db.SaveChanges();
 
                     break;
                 default:
                     break;
             }
+
+            db.Entry(this).State = EntityState.Modified;
+            db.SaveChanges();
+            SwapItems(this, userType, db);
         }
 
         private void HoldItems(string itemListJSON, UserCollection userCollection, Swap swap, ApplicationDbContext db)
@@ -205,28 +207,49 @@ namespace CollectionSwap.Models
             db.HeldItems.RemoveRange(heldItems);
             db.SaveChanges();
         }
-        private void SwapItems(Swap swap, ApplicationDbContext db)
+        private void SwapItems(Swap swap, string userType, ApplicationDbContext db)
         {
-            var heldItems = db.HeldItems.Include("UserCollection").Where(hi => hi.Swap.Id == swap.Id).ToList();
-
-            for (var i = 0; i <= 1; i++)
+            var heldItems = new HeldItems();
+            var userCollection = new UserCollection();
+            switch (userType)
             {
-                var index = i == 0 ? 1 : 0;
-                var userCollection = db.UserCollections.Find(heldItems[index].UserCollection.Id);
-                var deserializedSwapItems = JsonConvert.DeserializeObject<List<int>>(heldItems[i].ItemListJSON);
-                var deserializedItems = JsonConvert.DeserializeObject<List<int>>(userCollection.ItemCountJSON);
+                case "sender":
+                    // Find the items that DO NOT belong to to sender
+                    heldItems = db.HeldItems.Include("UserCollection").Where(
+                                                                            hi => hi.Swap.Id == swap.Id &&
+                                                                            hi.UserCollection.UserId != swap.SenderId)
+                                                                            .FirstOrDefault();
 
-                foreach (var deserializedItem in deserializedSwapItems)
-                {
-                    deserializedItems[deserializedItem] = deserializedItems[deserializedItem] + 1;
-                }
+                    // Define the User Collection that will be getting updated as the senders
+                    userCollection = db.UserCollections.Find(swap.SenderUserCollectionId);
+                    break;
 
-                userCollection.ItemCountJSON = JsonConvert.SerializeObject(deserializedItems);
-                db.Entry(userCollection).State = EntityState.Modified;
-                db.SaveChanges();
+                case "receiver":
+                    // Find the items that DO NOT belong to to receiver
+                    heldItems = db.HeldItems.Include("UserCollection").Where(
+                                                                        hi => hi.Swap.Id == swap.Id &&
+                                                                        hi.UserCollection.UserId != swap.ReceiverId)
+                                                                        .FirstOrDefault();
+
+                    // Define the User Collection that will be getting updated as the receivers
+                    userCollection = db.UserCollections.Find(swap.ReceiverUserCollectionId);
+                    break;
+                default:
+                    break;
             }
 
-            db.HeldItems.RemoveRange(heldItems);
+            var deserializedSwapItems = JsonConvert.DeserializeObject<List<int>>(heldItems.ItemListJSON);
+            var deserializedItems = JsonConvert.DeserializeObject<List<int>>(userCollection.ItemCountJSON);
+
+            foreach (var deserializedItem in deserializedSwapItems)
+            {
+                deserializedItems[deserializedItem] += 1;
+            }
+
+            userCollection.ItemCountJSON = JsonConvert.SerializeObject(deserializedItems);
+            db.Entry(userCollection).State = EntityState.Modified;
+
+            db.HeldItems.Remove(heldItems);
             db.SaveChanges();
         }
     }
