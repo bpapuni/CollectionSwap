@@ -276,11 +276,14 @@ namespace CollectionSwap.Controllers
         public ActionResult EditCollection(int id)
         {
             var partial = String.Empty;
-            var model = new EditCollectionModel { Collection = db.Collections.Find(id) };
 
-            ViewBag.ShouldDisplay = true;
-            partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", model, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#edit-collection-container" }, ScrollTarget = "#edit-collection-container" }, JsonRequestBehavior.AllowGet);
+            var mcModel = new ManageCollectionsViewModel
+            {
+                Collections = db.Collections.ToList(),
+                EditCollection = new EditCollectionModel { Collection = db.Collections.Find(id) }
+            };
+            partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcModel, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container", second = "#edit-collection-container" }, ScrollTarget = "#edit-collection-container" }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -311,10 +314,9 @@ namespace CollectionSwap.Controllers
             var partial = String.Empty;
             if (!ModelState.IsValid)
             {
-                model.ItemListJSON = db.Collections.Find(model.Id).ItemListJSON;
-                ViewBag.ShouldDisplay = true;
-                partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", model, true);
-                return Json(new { PartialView = partial });
+                var ecModel = new EditCollectionModel { Collection = db.Collections.Find(model.Id) };
+                partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", ecModel, true);
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#edit-collection-container" } });
 
             }
 
@@ -328,9 +330,9 @@ namespace CollectionSwap.Controllers
                 EditCollection = new EditCollectionModel { Collection = db.Collections.Find(model.Id) }
             };
 
-            ViewBag.ShouldDisplay = true;
+            ViewBag.Status = "Collection name updated successfully";
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcViewModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container" } });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container", second = "#edit-collection-container" } });
         }
 
         [HttpPost]
@@ -340,23 +342,26 @@ namespace CollectionSwap.Controllers
         {
             var partial = String.Empty;
             var collection = db.Collections.Find(model.Collection.Id);
+            var mcViewModel = new ManageCollectionsViewModel();
 
             if (!ModelState.IsValidField("FileInput"))
             {
                 model.Collection = collection;
-                ViewBag.ShouldDisplay = true;
-                partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", model, true);
-                return Json(new { PartialView = partial, RefreshTargets = new { first = "#edit-collection-container" } });
+                mcViewModel.Collections = db.Collections.ToList();
+                mcViewModel.EditCollection = model;
 
+                partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcViewModel, true);
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#edit-collection-container" } });
             }
 
             collection.AddItem(model.FileInput, db);
             model.Collection = collection;
+            mcViewModel.Collections = db.Collections.ToList();
+            mcViewModel.EditCollection = model;
 
-            ViewBag.ShouldDisplay = true;
-            ViewBag.EditCollectionStatus = "Item successfully added to collection.";
-            partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", model, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#edit-collection-container" } });
+            ViewBag.Status = "Item successfully added to collection";
+            partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcViewModel, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container", second = "#edit-collection-container" } });
         }
 
         [HttpPost]
@@ -428,7 +433,7 @@ namespace CollectionSwap.Controllers
         }
 
         //
-        // GET: /Manage/ManageCollections/_EditCollection
+        // GET: /Manage/ManageCollections/_UserCollection
 
         [Authorize]
         public ActionResult UserCollection(int? id)

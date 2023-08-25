@@ -7,6 +7,7 @@
 /* Calculate different shades */
 :root {
     --background: #F5F2EE;
+    --brand-neutral: #ccc;
     --brand-blue: #3666C2;
     --brand-yellow: #F9C612;
     --brand-red: #E84744;
@@ -63,13 +64,14 @@ input:focus {
     -webkit-margin-end: 0.75rem;
     margin-inline-end: 0.75rem;
     color: #212529;
-    background-color: var(--neutral-shade);
+    background-color: var(--brand-neutral);
     pointer-events: none;
     border-color: inherit;
     border-style: solid;
     border-width: 0;
     border-inline-end-width: 1px;
     border-radius: 0.5rem;
+    border: none;
     -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
@@ -924,11 +926,11 @@ button.close {
     justify-content: center;
     width: 2.5rem;
     height: 2.5rem;
-    /*margin: 2.3rem 1rem 0 0;*/
-    margin: 0.8rem 1rem 0 0;
-    font-size: 3rem;
-    color: black;
-    /*background: black;*/
+    padding-right: 0.5rem;
+    margin: 2.6rem 1rem 0 0;
+    font-size: 2rem;
+    color: white;
+    background: black;
     border: 1px solid black;
     /*border: none;*/
     border-radius: 50%;
@@ -936,11 +938,11 @@ button.close {
     outline: none;
 }
 
-    /*.scroll-row-button:hover {
+    .scroll-row-button:hover {
         color: black;
         background: white;
         box-shadow: 0 2px 2px #00000099;
-    }*/
+    }
 
 #create-collection-container {
     display: flex;
@@ -952,8 +954,39 @@ button.close {
     background-color: var(--neutral-shade);
 }
 
+.status-message {
+    position: fixed;
+    top: -3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.5rem 1rem;
+    color: darkgreen;
+    background: #c1dcb1;
+    border: 1px solid darkgreen;
+    border-radius: 1rem;
+    z-index: 999;
+    animation: slide 3s ease-in;
+}
+
+@keyframes slide {
+    0% {
+        top: -3rem;
+    }
+
+    5%, 95% {
+        top: 1rem;
+    }
+
+
+    100% {
+        top: -3rem;
+    }
+}
+
 .success-message {
-    color: forestgreen;
+    height: 1.5rem;
+    line-height: 1.5;
+    color: var(--brand-green);
 }
 
 .paint-blotches {
@@ -1278,7 +1311,7 @@ nav a {
 }
 
 #available-collections-container {
-    position: relative;edit-collection-container
+    position: relative;
     display: flex;
     flex-direction: column;
     min-width: 100%;
@@ -1298,6 +1331,10 @@ nav a {
 
 #edit-collection-container section {
     flex-direction: column;
+}
+
+.edit-collection-form {
+    flex: 0.2;
 }
 
 #user-collection-container {
