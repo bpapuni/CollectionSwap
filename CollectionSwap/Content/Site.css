@@ -111,6 +111,17 @@ textarea {
         box-shadow: 0 2px 2px #00000099;
     }
 
+    .submit-button:disabled {
+        color: #999;
+        border: 1px solid #999;
+        background: var(--brand-neutral);
+        cursor: unset;
+    }
+
+        .submit-button:disabled:hover {
+            box-shadow: none;
+        }
+
 button {
     font-family: inherit;
     line-height: inherit;
@@ -597,7 +608,7 @@ button.close {
 
     #history-container thead {
         /*white-space: nowrap;*/
-        background: var(--dark-shade);
+        background: var(--brand-yellow);
         border-radius: 1rem;
     }
 
@@ -949,8 +960,8 @@ button.close {
 }
 
 .collection:hover {
-    color: var(--darkest-shade);
-    background-color: var(--neutral-shade);
+    color: white;
+    background-color: var(--brand-green);
 }
 
 .status-message {
@@ -1072,7 +1083,7 @@ button.close {
     .new-collection:hover {
         background: #fff;
         border: 1px solid #444;
-        box-shadow: 0 2px 5px var(--neutral-shade);
+        box-shadow: 0 2px 5px var(--brand-neutral);
     }
 
 /* Add New Collection button */
@@ -1132,7 +1143,7 @@ section > .collection-button .new-collection:nth-child(1) {
     color: white;
     font-size: 2rem;
     font-weight: 300;
-    background: var(--dark-shade);
+    background: red;
     margin-top: -1rem;
 }
 
@@ -1400,11 +1411,11 @@ section {
     min-width: 7.5rem;
     height: 5rem;
     padding: 1rem;
-    color: var(--neutral-shade);
+    color: black;
     text-decoration: none;
     border-radius: 0.5rem;
-    border: 1px solid var(--darkest-shade);
-    background-color: var(--dark-shade);
+    border: 1px solid black;
+    background-color: white;
     transition: transform ease 0.2s, box-shadow ease 0.2s;
     cursor: pointer;
 }
@@ -1412,15 +1423,15 @@ section {
 .collection:hover {
     /*transform: scale(100.5%);*/
     box-shadow: 0 2px 5px #888;
-    color: var(--darkest-shade);
-    background-color: var(--neutral-shade);
+    color: inherit;
+    background-color: white;
 }
 
 .user-collection-selected {
     border: 2px solid #0071e3;
     box-shadow: 0 2px 5px #888;
-    color: var(--darkest-shade);
-    background-color: var(--lighter-shade);
+    color: white;
+    background-color: #357053;
 }
 
 .status {
@@ -1440,11 +1451,11 @@ section {
     font-size: 1.5rem;
     width: 2.5rem;
     aspect-ratio: 1/1;
-    color: var(--steel-blue-600);
+    color: white;
     border: none;
     text-decoration: none;
     text-align: center;
-    background: var(--steel-blue-100);
+    background: var(--brand-blue);
     border-radius: 0.5rem;
     /*border: 1px solid var(--light-shade);*/
     cursor: pointer;
@@ -1541,10 +1552,9 @@ input[type=number] {
 .swap-container {
     display: flex;
     flex-direction: column;
-    /*align-items: flex-end;*/
-    width: 100%;
+    /*width: clamp(47rem, 47rem, 100%);*/
     height: 40rem;
-    color: var(--darkest-shade);
+    color: black;
     border-radius: 1rem;
     box-shadow: 0 2px 5px #888;
     overflow: hidden;
@@ -1558,7 +1568,7 @@ input[type=number] {
     flex-shrink: 0;
     height: 6rem;
     padding: 1rem;
-    background: var(--lighter-shade);
+    background: white;
     z-index: 99;
     /*border: 1px solid black;*/
 }
@@ -1592,7 +1602,7 @@ input[type=number] {
 }
 
 .swap-profile h5 {
-    color: var(--darkerest-shade);
+    /*color: black;*/
     margin: 0;
 }
 
@@ -1603,7 +1613,6 @@ input[type=number] {
     padding: 0.5rem;
     line-height: 1.2;
     height: 4rem;
-    /*border: 1px solid black;*/
 }
 
 .swap-size {
@@ -1614,21 +1623,21 @@ input[type=number] {
 .swap-container-body {
     position: relative;
     display: flex;
-    flex-grow: 1;
-    background: var(--neutral-shade);
+    height: 100%;
+    overflow: hidden;
+    background: var(--brand-neutral);
 }
 
 .swap-container-main {
     position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    /*justify-content: space-between;*/
     flex-grow: 1;
     gap: 1.5rem;
-    padding: 1rem;
-    color: var(--light-shade);
-    background: var(--darkest-shade);
+    width: 50rem;
+    padding: 1rem 2rem;
+    color: black;
+    background: #357053;
 }
 
 .swap-container-main::after {
@@ -1650,12 +1659,14 @@ input[type=number] {
     position: relative;
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: flex-start;
-    flex-grow: 0;
-    padding: 0.5rem;
+    flex-wrap: wrap;
     gap: 1rem;
+    /*width: 100%;*/
+    height: 12rem;
+    padding: 0.5rem;
+    overflow: hidden;
 }
 
 .swap-featured-item {
@@ -1672,15 +1683,17 @@ input[type=number] {
 }
 
 .swap-pool-container {
+    --_button-size: 4rem;
+    position: relative;
     display: flex;
     align-content: flex-start;
+    justify-content: center;
     gap: 1rem;
     flex-wrap: wrap;
-    flex-shrink: 0;
-    width: 18rem;
-    /*height: 28rem;*/
+    width: 20rem;
+    height: calc(100% - var(--_button-size) - 0.3rem);
     padding: 1rem;
-    background: var(--neutral-shade);
+    background: #88b0866c;
     overflow-y: scroll;
     scrollbar-gutter: stable both-edges;
 }
@@ -1709,16 +1722,17 @@ input[type=number] {
 /* Your cards */
 .swap-yours ~ .swap-featured-container::after {
     content: "Your Items";
-    font-size: 1.4rem;
-    font-weight: 600;
     position: absolute;
     top: 0;
     left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    color: var(--background);
+    font-size: 1.4rem;
+    font-weight: 600;
     border-radius: 1rem;
     background-color: #222222ee;
     cursor: pointer;
@@ -1780,6 +1794,7 @@ input[type=number] {
     content: "";
     width: 0;
     height: 0;
+    border: none;
 }
 
 .swap-theirs ~ .swap-featured-container .swap-featured-item.selecting::after {
@@ -1791,7 +1806,7 @@ input[type=number] {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    width: 80%;
+    width: 100%;
     font-size: 0.8rem;
     line-height: 1.2rem;
 }
@@ -1822,9 +1837,10 @@ input[type=number] {
     flex-direction: row;
     justify-content: center;
     gap: 0.9rem;
-    width: 18rem;
+    width: 20rem;
+    height: var(--_button-size);
     padding: 0.9rem;
-    /*background-color: var(--steel-blue-200);*/
+    background-color: #b0c1af;
 }
 
 .accept-swap, .confirm-swap, .decline-swap {
@@ -1868,7 +1884,8 @@ input[type=number] {
 #find-swaps-container {
     display: flex;
     flex-direction: column;
-    width: clamp(40.5rem, 80rem, 100%);
+    /*width: clamp(80%, 80%, 100%);*/
+    padding: 0 0 2rem 0;
 }
 
 #register-container {

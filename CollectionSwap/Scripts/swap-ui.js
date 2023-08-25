@@ -71,23 +71,23 @@ function updatedPoolText(mainContainer, poolContainer) {
     const itemsSelected = mainContainer.find(".swap-featured-item.selected").length;
     const remainingSelections = swapSize - itemsSelected;
     const poolText = poolContainer.find("span").eq(1);
-    const swapButton = mainContainer.closest(".swap-container-body").find(".accept-swap").parent();
+    const swapButton = mainContainer.closest(".swap-container-body").find(".submit-button").eq(0);
 
     switch (remainingSelections) {
         case 0:
             poolText.text("All selections made.");
-            swapButton.removeClass("d-none");
+            swapButton.removeAttr("disabled");
             break;
         default:
             poolText.text(`Select ${remainingSelections} you'd like.`);
-            swapButton.addClass("d-none");
+            swapButton.attr("disabled", true);
             break;
     }
 }
 
 function offerSwap(e, swapType, id) {
     const swapButton = $(e);
-    const swapIndex = $(".accept-swap").index(swapButton);
+    const swapIndex = $(".submit-button").index(swapButton);
     const matchingSwaps = serializedMatchingSwaps;
     const offeredSwapItems = $(".swap-featured-item.selected img").map(function () {
         return +$(this).attr("alt");
@@ -126,7 +126,7 @@ function offerSwap(e, swapType, id) {
 
 function acceptSwap(e, swapType, id) {
     const swapButton = $(e);
-    const swapIndex = $(".accept-swap").index(swapButton);
+    const swapIndex = $(".submit-button").index(swapButton);
     const offeredSwap = serializedOfferedSwaps.find(swap => swap.Id === id);
     const offeredSwapItems = $(".swap-container-main").eq(swapIndex).find(".swap-featured-item.selected img").map(function () {
         return +$(this).attr("alt");
@@ -196,7 +196,6 @@ function confirmSwap(e, swapType, id) {
 
 function declineSwap(e, swapType, id) {
     const swapButton = $(e);
-    const swapIndex = $(".decline-swap").index(swapButton);
     const declinedSwap = swapType == "offered" ? serializedOfferedSwaps.find(swap => swap.Id === id) : serializedAcceptedSwaps.find(swap => swap.Id === id);
 
     var swapData = {

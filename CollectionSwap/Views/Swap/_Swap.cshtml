@@ -150,20 +150,20 @@
         @switch (swapType)
         {
             case "swap":
-                <div class="swap-offered-buttons d-none">
-                    <button class="create accept-swap" onclick="offerSwap(this, '@swapType', @id)">Request Swap</button>
+                <div class="swap-offered-buttons">
+                    <button class="submit-button" onclick="offerSwap(this, '@swapType', @id)" disabled>Request Swap</button>
                 </div>
                 break;
             case "offered":
-                <div class="swap-offered-buttons d-none">
-                    <button class="create accept-swap" onclick="acceptSwap(this, '@swapType', @id)">Accept Swap</button>
-                    <button class="create decline-swap" onclick="declineSwap(this, '@swapType', @id)">Decline Swap</button>
+                <div class="swap-offered-buttons">
+                    <button class="submit-button" onclick="acceptSwap(this, '@swapType', @id)" disabled>Accept Swap</button>
+                    <button class="submit-button" onclick="declineSwap(this, '@swapType', @id)">Decline Swap</button>
                 </div>
                 break;
             case "accepted":
                 <div class="swap-offered-buttons">
-                    <button class="create confirm-swap" onclick="confirmSwap(this, '@swapType', @id)">Confirm Swap</button>
-                    <button class="create decline-swap" onclick="declineSwap(this, '@swapType', @id)">Decline Swap</button>
+                    <button class="submit-button" onclick="confirmSwap(this, '@swapType', @id)">Confirm Swap</button>
+                    <button class="submit-button" onclick="declineSwap(this, '@swapType', @id)">Decline Swap</button>
                 </div>
                 break;
             default:
