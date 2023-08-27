@@ -663,6 +663,7 @@ namespace CollectionSwap.Controllers
                 Feedback = fbModel
             };
 
+            ViewBag.Status = "Thank you for your feedback";
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#feedback-container" }, ScrollTarget = "#feedback-container" });
         }

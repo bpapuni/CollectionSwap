@@ -2,6 +2,8 @@
 @using Microsoft.AspNet.Identity
 @using Newtonsoft.Json
 @{
+    string statusMessage = ViewBag.Status;
+
     var itemList = JsonConvert.DeserializeObject<List<string>>(Model.Swap.Collection.ItemListJSON);
     var deserializedSentItems = User.Identity.GetUserId() == Model.Swap.SenderId ? JsonConvert.DeserializeObject<List<int>>(Model.Swap.SenderItemIdsJSON) : JsonConvert.DeserializeObject<List<int>>(Model.Swap.ReceiverItemIdsJSON);
     var deserializedReceivedItems = User.Identity.GetUserId() == Model.Swap.SenderId ? JsonConvert.DeserializeObject<List<int>>(Model.Swap.ReceiverItemIdsJSON) : JsonConvert.DeserializeObject<List<int>>(Model.Swap.SenderItemIdsJSON);
@@ -10,6 +12,12 @@
     var neutralFeedback = Model.Feedback != null ? JsonConvert.DeserializeObject<List<string>>(Model.Feedback.NeutralFeedback) : null;
     var negativeFeedback = Model.Feedback != null ? JsonConvert.DeserializeObject<List<string>>(Model.Feedback.NegativeFeedback) : null;
 }
+
+@if (!String.IsNullOrEmpty(statusMessage))
+{
+    <div class="status-message">@statusMessage</div>
+}
+
 <div class="row">
     <button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-angle-left"></i></button>
 
@@ -159,8 +167,11 @@
                     </ul>
                 </div>
 
-                @Html.HiddenFor(m => m.Feedback.Id)
-                @Html.HiddenFor(m => m.Feedback.SwapId)
+                if (Model.Feedback != null)
+                {
+                    @Html.HiddenFor(m => m.Feedback.Id)
+                }
+                @Html.Hidden("Feedback.SwapId", Model.Swap.Id)
                 @Html.HiddenFor(m => m.Feedback.Rating)
                 @Html.HiddenFor(m => m.Feedback.PositiveFeedback)
                 @Html.HiddenFor(m => m.Feedback.NeutralFeedback)
