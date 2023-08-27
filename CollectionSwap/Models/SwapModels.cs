@@ -51,7 +51,7 @@ namespace CollectionSwap.Models
     public class SwapHistoryViewModel
     {
         public List<Swap> Swaps { get; set; }
-        public Swap OpenSwap { get; set; }
+        public FeedbackViewModel Feedback { get; set; }
     }
 
     public class Swap
@@ -257,13 +257,26 @@ namespace CollectionSwap.Models
     {
         public int Id { get; set; }
         public int SwapId { get; set; }
-        [ForeignKey("SwapId")]
-        public Swap Swap { get; set; }
         public string SenderId { get; set; }
         public string ReceiverId { get; set; }
+        [Required(ErrorMessage = "You must select a rating")]
         public int Rating { get; set; }
         public string PositiveFeedback { get; set; }
         public string NeutralFeedback { get; set; }
         public string NegativeFeedback { get; set; }
+        public Feedback Create(string userId, ApplicationDbContext db)
+        {
+            if (db.Feedbacks.Find(this.Id) != null)
+            {
+                return this;
+            }
+            this.SenderId = userId;
+            this.ReceiverId = db.Swaps.Find(this.SwapId).SenderId == userId ? db.Swaps.Find(this.SwapId).ReceiverId : db.Swaps.Find(this.SwapId).SenderId;
+
+            db.Feedbacks.Add(this);
+            db.SaveChanges();
+
+            return this;
+        }
     }
 }

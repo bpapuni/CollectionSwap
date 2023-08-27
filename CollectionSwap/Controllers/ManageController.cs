@@ -604,13 +604,19 @@ namespace CollectionSwap.Controllers
             var partial = String.Empty;
             var userId = User.Identity.GetUserId();
 
+            var fbModel = new FeedbackViewModel
+            {
+                Swap = db.Swaps.Find(id),
+                Feedback = db.Feedbacks.Where(fb => fb.SenderId == userId && fb.SwapId == id).FirstOrDefault()
+            };
+
             var shModel = new SwapHistoryViewModel
             {
                 Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
                                 .Include(s => s.Collection)
                                 .Include(s => s.Sender)
                                 .Include(s => s.Receiver).ToList(),
-                OpenSwap = db.Swaps.Find(id)
+                Feedback = fbModel
             };
 
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
@@ -619,10 +625,16 @@ namespace CollectionSwap.Controllers
 
         [HttpPost]
         [Authorize]
-        public ActionResult PlaceFeedback(List<string> posFB, List<string> neutralFB, List<string> negFB, int rating)
+        public ActionResult PlaceFeedback([Bind(Prefix = "Feedback")] Feedback model)
         {
             var partial = String.Empty;
             var userId = User.Identity.GetUserId();
+
+            var fbModel = new FeedbackViewModel
+            {
+                Swap = db.Swaps.Find(model.SwapId),
+                //Feedback = model
+            };
 
             var shModel = new SwapHistoryViewModel
             {
@@ -630,11 +642,29 @@ namespace CollectionSwap.Controllers
                                 .Include(s => s.Collection)
                                 .Include(s => s.Sender)
                                 .Include(s => s.Receiver).ToList(),
-                //OpenSwap = db.Swaps.Find(id)
+                Feedback = fbModel
+            };
+
+            if (!ModelState.IsValid)
+            {
+                partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#feedback-container" } });
+            }
+
+            var feedback = model.Create(userId, db);
+            fbModel.Feedback = feedback;
+
+            shModel = new SwapHistoryViewModel
+            {
+                Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
+                                .Include(s => s.Collection)
+                                .Include(s => s.Sender)
+                                .Include(s => s.Receiver).ToList(),
+                Feedback = fbModel
             };
 
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container" } });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#feedback-container" }, ScrollTarget = "#feedback-container" });
         }
 
 

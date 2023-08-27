@@ -37,6 +37,12 @@ namespace CollectionSwap.Models
         public UserCollectionModel EditCollection { get; set; }
     }
 
+    public class FeedbackViewModel
+    {
+        public Swap Swap { get; set; }
+        public Feedback Feedback { get; set; }
+    }
+
     public class ManageLoginsViewModel
     {
         public IList<UserLoginInfo> CurrentLogins { get; set; }

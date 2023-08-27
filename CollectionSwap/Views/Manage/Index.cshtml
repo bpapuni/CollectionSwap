@@ -52,7 +52,6 @@
         navUl.addClass(`selected-${selectedIndex}`);
 
         // Display the partial view
-        console.log(partialName);
         LoadPartial(partialName, `/Manage/${partialName}`)
         if (partialId) {
             const formData = new FormData();
@@ -117,8 +116,31 @@
         $(document).on("submit", ".manage-container-main form", function (event) {
             event.preventDefault();
             var formData = new FormData(this);
+
             if (this.id == "feedback-form") {
-                formData.append("rating", $(".star-button.selected").length);
+                var rating = $(".star-button.selected").length > 0 ? $(".star-button.selected").length : null;
+                var positiveFeedbackValues = [];
+                var neutralFeedbackValues = [];
+                var negativeFeedbackValues = [];
+
+                $("#Feedback_Rating").val(rating);
+
+                $(".positive-feedback .selected").each(function () {
+                    positiveFeedbackValues.push($(this).text());
+                });
+
+                $(".neutral-feedback .selected").each(function () {
+                    neutralFeedbackValues.push($(this).text());
+                });
+
+                $(".negative-feedback .selected").each(function () {
+                    negativeFeedbackValues.push($(this).text());
+                });
+
+                $("#Feedback_PositiveFeedback").val(JSON.stringify(positiveFeedbackValues));
+                $("#Feedback_NeutralFeedback").val(JSON.stringify(neutralFeedbackValues));
+                $("#Feedback_NegativeFeedback").val(JSON.stringify(negativeFeedbackValues));
+                formData = new FormData(this);
             }
             HandleFormSubmit($(this).attr("action"), $(this).attr("method"), formData);
         });
@@ -188,7 +210,6 @@
         }
 
         function OpenCreateUserCollection(e) {
-            console.log($("#create-user-collection-container"));
             var scrollRow = $(e).closest(".scroll-snap-row");
             scrollRow.css("scroll-snap-type", "none");
             $("#create-user-collection-container").removeClass("d-none");
@@ -240,12 +261,18 @@
         });
 
         // Feedback option toggle
-        $(document).on("change", ".feedback-list [type='checkbox']", function () {
-            $(this).closest("li").toggleClass("selected");
+        $(document).on("click", ".feedback-list li", function () {
+            if ($(".feedback-form-container .submit-button").is(":disabled")) {
+                return;
+            }
+            $(this).toggleClass("selected");
         });
 
-        // Feedback option toggle
+        // Feedback star toggle
         $(document).on("click", ".star-button", function () {
+            if ($(".feedback-form-container .submit-button").is(":disabled")) {
+                return;
+            }
             const index = $(".star-button").index(this);
 
             $(".star-button").removeClass("selected");
