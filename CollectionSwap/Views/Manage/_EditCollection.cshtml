@@ -48,14 +48,14 @@
             var imagePath = $"~/Collections/{Model.Collection.Id}";
             var itemId = items.IndexOf(item) + 1;
 
-            <div class="column align-items-center">
+            <div class="column align-items-center gap-1">
                 @(item.Split('?')[0])
                 <img class="item" src="@Url.Content(imagePath)/@item" />
-                <div class="row">
+                <div class="row gap-1">
                     @using (Html.BeginForm("EditItem", "Manage", new { collectionId = @Model.Collection.Id, itemId = @itemId - 1, fileName = @item }, FormMethod.Post, new { enctype = "multipart/form-data" }))
                     {
                         @Html.AntiForgeryToken()
-                        <label for="fileInput@(itemId)" class="button-icon button-icon-upload"><i class="fa fa-upload"></i></label>
+                        <label for="fileInput@(itemId)"><button class="button-icon button-icon-upload"><i class="fa fa-upload"></i></button></label>
                         <input class="d-none" type="file" id="fileInput@(itemId)" name="fileInput">
                     }
                     @using (Html.BeginForm("DeleteItem", "Manage", new { collectionId = @Model.Collection.Id, fileName = @item }, FormMethod.Post, new { role = "form", @class = "mt-3" }))

@@ -1,6 +1,6 @@
 ﻿@model CollectionSwap.Models.ManageCollectionsViewModel
 
-@using (Html.BeginForm("CreateCollection", "Manage", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("CreateCollection", "Manage", FormMethod.Post, new { enctype = "multipart/form-data", id = "create-collection-form" }))
 {
     @Html.AntiForgeryToken()
 

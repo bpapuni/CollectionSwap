@@ -161,7 +161,6 @@ namespace CollectionSwap.Models
             db.SaveChanges();
             SwapItems(this, userType, db);
         }
-
         private void HoldItems(string itemListJSON, UserCollection userCollection, Swap swap, ApplicationDbContext db)
         {
             var deserializedReceiverItems = JsonConvert.DeserializeObject<List<int>>(userCollection.ItemCountJSON);
@@ -252,5 +251,19 @@ namespace CollectionSwap.Models
             db.HeldItems.Remove(heldItems);
             db.SaveChanges();
         }
+    }
+
+    public class Feedback
+    {
+        public int Id { get; set; }
+        public int SwapId { get; set; }
+        [ForeignKey("SwapId")]
+        public Swap Swap { get; set; }
+        public string SenderId { get; set; }
+        public string ReceiverId { get; set; }
+        public int Rating { get; set; }
+        public string PositiveFeedback { get; set; }
+        public string NeutralFeedback { get; set; }
+        public string NegativeFeedback { get; set; }
     }
 }

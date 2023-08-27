@@ -185,6 +185,10 @@
     <Compile Include="Migrations\202308242057559_InitialSchema.designer.cs">
       <DependentUpon>202308242057559_InitialSchema.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202308270009046_CreateFeedbackTable.cs" />
+    <Compile Include="Migrations\202308270009046_CreateFeedbackTable.designer.cs">
+      <DependentUpon>202308270009046_CreateFeedbackTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CollectionModels.cs" />
@@ -426,6 +430,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202308242057559_InitialSchema.resx">
       <DependentUpon>202308242057559_InitialSchema.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202308270009046_CreateFeedbackTable.resx">
+      <DependentUpon>202308270009046_CreateFeedbackTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

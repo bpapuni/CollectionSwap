@@ -4,6 +4,8 @@
 @using Newtonsoft.Json
 @{ 
     var itemList = JsonConvert.DeserializeObject<List<string>>(Model.Collection.ItemListJSON);
+    var deserializedSentItems = User.Identity.GetUserId() == Model.SenderId ? JsonConvert.DeserializeObject<List<int>>(Model.SenderItemIdsJSON) : JsonConvert.DeserializeObject<List<int>>(Model.ReceiverItemIdsJSON);
+    var deserializedReceivedItems = User.Identity.GetUserId() == Model.SenderId ? JsonConvert.DeserializeObject<List<int>>(Model.ReceiverItemIdsJSON) : JsonConvert.DeserializeObject<List<int>>(Model.SenderItemIdsJSON);
 }
 <div class="row">
     <button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-angle-left"></i></button>
@@ -14,55 +16,82 @@
 </div>
 
 <section class="row gap-2">
-
     <div class="feedback-module">
-        <span class="feedback-header">How was your swap with @(User.Identity.GetUserId() == Model.SenderId ? Model.Receiver.UserName : Model.Sender.UserName)?</span>
-        <div class="star-rating-module">
-            <button class="star-button"><i class="fa fa-star"></i></button>
-            <button class="star-button"><i class="fa fa-star"></i></button>
-            <button class="star-button"><i class="fa fa-star"></i></button>
-            <button class="star-button"><i class="fa fa-star"></i></button>
-            <button class="star-button"><i class="fa fa-star"></i></button>
-        </div>
-        <div class="feedback-tabs">
-            <a href="javascript:void(0)" class="feedback-tab active-tab" onclick="OpenFeedbackTab(this);">Positive</a>
-            <a href="javascript:void(0)" class="feedback-tab" onclick="OpenFeedbackTab(this);">Neutral</a>
-            <a href="javascript:void(0)" class="feedback-tab" onclick="OpenFeedbackTab(this);">Negative</a>
+        <div>
+            <span class="feedback-header">How would you rate your swap with @(User.Identity.GetUserId() == Model.SenderId ? Model.Receiver.UserName : Model.Sender.UserName)?</span>
+            <div class="star-rating-module">
+                <button class="star-button"><i class="fa fa-star"></i></button>
+                <button class="star-button"><i class="fa fa-star"></i></button>
+                <button class="star-button"><i class="fa fa-star"></i></button>
+                <button class="star-button"><i class="fa fa-star"></i></button>
+                <button class="star-button"><i class="fa fa-star"></i></button>
+            </div>
         </div>
 
-        <div class="feedback-options positive-feedback">
-            <ul class="feedback-list">
-                <li>Swap accepted quickly</li>
-                <li>Items arrived quickly</li>
-                <li>Items packaged well</li>
-                <li>Items in good condition</li>
-                <li>Generous swapper</li>
-                <li>Would gladly swap with again</li>
-            </ul>
+        <div class="feedback-form-container">
+            <span class="feedback-header">Select any reasons for this rating that apply</span>
+            <div class="feedback-tabs">
+                <a href="javascript:void(0)" class="feedback-tab" onclick="OpenFeedbackTab(this);">Negative</a>
+                <a href="javascript:void(0)" class="feedback-tab" onclick="OpenFeedbackTab(this);">Neutral</a>
+                <a href="javascript:void(0)" class="feedback-tab active-tab" onclick="OpenFeedbackTab(this);">Positive</a>
+            </div>
+
+            @using (Html.BeginForm("PlaceFeedback", "Manage", FormMethod.Post, new { id = "feedback-form" }))
+            {
+                <div class="feedback-options neutral-feedback d-none">
+                    <ul class="feedback-list">
+                        <li>Swap accepted in reasonable time</li>
+                        <li>Items arrived  in reasonable time</li>
+                        <li>Items packaged okay</li>
+                        <li>Items in acceptable condition</li>
+                    </ul>
+                </div>
+                <div class="feedback-options negative-feedback d-none">
+                    <ul class="feedback-list">
+                        <li>Swap took a long time to be accepted</li>
+                        <li>Items took too long to arrive</li>
+                        <li>Items packaged poorly</li>
+                        <li>Items in poor condition</li>
+                        <li>Would not swap with again</li>
+                    </ul>
+                </div>
+                <div class="feedback-options positive-feedback">
+                    <ul class="feedback-list">
+                        <li><label><input type="checkbox" name="posFB" value="Swap accepted quickly">Swap accepted quickly</label></li>
+                        <li><label><input type="checkbox" name="posFB" value="Items arrived quickly">Items arrived quickly</label></li>
+                        <li><label><input type="checkbox" name="posFB" value="Items packaged well">Items packaged well</label></li>
+                        <li><label><input type="checkbox" name="posFB" value="Items in good condition">Items in good condition</label></li>
+                        <li><label><input type="checkbox" name="posFB" value="Generous swapper">Generous swapper</label></li>
+                        <li><label><input type="checkbox" name="posFB" value="Would gladly swap with again">Would gladly swap with again</label></li>
+                    </ul>
+                </div>
+
+                <button class="submit-button" type="submit">Submit Feedback</button>
+            }
         </div>
-        <div class="feedback-options neutral-feedback d-none">
-            <ul class="feedback-list">
-                <li>Swap accepted in reasonable time</li>
-                <li>Items arrived  in reasonable time</li>
-                <li>Items packaged okay</li>
-                <li>Items in acceptable condition</li>
-            </ul>
-        </div>
-        <div class="feedback-options negative-feedback d-none">
-            <ul class="feedback-list">
-                <li>Swap took a long time to be accepted</li>
-                <li>Items took too long to arrive</li>
-                <li>Items packaged poorly</li>
-                <li>Items in poor condition</li>
-                <li>Would not swap with again</li>
-            </ul>
-        </div>
-        <button class="submit-button">Submit Feedback</button>
+
+        
     </div>
     <div class="feedback-swap-preview">
-        @*<span class="feedback-header">Sent</span>
-            <img class="new-collection-feature-card" src="~/Collections/@Model.CollectionId/@itemList[0]" alt="" />
-            <span class="feedback-header">Received</span>*@
+        <div class="feedback-swap-sent">
+            <span class="feedback-header">Sent</span>
+            <div class="feedback-swap-items">
+                @for (int i = 0; i < Math.Min(3, deserializedSentItems.Count); i++)
+                {
+                    <img class="feedback-item" src="~/Collections/@Model.CollectionId/@itemList[deserializedSentItems[i]]" />
+                }
+            </div>
+        </div>
+        @*<div class="feedback-swap-size">deserializedSentItems</div>*@
+        <div class="feedback-swap-receiver">
+            <span class="feedback-header">Received</span>
+            <div class="feedback-swap-items">
+                @for (int i = 0; i < Math.Min(3, deserializedReceivedItems.Count); i++)
+                {
+                    <img class="feedback-item" src="~/Collections/@Model.CollectionId/@itemList[deserializedReceivedItems[i]]" />
+                }
+            </div>
+        </div>
     </div>
 </section>
 

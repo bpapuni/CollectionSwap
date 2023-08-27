@@ -13,7 +13,7 @@
     @Scripts.Render("~/bundles/modernizr")
 
 </head>
-<body>
+<body class="@(currentAction == "Support" ? "support-bg-split" : "")">
     <nav class="main-navbar @(currentController == "Account" ? "bg-split" : "")">
         <ul>
             <li>
@@ -21,9 +21,6 @@
             </li>
         </ul>
         <ul>
-            @*<li class="@(currentController == "Home" ? "selected" : "")">
-            @Html.ActionLink("Home", "Index", "Home")
-        </li>*@
             <li class="@(currentController == "Swap" ? "selected" : "")">
                 <a href="/Swap/UserCollection">Find Swaps</a>
             </li>
@@ -37,7 +34,7 @@
         </ul>
     </nav>
 
-    <main class="@(currentController == "Account" ? "bg-split" : "") @(currentAction == "Support" ? "support-bg-split" : "")">
+    <main class="@(currentController == "Account" ? "bg-split" : "")">
         @RenderBody()
     </main>
 

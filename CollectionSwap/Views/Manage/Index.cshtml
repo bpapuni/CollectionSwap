@@ -116,7 +116,11 @@
         // Form submit listeners Handle loading form submission partial views
         $(document).on("submit", ".manage-container-main form", function (event) {
             event.preventDefault();
-            HandleFormSubmit($(this).attr("action"), $(this).attr("method"), new FormData(this));
+            var formData = new FormData(this);
+            if (this.id == "feedback-form") {
+                formData.append("rating", $(".star-button.selected").length);
+            }
+            HandleFormSubmit($(this).attr("action"), $(this).attr("method"), formData);
         });
 
         // Handle loading the navigation partial views
@@ -232,6 +236,23 @@
             if (quantity < 0) {
                 input.val(0);
                 $(this).parent().parent().parent().prev().removeClass("item-not-owned");
+            }
+        });
+
+        // Feedback option toggle
+        $(document).on("change", ".feedback-list [type='checkbox']", function () {
+            $(this).closest("li").toggleClass("selected");
+        });
+
+        // Feedback option toggle
+        $(document).on("click", ".star-button", function () {
+            const index = $(".star-button").index(this);
+
+            $(".star-button").removeClass("selected");
+
+            // Star buttons are displayed rtl so we loop from clicked index to 5
+            for (var i = index; i < 5; i++) {
+                $(".star-button").eq(i).addClass("selected");
             }
         });
 

@@ -15,12 +15,12 @@
             Available Collections
         </span>
 
-        <section class="min-width-100 gap-2">
+        <section class="min-width-100 gap-1">
             @Html.Partial("_CreateCollection", Model)
 
             @foreach (var collection in Model.Collections)
             {
-                <div class="column align-items-center">
+                <div class="column align-items-center gap-2">
                     @{
                         var collectionButton = new CollectionButton
                         {

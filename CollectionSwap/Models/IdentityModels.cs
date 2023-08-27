@@ -59,6 +59,7 @@ namespace CollectionSwap.Models
         public DbSet<Swap> Swaps { get; set; }
         public DbSet<HeldItems> HeldItems { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<Feedback> Feedbacks { get; set; }
     }
 
     public class ApplicationRole : IdentityRole
