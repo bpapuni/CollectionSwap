@@ -967,6 +967,7 @@ button.close {
     display: flex;
     flex-direction: row;
     gap: 0 4rem;
+    padding-inline: 1rem;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-behavior: auto;
@@ -1013,6 +1014,10 @@ button.close {
 #create-collection-container {
     display: flex;
     flex-direction: column;
+}
+
+#create-collection-form {
+    width: 15rem;
 }
 
 #create-collection-form > :nth-child(4) {
@@ -1313,6 +1318,7 @@ nav a {
     display: flex;
     flex-direction: column;
     width: 100%;
+    padding-inline: 1rem;
 }
 
 .header {
@@ -1508,32 +1514,32 @@ section {
     font-size: 1.5rem;
     width: 2.5rem;
     aspect-ratio: 1/1;
-    color: white;
+    color: black;
     border: none;
     text-decoration: none;
     text-align: center;
-    background: black;
+    /*background: black;*/
     border-radius: 0.5rem;
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     cursor: pointer;
 }
 
 .button-icon-upload:hover {
-    color: black;
-    background: white;
+    color: var(--brand-blue);
+    /*background: white;*/
 }
 
 .button-icon-trash {
     /*color: white;*/
-    background: var(--danger-500);
-    border: 1px solid var(--danger-500);
+    /*background: var(--danger-500);*/
+    /*border: 1px solid var(--danger-500);*/
 }
 
-.button-icon-trash:hover {
-    color: black;
-    background: var(--danger-100);
-    border: 1px solid var(--danger-500);
-}
+    .button-icon-trash:hover {
+        color: var(--brand-red);
+        /*background: var(--danger-100);*/
+        /*border: 1px solid var(--danger-500);*/
+    }
 
 .fa-plus {
     font-size: 2rem;
