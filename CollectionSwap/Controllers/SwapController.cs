@@ -49,7 +49,7 @@ namespace CollectionSwap.Controllers
                 ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList()
             };
 
-            if (id.HasValue && selectedCollection.UserId == userId)
+            if (id.HasValue && selectedCollection != null && selectedCollection.UserId == userId)
             {
                 ViewBag.MatchingSwaps = selectedCollection.FindMatchingSwaps(db);
                 ViewBag.SelectedCollection = selectedCollection;
