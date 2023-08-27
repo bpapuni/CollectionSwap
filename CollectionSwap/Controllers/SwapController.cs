@@ -20,8 +20,16 @@ namespace CollectionSwap.Controllers
 
         public ActionResult Index()
         {
-            var currentUserId = User.Identity.GetUserId();
-            var model = FindSwapsViewModel.Create(currentUserId, db);
+            var userId = User.Identity.GetUserId();
+            var model = new FindSwapsViewModel
+            {
+                Users = db.Users.ToList(),
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
+                OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
+                AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
+                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList()
+            };
 
             return View(model);
         }
@@ -29,18 +37,23 @@ namespace CollectionSwap.Controllers
         [Authorize]
         public ActionResult UserCollection(int? id)
         {
-            var currentUserId = User.Identity.GetUserId();
-            var model = FindSwapsViewModel.Create(currentUserId, db);
-            UserCollection selectedCollection = db.UserCollections.Find(id);
-
-            if (id == null)
+            var userId = User.Identity.GetUserId();
+            var selectedCollection = db.UserCollections.Find(id);
+            var model = new FindSwapsViewModel
             {
-                ViewBag.SelectedCollection = selectedCollection;
-                return View(model);
-            }
+                Users = db.Users.ToList(),
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
+                OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
+                AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
+                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList()
+            };
 
-            ViewBag.MatchingSwaps = selectedCollection.FindMatchingSwaps(db);
-            ViewBag.SelectedCollection = selectedCollection;
+            if (id.HasValue && selectedCollection.UserId == userId)
+            {
+                ViewBag.MatchingSwaps = selectedCollection.FindMatchingSwaps(db);
+                ViewBag.SelectedCollection = selectedCollection;
+            }
 
             return View(model);
         }
@@ -61,8 +74,16 @@ namespace CollectionSwap.Controllers
         [Authorize]
         public ActionResult Offers()
         {
-            var currentUserId = User.Identity.GetUserId();
-            var model = FindSwapsViewModel.Create(currentUserId, db);
+            var userId = User.Identity.GetUserId();
+            var model = new FindSwapsViewModel
+            {
+                Users = db.Users.ToList(),
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
+                OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
+                AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
+                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList()
+            };
 
             return View(model);
         }

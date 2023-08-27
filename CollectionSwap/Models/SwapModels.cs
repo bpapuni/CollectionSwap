@@ -20,20 +20,6 @@ namespace CollectionSwap.Models
         public List<Swap> OfferedSwaps { get; set; }
         public List<Swap> AcceptedSwaps { get; set; }
         public List<Swap> ConfirmedSwaps { get; set; }
-        public static FindSwapsViewModel Create(string currentUserId, ApplicationDbContext db)
-        {
-            FindSwapsViewModel model = new FindSwapsViewModel
-            {
-                Users = db.Users.ToList(),
-                Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.Where(uc => uc.User.Id == currentUserId).ToList(),
-                OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == currentUserId && swap.Status == "offered").ToList(),
-                AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == currentUserId && swap.Status == "accepted").ToList(),
-                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == currentUserId && swap.Status == "confirmed").ToList()
-            };
-
-            return model;
-        }
     }
 
     public class SwapViewModel
