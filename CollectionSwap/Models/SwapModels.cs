@@ -26,6 +26,7 @@ namespace CollectionSwap.Models
     {
         public int Id { get; set; }
         public string UserName { get; set; }
+        public int Rating { get; set; }
         public List<string> ItemList { get; set; }
         public string ImagePath { get; set; }
         public List<int> SenderItemIds { get; set; }

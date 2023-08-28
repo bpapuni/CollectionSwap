@@ -96,7 +96,7 @@ namespace CollectionSwap.Controllers
             var userId = User.Identity.GetUserId();
             var model = new IndexViewModel
             {
-                ChangeAddress = db.Addresses.Where(address => address.UserId == userId).FirstOrDefault()
+                ChangeAddress = db.Addresses.Where(address => address.UserId == userId).ToList().LastOrDefault(),
             };
 
             var partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);

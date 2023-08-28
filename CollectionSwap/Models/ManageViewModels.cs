@@ -146,7 +146,8 @@ namespace CollectionSwap.Models
                 var lastAddress = db.Addresses.OrderByDescending(a => a.Created)
                                               .FirstOrDefault(a => a.UserId == userId);
 
-                if (lastAddress.FullName == this.FullName &&
+                if (lastAddress != null && 
+                    lastAddress.FullName == this.FullName &&
                     lastAddress.CompanyName == this.CompanyName &&
                     lastAddress.LineOne == this.LineOne &&
                     lastAddress.LineTwo == this.LineTwo &&

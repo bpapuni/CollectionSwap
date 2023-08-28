@@ -51,6 +51,7 @@
                         SwapViewModel model = new SwapViewModel
                         {
                             UserName = matchingSwap.Receiver.UserName,
+                            Rating = 5,
                             ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON),
                             ImagePath = $"~/Collections/{selectedCollection.CollectionId}",
                             SenderItemIds = senderItemIds,

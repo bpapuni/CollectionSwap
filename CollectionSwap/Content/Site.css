@@ -814,6 +814,10 @@ button.close {
     cursor: pointer;
 }
 
+.star-button-half {
+    color: #ccc;
+}
+
     .star-button:hover,
     .star-button:hover ~ .star-button,
     .star-button.selected {
