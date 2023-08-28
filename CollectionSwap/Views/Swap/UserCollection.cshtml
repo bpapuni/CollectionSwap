@@ -47,11 +47,13 @@
                         var senderItemIds = matchingSwap.SenderItemIds;
                         var receiverItemIds = matchingSwap.ReceiverItemIds;
                         var swapSize = Math.Min(matchingSwap.SenderItemIds.Count, matchingSwap.ReceiverItemIds.Count);
+                        var feedbacks = Model.Feedbacks?.Where(fb => fb.ReceiverId == matchingSwap.Receiver.Id).ToList();
+                        var rating = feedbacks.Any() ? Math.Round(feedbacks.Select(fb => fb.Rating).Average() * 2) / 2 : 0;
 
                         SwapViewModel model = new SwapViewModel
                         {
                             UserName = matchingSwap.Receiver.UserName,
-                            Rating = 5,
+                            Rating = rating,
                             ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON),
                             ImagePath = $"~/Collections/{selectedCollection.CollectionId}",
                             SenderItemIds = senderItemIds,

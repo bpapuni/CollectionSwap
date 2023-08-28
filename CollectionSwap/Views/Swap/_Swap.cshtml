@@ -17,11 +17,14 @@
             <div>
                 User: @userName<br />
                 <span class="swap-rating">
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
-                    <i class="fa fa-star"></i>
+                    @for (int i = 0; i < Math.Floor(Model.Rating); i++)
+                    {
+                        <i class="fa fa-star"></i>
+                    }
+                    @if (Model.Rating % 1 == 0.5)
+                    {
+                        <i class="fa fa-star-half"></i>
+                    }
                 </span>
             </div>
         </div>
@@ -57,7 +60,6 @@
                             @for (var i = 0; i < receiverItemIds.Count; i++)
                             {
                                 var itemIndex = receiverItemIds[i];
-                                //var fileName = itemList[itemIndex];
                                 var fileName = itemList[itemIndex];
                                 <div class="swap-featured-item @(i < swapSize ? "swap-example" : "d-none")">
                                     <img src="@Url.Content(imagePath)/@fileName" alt="@itemIndex">

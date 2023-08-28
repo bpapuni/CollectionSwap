@@ -20,13 +20,14 @@ namespace CollectionSwap.Models
         public List<Swap> OfferedSwaps { get; set; }
         public List<Swap> AcceptedSwaps { get; set; }
         public List<Swap> ConfirmedSwaps { get; set; }
+        public List<Feedback> Feedbacks { get; set; }
     }
 
     public class SwapViewModel
     {
         public int Id { get; set; }
         public string UserName { get; set; }
-        public int Rating { get; set; }
+        public double Rating { get; set; }
         public List<string> ItemList { get; set; }
         public string ImagePath { get; set; }
         public List<int> SenderItemIds { get; set; }

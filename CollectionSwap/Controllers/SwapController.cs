@@ -28,7 +28,8 @@ namespace CollectionSwap.Controllers
                 UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
                 OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
                 AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
-                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList()
+                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList(),
+                Feedbacks = db.Feedbacks.ToList()
             };
 
             return View(model);
@@ -46,7 +47,8 @@ namespace CollectionSwap.Controllers
                 UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
                 OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
                 AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
-                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList()
+                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList(),
+                Feedbacks = db.Feedbacks.ToList()
             };
 
             if (id.HasValue && selectedCollection != null && selectedCollection.UserId == userId)
@@ -82,7 +84,8 @@ namespace CollectionSwap.Controllers
                 UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
                 OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
                 AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
-                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList()
+                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList(),
+                Feedbacks = db.Feedbacks.ToList()
             };
 
             return View(model);
