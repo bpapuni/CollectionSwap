@@ -309,23 +309,23 @@ namespace CollectionSwap.Controllers
         public ActionResult ChangeCollectionName([Bind(Prefix = "Collection")] Collection model)
         {
             var partial = String.Empty;
-            if (!ModelState.IsValid)
-            {
-                var ecModel = new EditCollectionModel { Collection = db.Collections.Find(model.Id) };
-                partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", ecModel, true);
-                return Json(new { PartialView = partial, RefreshTargets = new { first = "#edit-collection-container" } });
-
-            }
-
-            Collection collection = db.Collections.Find(model.Id);
-            collection.Update(model.Name, db);
-
             var mcViewModel = new ManageCollectionsViewModel
             {
                 Collections = db.Collections.ToList(),
                 CreateCollection = new CreateCollectionModel(),
                 EditCollection = new EditCollectionModel { Collection = db.Collections.Find(model.Id) }
             };
+
+            if (!ModelState.IsValid)
+            {
+                partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcViewModel, true);
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#edit-collection-container" } });
+
+            }
+
+            Collection collection = db.Collections.Find(model.Id);
+            collection.Update(model.Name, db);
+            mcViewModel.EditCollection.Collection = collection;
 
             ViewBag.Status = "Collection name updated successfully";
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcViewModel, true);
