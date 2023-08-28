@@ -16,6 +16,10 @@
             <div class="swap-portrait">Pic</div>
             <div>
                 User: @userName<br />
+                @if (Model.Rating == -1)
+                {
+                    <span class="new">New</span>
+                }
                 <span class="swap-rating">
                     @for (int i = 0; i < Math.Floor(Model.Rating); i++)
                     {

@@ -48,7 +48,7 @@
                         var receiverItemIds = matchingSwap.ReceiverItemIds;
                         var swapSize = Math.Min(matchingSwap.SenderItemIds.Count, matchingSwap.ReceiverItemIds.Count);
                         var feedbacks = Model.Feedbacks?.Where(fb => fb.ReceiverId == matchingSwap.Receiver.Id).ToList();
-                        var rating = feedbacks.Any() ? Math.Round(feedbacks.Select(fb => fb.Rating).Average() * 2) / 2 : 0;
+                        var rating = feedbacks.Any() ? Math.Round(feedbacks.Select(fb => fb.Rating).Average() * 2) / 2 : -1;
 
                         SwapViewModel model = new SwapViewModel
                         {
