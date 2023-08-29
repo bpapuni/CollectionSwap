@@ -10,7 +10,6 @@
 <div id="find-swaps-container">
     <span class="header">Find Swaps</span>
     <hr />
-    <span class="text-success"></span>
     <section class="column">
         @if (Model.AcceptedSwaps != null && Model.AcceptedSwaps.Any())
         {
@@ -26,7 +25,7 @@
         <div class="row gap-2">
             @foreach (UserCollection userCollection in Model.UserCollections)
             {
-                @Html.ActionLink(userCollection.Name, "UserCollection", "Swap", new { id = userCollection.Id }, new { @class = "collection user-collection" })
+                @Html.ActionLink(userCollection.Name, "UserCollection", "Swap", new { id = userCollection.Id }, new { @class = "user-collection" })
             }
         </div>
         <br />
@@ -36,7 +35,7 @@
         {
             if (matchingSwaps.Count > 0)
             {
-                <div class="column min-width-100 gap-4">
+                <div class="column gap-1">
                     <div>
                         <h3>Available Swaps:</h3>
                     </div>
@@ -68,7 +67,10 @@
             }
             else
             {
-                <h5> No potential swappers found.</h5>
+                <div class="swap-none-found">
+                    <img src="~/Content/images/doodles/14.png" />
+                    <span>Sorry, no macthes found</span>
+                </div>
             }
         }
     </section>
@@ -80,11 +82,16 @@
         const selectedCollection = $(`[href='/Swap/UserCollection/${id}']`);
 
         if (selectedCollection.length) {
-            selectedCollection.addClass("user-collection-selected")
+            selectedCollection.addClass("selected")
         }
 
         const serializedMatchingSwaps = @Html.Raw(JsonConvert.SerializeObject(matchingSwaps));
         const serializedSelectedCollection = @Html.Raw(JsonConvert.SerializeObject(selectedCollection));
+
+
+        if (serializedMatchingSwaps.length === 0) {
+            $("#find-swaps-container").toggleClass("no-swaps");
+        }
     </script>
     <script src="~/Scripts/swap-ui.js"></script>
 }

@@ -20,28 +20,56 @@ if (reloadPageMessage) {
     $(".text-success").text(reloadPageMessage);
 }
 
-function selectItem(e) {
-    const self = $(e);
-    const mainContainer = self.closest(".swap-container-main");
-    const poolContainer = mainContainer.next(".swap-pool-container");
-    const itemExists = self.hasClass("selected");
+function SelectItem(e) {
+    const swapContainer = $(e).closest(".swap-container");
+    const placeHolders = swapContainer.find(".swap-item.placeholder");
+    const requestButton = swapContainer.next(".submit-button");
+    const swapIndex = $(".swap-container").index(swapContainer);
+    const matchingSwap = serializedMatchingSwaps[swapIndex];
+    const swapSize = Math.min(matchingSwap.SenderItemIds.length, matchingSwap.ReceiverItemIds.length);
+    const selectedCount = swapContainer.find(".swap-item.selected").length;
+    const selectedItem = $(e).find("img");
 
-    self.removeClass("selected");
-    self.toggleClass("selecting");
-    mainContainer.toggleClass("dim");
-
-    if (mainContainer.hasClass("dim")) {
-        if (itemExists) {
-            const src = self.find("img").attr("src").split('?')[0];
-            poolContainer.find(`[src="${src}"]`).parent().show();
-            updatedPoolText(mainContainer, poolContainer);
-
-        }
-        $(".swap-pool-item").toggleClass("highlight");
-        setTimeout(() => {
-            $(".swap-pool-item").toggleClass("highlight");
-        }, 200);
+    if ($(e).hasClass("selected")) {
+        const placeholderItem = swapContainer.find(".swap-items").eq(0).find(`[src='${selectedItem.attr("src")}']`).parent();
+        ClearItem(placeholderItem);
     }
+    else if (selectedCount < swapSize - 1)
+    {
+        $(e).toggleClass("selected");
+        placeHolders.eq(0).toggleClass("placeholder").find("img").data(("item-id"), selectedItem.data("item-id")).attr("src", selectedItem.attr("src"));
+        requestButton.text(`Items Selected (${selectedCount + 1}/${swapSize})`);
+        requestButton.attr("disabled", "");
+    }
+    else if (selectedCount === swapSize - 1)
+    {
+        $(e).toggleClass("selected");
+        placeHolders.eq(0).toggleClass("placeholder").find("img").data(("item-id"), selectedItem.data("item-id")).attr("src", selectedItem.attr("src"));
+        requestButton.text("Request Swap");
+        requestButton.removeAttr("disabled");
+    }
+}
+
+function ClearItem(e) {
+    const swapContainer = $(e).closest(".swap-container");
+    const requestButton = swapContainer.next(".submit-button");
+    const swapIndex = $(".swap-container").index(swapContainer);
+    const matchingSwap = serializedMatchingSwaps[swapIndex];
+    const swapSize = Math.min(matchingSwap.SenderItemIds.length, matchingSwap.ReceiverItemIds.length);
+    const selectedCount = swapContainer.find(".swap-item.selected").length;
+    const selectedItem = swapContainer.find(".swap-items").eq(1).find(`[src='${$(e).find("img").attr("src")}']`).parent();
+
+    $(e).addClass("placeholder");
+    selectedItem.removeClass("selected");
+
+    requestButton.text(`Items Selected (${selectedCount - 1}/${swapSize})`);
+    requestButton.attr("disabled", "");
+}
+
+function ToggleSwapItems(e) {
+    $(e).toggleClass("selected");
+    $(e).closest(".swap-container-body").find(".swap-items").toggleClass("d-none");
+    $(e).closest(".swap-container-body").find(".header").toggleClass("d-none");
 }
 
 function selectPoolItem(e) {
@@ -86,12 +114,14 @@ function updatedPoolText(mainContainer, poolContainer) {
 }
 
 function offerSwap(e, swapType, id) {
-    const swapButton = $(e);
-    const swapIndex = $(".submit-button").index(swapButton);
-    const matchingSwaps = serializedMatchingSwaps;
-    const offeredSwapItems = $(".swap-featured-item.selected img").map(function () {
-        return +$(this).attr("alt");
+    const swapContainer = $(e).prev(".swap-container");
+    const requestButton = swapContainer.next(".submit-button");
+    const swapIndex = $(".swap-container").index(swapContainer);
+
+    const requestedItems = swapContainer.find(".swap-item.selected img").map(function () {
+        return +$(this).data("item-id");
     }).get();
+
     const selectedCollection = serializedSelectedCollection;
 
     if (selectedCollection != null) {
