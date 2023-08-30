@@ -9,6 +9,7 @@
     <div class="manage-container-nav">
         <ul class="">
             @*<li>@Html.ActionLink("Swapper", "Index", "Home")</li>*@
+            <li>@Html.ActionLink("Find Swaps", "FindSwaps", "Manage")</li>
             <li>@Html.ActionLink("Account", "Account", "Manage")</li>
             @if (User.IsInRole("Admin"))
             {
@@ -24,6 +25,7 @@
 
 @section scripts {
     @*<script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.1/chroma.min.js"></script>*@
+    <script src="~/Scripts/swap-ui.js"></script>
     <script>
         const navUl = $(".manage-container-nav ul");
         const subNavLinks = navUl.find("a");
@@ -43,36 +45,36 @@
             partialName = "Account";
         }
 
-        // Find the link index of the the currently active partial view
-        var selectedNavLink = subNavLinks.parent().find(`[href='/Manage/${partialName}']`)
-        var selectedIndex = subNavLinks.index(selectedNavLink) + 1;
+        //// Find the link index of the the currently active partial view
+        //var selectedNavLink = subNavLinks.parent().find(`[href='/Manage/${partialName}']`)
+        //var selectedIndex = subNavLinks.index(selectedNavLink) + 1;
 
-        // Animate the link highlight to the correct position
-        navUl.removeClass("selected-1 selected-2 selected-3 selected-4");
-        navUl.addClass(`selected-${selectedIndex}`);
+        //// Animate the link highlight to the correct position
+        //navUl.removeClass("selected-1 selected-2 selected-3 selected-4");
+        //navUl.addClass(`selected-${selectedIndex}`);
 
         // Display the partial view
         LoadPartial(partialName, `/Manage/${partialName}`)
+
         if (partialId) {
             const formData = new FormData();
-            const collectionType = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("SwapHistory", "Feedback");
+            const action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("SwapHistory", "Feedback").replace("FindSwaps", "DisplaySwapMatches");
             formData.append("id", partialId);
 
-            HandleFormSubmit(`/Manage/${collectionType}`, "POST", formData);
+            HandleFormSubmit(`/Manage/${action}`, "POST", formData);
         }
 
         // On back/forward navigation update the partial name and display the corresponding view
         $(window).on("popstate", function (e) {
-            //partialName = e.originalEvent.state ? e.originalEvent.state.partialName : "Account";
             partialName = partialName == "Index" ? "Account" : location.pathname.split("/Manage/").pop().split("/")[0]
             partialId = location.pathname.split("/Manage/").pop().split("/")[1];
             LoadPartial(partialName, `/Manage/${partialName}`)
             if (partialId) {
                 const formData = new FormData();
-                const collectionType = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("SwapHistory", "Feedback");
+                const action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("SwapHistory", "Feedback").replace("FindSwaps", "DisplaySwapMatches");
                 formData.append("id", partialId);
 
-                HandleFormSubmit(`/Manage/${collectionType}`, "POST", formData);
+                HandleFormSubmit(`/Manage/${action}`, "POST", formData);
             }
         });
 
@@ -95,21 +97,22 @@
         });
 
         // Anchor click listeners
-        $(document).on("click", "a.collection-button, #history-container a", function (event) {
+        $(document).on("click", "a.collection-button, #history-container a, a.user-collection", function (event) {
             event.preventDefault();
             $("#create-user-collection-container").addClass("d-none");
-            const url = $(this).attr("href").split("/Manage/").pop().split("/");
-            partialName = url[0];
-            partialId = url[1] == '#' ? '' : url[1];
+            const controller = $(this).attr("href").split("/")[1];
+            var action = $(this).attr("href").split("/")[2];
+            const id = $(this).attr("href").split("/")[3];
 
-            const historyEntry = partialId == undefined ? partialName : `${partialName}/${partialId}`;
-            history.pushState({ partialName: historyEntry }, null, `/Manage/${historyEntry}`);
+            console.log(controller, action, id);
+            const historyEntry = id == undefined ? action : `${action}/${id}`;
+            history.pushState({ partialName: action }, null, `/${controller}/${historyEntry}`);
 
             const formData = new FormData();
-            formData.append("id", partialId);
+            formData.append("id", id);
 
-            const collectionType = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("SwapHistory", "Feedback");
-            HandleFormSubmit(`/Manage/${collectionType}`, "POST", formData);
+            action = action.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("SwapHistory", "Feedback").replace("FindSwaps", "DisplaySwapMatches");
+            HandleFormSubmit(`/${controller}/${action}`, "POST", formData);
         });
 
         // Form submit listeners Handle loading form submission partial views
@@ -288,14 +291,12 @@
                 if ($(this).closest("td").prev().prev().find(".swap-capstone p").text() != "confirmed") {
                     this.checked = false;
                 }
-                else
-                {
+                else {
                     const confirmed = confirm("By confirming, you acknowledge that you've received the items and this setting cannot be changed later. Are you sure?");
                     if (!confirmed) {
                         this.checked = false;
                     }
-                    else
-                    {
+                    else {
                         const formData = new FormData();
                         formData.append("id", $(this).data("swap-id"));
 
@@ -323,36 +324,36 @@
             feedbackOptions.eq(index).removeClass("d-none");
         }
 
-            //function ColourButtons() {
-            //    const buttons = $('input[type="submit"]');
+                //function ColourButtons() {
+                //    const buttons = $('input[type="submit"]');
 
-            //    buttons.each(function () {
-            //        const baseHue = Math.random() * 360;
-            //        const vibrantColor = chroma.hsl(baseHue, 30, 74); // Adjust saturation and lightness as needed
-            //        const buttonColor = vibrantColor.hex(); // Convert Chroma color to HEX format
-            //        const textColor = chroma.contrast(buttonColor, 'white') > 4.5 ? 'white' : 'black';
-            //        $(this).css('background-color', buttonColor);
-            //        $(this).css('color', textColor);
-            //    });
-            //}
-
-                //const paintBlotches = document.querySelector('.manage-container-main');
-                //const numBlotches = 30; // Adjust the number of blotches as needed
-
-                //for (let i = 0; i < numBlotches; i++) {
-                //    const blotch = document.createElement('div');
-                //    const baseHue = Math.random() * 360;
-                //    const vibrantColor = chroma.hsl(baseHue, 30, 74); // Adjust saturation and lightness as needed
-
-                //    blotch.classList.add('paint-blotch');
-                //    blotch.style.left = `${Math.random() * 100}%`;
-                //    blotch.style.top = `${Math.random() * 100}%`;
-                //    blotch.style.scale = `${Math.random() * 100}%`;
-                //    blotch.style.backgroundColor = vibrantColor;
-                //    //blotch.style.borderRadius = `${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% / ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100 }%`
-                //    //blotch.style.animation = `animateBlotches ${(Math.random() * 3 + 2).toFixed(1)}s ${(Math.random() * 3).toFixed(1)}s infinite alternate`;
-                //    paintBlotches.appendChild(blotch);
+                //    buttons.each(function () {
+                //        const baseHue = Math.random() * 360;
+                //        const vibrantColor = chroma.hsl(baseHue, 30, 74); // Adjust saturation and lightness as needed
+                //        const buttonColor = vibrantColor.hex(); // Convert Chroma color to HEX format
+                //        const textColor = chroma.contrast(buttonColor, 'white') > 4.5 ? 'white' : 'black';
+                //        $(this).css('background-color', buttonColor);
+                //        $(this).css('color', textColor);
+                //    });
                 //}
+
+                    //const paintBlotches = document.querySelector('.manage-container-main');
+                    //const numBlotches = 30; // Adjust the number of blotches as needed
+
+                    //for (let i = 0; i < numBlotches; i++) {
+                    //    const blotch = document.createElement('div');
+                    //    const baseHue = Math.random() * 360;
+                    //    const vibrantColor = chroma.hsl(baseHue, 30, 74); // Adjust saturation and lightness as needed
+
+                    //    blotch.classList.add('paint-blotch');
+                    //    blotch.style.left = `${Math.random() * 100}%`;
+                    //    blotch.style.top = `${Math.random() * 100}%`;
+                    //    blotch.style.scale = `${Math.random() * 100}%`;
+                    //    blotch.style.backgroundColor = vibrantColor;
+                    //    //blotch.style.borderRadius = `${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% / ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100 }%`
+                    //    //blotch.style.animation = `animateBlotches ${(Math.random() * 3 + 2).toFixed(1)}s ${(Math.random() * 3).toFixed(1)}s infinite alternate`;
+                    //    paintBlotches.appendChild(blotch);
+                    //}
     </script>
     @Scripts.Render("~/bundles/jqueryval")
 }

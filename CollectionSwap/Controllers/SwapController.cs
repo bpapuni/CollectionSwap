@@ -57,20 +57,26 @@ namespace CollectionSwap.Controllers
                 ViewBag.SelectedCollection = selectedCollection;
             }
 
-            return View(model);
+            var partial = Helper.RenderViewToString(ControllerContext, "~/Views/Manage/_FindSwaps.cshtml", model, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#find-swaps-container" } }, JsonRequestBehavior.AllowGet);
         }
 
         [Authorize]
         [HttpPost]
-        public ActionResult ProcessSwap(Swap swap)
+        public ActionResult ProcessSwap(SwapRequestViewModel request)
         {
-            if (ModelState.IsValid)
+            var userId = User.Identity.GetUserId();
+            if (!ModelState.IsValid)
             {
-                Response.Cookies["swapSuccessMessage"].Value = swap.Process(db);
-                return Json(new { reloadPage = true });
+                // Fail
+                return Json(new { reloadPage = false });
             }
 
-            return Json(new { reloadPage = false });
+            var swap = new Swap();
+            swap.Process(userId, request, db);
+
+            TempData["Status"] = "Your swap request has been sent";
+            return RedirectToAction("DisplaySwapMatches", "Manage", new { id = request.SenderUserCollectionId });
         }
 
         [Authorize]

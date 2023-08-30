@@ -20,6 +20,12 @@ namespace CollectionSwap
             //);
 
             routes.MapRoute(
+                name: "FindSwaps",
+                url: "Manage/FindSwaps/{id}",
+                defaults: new { controller = "Manage", action = "Index", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
                 name: "Account",
                 url: "Manage/Account",
                 defaults: new { controller = "Manage", action = "Index" }
@@ -43,11 +49,11 @@ namespace CollectionSwap
                 defaults: new { controller = "Manage", action = "Index", id = UrlParameter.Optional }
             );
 
-            routes.MapRoute(
-                name: "SwapHistory",
-                url: "Manage/SwapHistory",
-                defaults: new { controller = "Manage", action = "Index" }
-            );
+            //routes.MapRoute(
+            //    name: "SwapHistory",
+            //    url: "Manage/SwapHistory",
+            //    defaults: new { controller = "Manage", action = "Index" }
+            //);
 
             routes.MapRoute(
                 name: "Default",

@@ -88,6 +88,55 @@ namespace CollectionSwap.Controllers
         }
 
         //
+        // GET: /Manage/FindSwaps
+
+        [Authorize]
+        public ActionResult FindSwapsPartial()
+        {
+            var userId = User.Identity.GetUserId();
+            var model = new FindSwapsViewModel
+            {
+                Users = db.Users.ToList(),
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
+                OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
+                AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
+                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList(),
+                Feedbacks = db.Feedbacks.ToList()
+            };
+
+            var partial = Helper.RenderViewToString(ControllerContext, "_FindSwaps", model, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#find-swaps-container" } });
+        }
+
+        [Authorize]
+        public ActionResult DisplaySwapMatches(int? id)
+        {
+            var userId = User.Identity.GetUserId();
+            var selectedCollection = db.UserCollections.Find(id);
+            var model = new FindSwapsViewModel
+            {
+                Users = db.Users.ToList(),
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
+                OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
+                AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
+                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList(),
+                Feedbacks = db.Feedbacks.ToList()
+            };
+
+            if (id.HasValue && selectedCollection != null && selectedCollection.UserId == userId)
+            {
+                ViewBag.MatchingSwaps = selectedCollection.FindMatchingSwaps(db);
+                ViewBag.SelectedCollection = selectedCollection;
+            }
+
+            ViewBag.Status = TempData["Status"];
+            var partial = Helper.RenderViewToString(ControllerContext, "_FindSwaps", model, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#find-swaps-container" } }, JsonRequestBehavior.AllowGet);
+        }
+
+        //
         // GET: /Manage/Account
 
         [Authorize]

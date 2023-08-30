@@ -396,7 +396,7 @@
     <Content Include="Views\UserCollections\_Items.cshtml" />
     <Content Include="Views\UserCollections\Edit.cshtml" />
     <Content Include="Views\Swap\UserCollection.cshtml" />
-    <Content Include="Views\Swap\_Swap.cshtml" />
+    <Content Include="Views\Manage\_Swap.cshtml" />
     <Content Include="Views\Swap\Offers.cshtml" />
     <Content Include="Views\Swap\History.cshtml" />
     <Content Include="Views\Swap\_PastSwap.cshtml" />
@@ -412,6 +412,7 @@
     <Content Include="Views\Manage\_SwapProgress.cshtml" />
     <Content Include="Views\Manage\_CreateUserCollection.cshtml" />
     <Content Include="Views\Manage\_Feedback.cshtml" />
+    <Content Include="Views\Manage\_FindSwaps.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

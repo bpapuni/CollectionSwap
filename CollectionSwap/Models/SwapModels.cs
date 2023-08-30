@@ -1,4 +1,5 @@
 ﻿using CollectionSwap.Models;
+using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -25,13 +26,16 @@ namespace CollectionSwap.Models
 
     public class SwapViewModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string UserName { get; set; }
         public double Rating { get; set; }
+        public int CollectionId { get; set; }
         public List<string> ItemList { get; set; }
-        public string ImagePath { get; set; }
+        public int SenderCollectionId { get; set; }
+        public int ReceiverCollectionId { get; set; }
         public List<int> SenderItemIds { get; set; }
         public List<int> ReceiverItemIds { get; set; }
+        public List<int> RequestedItems { get; set; }
         public int SwapSize { get; set; }
         public string Type { get; set; }
     }
@@ -79,54 +83,63 @@ namespace CollectionSwap.Models
         public ApplicationUser Receiver { get; set; }
         [ForeignKey("CollectionId")]
         public Collection Collection { get; set; }
-        public string Process(ApplicationDbContext db)
+        public void Process(string userId, SwapRequestViewModel request, ApplicationDbContext db)
         {
-            string response = string.Empty;
-            switch (this.Status)
+            //string response = string.Empty;
+            switch (request.Status)
             {
                 case "offered":
-                    var receiverName = db.Users.Find(this.ReceiverId).UserName;
+                    this.CollectionId = request.CollectionId;
+                    this.SenderUserCollectionId = request.SenderUserCollectionId;
+                    this.ReceiverUserCollectionId = request.ReceiverUserCollectionId;
+                    this.SenderId = userId;
+                    this.ReceiverId = request.ReceiverId;
+                    this.SenderItemIdsJSON = request.SenderItems;
+                    this.ReceiverItemIdsJSON = request.RequestedItems;
+                    this.Status = request.Status;
+                    this.StartDate = request.StartDate;
+
                     db.Swaps.Add(this);
                     db.SaveChanges();
 
-                    response = $"Offer made, waiting for {receiverName} to accept.";
+                    //response = $"Offer made, waiting for {receiverName} to accept.";
                     break;
 
-                case "accepted":
-                    var senderName = db.Users.Find(this.SenderId).UserName;
-                    var receiverItems = db.UserCollections.Find(this.ReceiverUserCollectionId);
+                //case "accepted":
+                //    var senderName = db.Users.Find(this.SenderId).UserName;
+                //    var receiverItems = db.UserCollections.Find(this.ReceiverUserCollectionId);
 
-                    db.Entry(this).State = EntityState.Modified;
-                    HoldItems(this.ReceiverItemIdsJSON, receiverItems, this, db);
-                    db.SaveChanges();
+                //    db.Entry(this).State = EntityState.Modified;
+                //    HoldItems(this.ReceiverItemIdsJSON, receiverItems, this, db);
+                //    db.SaveChanges();
 
-                    response = $"Offer accepted, waiting for {senderName} to confirm.";
-                    break;
+                //    response = $"Offer accepted, waiting for {senderName} to confirm.";
+                //    break;
 
-                case "confirmed":
-                    var senderItems = db.UserCollections.Find(this.SenderUserCollectionId);
+                //case "confirmed":
+                //    var senderItems = db.UserCollections.Find(this.SenderUserCollectionId);
 
-                    db.Entry(this).State = EntityState.Modified;
-                    HoldItems(this.SenderItemIdsJSON, senderItems, this, db);
-                    db.SaveChanges();
+                //    db.Entry(this).State = EntityState.Modified;
+                //    HoldItems(this.SenderItemIdsJSON, senderItems, this, db);
+                //    db.SaveChanges();
 
-                    response = $"Swap confirmed.";
-                    break;
+                //    response = $"Swap confirmed.";
+                //    break;
 
-                case "declined":
-                    ReleaseItems(this, db);
+                //case "declined":
+                //    ReleaseItems(this, db);
 
-                    db.Entry(this).State = EntityState.Modified;
-                    db.Swaps.Remove(this);
-                    db.SaveChanges();
+                //    db.Entry(this).State = EntityState.Modified;
+                //    db.Swaps.Remove(this);
+                //    db.SaveChanges();
 
-                    response = $"Swap declined.";
-                    break;
+                //    response = $"Swap declined.";
+                //    break;
                 default:
                     break;
             }
 
-            return response;
+            //return response;
         }
         public void Confirm(string userType, ApplicationDbContext db)
         {
@@ -239,6 +252,26 @@ namespace CollectionSwap.Models
             db.HeldItems.Remove(heldItems);
             db.SaveChanges();
         }
+    }
+
+    public class SwapRequestViewModel
+    {
+        [Required]
+        public string ReceiverId { get; set; }
+        [Required]
+        public int CollectionId { get; set; }
+        [Required]
+        public int SenderUserCollectionId { get; set; }
+        [Required]
+        public int ReceiverUserCollectionId { get; set; }
+        [Required]
+        public string SenderItems { get; set; }
+        [Required]
+        public string RequestedItems { get; set; }
+        [Required]
+        public DateTimeOffset StartDate { get; set; }
+        [Required]
+        public string Status { get; set; }
     }
 
     public class Feedback

@@ -155,6 +155,12 @@ body {
     scrollbar-gutter: stable both-edges;
 }
 
+body {
+    /*background: var(--background) url('images/blob-haikei.svg') no-repeat;*/
+    background-size: cover;
+    background-position: right;
+}
+
 main {
     display: flex;
     flex-direction: column;
@@ -163,6 +169,7 @@ main {
     margin-top: 5rem;
     width: var(--main-width);
     /*height: 100%;*/
+    /*background: var(--background);*/
 }
 
     main.bg-split {
@@ -1308,7 +1315,8 @@ nav a {
     padding: 0 2rem 0 calc((100vw - var(--main-width)) / 2 + 0.5rem);
     color: inherit;
     font-size: 1rem;
-    background: inherit;
+    /*background: inherit;*/
+    background: linear-gradient(to right, #00000000 50%, var(--background) 100%);
     z-index: 100;
 }
 
@@ -1654,7 +1662,7 @@ input[type=number] {
 .swap-container {
     display: flex;
     flex-direction: column;
-    width: 50rem;
+    width: 100%;
     color: black;
     border-radius: 1rem;
     box-shadow: 0 2px 5px #888;
@@ -1690,9 +1698,21 @@ input[type=number] {
     /*border: 1px solid black;*/
 }
 
-.swap-rating {
-    color: gold;
-}
+    .swap-profile > div:nth-child(1) {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: flex-end;
+    }
+    
+    .swap-profile > div:nth-child(1) > * {
+        margin: 0;
+        padding: 0;
+    }
+
+    .swap-rating {
+        color: gold;
+    }
 
 .swap-portrait {
     display: flex;
@@ -1710,15 +1730,20 @@ input[type=number] {
 .swap-info {
     display: flex;
     align-items: flex-end;
-    justify-content: center;
+    justify-content: flex-end;
     padding: 0.5rem;
     line-height: 1.2;
     height: 4rem;
 }
 
 .swap-size {
-    align-self: center;
+    /*align-self: center;*/
     font-size: 4rem;
+    line-height: 0.9;
+}
+
+.swap-size + span {
+    width: 3rem;
 }
 
 .swap-container-body {
@@ -1738,26 +1763,22 @@ input[type=number] {
         font-weight: 500;
         font-size: 1.2rem;
         padding: 1rem 0 0 1rem;
-        margin-bottom: -0.5rem;
-    }
-
-    .swap-container-body > div:nth-child(1) {
-        display: flex;
-        justify-content: space-between;
-        padding-right: 1rem;
-        margin-bottom: -0.5rem;
     }
 
 .swap-your-items-button {
     display: flex;
     padding: 0.5rem;
-    margin: 1rem 0 -1rem 0;
+    margin: 1rem 0 0 0;
     color: white;
     outline: none;
     border: 1px solid black;
     background: black;
     border-radius: 0.5rem;
     cursor: pointer;
+}
+
+.swap-your-items-button > * {
+    /*pointer-events: none;*/
 }
 
     .swap-your-items-button:hover {
@@ -1795,10 +1816,19 @@ input[type=number] {
     padding: 1rem;
 }
 
-
-.swap-request-item {
-    width: 7rem;
+.selection-pool {
+    display: flex;
+    flex-direction: column;
+    max-height: 16rem;
+    overflow: auto;
 }
+
+    .selection-pool > :nth-child(1) {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        padding-right: 1rem;
+    }
 
 .swap-items:not(:nth-child(3)) {
     border-bottom: 1px solid #ccc;
@@ -1807,9 +1837,13 @@ input[type=number] {
 .swap-item {
     position: relative;
     display: flex;
-    width: 8.5rem;
+    width: 7rem;
     border-radius: 1rem;
     overflow: hidden;
+}
+
+.swap-request-item {
+    width: 7rem;
 }
 
 .your-items > .swap-item {
@@ -1939,16 +1973,16 @@ input[type=number] {
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 43rem;
-    padding: 0 0 2rem 0;
+    width: 50rem;
+    padding-inline: 1rem;
 }
 
     #find-swaps-container::before {
         content: "";
         position: absolute;
-        right: 0;
-        width: 20rem;
-        height: 20rem;
+        right: 2rem;
+        width: 14rem;
+        height: 27rem;
         background: url('images/doodles/13.png') no-repeat;
         background-position: right;
         background-size: contain;
