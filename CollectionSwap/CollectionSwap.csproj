@@ -413,6 +413,7 @@
     <Content Include="Views\Manage\_CreateUserCollection.cshtml" />
     <Content Include="Views\Manage\_Feedback.cshtml" />
     <Content Include="Views\Manage\_FindSwaps.cshtml" />
+    <Content Include="Views\Manage\_Offer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -18,12 +18,12 @@
     <section class="column">
         @if (Model.AcceptedSwaps != null && Model.AcceptedSwaps.Any())
         {
-            <a href="/Swap/Offers"><h3>You have @(Model.AcceptedSwaps.Count == 1 ? "1 accepted offer" : Model.AcceptedSwaps.Count + " accepted offers")</h3></a>
+            <a href="/Manage/Offers"><h3>You have @(Model.AcceptedSwaps.Count == 1 ? "1 accepted offer" : Model.AcceptedSwaps.Count + " accepted offers")</h3></a>
 
         }
         @if (Model.OfferedSwaps != null && Model.OfferedSwaps.Any())
         {
-            <a href="/Swap/Offers"><h3>You have @(Model.OfferedSwaps.Count == 1 ? "1 swap offer" : Model.OfferedSwaps.Count + " swap offers")</h3></a>
+            <a href="/Manage/Offers"><h3>You have @(Model.OfferedSwaps.Count == 1 ? "1 swap offer" : Model.OfferedSwaps.Count + " swap offers")</h3></a>
         }
         <h2>Select a collection to find swaps for:</h2>
         <br />

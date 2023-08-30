@@ -717,6 +717,41 @@ namespace CollectionSwap.Controllers
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#feedback-container" }, ScrollTarget = "#feedback-container" });
         }
 
+        //
+        // GET: /Manage/YourSwaps/Offer
+
+        [Authorize]
+        public ActionResult Offer(int id)
+        {
+            var partial = String.Empty;
+            var userId = User.Identity.GetUserId();
+            var swap = db.Swaps.Find(id);
+
+            var offerModel = new OfferViewModel
+            {
+                SenderId = swap.SenderId,
+                ReceiverId = swap.ReceiverId,
+                CollectionId = swap.CollectionId,
+                SenderUserCollectionId = swap.SenderUserCollectionId,
+                ReceiverUserCollectionId = swap.ReceiverUserCollectionId,
+                SenderItems = swap.SenderItemIdsJSON,
+                RequestedItems = swap.ReceiverItemIdsJSON,
+                Status = swap.Status
+            };
+
+            var shModel = new SwapHistoryViewModel
+            {
+                Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
+                                .Include(s => s.Collection)
+                                .Include(s => s.Sender)
+                                .Include(s => s.Receiver).ToList(),
+                Offer = offerModel
+            };
+
+            partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#offer-container" }, ScrollTarget = "#offer-container" }, JsonRequestBehavior.AllowGet);
+        }
+
 
 
         //

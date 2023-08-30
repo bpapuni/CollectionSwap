@@ -9,14 +9,14 @@
     <div class="manage-container-nav">
         <ul class="">
             @*<li>@Html.ActionLink("Swapper", "Index", "Home")</li>*@
-            <li>@Html.ActionLink("Find Swaps", "FindSwaps", "Manage")</li>
-            <li>@Html.ActionLink("Account", "Account", "Manage")</li>
+            <li><button class="submit-button">@Html.ActionLink("Find Swaps", "FindSwaps", "Manage")</button></li>
+            <li>@Html.ActionLink("Swap History", "SwapHistory", "Manage")</li>
+            <li>@Html.ActionLink("Your Collections", "YourCollections", "Manage")</li>
             @if (User.IsInRole("Admin"))
             {
                 <li>@Html.ActionLink("Manage Collections", "ManageCollections", "Manage")</li>
             }
-            <li>@Html.ActionLink("Your Collections", "YourCollections", "Manage")</li>
-            <li>@Html.ActionLink("Swap History", "SwapHistory", "Manage")</li>
+            <li>@Html.ActionLink("Account", "Account", "Manage")</li>
         </ul>
     </div>
     <div class="manage-container-main">

@@ -465,16 +465,15 @@ section.mugshots img {
     position: fixed;
     width: 100%;
     max-width: var(--_nav-width);
-    margin-top: 3rem;
+    margin-top: 2rem;
     padding: 0; 
     font-size: 1rem;
-    line-height: 2.5;
     font-weight: 400;
     list-style: none;
 }
 
     .manage-container-nav ul a {
-        color: var(--darkest-shade);
+        color: inherit;
         text-decoration: none;
     }
 
@@ -522,10 +521,17 @@ section.mugshots img {
         margin: 0 0 2rem 0;
     }*/
 
-    .manage-container-nav ul li {
-        padding: 0 1rem;
-        border-radius: 0.7rem;
+    .manage-container-nav ul > li {
+        padding: 0.5rem 1rem;
+    }
+
+    .manage-container-nav ul > li > a{
+        padding: 0.5rem 0;
         cursor: pointer;
+    }
+
+    .manage-container-nav ul li:nth-child(1) {
+        margin-bottom: 1rem
     }
 
 .subnav-link {
@@ -1570,7 +1576,6 @@ section {
 }
 
 .button-icon-trash {
-    /*color: white;*/
     /*background: var(--danger-500);*/
     /*border: 1px solid var(--danger-500);*/
 }

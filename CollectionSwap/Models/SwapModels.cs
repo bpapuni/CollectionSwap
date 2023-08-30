@@ -44,6 +44,7 @@ namespace CollectionSwap.Models
     {
         public List<Swap> Swaps { get; set; }
         public FeedbackViewModel Feedback { get; set; }
+        public OfferViewModel Offer { get; set; }
     }
 
     public class Swap
@@ -270,6 +271,26 @@ namespace CollectionSwap.Models
         public string RequestedItems { get; set; }
         [Required]
         public DateTimeOffset StartDate { get; set; }
+        [Required]
+        public string Status { get; set; }
+    }
+
+    public class OfferViewModel
+    {
+        [Required]
+        public string SenderId { get; set; }
+        [Required]
+        public string ReceiverId { get; set; }
+        [Required]
+        public int CollectionId { get; set; }
+        [Required]
+        public int SenderUserCollectionId { get; set; }
+        [Required]
+        public int ReceiverUserCollectionId { get; set; }
+        [Required]
+        public string SenderItems { get; set; }
+        [Required]
+        public string RequestedItems { get; set; }
         [Required]
         public string Status { get; set; }
     }

@@ -13,7 +13,7 @@
                         <th>Status</th>
                         <th>Items Sent</th>
                         <th>Items Received</th>
-                        <th>Provide Feedback</th>
+                        <th>Next Action</th>
                     </tr>
                 </thead>
 
@@ -97,7 +97,18 @@
                                         <input data-swap-id="@Swap.Id" class="swap-confirm" type="checkbox" checked="@Swap.ReceiverConfirmReceieved" />
                                     </td>
                                 }
-                                <td><a href="/Manage/SwapHistory/@Swap.Id">Please Provide</a></td>
+
+                                @switch (@Swap.Status)
+                                {
+                                    case "offered":
+                                        <td><a href="/Manage/Offer/@Swap.Id">View Offer</a></td>
+                                        break;
+                                    case "confirmed":
+                                        <td><a href="/Manage/SwapHistory/@Swap.Id">Provide Feedback</a></td>
+                                        break;
+                                    default:
+                                        break;
+                                }
                             </tr>
                         }
                 </tbody>
@@ -109,6 +120,13 @@
         @if (Model.Feedback != null)
         {
             @Html.Partial("_Feedback", Model.Feedback)
+        }
+    </div>
+
+    <div id="offer-container" class="d-none">
+        @if (Model.Offer != null)
+        {
+            @Html.Partial("_Offer", Model.Offer)
         }
     </div>
 </div>
