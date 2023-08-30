@@ -58,13 +58,14 @@ function offerSwap(e) {
     const swapContainer = $(e).prev(".swap-container");
     const requestButton = swapContainer.next(".submit-button");
     const swapIndex = $(".swap-container").index(swapContainer);
-    const senderItems = swapContainer.find(".your-items > .swap-item > img").map(function () {
+    const senderItems = swapContainer.find(".your-items .swap-item > img").map(function () {
         return +$(this).data("item-id");
     }).get();
     const requestedItems = swapContainer.find(".swap-item.selected > img").map(function () {
         return +$(this).data("item-id");
     }).get();
 
+    console.log(JSON.stringify(requestedItems));
     var swapRequestData = {
         ReceiverId: swapContainer.find(".swap-profile").data("user-id"),
         CollectionId: swapContainer.data("collection-id"),
