@@ -1,95 +1,10 @@
-﻿@model CollectionSwap.Models.SwapViewModel
+﻿@model CollectionSwap.Models.OfferViewModel
+@using CollectionSwap.Models
 @using Newtonsoft.Json;
 @{
-    var id = Model.Id;
-    var userName = Model.UserName;
-    var collectionId = Model.CollectionId;
-    var itemList = Model.ItemList;
-    var senderCollectionId = Model.SenderCollectionId;
-    var receiverCollectionId = Model.ReceiverCollectionId;
-    var senderItemIds = Model.SenderItemIds;
-    var receiverItemIds = Model.ReceiverItemIds;
-    var swapSize = Model.SwapSize;
-    var swapType = Model.Type;
+    ViewBag.Title = "Offers";
 }
 
-<div class="row">
-    <button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-angle-left"></i></button>
-
-    <span class="header">
-        Offered Swap
-    </span>
+<div id="offer-container">
+    
 </div>
-
-<div class="swap-container">
-    <div class="swap-container-header">
-        <div class="swap-info">
-            <span class="swap-size">@swapSize</span>
-            <span>Swap for @swapSize</span>
-        </div>
-        <div class="swap-profile" data-user-id="@id">
-            <div>
-                <span class="header">Swap with @userName</span>
-                @if (Model.Rating == -1)
-                {
-                    <span class="new">New</span>
-                }
-                <span class="swap-rating">
-                    @for (int i = 0; i < Math.Floor(Model.Rating); i++)
-                    {
-                        <i class="fa fa-star"></i>
-                    }
-                    @if (Model.Rating % 1 == 0.5)
-                    {
-                        <i class="fa fa-star-half"></i>
-                    }
-                </span>
-            </div>
-            <div class="swap-portrait">Pic</div>
-        </div>
-    </div>
-    <div class="swap-container-body">
-        <div class="selection-pool">
-            <div>
-                <span class="header">Select @swapSize of @userName's items</span>
-                <button class="swap-your-items-button" onclick="ToggleSwapItems(this)"><i class="fa-solid fa-file"></i><text>Your Items</text></button>
-            </div>
-            <div class="swap-items">
-                @*@foreach (var itemId in itemList)*@
-                @foreach (var itemId in senderItemIds)
-                {
-                    <div class="swap-item swap-request-item" onclick="SelectItem(this)">
-                        @*<img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + itemId)" />*@
-                        <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
-                    </div>
-                }
-            </div>
-        </div>
-
-        <div class="your-selection d-none">
-            <span class="header">Your Selection</span>
-            <div class="swap-items">
-                @for (var i = 0; i < swapSize; i++)
-                {
-                    <div class="swap-item placeholder" onclick="ClearItem(this)">
-                        <img src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[0])" />
-                    </div>
-                }
-            </div>
-        </div>
-        <div class="your-items d-none">
-            <span class="header">@Model.UserName has requested the following 2 items of yours</span>
-            <div class="swap-items">
-                @foreach (var itemId in receiverItemIds)
-                {
-                    <div class="swap-item">
-                        <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
-                    </div>
-                }
-            </div>
-        </div>
-    </div>
-</div>
-
-<button class="submit-button" onclick="offerSwap(this)" disabled>Items Selected (0/@Model.SwapSize)</button>
-<button class="submit-button" onclick="declineSwap(this, '@swapType', @id)">Decline Swap</button>

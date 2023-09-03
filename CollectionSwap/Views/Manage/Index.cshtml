@@ -35,7 +35,6 @@
         const partialNames = subNavLinks.map(function () {
             return $(this).text().replace(' ', '');
         }).get();
-        //partialNames.push("Offer");
 
         // Get the current partial views name and id if there is one
         var partialName = location.pathname.split("/Manage/").pop().split("/")[0];
@@ -43,7 +42,7 @@
 
         // If user has navigated to a page not within our partialNames array redirect them them to the Account partial
         if (!partialNames.includes(partialName)) {
-            partialName = "SwapHistory";
+            partialName = "Account";
         }
 
         //// Find the link index of the the currently active partial view
@@ -59,8 +58,7 @@
 
         if (partialId) {
             const formData = new FormData();
-            var action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches");
-
+            const action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("SwapHistory", "Feedback").replace("FindSwaps", "DisplaySwapMatches");
             formData.append("id", partialId);
 
             HandleFormSubmit(`/Manage/${action}`, "POST", formData);
@@ -73,7 +71,7 @@
             LoadPartial(partialName, `/Manage/${partialName}`)
             if (partialId) {
                 const formData = new FormData();
-                const action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches");
+                const action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("SwapHistory", "Feedback").replace("FindSwaps", "DisplaySwapMatches");
                 formData.append("id", partialId);
 
                 HandleFormSubmit(`/Manage/${action}`, "POST", formData);
@@ -106,21 +104,14 @@
             var action = $(this).attr("href").split("/")[2];
             const id = $(this).attr("href").split("/")[3];
 
-            //console.log(controller, action, id);
+            console.log(controller, action, id);
             const historyEntry = id == undefined ? action : `${action}/${id}`;
             history.pushState({ partialName: action }, null, `/${controller}/${historyEntry}`);
 
             const formData = new FormData();
             formData.append("id", id);
 
-            action = action.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches");
-
-            if ($(this).hasClass("swap-offer")) {
-                action = action.replace("SwapHistory", "Offer");
-            } else if ($(this).hasClass("swap-feedback")) {
-                action = action.replace("SwapHistory", "Feedback");
-            }
-
+            action = action.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("SwapHistory", "Feedback").replace("FindSwaps", "DisplaySwapMatches");
             HandleFormSubmit(`/${controller}/${action}`, "POST", formData);
         });
 
@@ -240,8 +231,9 @@
 
             scrollRow.animate({ scrollLeft: 0 }, 250, "swing", () => {
                 $(document).scrollTop(0);
-                scrollRow.css("scroll-snap-type", "x mandatory");
-                scrollRow.children().not(":first").addClass("d-none");
+                scrollRow.css("scroll-snap-type", "x mandatory")
+                $("#user-collection-container").addClass("d-none");
+                $("#create-user-collection-container").addClass("d-none");
             });
         }
 

@@ -44,7 +44,7 @@ namespace CollectionSwap.Models
     {
         public List<Swap> Swaps { get; set; }
         public FeedbackViewModel Feedback { get; set; }
-        public SwapViewModel Offer { get; set; }
+        public OfferViewModel Offer { get; set; }
     }
 
     public class Swap

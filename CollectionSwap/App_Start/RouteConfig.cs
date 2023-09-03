@@ -44,10 +44,16 @@ namespace CollectionSwap
             );
 
             routes.MapRoute(
-                name: "SwapHistory",
+                name: "Feedback",
                 url: "Manage/SwapHistory/{id}",
                 defaults: new { controller = "Manage", action = "Index", id = UrlParameter.Optional }
             );
+
+            //routes.MapRoute(
+            //    name: "SwapHistory",
+            //    url: "Manage/SwapHistory",
+            //    defaults: new { controller = "Manage", action = "Index" }
+            //);
 
             routes.MapRoute(
                 name: "Default",
