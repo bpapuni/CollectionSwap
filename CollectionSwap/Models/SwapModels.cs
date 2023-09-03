@@ -122,6 +122,7 @@ namespace CollectionSwap.Models
 
                     case "accepted":
                         this.SenderItemIdsJSON = request.SenderItems;
+                        this.Status = "accepted";
                         db.Entry(this).State = EntityState.Modified;
 
                         HoldItems(this.ReceiverItemIdsJSON, db.UserCollections.Find(this.ReceiverUserCollectionId), this, db);

@@ -94,7 +94,7 @@ function acceptSwap(e, swapId) {
 
     var swapRequestData = {
         SwapId: swapId,
-        ReceiverId: swapContainer.find(".swap-profile").data("user-id"),
+        ReceiverId: swapContainer.data("receiver-id"),
         CollectionId: swapContainer.data("collection-id"),
         SenderUserCollectionId: swapContainer.data("sender-collection-id"),
         ReceiverUserCollectionId: swapContainer.data("receiver-collection-id"),

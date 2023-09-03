@@ -24,7 +24,6 @@
 </div>
 
 @section scripts {
-    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.1/chroma.min.js"></script>*@
     <script src="~/Scripts/swap-ui.js"></script>
     <script>
         const navUl = $(".manage-container-nav ul");
@@ -35,7 +34,6 @@
         const partialNames = subNavLinks.map(function () {
             return $(this).text().replace(' ', '');
         }).get();
-        //partialNames.push("Offer");
 
         // Get the current partial views name and id if there is one
         var partialName = location.pathname.split("/Manage/").pop().split("/")[0];
@@ -186,6 +184,7 @@
                                 $(`${target}`).prop("outerHTML", $(partialView).prop("outerHTML"));
                             } else {
                                 $(`${target}`).prop("outerHTML", $(partialView).find(target).prop("outerHTML"));
+                                console.log($(`${target}`).prop("outerHTML"));
                             }
                             $(`${target}`).removeClass("d-none");
                         });

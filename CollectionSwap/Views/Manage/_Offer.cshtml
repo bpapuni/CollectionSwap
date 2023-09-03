@@ -15,8 +15,8 @@
     var userName = User.Identity.GetUserId() == Sender.Id ? Receiver.UserName : Sender.UserName;
     var primaryHeader = User.Identity.GetUserId() == Sender.Id ? "You've requested the following items" : $"{@userName} has requested the following {@swapSize} items";
     //var primaryItems = User.Identity.GetUserId() == Sender.Id ? Model.SenderItemIds : Model.ReceiverItemIds;
-    var requestedItems = Model.SenderItemIds;
-    var selectionPool = Model.ReceiverItemIds;
+    var requestedItems = Model.ReceiverItemIds;
+    var selectionPool = Model.SenderItemIds;
     var rating = User.Identity.GetUserId() == Sender.Id ? Model.ReceiverRating : Model.SenderRating;
 }
 
@@ -29,7 +29,7 @@
 </div>
 
 <section>
-    <div class="swap-container" data-collection-id="@collectionId" data-sender-collection-id="@senderCollectionId" data-receiver-collection-id="@receiverCollectionId">
+    <div class="swap-container" data-collection-id="@collectionId" data-sender-id="@Sender.Id" data-receiver-id="@Receiver.Id" data-sender-collection-id="@senderCollectionId" data-receiver-collection-id="@receiverCollectionId">
         <div class="swap-container-header">
             <div class="swap-info">
                 <span class="swap-size">@swapSize</span>

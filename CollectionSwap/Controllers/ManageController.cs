@@ -612,7 +612,9 @@ namespace CollectionSwap.Controllers
                 Swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId)
                                 .Include(swap => swap.Collection)
                                 .Include(swap => swap.Sender)
-                                .Include(swap => swap.Receiver).ToList()
+                                .Include(swap => swap.Receiver).ToList(),
+                Feedback = null,
+                Offer = null
             };
 
             if (id.HasValue)
@@ -629,8 +631,9 @@ namespace CollectionSwap.Controllers
                 }
             }
 
+            ViewBag.Status = TempData["Status"];
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container" } });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#feedback-container", third = "#offer-container" }, ScrollTarget = "#history-container" }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -753,8 +756,10 @@ namespace CollectionSwap.Controllers
                 Id = offer.Id,
                 Sender = db.Users.Where(u => u.Id == offer.SenderId).FirstOrDefault(),
                 Receiver = db.Users.Where(u => u.Id == offer.ReceiverId).FirstOrDefault(),
-                SenderRating = db.Feedbacks.Where(fb => fb.SenderId == offer.SenderId).Any() ? (db.Feedbacks.Where(fb => fb.SenderId == offer.SenderId).Select(fb => fb.Rating).Average() * 2) / 2 : -1,
-                ReceiverRating = db.Feedbacks.Where(fb => fb.SenderId == offer.ReceiverId).Any() ? (db.Feedbacks.Where(fb => fb.ReceiverId == offer.ReceiverId).Select(fb => fb.Rating).Average() * 2) / 2 : -1,
+                //SenderRating = db.Feedbacks.Where(fb => fb.SenderId == offer.SenderId).Any() ? (db.Feedbacks.Where(fb => fb.SenderId == offer.SenderId).Select(fb => fb.Rating).Average() * 2) / 2 : -1,
+                //ReceiverRating = db.Feedbacks.Where(fb => fb.SenderId == offer.ReceiverId).Any() ? (db.Feedbacks.Where(fb => fb.ReceiverId == offer.ReceiverId).Select(fb => fb.Rating).Average() * 2) / 2 : -1,
+                SenderRating = 5,
+                ReceiverRating = 5,
                 CollectionId = offer.CollectionId,
                 ItemList = JsonConvert.DeserializeObject<List<string>>(offer.Collection.ItemListJSON),
                 SenderCollectionId = offer.SenderUserCollectionId,
