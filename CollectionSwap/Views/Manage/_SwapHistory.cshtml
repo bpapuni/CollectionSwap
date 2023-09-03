@@ -101,10 +101,10 @@
                                 @switch (@Swap.Status)
                                 {
                                     case "offered":
-                                        <td><a href="/Manage/Offer/@Swap.Id">View Offer</a></td>
+                                        <td><a href="/Manage/SwapHistory/@Swap.Id" class="swap-offer">View Offer</a></td>
                                         break;
                                     case "confirmed":
-                                        <td><a href="/Manage/SwapHistory/@Swap.Id">Provide Feedback</a></td>
+                                        <td><a href="/Manage/SwapHistory/@Swap.Id" class="swap-feedback">Provide Feedback</a></td>
                                         break;
                                     default:
                                         break;
