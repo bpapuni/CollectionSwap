@@ -59,10 +59,10 @@
 
         if (partialId) {
             const formData = new FormData();
-            var action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches").replace("SwapHistory", "SwapHistoryPartial");
+            var action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches");
 
             formData.append("id", partialId);
-            console.log(action);
+
             HandleFormSubmit(`/Manage/${action}`, "POST", formData);
         }
 
@@ -73,7 +73,7 @@
             LoadPartial(partialName, `/Manage/${partialName}`)
             if (partialId) {
                 const formData = new FormData();
-                const action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches").replace("SwapHistory", "SwapHistoryPartial");
+                const action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches");
                 formData.append("id", partialId);
 
                 HandleFormSubmit(`/Manage/${action}`, "POST", formData);
@@ -113,7 +113,13 @@
             const formData = new FormData();
             formData.append("id", id);
 
-            action = action.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches").replace("SwapHistory", "SwapHistoryPartial");;
+            action = action.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches");
+
+            if ($(this).hasClass("swap-offer")) {
+                action = action.replace("SwapHistory", "Offer");
+            } else if ($(this).hasClass("swap-feedback")) {
+                action = action.replace("SwapHistory", "Feedback");
+            }
 
             HandleFormSubmit(`/${controller}/${action}`, "POST", formData);
         });

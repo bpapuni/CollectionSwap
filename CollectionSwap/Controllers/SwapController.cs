@@ -8,8 +8,6 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
@@ -65,7 +63,7 @@ namespace CollectionSwap.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult> ProcessSwap(SwapRequestViewModel request)
+        public ActionResult ProcessSwap(SwapRequestViewModel request)
         {
             var userId = User.Identity.GetUserId();
             if (!ModelState.IsValid)
@@ -74,26 +72,11 @@ namespace CollectionSwap.Controllers
                 return Json(new { reloadPage = false });
             }
 
-            var swap = db.Swaps.Find(request.SwapId) == null ? new Swap() : db.Swaps.Find(request.SwapId);
+            var swap = new Swap();
+            swap.Process(userId, request, db);
 
-            var result = await swap.ProcessAsync(userId, request, db);
-            if (!result.Succeeded)
-            {
-                return Json(new { reloadPage = false });
-            }
-
-            switch (result.SuccessType)
-            {
-                case "offered":
-                    TempData["Status"] = "Your swap request has been sent";
-                    return RedirectToAction("DisplaySwapMatches", "Manage", new { id = request.SenderUserCollectionId });
-                case "accepted":
-                    TempData["Status"] = "You've accepted this swap";
-                    return RedirectToAction("SwapHistoryPartial", "Manage");
-                default:
-                    return Json(new { reloadPage = false });
-            }
-            
+            TempData["Status"] = "Your swap request has been sent";
+            return RedirectToAction("DisplaySwapMatches", "Manage", new { id = request.SenderUserCollectionId });
         }
 
         [Authorize]
