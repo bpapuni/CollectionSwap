@@ -1,8 +1,9 @@
 ﻿@model CollectionSwap.Models.SwapViewModel
+@using Microsoft.AspNet.Identity
 @using Newtonsoft.Json;
 @{
-    var id = Model.Id;
-    var userName = Model.UserName;
+    var Sender = Model.Sender;
+    var Receiver = Model.Receiver;
     var collectionId = Model.CollectionId;
     var itemList = Model.ItemList;
     var senderCollectionId = Model.SenderCollectionId;
@@ -11,6 +12,11 @@
     var receiverItemIds = Model.ReceiverItemIds;
     var swapSize = Model.SwapSize;
     var swapType = Model.Type;
+    var id = User.Identity.GetUserId() == Sender.Id ? Receiver.Id : Sender.Id;
+    var userName = User.Identity.GetUserId() == Sender.Id ? Receiver.UserName : Sender.UserName;
+    var primaryHeader = User.Identity.GetUserId() == Sender.Id ? "You've requested the following items" : $"Select {@swapSize} of {@userName}'s items";
+    var primaryItems = User.Identity.GetUserId() == Sender.Id ? Model.RequestedItems : Model.SenderItemIds;
+    var rating = User.Identity.GetUserId() == Sender.Id ? Model.ReceiverRating : Model.SenderRating;
 }
 
 <div class="swap-container" data-collection-id="@collectionId" data-sender-collection-id="@senderCollectionId" data-receiver-collection-id="@receiverCollectionId">
@@ -22,16 +28,16 @@
         <div class="swap-profile" data-user-id="@id">
             <div>
                 <span class="header">Swap with @userName</span>
-                @if (Model.Rating == -1)
+                @if (rating == -1)
                 {
                     <span class="new">New</span>
                 }
                 <span class="swap-rating">
-                    @for (int i = 0; i < Math.Floor(Model.Rating); i++)
+                    @for (int i = 0; i < Math.Floor(rating); i++)
                     {
                         <i class="fa fa-star"></i>
                     }
-                    @if (Model.Rating % 1 == 0.5)
+                    @if (rating % 1 == 0.5)
                     {
                         <i class="fa fa-star-half"></i>
                     }
@@ -48,7 +54,7 @@
             </div>
             <div class="swap-items">
                 @*@foreach (var itemId in itemList)*@
-                @foreach (var itemId in receiverItemIds)
+                @foreach (var itemId in senderItemIds)
                 {
                     <div class="swap-item swap-request-item" onclick="SelectItem(this)">
                         @*<img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + itemId)" />*@
@@ -70,9 +76,9 @@
             </div>
         </div>
         <div class="your-items d-none">
-            <span class="header">@Model.UserName will be offered to select 2 your items</span>
+            <span class="header">@Model.Receiver.UserName will be offered to select 2 your items</span>
             <div class="swap-items">
-                @foreach (var itemId in senderItemIds)
+                @foreach (var itemId in receiverItemIds)
                 {
                     <div class="swap-item">
                         <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
@@ -82,5 +88,5 @@
         </div>
     </div>
 </div>
-<button class="submit-button" onclick="offerSwap(this)" disabled>Items Selected (0/@Model.SwapSize)</button>
+<button class="submit-button offer" onclick="offerSwap(this)" disabled>Items Selected (0/@Model.SwapSize)</button>
 @*<button class="submit-button" onclick="declineSwap(this, '@swapType', @id)">Decline Swap</button>*@

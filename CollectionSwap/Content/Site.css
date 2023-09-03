@@ -2187,9 +2187,12 @@ input[type=number] {
 
 
 
-#offer-container {
+#offer-container > section {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
+    gap: 1rem;
+    width: 50rem;
+    padding-bottom: 1rem;
 }
