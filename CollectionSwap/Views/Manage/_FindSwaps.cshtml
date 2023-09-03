@@ -16,7 +16,7 @@
     <span class="header">Find Swaps</span>
     <br />
     <section class="column">
-        @if (Model.AcceptedSwaps != null && Model.AcceptedSwaps.Any())
+        @*@if (Model.AcceptedSwaps != null && Model.AcceptedSwaps.Any())
         {
             <a href="/Manage/Offers"><h3>You have @(Model.AcceptedSwaps.Count == 1 ? "1 accepted offer" : Model.AcceptedSwaps.Count + " accepted offers")</h3></a>
 
@@ -24,7 +24,7 @@
         @if (Model.OfferedSwaps != null && Model.OfferedSwaps.Any())
         {
             <a href="/Manage/Offers"><h3>You have @(Model.OfferedSwaps.Count == 1 ? "1 swap offer" : Model.OfferedSwaps.Count + " swap offers")</h3></a>
-        }
+        }*@
         <h2>Select a collection to find swaps for:</h2>
         <br />
         <div class="row gap-2">
@@ -54,9 +54,9 @@
 
                         SwapViewModel model = new SwapViewModel
                         {
-                            Id = matchingSwap.Receiver.Id,
-                            UserName = matchingSwap.Receiver.UserName,
-                            Rating = rating,
+                            Sender = matchingSwap.Sender,
+                            Receiver = matchingSwap.Receiver,
+                            ReceiverRating = rating,
                             CollectionId = selectedCollection.CollectionId,
                             ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON),
                             SenderCollectionId = selectedCollection.Id,

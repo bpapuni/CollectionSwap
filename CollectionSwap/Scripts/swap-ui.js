@@ -1,10 +1,11 @@
 ﻿function SelectItem(e) {
     const swapContainer = $(e).closest(".swap-container");
     const placeHolders = swapContainer.find(".swap-item.placeholder");
-    const requestButton = swapContainer.next(".submit-button");
+    const requestButton = swapContainer.parent().find(".submit-button").eq(0);
     const swapSize = swapContainer.find(".swap-size").text();
     const selectedCount = swapContainer.find(".swap-item.selected").length;
     const selectedItem = $(e).find("img");
+    const buttonText = requestButton.hasClass("offer") ? "Request Swap" : requestButton.hasClass("accept") ? "Accept Swap" : "Confirm Swap";
 
     if ($(e).hasClass("selected")) {
         const placeholderItem = swapContainer.find(".your-selection").find(`[src='${selectedItem.attr("src")}']`).parent();
@@ -22,14 +23,14 @@
     {
         $(e).toggleClass("selected");
         placeHolders.eq(0).toggleClass("placeholder").find("img").data(("item-id"), selectedItem.data("item-id")).attr("src", selectedItem.attr("src"));
-        requestButton.text("Request Swap");
+        requestButton.text(buttonText);
         requestButton.removeAttr("disabled");
     }
 }
 
 function ClearItem(e) {
     const swapContainer = $(e).closest(".swap-container");
-    const requestButton = swapContainer.next(".submit-button");
+    const requestButton = swapContainer.parent().find(".submit-button").eq(0);
     const swapSize = swapContainer.find(".swap-size").text();
     const selectedCount = swapContainer.find(".swap-item.selected").length;
     const selectedItem = swapContainer.find(".selection-pool").find(`[src='${$(e).find("img").attr("src")}']`).parent();
@@ -56,8 +57,6 @@ function ToggleSwapItems(e) {
 
 function offerSwap(e) {
     const swapContainer = $(e).prev(".swap-container");
-    const requestButton = swapContainer.next(".submit-button");
-    const swapIndex = $(".swap-container").index(swapContainer);
     const senderItems = swapContainer.find(".your-items .swap-item > img").map(function () {
         return +$(this).data("item-id");
     }).get();
@@ -65,7 +64,6 @@ function offerSwap(e) {
         return +$(this).data("item-id");
     }).get();
 
-    console.log(JSON.stringify(requestedItems));
     var swapRequestData = {
         ReceiverId: swapContainer.find(".swap-profile").data("user-id"),
         CollectionId: swapContainer.data("collection-id"),
@@ -85,41 +83,68 @@ function offerSwap(e) {
     HandleFormSubmit("/Swap/ProcessSwap", "POST", formData);
 }
 
-function acceptSwap(e, swapType, id) {
-    const swapButton = $(e);
-    const swapIndex = $(".submit-button").index(swapButton);
-    const offeredSwap = serializedOfferedSwaps.find(swap => swap.Id === id);
-    const offeredSwapItems = $(".swap-container-main").eq(swapIndex).find(".swap-featured-item.selected img").map(function () {
-        return +$(this).attr("alt");
+function acceptSwap(e, swapId) {
+    const swapContainer = $(e).parent().prev(".swap-container");
+    const senderItems = swapContainer.find(".swap-item.selected > img").map(function () {
+        return +$(this).data("item-id");
+    }).get();
+    const requestedItems = swapContainer.find(".receiver-items .swap-item > img").map(function () {
+        return +$(this).data("item-id");
     }).get();
 
-    var swapData = {
-        Id: offeredSwap.Id,
-        SenderId: offeredSwap.Sender.Id,
-        ReceiverId: offeredSwap.Receiver.Id,
-        CollectionId: offeredSwap.CollectionId,
-        SenderUserCollectionId: offeredSwap.SenderUserCollectionId,
-        ReceiverUserCollectionId: offeredSwap.ReceiverUserCollectionId,
-        SenderItemIdsJSON: JSON.stringify(offeredSwapItems),
-        ReceiverItemIdsJSON: offeredSwap.ReceiverItemIdsJSON,
-        StartDate: offeredSwap.StartDate,
-        EndDate: null,
+    var swapRequestData = {
+        SwapId: swapId,
+        ReceiverId: swapContainer.find(".swap-profile").data("user-id"),
+        CollectionId: swapContainer.data("collection-id"),
+        SenderUserCollectionId: swapContainer.data("sender-collection-id"),
+        ReceiverUserCollectionId: swapContainer.data("receiver-collection-id"),
+        SenderItems: JSON.stringify(senderItems),
+        RequestedItems: JSON.stringify(requestedItems),
+        //StartDate: new Date().toISOString(),
         Status: "accepted"
     }
 
-    $.ajax({
-        url: "/Swap/ProcessSwap",
-        type: "POST",
-        data: swapData,
-        dataType: "json",
-        success: function (response) {
-            if (response.reloadPage) {
-                location.reload();
-            }
-        },
-        error: function (xhr, status, error) {
-        }
-    })
+    const formData = new FormData();
+    Object.entries(swapRequestData).forEach(([key, value]) => {
+        formData.append(key, value);
+    });
+
+    HandleFormSubmit("/Swap/ProcessSwap", "POST", formData);
+
+    //const swapButton = $(e);
+    //const swapIndex = $(".submit-button").index(swapButton);
+    //const offeredSwap = serializedOfferedSwaps.find(swap => swap.Id === id);
+    //const offeredSwapItems = $(".swap-container-main").eq(swapIndex).find(".swap-featured-item.selected img").map(function () {
+    //    return +$(this).attr("alt");
+    //}).get();
+
+    //var swapData = {
+    //    Id: offeredSwap.Id,
+    //    SenderId: offeredSwap.Sender.Id,
+    //    ReceiverId: offeredSwap.Receiver.Id,
+    //    CollectionId: offeredSwap.CollectionId,
+    //    SenderUserCollectionId: offeredSwap.SenderUserCollectionId,
+    //    ReceiverUserCollectionId: offeredSwap.ReceiverUserCollectionId,
+    //    SenderItemIdsJSON: JSON.stringify(offeredSwapItems),
+    //    ReceiverItemIdsJSON: offeredSwap.ReceiverItemIdsJSON,
+    //    StartDate: offeredSwap.StartDate,
+    //    EndDate: null,
+    //    Status: "accepted"
+    //}
+
+    //$.ajax({
+    //    url: "/Swap/ProcessSwap",
+    //    type: "POST",
+    //    data: swapData,
+    //    dataType: "json",
+    //    success: function (response) {
+    //        if (response.reloadPage) {
+    //            location.reload();
+    //        }
+    //    },
+    //    error: function (xhr, status, error) {
+    //    }
+    //})
 }
 
 function confirmSwap(e, swapType, id) {

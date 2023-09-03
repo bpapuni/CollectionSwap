@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -26,9 +27,9 @@ namespace CollectionSwap.Models
 
     public class SwapViewModel
     {
-        public string Id { get; set; }
-        public string UserName { get; set; }
-        public double Rating { get; set; }
+        public int Id { get; set; }
+        public string SenderId { get; set; }
+        public string ReceiverId { get; set; }
         public int CollectionId { get; set; }
         public List<string> ItemList { get; set; }
         public int SenderCollectionId { get; set; }
@@ -36,8 +37,14 @@ namespace CollectionSwap.Models
         public List<int> SenderItemIds { get; set; }
         public List<int> ReceiverItemIds { get; set; }
         public List<int> RequestedItems { get; set; }
+        public double SenderRating { get; set; }
+        public double ReceiverRating { get; set; }
         public int SwapSize { get; set; }
         public string Type { get; set; }
+        [ForeignKey("SenderId")]
+        public ApplicationUser Sender { get; set; }
+        [ForeignKey("ReceiverId")]
+        public ApplicationUser Receiver { get; set; }
     }
 
     public class SwapHistoryViewModel
@@ -84,63 +91,72 @@ namespace CollectionSwap.Models
         public ApplicationUser Receiver { get; set; }
         [ForeignKey("CollectionId")]
         public Collection Collection { get; set; }
-        public void Process(string userId, SwapRequestViewModel request, ApplicationDbContext db)
+        public class ProcessSwapResult
         {
-            //string response = string.Empty;
-            switch (request.Status)
+            public bool Succeeded { get; set; }
+            public string SuccessType { get; set; }
+            public string Error { get; set; }
+        }
+
+        public async Task<ProcessSwapResult> ProcessAsync(string userId, SwapRequestViewModel request, ApplicationDbContext db)
+        {
+            try
             {
-                case "offered":
-                    this.CollectionId = request.CollectionId;
-                    this.SenderUserCollectionId = request.SenderUserCollectionId;
-                    this.ReceiverUserCollectionId = request.ReceiverUserCollectionId;
-                    this.SenderId = userId;
-                    this.ReceiverId = request.ReceiverId;
-                    this.SenderItemIdsJSON = request.SenderItems;
-                    this.ReceiverItemIdsJSON = request.RequestedItems;
-                    this.Status = request.Status;
-                    this.StartDate = request.StartDate;
+                string response = string.Empty;
+                switch (request.Status)
+                {
+                    case "offered":
+                        this.CollectionId = request.CollectionId;
+                        this.SenderUserCollectionId = request.SenderUserCollectionId;
+                        this.ReceiverUserCollectionId = request.ReceiverUserCollectionId;
+                        this.SenderId = userId;
+                        this.ReceiverId = request.ReceiverId;
+                        this.SenderItemIdsJSON = request.SenderItems;
+                        this.ReceiverItemIdsJSON = request.RequestedItems;
+                        this.Status = request.Status;
+                        this.StartDate = request.StartDate;
 
-                    db.Swaps.Add(this);
-                    db.SaveChanges();
+                        db.Swaps.Add(this);
+                        await db.SaveChangesAsync();
+                        return new ProcessSwapResult { Succeeded = true, SuccessType = "offered" };
 
-                    //response = $"Offer made, waiting for {receiverName} to accept.";
-                    break;
+                    case "accepted":
+                        this.SenderItemIdsJSON = request.SenderItems;
+                        db.Entry(this).State = EntityState.Modified;
 
-                //case "accepted":
-                //    var senderName = db.Users.Find(this.SenderId).UserName;
-                //    var receiverItems = db.UserCollections.Find(this.ReceiverUserCollectionId);
+                        HoldItems(this.ReceiverItemIdsJSON, db.UserCollections.Find(this.ReceiverUserCollectionId), this, db);
+                        await db.SaveChangesAsync();
+                        return new ProcessSwapResult { Succeeded = true, SuccessType = "accepted" };
 
-                //    db.Entry(this).State = EntityState.Modified;
-                //    HoldItems(this.ReceiverItemIdsJSON, receiverItems, this, db);
-                //    db.SaveChanges();
+                    //case "confirmed":
+                    //    var senderItems = db.UserCollections.Find(this.SenderUserCollectionId);
 
-                //    response = $"Offer accepted, waiting for {senderName} to confirm.";
-                //    break;
+                    //    db.Entry(this).State = EntityState.Modified;
+                    //    HoldItems(this.SenderItemIdsJSON, senderItems, this, db);
+                    //    db.SaveChanges();
 
-                //case "confirmed":
-                //    var senderItems = db.UserCollections.Find(this.SenderUserCollectionId);
+                    //    response = $"Swap confirmed.";
+                    //    break;
 
-                //    db.Entry(this).State = EntityState.Modified;
-                //    HoldItems(this.SenderItemIdsJSON, senderItems, this, db);
-                //    db.SaveChanges();
+                    //case "declined":
+                    //    ReleaseItems(this, db);
 
-                //    response = $"Swap confirmed.";
-                //    break;
+                    //    db.Entry(this).State = EntityState.Modified;
+                    //    db.Swaps.Remove(this);
+                    //    db.SaveChanges();
 
-                //case "declined":
-                //    ReleaseItems(this, db);
+                    //    response = $"Swap declined.";
+                    //    break;
+                    default:
+                        break;
+                }
 
-                //    db.Entry(this).State = EntityState.Modified;
-                //    db.Swaps.Remove(this);
-                //    db.SaveChanges();
-
-                //    response = $"Swap declined.";
-                //    break;
-                default:
-                    break;
+                return new ProcessSwapResult { Succeeded = false };
             }
-
-            //return response;
+            catch (Exception ex)
+            {
+                return new ProcessSwapResult { Succeeded = false, Error = ex.Message };
+            }
         }
         public void Confirm(string userType, ApplicationDbContext db)
         {
@@ -257,6 +273,7 @@ namespace CollectionSwap.Models
 
     public class SwapRequestViewModel
     {
+        public int SwapId { get; set;}
         [Required]
         public string ReceiverId { get; set; }
         [Required]
