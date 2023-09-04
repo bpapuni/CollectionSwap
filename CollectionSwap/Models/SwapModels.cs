@@ -40,7 +40,7 @@ namespace CollectionSwap.Models
         public double SenderRating { get; set; }
         public double ReceiverRating { get; set; }
         public int SwapSize { get; set; }
-        public string Type { get; set; }
+        public string Status { get; set; }
         [ForeignKey("SenderId")]
         public ApplicationUser Sender { get; set; }
         [ForeignKey("ReceiverId")]

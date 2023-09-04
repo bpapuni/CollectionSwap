@@ -624,6 +624,8 @@ namespace CollectionSwap.Controllers
                 {
                     case "offered":
                         return Offer(id.Value);
+                    case "accepted":
+                        return Offer(id.Value);
                     case "confirmed":
                         return Feedback(id.Value);
                     default:
@@ -767,7 +769,7 @@ namespace CollectionSwap.Controllers
                 SenderItemIds = JsonConvert.DeserializeObject<List<int>>(offer.SenderItemIdsJSON),
                 ReceiverItemIds = JsonConvert.DeserializeObject<List<int>>(offer.ReceiverItemIdsJSON),
                 SwapSize = JsonConvert.DeserializeObject<List<int>>(offer.ReceiverItemIdsJSON).Count(),
-                Type = "offer"
+                Status = offer.Status
             };
 
             var shModel = new SwapHistoryViewModel

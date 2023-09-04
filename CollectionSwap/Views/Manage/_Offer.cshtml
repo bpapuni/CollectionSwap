@@ -10,21 +10,23 @@
     var senderCollectionId = Model.SenderCollectionId;
     var receiverCollectionId = Model.ReceiverCollectionId;
     var swapSize = Model.SwapSize;
-    var swapType = Model.Type;
+    var swapStatus = Model.Status;
     var userId = User.Identity.GetUserId() == Sender.Id ? Receiver.Id : Sender.Id;
     var userName = User.Identity.GetUserId() == Sender.Id ? Receiver.UserName : Sender.UserName;
-    var primaryHeader = User.Identity.GetUserId() == Sender.Id ? "You've requested the following items" : $"{@userName} has requested the following {@swapSize} items";
+    var primaryHeader = "You've requested the following items";
+    var secondaryHeader = User.Identity.GetUserId() == Sender.Id ? "You've requested the following items" : $"{@userName} has requested the following items";
     //var primaryItems = User.Identity.GetUserId() == Sender.Id ? Model.SenderItemIds : Model.ReceiverItemIds;
     var requestedItems = Model.ReceiverItemIds;
     var selectionPool = Model.SenderItemIds;
     var rating = User.Identity.GetUserId() == Sender.Id ? Model.ReceiverRating : Model.SenderRating;
+    var heading = swapStatus == "offered" || User.Identity.GetUserId() == Receiver.Id ? "Offered Swap" : "Confirm Swap";
 }
 
 <div class="row">
     <button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-angle-left"></i></button>
 
     <span class="header">
-        Offered Swap
+        @heading
     </span>
 </div>
 
@@ -57,21 +59,34 @@
             </div>
         </div>
         <div class="swap-container-body">
-            <div class="selection-pool">
-                <span class="header">@primaryHeader</span>
-                <div class="swap-items receiver-items">
-                    @foreach (var itemId in @requestedItems)
-                    {
-                        <div class="swap-item swap-request-item">
-                            <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
-                        </div>
-                    }
-                </div>
-            </div>
-
-            @if (User.Identity.GetUserId() != Sender.Id)
+            @if (swapStatus == "offered")
             {
                 <div class="selection-pool">
+                    <span class="header">@primaryHeader</span>
+                    <div class="swap-items receiver-items">
+                        @foreach (var itemId in @requestedItems)
+                        {
+                            <div class="swap-item swap-request-item">
+                                <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                            </div>
+                        }
+                    </div>
+                </div>
+                if (User.Identity.GetUserId() == Receiver.Id)
+                {
+                    <div class="selection-pool">
+                        <span class="header">Select @swapSize of @userName's items</span>
+                        <div class="swap-items sender-items">
+                            @foreach (var itemId in @selectionPool)
+                            {
+                                <div class="swap-item swap-request-item" onclick="SelectItem(this)">
+                                    <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    @*<div class="selection-pool">
                     <span class="header">Select @swapSize of @userName's items</span>
                     <div class="swap-items sender-items">
                         @foreach (var itemId in @selectionPool)
@@ -79,6 +94,57 @@
                             <div class="swap-item swap-request-item" onclick="SelectItem(this)">
                                 <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
                             </div>
+                        }
+                    </div>
+                </div>*@
+                }
+            }
+            else if (swapStatus == "accepted")
+            {
+                <div class="selection-pool">
+                    <span class="header">You've requested the following items</span>
+                    <div class="swap-items">
+                        @if (User.Identity.GetUserId() == Sender.Id)
+                        {
+                            foreach (var itemId in requestedItems)
+                            {
+                                <div class="swap-item">
+                                    <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            foreach (var itemId in selectionPool)
+                            {
+                                <div class="swap-item">
+                                    <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+
+                <div class="selection-pool">
+                    <span class="header">@userName has requested the following items</span>
+                    <div class="swap-items">
+                        @if (User.Identity.GetUserId() == Sender.Id)
+                        {
+                            foreach (var itemId in selectionPool)
+                            {
+                                <div class="swap-item">
+                                    <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            foreach (var itemId in requestedItems)
+                            {
+                                <div class="swap-item swap-request-item">
+                                    <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                                </div>
+                            }
                         }
                     </div>
                 </div>
@@ -99,10 +165,29 @@
     </div>
 
     <div class="row gap-1">
-        @if (User.Identity.GetUserId() != Sender.Id)
+        @if (swapStatus == "offered")
         {
-            <button class="submit-button accept" onclick="acceptSwap(this, @id)" disabled>Items Selected (0/@Model.SwapSize)</button>
+            if (User.Identity.GetUserId() == Sender.Id)
+            {
+                <button class="submit-button" onclick="declineSwap(this)">Cancel Swap</button>
+            }
+            else
+            {
+                <button class="submit-button accept" onclick="acceptSwap(this, @id)" disabled>Items Selected (0/@Model.SwapSize)</button>
+                <button class="submit-button" onclick="declineSwap(this)">Decline Swap</button>
+            }
         }
-        <button class="submit-button" onclick="declineSwap(this)">@(User.Identity.GetUserId() == Sender.Id ? "Cancel Swap" : "Decline Swap")</button>
+        else if (swapStatus == "accepted")
+        {
+            if (User.Identity.GetUserId() == Sender.Id)
+            {
+                <button class="submit-button accept" onclick="confirmSwap(this, @id)">Confirm Swap</button>
+                <button class="submit-button" onclick="declineSwap(this)">Decline Swap</button>
+            }
+            else
+            {
+                <button class="submit-button" onclick="declineSwap(this)">Cancel Swap</button>
+            }
+        }
     </div>
 </section>

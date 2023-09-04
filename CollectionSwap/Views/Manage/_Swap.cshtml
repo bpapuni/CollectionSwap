@@ -11,7 +11,7 @@
     var senderItemIds = Model.SenderItemIds;
     var receiverItemIds = Model.ReceiverItemIds;
     var swapSize = Model.SwapSize;
-    var swapType = Model.Type;
+    var swapStatus = Model.Status;
     var id = User.Identity.GetUserId() == Sender.Id ? Receiver.Id : Sender.Id;
     var userName = User.Identity.GetUserId() == Sender.Id ? Receiver.UserName : Sender.UserName;
     var primaryHeader = User.Identity.GetUserId() == Sender.Id ? "You've requested the following items" : $"Select {@swapSize} of {@userName}'s items";
