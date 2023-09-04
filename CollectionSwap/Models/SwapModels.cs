@@ -122,22 +122,21 @@ namespace CollectionSwap.Models
 
                     case "accepted":
                         this.SenderItemIdsJSON = request.SenderItems;
-                        this.Status = "accepted";
+                        this.Status = request.Status;
                         db.Entry(this).State = EntityState.Modified;
 
                         HoldItems(this.ReceiverItemIdsJSON, db.UserCollections.Find(this.ReceiverUserCollectionId), this, db);
                         await db.SaveChangesAsync();
                         return new ProcessSwapResult { Succeeded = true, SuccessType = "accepted" };
 
-                    //case "confirmed":
-                    //    var senderItems = db.UserCollections.Find(this.SenderUserCollectionId);
+                    case "confirmed":
+                        this.ReceiverItemIdsJSON = request.RequestedItems;
+                        this.Status = request.Status;
+                        db.Entry(this).State = EntityState.Modified;
 
-                    //    db.Entry(this).State = EntityState.Modified;
-                    //    HoldItems(this.SenderItemIdsJSON, senderItems, this, db);
-                    //    db.SaveChanges();
-
-                    //    response = $"Swap confirmed.";
-                    //    break;
+                        HoldItems(this.SenderItemIdsJSON, db.UserCollections.Find(this.SenderUserCollectionId), this, db);
+                        await db.SaveChangesAsync();
+                        return new ProcessSwapResult { Succeeded = true, SuccessType = "confirmed" };
 
                     //case "declined":
                     //    ReleaseItems(this, db);

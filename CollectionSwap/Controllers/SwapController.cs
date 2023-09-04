@@ -90,6 +90,9 @@ namespace CollectionSwap.Controllers
                 case "accepted":
                     TempData["Status"] = "You've accepted this swap";
                     return RedirectToAction("SwapHistoryPartial", "Manage");
+                case "confirmed":
+                    TempData["Status"] = "You've confirmed this swap";
+                    return RedirectToAction("SwapHistoryPartial", "Manage");
                 default:
                     return Json(new { reloadPage = false });
             }

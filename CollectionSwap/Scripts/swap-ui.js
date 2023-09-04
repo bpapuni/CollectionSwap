@@ -1,7 +1,7 @@
 ﻿function SelectItem(e) {
     const swapContainer = $(e).closest(".swap-container");
     const placeHolders = swapContainer.find(".swap-item.placeholder");
-    const requestButton = swapContainer.parent().find(".submit-button").eq(0);
+    const requestButton = swapContainer.next(".submit-button").length == 0 ? swapContainer.next().find(".submit-button").eq(0) : swapContainer.next(".submit-button");
     const swapSize = swapContainer.find(".swap-size").text();
     const selectedCount = swapContainer.find(".swap-item.selected").length;
     const selectedItem = $(e).find("img");
@@ -30,7 +30,7 @@
 
 function ClearItem(e) {
     const swapContainer = $(e).closest(".swap-container");
-    const requestButton = swapContainer.parent().find(".submit-button").eq(0);
+    const requestButton = swapContainer.next(".submit-button").length == 0 ? swapContainer.next().find(".submit-button").eq(0) : swapContainer.next(".submit-button");
     const swapSize = swapContainer.find(".swap-size").text();
     const selectedCount = swapContainer.find(".swap-item.selected").length;
     const selectedItem = swapContainer.find(".selection-pool").find(`[src='${$(e).find("img").attr("src")}']`).parent();
@@ -110,26 +110,50 @@ function acceptSwap(e, swapId) {
     });
 
     HandleFormSubmit("/Swap/ProcessSwap", "POST", formData);
+}
 
+function confirmSwap(e, swapId) {
+    const swapContainer = $(e).parent().prev(".swap-container");
+    const senderItems = swapContainer.find(".swap-items").eq(1).find(".swap-item > img").map(function () {
+        return +$(this).data("item-id");
+    }).get();
+    const requestedItems = swapContainer.find(".swap-items").eq(0).find(".swap-item > img").map(function () {
+        return +$(this).data("item-id");
+    }).get();
+
+    var swapRequestData = {
+        SwapId: swapId,
+        ReceiverId: swapContainer.data("receiver-id"),
+        CollectionId: swapContainer.data("collection-id"),
+        SenderUserCollectionId: swapContainer.data("sender-collection-id"),
+        ReceiverUserCollectionId: swapContainer.data("receiver-collection-id"),
+        SenderItems: JSON.stringify(senderItems),
+        RequestedItems: JSON.stringify(requestedItems),
+        ////StartDate: new Date().toISOString(),
+        Status: "confirmed"
+    }
+
+    const formData = new FormData();
+    Object.entries(swapRequestData).forEach(([key, value]) => {
+        formData.append(key, value);
+    });
+
+    HandleFormSubmit("/Swap/ProcessSwap", "POST", formData);
     //const swapButton = $(e);
-    //const swapIndex = $(".submit-button").index(swapButton);
-    //const offeredSwap = serializedOfferedSwaps.find(swap => swap.Id === id);
-    //const offeredSwapItems = $(".swap-container-main").eq(swapIndex).find(".swap-featured-item.selected img").map(function () {
-    //    return +$(this).attr("alt");
-    //}).get();
+    //const acceptedSwap = serializedAcceptedSwaps.find(swap => swap.Id === id);
 
     //var swapData = {
-    //    Id: offeredSwap.Id,
-    //    SenderId: offeredSwap.Sender.Id,
-    //    ReceiverId: offeredSwap.Receiver.Id,
-    //    CollectionId: offeredSwap.CollectionId,
-    //    SenderUserCollectionId: offeredSwap.SenderUserCollectionId,
-    //    ReceiverUserCollectionId: offeredSwap.ReceiverUserCollectionId,
-    //    SenderItemIdsJSON: JSON.stringify(offeredSwapItems),
-    //    ReceiverItemIdsJSON: offeredSwap.ReceiverItemIdsJSON,
-    //    StartDate: offeredSwap.StartDate,
-    //    EndDate: null,
-    //    Status: "accepted"
+    //    Id: acceptedSwap.Id,
+    //    SenderId: acceptedSwap.Sender.Id,
+    //    ReceiverId: acceptedSwap.Receiver.Id,
+    //    CollectionId: acceptedSwap.CollectionId,
+    //    SenderUserCollectionId: acceptedSwap.SenderUserCollectionId,
+    //    ReceiverUserCollectionId: acceptedSwap.ReceiverUserCollectionId,
+    //    SenderItemIdsJSON: acceptedSwap.SenderItemIdsJSON,
+    //    ReceiverItemIdsJSON: acceptedSwap.ReceiverItemIdsJSON,
+    //    StartDate: acceptedSwap.StartDate,
+    //    EndDate: new Date().toISOString(),
+    //    Status: "confirmed"
     //}
 
     //$.ajax({
@@ -145,39 +169,6 @@ function acceptSwap(e, swapId) {
     //    error: function (xhr, status, error) {
     //    }
     //})
-}
-
-function confirmSwap(e, swapType, id) {
-    const swapButton = $(e);
-    const acceptedSwap = serializedAcceptedSwaps.find(swap => swap.Id === id);
-
-    var swapData = {
-        Id: acceptedSwap.Id,
-        SenderId: acceptedSwap.Sender.Id,
-        ReceiverId: acceptedSwap.Receiver.Id,
-        CollectionId: acceptedSwap.CollectionId,
-        SenderUserCollectionId: acceptedSwap.SenderUserCollectionId,
-        ReceiverUserCollectionId: acceptedSwap.ReceiverUserCollectionId,
-        SenderItemIdsJSON: acceptedSwap.SenderItemIdsJSON,
-        ReceiverItemIdsJSON: acceptedSwap.ReceiverItemIdsJSON,
-        StartDate: acceptedSwap.StartDate,
-        EndDate: new Date().toISOString(),
-        Status: "confirmed"
-    }
-
-    $.ajax({
-        url: "/Swap/ProcessSwap",
-        type: "POST",
-        data: swapData,
-        dataType: "json",
-        success: function (response) {
-            if (response.reloadPage) {
-                location.reload();
-            }
-        },
-        error: function (xhr, status, error) {
-        }
-    })
 }
 
 function declineSwap(e, swapType, id) {

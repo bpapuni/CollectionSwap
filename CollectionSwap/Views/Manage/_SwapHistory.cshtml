@@ -114,7 +114,7 @@
                                 case "accepted":
                                     <td>
                                         @if (Swap.SenderId == User.Identity.GetUserId()) {
-                                            <a href="/Manage/SwapHistory/@Swap.Id" class="swap-offer">View Accepted Offer</a>
+                                            <a href="/Manage/SwapHistory/@Swap.Id" class="swap-offer">Confirm Swap</a>
                                         }
                                         else 
                                         {
@@ -123,8 +123,8 @@
                                         }
                                     </td>
                                     break;
-                                        case "confirmed":
-                                    <td><a href="/Manage/SwapHistory/@Swap.Id" class="swap-feedback">Provide Feedback</a></td>
+                                case "confirmed":
+                                    <td><a href="/Manage/SwapHistory/@Swap.Id" class="swap-feedback">View Mailing Instructions</a></td>
                                     break;
                                 default:
                                     break;

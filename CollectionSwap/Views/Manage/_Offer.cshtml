@@ -13,8 +13,7 @@
     var swapStatus = Model.Status;
     var userId = User.Identity.GetUserId() == Sender.Id ? Receiver.Id : Sender.Id;
     var userName = User.Identity.GetUserId() == Sender.Id ? Receiver.UserName : Sender.UserName;
-    var primaryHeader = "You've requested the following items";
-    var secondaryHeader = User.Identity.GetUserId() == Sender.Id ? "You've requested the following items" : $"{@userName} has requested the following items";
+    var primaryHeader = User.Identity.GetUserId() == Sender.Id ? "You've requested the following items" : $"{@userName} has requested the following items";
     //var primaryItems = User.Identity.GetUserId() == Sender.Id ? Model.SenderItemIds : Model.ReceiverItemIds;
     var requestedItems = Model.ReceiverItemIds;
     var selectionPool = Model.SenderItemIds;
@@ -75,7 +74,7 @@
                 if (User.Identity.GetUserId() == Receiver.Id)
                 {
                     <div class="selection-pool">
-                        <span class="header">Select @swapSize of @userName's items</span>
+                        <span class="header">Select @swapSize of their items in exchange</span>
                         <div class="swap-items sender-items">
                             @foreach (var itemId in @selectionPool)
                             {
@@ -169,12 +168,12 @@
         {
             if (User.Identity.GetUserId() == Sender.Id)
             {
-                <button class="submit-button" onclick="declineSwap(this)">Cancel Swap</button>
+                <button class="submit-button" onclick="declineSwap(this, @id)">Cancel Swap</button>
             }
             else
             {
                 <button class="submit-button accept" onclick="acceptSwap(this, @id)" disabled>Items Selected (0/@Model.SwapSize)</button>
-                <button class="submit-button" onclick="declineSwap(this)">Decline Swap</button>
+                <button class="submit-button" onclick="declineSwap(this, @id)">Decline Swap</button>
             }
         }
         else if (swapStatus == "accepted")
@@ -182,11 +181,11 @@
             if (User.Identity.GetUserId() == Sender.Id)
             {
                 <button class="submit-button accept" onclick="confirmSwap(this, @id)">Confirm Swap</button>
-                <button class="submit-button" onclick="declineSwap(this)">Decline Swap</button>
+                <button class="submit-button" onclick="declineSwap(this, @id)">Decline Swap</button>
             }
             else
             {
-                <button class="submit-button" onclick="declineSwap(this)">Cancel Swap</button>
+                <button class="submit-button" onclick="declineSwap(this, @id)">Cancel Swap</button>
             }
         }
     </div>

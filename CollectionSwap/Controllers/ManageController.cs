@@ -635,7 +635,15 @@ namespace CollectionSwap.Controllers
 
             ViewBag.Status = TempData["Status"];
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#feedback-container", third = "#offer-container" }, ScrollTarget = "#history-container" }, JsonRequestBehavior.AllowGet);
+
+            if (ViewBag.Status != null)
+            {
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#feedback-container", third = "#offer-container" }, ScrollTarget = "#history-container" }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container" } }, JsonRequestBehavior.AllowGet);
+            }
         }
 
         [HttpPost]
