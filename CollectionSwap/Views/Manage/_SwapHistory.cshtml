@@ -84,6 +84,9 @@
                                         }
                                     }
                                     break;
+                                case "completed":
+                                    <td class="swap-status" title="Swap complete">@Html.Partial("_SwapProgress", Swap)</td>
+                                    break;
                                 default:
                                     break;
                             }
@@ -93,7 +96,7 @@
                                     <input data-swap-id="@Swap.Id" class="swap-confirm" type="checkbox" checked="@Swap.SenderConfirmSent" />
                                 </td>
                                 <td>
-                                    <input data-swap-id="@Swap.Id" class="swap-confirm" type="checkbox" checked="@Swap.SenderConfirmReceieved" />
+                                    <input data-swap-id="@Swap.Id" class="swap-confirm" type="checkbox" checked="@Swap.SenderConfirmReceived" />
                                 </td>
                             }
                             else
@@ -102,21 +105,32 @@
                                     <input data-swap-id="@Swap.Id" class="swap-confirm" type="checkbox" checked="@Swap.ReceiverConfirmSent" />
                                 </td>
                                 <td>
-                                    <input data-swap-id="@Swap.Id" class="swap-confirm" type="checkbox" checked="@Swap.ReceiverConfirmReceieved" />
+                                    <input data-swap-id="@Swap.Id" class="swap-confirm" type="checkbox" checked="@Swap.ReceiverConfirmReceived" />
                                 </td>
                             }
 
                             @switch (@Swap.Status)
                             {
                                 case "offered":
-                                    <td><a href="/Manage/SwapHistory/@Swap.Id" class="swap-offer">View Offer</a></td>
+                                    <td>
+                                        @if (Swap.SenderId == User.Identity.GetUserId())
+                                        {
+                                            <span>Waiting for @Swap.Receiver.UserName</span><br />
+                                            <a href="/Manage/SwapHistory/@Swap.Id" class="swap-offer">(View Offer)</a>
+                                        }
+                                        else
+                                        {
+                                            <a href="/Manage/SwapHistory/@Swap.Id" class="swap-offer">Review Offer</a>
+                                        }
+                                    </td>
                                     break;
                                 case "accepted":
                                     <td>
-                                        @if (Swap.SenderId == User.Identity.GetUserId()) {
+                                        @if (Swap.SenderId == User.Identity.GetUserId())
+                                        {
                                             <a href="/Manage/SwapHistory/@Swap.Id" class="swap-offer">Confirm Swap</a>
                                         }
-                                        else 
+                                        else
                                         {
                                             <span>Waiting for @Swap.Sender.UserName</span><br />
                                             <a href="/Manage/SwapHistory/@Swap.Id" class="swap-offer">(View Offer)</a>
@@ -124,9 +138,37 @@
                                     </td>
                                     break;
                                 case "confirmed":
-                                    <td><a href="/Manage/SwapHistory/@Swap.Id" class="swap-feedback">View Mailing Instructions</a></td>
+                                    var hasPlacedFeedback = Swap.Sender.Id == User.Identity.GetUserId() ? Swap.SenderFeedbackSent : Swap.ReceiverFeedbackSent;
+                                    var hasSentItems = Swap.Sender.Id == User.Identity.GetUserId() ? Swap.SenderConfirmSent : Swap.ReceiverConfirmSent;
+                                    var hasReceivedItems = Swap.Sender.Id == User.Identity.GetUserId() ? Swap.SenderConfirmReceived : Swap.ReceiverConfirmReceived;
+                                    if (hasPlacedFeedback)
+                                    {
+                                        <td>
+                                            <span>Complete</span><br />
+                                            <a href="/Manage/SwapHistory/@Swap.Id" class="swap-offer">(View Swap)</a>
+                                        </td>
+                                    }
+                                    else if (hasSentItems && hasReceivedItems)
+                                    {
+                                        <td><a href="/Manage/SwapHistory/@Swap.Id">Provide Feedback</a></td>
+                                    }
+                                    else if (hasSentItems)
+                                    {
+                                        <td>
+                                            <span>Waiting to receive items</span><br />
+                                            <a href="/Manage/SwapHistory/@Swap.Id">(View Swap)</a>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td><a href="/Manage/SwapHistory/@Swap.Id">View Mailing Instructions</a></td>
+                                    }
                                     break;
                                 default:
+                                    <td>
+                                        <span>Complete</span><br />
+                                        <a href="/Manage/SwapHistory/@Swap.Id" class="swap-offer">(View Swap)</a>
+                                    </td>
                                     break;
                             }
                         </tr>
@@ -134,6 +176,10 @@
                 </tbody>
             </table>
         </section>
+
+        <div class="swap-history-doodle">
+            <img src="~/Content/images/doodles/6.png" />
+        </div>
     </div>
 
     <div id="feedback-container" class="d-none">

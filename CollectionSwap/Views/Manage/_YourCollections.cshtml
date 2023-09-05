@@ -45,6 +45,7 @@
                 {
                     Id = userCollection.CollectionId,
                     Name = userCollection.Name,
+                    Description = userCollection.Description,
                     ItemList = userItemList.Select(index => deserializedItemListJSON[index]).ToList(),
                     SetSize = deserializedItemListJSON.Count,
                     Duplicates = duplicates

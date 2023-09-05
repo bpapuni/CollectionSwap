@@ -2,14 +2,14 @@
 @using CollectionSwap.Models
 @using Newtonsoft.Json;
 @{
-    ViewBag.Title = "Mange Your Account";
+    ViewBag.Title = "Manage Your Account";
 }
 
 <div class="manage-container">
     <div class="manage-container-nav">
         <ul class="">
             @*<li>@Html.ActionLink("Swapper", "Index", "Home")</li>*@
-            <li><button class="submit-button">@Html.ActionLink("Find Swaps", "FindSwaps", "Manage")</button></li>
+            <li>@Html.ActionLink("Find Swaps", "FindSwaps", "Manage", null, new { @class = "submit-button" })</li>
             <li>@Html.ActionLink("Swap History", "SwapHistory", "Manage")</li>
             <li>@Html.ActionLink("Your Collections", "YourCollections", "Manage")</li>
             @if (User.IsInRole("Admin"))
@@ -44,13 +44,13 @@
             partialName = "SwapHistory";
         }
 
-        //// Find the link index of the the currently active partial view
-        //var selectedNavLink = subNavLinks.parent().find(`[href='/Manage/${partialName}']`)
-        //var selectedIndex = subNavLinks.index(selectedNavLink) + 1;
+        // Find the link index of the the currently active partial view
+        var selectedNavLink = subNavLinks.parent().find(`[href='/Manage/${partialName}']`)
+        var selectedIndex = subNavLinks.index(selectedNavLink);
 
-        //// Animate the link highlight to the correct position
-        //navUl.removeClass("selected-1 selected-2 selected-3 selected-4");
-        //navUl.addClass(`selected-${selectedIndex}`);
+        // Animate the link highlight to the correct position
+        navUl.find("li").removeClass("selected");
+        navUl.find("li").eq(selectedIndex).addClass("selected");
 
         // Display the partial view
         LoadPartial(partialName, `/Manage/${partialName}`)
@@ -152,9 +152,9 @@
         // Handle loading the navigation partial views
         function LoadPartial(partialName, url) {
             selectedNavLink = subNavLinks.parent().find(`[href='/Manage/${partialName.split("/")[0]}']`)
-            selectedIndex = subNavLinks.index(selectedNavLink) + 1;
-            navUl.removeClass("selected-1 selected-2 selected-3 selected-4");
-            navUl.addClass(`selected-${selectedIndex}`);
+            selectedIndex = subNavLinks.index(selectedNavLink);
+            navUl.find("li").removeClass("selected");
+            navUl.find("li").eq(selectedIndex).addClass("selected");
 
             $.ajax({
                 url: `${url}Partial`,
@@ -180,9 +180,10 @@
 
                     if (result.RefreshTargets) {
                         $.each(result.RefreshTargets, function (key, target) {
-                            if (`#${$(partialView)[0].id}` === target) {
+                            if (`#${$(partialView).attr("id")}` === target || `.${$(partialView).attr("class")}` == target) {
                                 $(`${target}`).prop("outerHTML", $(partialView).prop("outerHTML"));
                             } else {
+                                console.log($(partialView));
                                 $(`${target}`).prop("outerHTML", $(partialView).find(target).prop("outerHTML"));
                             }
                             $(`${target}`).removeClass("d-none");
@@ -286,9 +287,19 @@
             }
         });
 
+        $(document).on("click", ".confirm-sent-items > a", function (event) {
+            event.preventDefault();
+            const formData = new FormData();
+            formData.append("id", $(this).data("swap-id"));
+            formData.append("type", "sent");
+
+            HandleFormSubmit("/Manage/ConfirmSentReceived", "POST", formData);
+        });
+
         $(document).on("change", ".swap-confirm", function () {
             if (this.checked) {
-                if ($(this).closest("td").prev().prev().find(".swap-capstone p").text() != "confirmed") {
+                var status = $(this).closest("tr").find(".swap-capstone p").text();
+                if (status != "confirmed" && status != "Items Sent") {
                     this.checked = false;
                 }
                 else {
@@ -299,8 +310,9 @@
                     else {
                         const formData = new FormData();
                         formData.append("id", $(this).data("swap-id"));
+                        formData.append("type", "received");
 
-                        HandleFormSubmit("/Manage/ConfirmReceived", "POST", formData);
+                        HandleFormSubmit("/Manage/ConfirmSentReceived", "POST", formData);
                     }
                 }
             } else {

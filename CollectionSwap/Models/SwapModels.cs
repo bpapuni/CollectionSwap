@@ -41,10 +41,12 @@ namespace CollectionSwap.Models
         public double ReceiverRating { get; set; }
         public int SwapSize { get; set; }
         public string Status { get; set; }
+        public bool HasSentFeedback { get; set; }
         [ForeignKey("SenderId")]
         public ApplicationUser Sender { get; set; }
         [ForeignKey("ReceiverId")]
         public ApplicationUser Receiver { get; set; }
+        public Address Address { get; set; }
     }
 
     public class SwapHistoryViewModel
@@ -79,9 +81,13 @@ namespace CollectionSwap.Models
         [Required]
         public bool ReceiverConfirmSent { get; set; }
         [Required]
-        public bool SenderConfirmReceieved { get; set; }
+        public bool SenderConfirmReceived { get; set; }
         [Required]
-        public bool ReceiverConfirmReceieved { get; set; }
+        public bool ReceiverConfirmReceived { get; set; }
+        [Required]
+        public bool SenderFeedbackSent { get; set; }
+        [Required]
+        public bool ReceiverFeedbackSent { get; set; }
         [Required]
         public DateTimeOffset StartDate { get; set; }
         public DateTimeOffset? EndDate { get; set; }
@@ -97,7 +103,6 @@ namespace CollectionSwap.Models
             public string SuccessType { get; set; }
             public string Error { get; set; }
         }
-
         public async Task<ProcessSwapResult> ProcessAsync(string userId, SwapRequestViewModel request, ApplicationDbContext db)
         {
             try
@@ -138,15 +143,14 @@ namespace CollectionSwap.Models
                         await db.SaveChangesAsync();
                         return new ProcessSwapResult { Succeeded = true, SuccessType = "confirmed" };
 
-                    //case "declined":
-                    //    ReleaseItems(this, db);
+                    case "cancel":
+                    case "decline":
 
-                    //    db.Entry(this).State = EntityState.Modified;
-                    //    db.Swaps.Remove(this);
-                    //    db.SaveChanges();
+                        ReleaseItems(this, db);
+                        db.Swaps.Remove(this);
+                        await db.SaveChangesAsync();
+                        return new ProcessSwapResult { Succeeded = true, SuccessType = request.Status };
 
-                    //    response = $"Swap declined.";
-                    //    break;
                     default:
                         break;
                 }
@@ -158,26 +162,49 @@ namespace CollectionSwap.Models
                 return new ProcessSwapResult { Succeeded = false, Error = ex.Message };
             }
         }
-        public void Confirm(string userType, ApplicationDbContext db)
+        public void Confirm(string type, string userId, ApplicationDbContext db)
         {
-            switch (userType)
+            var userType = String.Empty;
+            if (this.SenderId == userId) {
+                userType = "sender";
+
+                if (type == "sent")
+                {
+                    this.SenderConfirmSent = true;
+                }
+                else if (type == "received")
+                {
+                    this.SenderConfirmReceived = true;
+                }
+            } 
+            else if (this.ReceiverId == userId)
             {
-                case "sender":
-                    this.SenderConfirmReceieved = true;
+                userType = "receiver";
 
-                    break;
-
-                case "receiver":
-                    this.ReceiverConfirmReceieved = true;
-
-                    break;
-                default:
-                    break;
+                if (type == "sent")
+                {
+                    this.ReceiverConfirmSent = true;
+                }
+                else if (type == "received")
+                {
+                    this.ReceiverConfirmReceived = true;
+                }
+            }
+            
+            if (this.SenderConfirmSent &&
+                this.SenderConfirmReceived &&
+                this.ReceiverConfirmSent &&
+                this.ReceiverConfirmReceived)
+            {
+                this.Status = "completed";
             }
 
             db.Entry(this).State = EntityState.Modified;
             db.SaveChanges();
-            SwapItems(this, userType, db);
+            if (type == "received")
+            {
+                SwapItems(this, userType, db);
+            }
         }
         private void HoldItems(string itemListJSON, UserCollection userCollection, Swap swap, ApplicationDbContext db)
         {
@@ -274,21 +301,13 @@ namespace CollectionSwap.Models
     public class SwapRequestViewModel
     {
         public int SwapId { get; set;}
-        [Required]
         public string ReceiverId { get; set; }
-        [Required]
         public int CollectionId { get; set; }
-        [Required]
         public int SenderUserCollectionId { get; set; }
-        [Required]
         public int ReceiverUserCollectionId { get; set; }
-        [Required]
         public string SenderItems { get; set; }
-        [Required]
         public string RequestedItems { get; set; }
-        [Required]
         public DateTimeOffset StartDate { get; set; }
-        [Required]
         public string Status { get; set; }
     }
 

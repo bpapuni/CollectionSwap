@@ -1,17 +1,27 @@
 ﻿@model CollectionSwap.Models.Swap
 @using Microsoft.AspNet.Identity
 @{
-    var progIndex = Model.SenderId == User.Identity.GetUserId() && Model.SenderConfirmReceieved ? 3 :
-                    Model.ReceiverId == User.Identity.GetUserId() && Model.ReceiverConfirmReceieved ? 3 :
-                    Model.Status == "offered" ? 0 :
+    var otherUserSent = ((Model.SenderId == User.Identity.GetUserId() && Model.ReceiverConfirmSent) || (Model.ReceiverId == User.Identity.GetUserId() && Model.SenderConfirmSent));
+    var progIndex = Model.Status == "offered" ? 0 :
                     Model.Status == "accepted" ? 1 :
-                    Model.Status == "confirmed" ? 2 :
-                    3;
+                    Model.Status == "confirmed" ? otherUserSent ? 3 : 2 :
+                    Model.Status == "completed" ? 4 : 5;
 
-}
+    }
 <div class="swap-prog-container">
-    <div class="swap-capstone @("prog-index-" + progIndex)"><p>@Model.Status</p></div>
-    <div class="swap-prog-1 @if (progIndex >= 1) { <text>prog-index-1</text> } "></div>
-    <div class="swap-prog-2 @if (progIndex >= 2) { <text>prog-index-2</text> } "></div>
-    <div class="swap-prog-3 @if (progIndex >= 3) { <text>prog-index-3</text> } "></div>
+    <div class="swap-capstone @("prog-index-" + progIndex)">
+        @if (Model.Status == "confirmed" && otherUserSent)
+        {
+            <p>Items Sent</p>
+        }
+        else
+        {
+            <p>@Model.Status</p>
+        }
+    </div>
+    <div class="swap-prog-1 @(progIndex >= 1 ? "prog-index-1" : "disabled")"></div>
+    <div class="swap-prog-2 @(progIndex >= 2 ? "prog-index-2" : "disabled")"></div>
+    <div class="swap-prog-3 @(progIndex >= 3 ? "prog-index-3" : "disabled")"></div>
+    <div class="swap-prog-4 @(progIndex >= 4 ? "prog-index-4" : "disabled")"></div>
+    @*<div class="swap-prog-5 @if (progIndex >= 5) { <text>prog-index-5</text> } "></div>*@
 </div>

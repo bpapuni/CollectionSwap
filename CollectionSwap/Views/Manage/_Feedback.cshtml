@@ -11,6 +11,13 @@
     var positiveFeedback = Model.Feedback != null ? JsonConvert.DeserializeObject<List<string>>(Model.Feedback.PositiveFeedback) : null;
     var neutralFeedback = Model.Feedback != null ? JsonConvert.DeserializeObject<List<string>>(Model.Feedback.NeutralFeedback) : null;
     var negativeFeedback = Model.Feedback != null ? JsonConvert.DeserializeObject<List<string>>(Model.Feedback.NegativeFeedback) : null;
+
+
+    var hasPlacedFeedback = Model.Swap.Sender.Id == User.Identity.GetUserId() ? Model.Swap.SenderFeedbackSent : Model.Swap.ReceiverFeedbackSent;
+    var hasSentItems = Model.Swap.Sender.Id == User.Identity.GetUserId() ? Model.Swap.SenderConfirmSent : Model.Swap.ReceiverConfirmSent;
+    var hasReceivedItems = Model.Swap.Sender.Id == User.Identity.GetUserId() ? Model.Swap.SenderConfirmReceived : Model.Swap.ReceiverConfirmReceived;
+
+    var heading = hasSentItems && hasReceivedItems && hasPlacedFeedback ? "Completed Swap" : "Swap Feedback";
 }
 
 @if (!String.IsNullOrEmpty(statusMessage))
@@ -22,192 +29,200 @@
     <button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-angle-left"></i></button>
 
     <span class="header">
-        Swap Feedback
+        @heading
     </span>
 </div>
 
-<section class="row gap-2">
-    <div class="feedback-module">
-        <div>
-            <span class="feedback-header">How would you rate your swap with @(User.Identity.GetUserId() == Model.Swap.SenderId ? Model.Swap.Receiver.UserName : Model.Swap.Sender.UserName)?</span>
-            <div class="form-group">
-                <div class="star-rating-module">
-                    @for (int i = 0; i < 5; i++)
+<section class="column gap-1">
+    <div class="row gap-1">
+        <div class="feedback-module">
+            <div>
+                <span class="feedback-header">How would you rate your swap with @(User.Identity.GetUserId() == Model.Swap.SenderId ? Model.Swap.Receiver.UserName : Model.Swap.Sender.UserName)?</span>
+                <div class="form-group">
+                    <div class="star-rating-module">
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            if (Model.Feedback != null)
+                            {
+                                if (5 - i <= Model.Feedback.Rating)
+                                {
+                                    <button class="star-button selected"><i class="fa fa-star"></i></button>
+                                }
+                                else
+                                {
+                                    <button class="star-button disabled"><i class="fa fa-star"></i></button>
+                                }
+                            }
+                            else
+                            {
+                                <button class="star-button"><i class="fa fa-star"></i></button>
+                            }
+                        }
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Feedback.Rating)
+                </div>
+            </div>
+
+            <div class="feedback-form-container">
+                <span class="feedback-header">Select any reasons for this rating that apply</span>
+                <div class="feedback-tabs">
+                    <a href="javascript:void(0)" class="feedback-tab" onclick="OpenFeedbackTab(this);">Negative</a>
+                    <a href="javascript:void(0)" class="feedback-tab" onclick="OpenFeedbackTab(this);">Neutral</a>
+                    <a href="javascript:void(0)" class="feedback-tab active-tab" onclick="OpenFeedbackTab(this);">Positive</a>
+                </div>
+
+                @using (Html.BeginForm("PlaceFeedback", "Manage", FormMethod.Post, new { id = "feedback-form" }))
+                {
+                    <div class="feedback-options negative-feedback d-none">
+                        <ul class="feedback-list">
+                            @{
+
+                                List<string> negativeOptions = new List<string> {
+                                    "Swap took a long time to be accepted",
+                                    "Items took too long to arrive",
+                                    "Items packaged poorly",
+                                    "Items in poor condition",
+                                    "Would not swap with again" };
+
+                                if (negativeFeedback != null)
+                                {
+                                    foreach (string option in negativeOptions)
+                                    {
+                                        if (negativeFeedback.Contains(option))
+                                        {
+                                            <li class="selected">@option</li>
+                                        }
+                                        else
+                                        {
+
+                                            <li>@option</li>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (string option in negativeOptions)
+                                    {
+                                        <li>@option</li>
+                                    }
+                                }
+                            }
+                        </ul>
+                    </div>
+                    <div class="feedback-options neutral-feedback d-none">
+                        <ul class="feedback-list">
+                            @{
+
+                                List<string> neutralOptions = new List<string> {
+                                    "Swap accepted in reasonable time",
+                                    "Items arrived  in reasonable time",
+                                    "Items packaged okay",
+                                    "Items in acceptable condition" };
+
+                                if (neutralFeedback != null)
+                                {
+                                    foreach (string option in neutralOptions)
+                                    {
+                                        if (neutralFeedback.Contains(option))
+                                        {
+                                            <li class="selected">@option</li>
+                                        }
+                                        else
+                                        {
+
+                                            <li>@option</li>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (string option in neutralOptions)
+                                    {
+                                        <li>@option</li>
+                                    }
+                                }
+                            }
+                        </ul>
+                    </div>
+                    <div class="feedback-options positive-feedback">
+                        <ul class="feedback-list">
+                            @{
+
+                                List<string> positiveOptions = new List<string> {
+                                    "Swap accepted quickly",
+                                    "Items arrived quickly",
+                                    "Items packaged well",
+                                    "Items in good condition",
+                                    "Generous swapper",
+                                    "Would gladly swap with again" };
+
+                                if (positiveFeedback != null)
+                                {
+                                    foreach (string option in positiveOptions)
+                                    {
+                                        if (positiveFeedback.Contains(option))
+                                        {
+                                            <li class="selected">@option</li>
+                                        }
+                                        else
+                                        {
+
+                                            <li>@option</li>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (string option in positiveOptions)
+                                    {
+                                        <li>@option</li>
+                                    }
+                                }
+                            }
+                        </ul>
+                    </div>
+
+                    if (Model.Feedback != null)
                     {
-                        if (Model.Feedback != null && i < Model.Feedback.Rating)
-                        {
-                            <button class="star-button selected"><i class="fa fa-star"></i></button>
-                        }
-                        else
-                        {
-                            <button class="star-button"><i class="fa fa-star"></i></button>
-                        }
+                        @Html.HiddenFor(m => m.Feedback.Id)
+                    }
+                    @Html.Hidden("Feedback.SwapId", Model.Swap.Id)
+                    @Html.HiddenFor(m => m.Feedback.Rating)
+                    @Html.HiddenFor(m => m.Feedback.PositiveFeedback)
+                    @Html.HiddenFor(m => m.Feedback.NeutralFeedback)
+                    @Html.HiddenFor(m => m.Feedback.NegativeFeedback)
+                }
+            </div>
+        </div>
+        <div class="feedback-swap-preview">
+            <div class="feedback-swap-sent">
+                <span class="feedback-header">Sent</span>
+                <div class="feedback-swap-items">
+                    @for (int i = 0; i < Math.Min(3, deserializedSentItems.Count); i++)
+                    {
+                        <img class="feedback-item" src="~/Collections/@Model.Swap.CollectionId/@itemList[deserializedSentItems[i]]" />
                     }
                 </div>
-                @Html.ValidationMessageFor(m => m.Feedback.Rating)
             </div>
-        </div>
-
-        <div class="feedback-form-container">
-            <span class="feedback-header">Select any reasons for this rating that apply</span>
-            <div class="feedback-tabs">
-                <a href="javascript:void(0)" class="feedback-tab" onclick="OpenFeedbackTab(this);">Negative</a>
-                <a href="javascript:void(0)" class="feedback-tab" onclick="OpenFeedbackTab(this);">Neutral</a>
-                <a href="javascript:void(0)" class="feedback-tab active-tab" onclick="OpenFeedbackTab(this);">Positive</a>
-            </div>
-
-            @using (Html.BeginForm("PlaceFeedback", "Manage", FormMethod.Post, new { id = "feedback-form" }))
-            {
-                <div class="feedback-options negative-feedback d-none">
-                    <ul class="feedback-list">
-                        @{
-
-                            List<string> negativeOptions = new List<string> {
-                                "Swap took a long time to be accepted",
-                                "Items took too long to arrive",
-                                "Items packaged poorly",
-                                "Items in poor condition",
-                                "Would not swap with again" };
-
-                            if (negativeFeedback != null)
-                            {
-                                foreach (string option in negativeOptions)
-                                {
-                                    if (negativeFeedback.Contains(option))
-                                    {
-                                        <li class="selected">@option</li>
-                                    }
-                                    else
-                                    {
-
-                                        <li>@option</li>
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                foreach (string option in negativeOptions)
-                                {
-                                    <li>@option</li>
-                                }
-                            }
-                        }
-                    </ul>
+            @*<div class="feedback-swap-size">deserializedSentItems</div>*@
+            <div class="feedback-swap-receiver">
+                <span class="feedback-header">Received</span>
+                <div class="feedback-swap-items">
+                    @for (int i = 0; i < Math.Min(3, deserializedReceivedItems.Count); i++)
+                    {
+                        <img class="feedback-item" src="~/Collections/@Model.Swap.CollectionId/@itemList[deserializedReceivedItems[i]]" />
+                    }
                 </div>
-                <div class="feedback-options neutral-feedback d-none">
-                    <ul class="feedback-list">
-                        @{
-
-                            List<string> neutralOptions = new List<string> {
-                                "Swap accepted in reasonable time",
-                                "Items arrived  in reasonable time",
-                                "Items packaged okay",
-                                "Items in acceptable condition" };
-
-                            if (neutralFeedback != null)
-                            {
-                                foreach (string option in neutralOptions)
-                                {
-                                    if (neutralFeedback.Contains(option))
-                                    {
-                                        <li class="selected">@option</li>
-                                    }
-                                    else
-                                    {
-
-                                        <li>@option</li>
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                foreach (string option in neutralOptions)
-                                {
-                                    <li>@option</li>
-                                }
-                            }
-                        }
-                    </ul>
-                </div>
-                <div class="feedback-options positive-feedback">
-                    <ul class="feedback-list">
-                        @{
-
-                            List<string> positiveOptions = new List<string> {
-                                "Swap accepted quickly",
-                                "Items arrived quickly",
-                                "Items packaged well",
-                                "Items in good condition",
-                                "Generous swapper",
-                                "Would gladly swap with again" };
-
-                            if (positiveFeedback != null)
-                            {
-                                foreach (string option in positiveOptions)
-                                {
-                                    if (positiveFeedback.Contains(option))
-                                    {
-                                        <li class="selected">@option</li>
-                                    }
-                                    else
-                                    {
-
-                                        <li>@option</li>
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                foreach (string option in positiveOptions)
-                                {
-                                    <li>@option</li>
-                                }
-                            }
-                        }
-                    </ul>
-                </div>
-
-                if (Model.Feedback != null)
-                {
-                    @Html.HiddenFor(m => m.Feedback.Id)
-                }
-                @Html.Hidden("Feedback.SwapId", Model.Swap.Id)
-                @Html.HiddenFor(m => m.Feedback.Rating)
-                @Html.HiddenFor(m => m.Feedback.PositiveFeedback)
-                @Html.HiddenFor(m => m.Feedback.NeutralFeedback)
-                @Html.HiddenFor(m => m.Feedback.NegativeFeedback)
-                if (Model.Feedback != null)
-                {
-                    <button class="submit-button" disabled>Feedback Submitted</button>
-                }
-                else
-                {
-                    <button class="submit-button" type="submit">Submit Feedback</button>
-                }
-            }
-        </div>
-
-
-    </div>
-    <div class="feedback-swap-preview">
-        <div class="feedback-swap-sent">
-            <span class="feedback-header">Sent</span>
-            <div class="feedback-swap-items">
-                @for (int i = 0; i < Math.Min(3, deserializedSentItems.Count); i++)
-                {
-                    <img class="feedback-item" src="~/Collections/@Model.Swap.CollectionId/@itemList[deserializedSentItems[i]]" />
-                }
-            </div>
-        </div>
-        @*<div class="feedback-swap-size">deserializedSentItems</div>*@
-        <div class="feedback-swap-receiver">
-            <span class="feedback-header">Received</span>
-            <div class="feedback-swap-items">
-                @for (int i = 0; i < Math.Min(3, deserializedReceivedItems.Count); i++)
-                {
-                    <img class="feedback-item" src="~/Collections/@Model.Swap.CollectionId/@itemList[deserializedReceivedItems[i]]" />
-                }
             </div>
         </div>
     </div>
+    
+    @if (Model.Feedback != null)
+    {
+        <button class="submit-button" disabled>Feedback Submitted</button>
+    }
+    else
+    {
+        <button class="submit-button" onclick="$('#feedback-form').trigger('submit')">Submit Feedback</button>
+    }
 </section>

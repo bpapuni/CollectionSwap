@@ -23,10 +23,9 @@
         <div class="new-collection-column">
             @*<div class="new-collection-center">@Model.Name[0]</div>*@
             <span><strong>@Model.Name</strong></span>
-            <span class="description">Short description goes here</span>
+            <span class="description">@(Model.Description ?? "")</span>
         </div>
 
-        @* If SetSize is 0 we're creating a new user collection, so display Add New button'*@
         if (Model.Type == "CreateUserCollection")
         {
             <div class="new-collection-row">

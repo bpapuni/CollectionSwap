@@ -68,12 +68,6 @@ namespace CollectionSwap.Controllers
         public async Task<ActionResult> ProcessSwap(SwapRequestViewModel request)
         {
             var userId = User.Identity.GetUserId();
-            if (!ModelState.IsValid)
-            {
-                // Fail
-                return Json(new { reloadPage = false });
-            }
-
             var swap = db.Swaps.Find(request.SwapId) == null ? new Swap() : db.Swaps.Find(request.SwapId);
 
             var result = await swap.ProcessAsync(userId, request, db);
@@ -92,6 +86,12 @@ namespace CollectionSwap.Controllers
                     return RedirectToAction("SwapHistoryPartial", "Manage");
                 case "confirmed":
                     TempData["Status"] = "You've confirmed this swap";
+                    return RedirectToAction("SwapHistoryPartial", "Manage");
+                case "cancel":
+                    TempData["Status"] = "You've canceled this swap";
+                    return RedirectToAction("SwapHistoryPartial", "Manage");
+                case "decline":
+                    TempData["Status"] = "You've declined this swap";
                     return RedirectToAction("SwapHistoryPartial", "Manage");
                 default:
                     return Json(new { reloadPage = false });

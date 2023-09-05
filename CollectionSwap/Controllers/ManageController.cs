@@ -623,11 +623,19 @@ namespace CollectionSwap.Controllers
                 switch (swap.Status)
                 {
                     case "offered":
-                        return Offer(id.Value);
                     case "accepted":
-                        return Offer(id.Value);
                     case "confirmed":
-                        return Feedback(id.Value);
+                    case "completed":
+                        var hasSentItems = swap.Sender.Id == userId ? swap.SenderConfirmSent : swap.ReceiverConfirmSent;
+                        var hasReceivedItems = swap.Sender.Id == userId ? swap.SenderConfirmReceived : swap.ReceiverConfirmReceived;
+                        if (hasSentItems && hasReceivedItems)
+                        {
+                            return Feedback(id.Value);
+                        }
+                        else
+                        {
+                            return Offer(id.Value);
+                        }
                     default:
                         break;
                 }
@@ -635,42 +643,29 @@ namespace CollectionSwap.Controllers
 
             ViewBag.Status = TempData["Status"];
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
-
-            if (ViewBag.Status != null)
-            {
-                return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#feedback-container", third = "#offer-container" }, ScrollTarget = "#history-container" }, JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container" } }, JsonRequestBehavior.AllowGet);
-            }
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" } }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
         [Authorize]
-        public ActionResult ConfirmReceived(int id)
+        public ActionResult ConfirmSentReceived(int id, string type)
         {
             var userId = User.Identity.GetUserId();
             var swap = db.Swaps.Find(id);
-            if (userId == swap.ReceiverId)
-            {
-                swap.Confirm("receiver", db);
-            }
-            else
-            {
-                swap.Confirm("sender", db);
-            }
+            swap.Confirm(type, userId, db);
 
             var shModel = new SwapHistoryViewModel
             {
                 Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
                                 .Include(s => s.Collection)
                                 .Include(s => s.Sender)
-                                .Include(s => s.Receiver).ToList()
+                                .Include(s => s.Receiver).ToList(),
+                Feedback = null,
+                Offer = null,
             };
 
             var partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container" } });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" } });
         }
 
         //
@@ -743,7 +738,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.Status = "Thank you for your feedback";
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#feedback-container" }, ScrollTarget = "#feedback-container" });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" } });
         }
 
         //
@@ -777,7 +772,9 @@ namespace CollectionSwap.Controllers
                 SenderItemIds = JsonConvert.DeserializeObject<List<int>>(offer.SenderItemIdsJSON),
                 ReceiverItemIds = JsonConvert.DeserializeObject<List<int>>(offer.ReceiverItemIdsJSON),
                 SwapSize = JsonConvert.DeserializeObject<List<int>>(offer.ReceiverItemIdsJSON).Count(),
-                Status = offer.Status
+                Status = offer.Status,
+                HasSentFeedback = offer.Sender.Id == userId ? offer.SenderConfirmSent : offer.ReceiverConfirmSent,
+                Address = db.Addresses.Where(a => a.UserId != userId && (a.UserId == offer.SenderId || a.UserId == offer.ReceiverId)).FirstOrDefault()
             };
 
             var shModel = new SwapHistoryViewModel
@@ -788,6 +785,34 @@ namespace CollectionSwap.Controllers
 
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#offer-container" }, ScrollTarget = "#offer-container" }, JsonRequestBehavior.AllowGet);
+        }
+
+        //
+        // GET: /Manage/SwapHistory
+
+        [Authorize]
+        public ActionResult Instructions(int id)
+        {
+            var partial = String.Empty;
+            var userId = User.Identity.GetUserId();
+
+            var fbModel = new FeedbackViewModel
+            {
+                Swap = db.Swaps.Find(id),
+                Feedback = db.Feedbacks.Where(fb => fb.SenderId == userId && fb.SwapId == id).FirstOrDefault()
+            };
+
+            var shModel = new SwapHistoryViewModel
+            {
+                Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
+                                .Include(s => s.Collection)
+                                .Include(s => s.Sender)
+                                .Include(s => s.Receiver).ToList(),
+                Feedback = fbModel
+            };
+
+            partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#feedback-container" }, ScrollTarget = "#feedback-container" }, JsonRequestBehavior.AllowGet);
         }
 
 

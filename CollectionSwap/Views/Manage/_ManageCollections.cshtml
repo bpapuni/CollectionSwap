@@ -26,6 +26,7 @@
                         {
                             Id = collection.Id,
                             Name = collection.Name,
+                            Description = collection.Description,
                             ItemList = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON),
                             Type = "DisplayCollection"
                         };

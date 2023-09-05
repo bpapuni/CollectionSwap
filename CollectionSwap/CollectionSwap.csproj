@@ -193,6 +193,18 @@
     <Compile Include="Migrations\202308270308470_RemovedSwapFeedbackRelationship.designer.cs">
       <DependentUpon>202308270308470_RemovedSwapFeedbackRelationship.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202309050350380_SwapsTableTrackFeedbackSent.cs" />
+    <Compile Include="Migrations\202309050350380_SwapsTableTrackFeedbackSent.designer.cs">
+      <DependentUpon>202309050350380_SwapsTableTrackFeedbackSent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202309051914241_FixedSwapReceivedTypo.cs" />
+    <Compile Include="Migrations\202309051914241_FixedSwapReceivedTypo.designer.cs">
+      <DependentUpon>202309051914241_FixedSwapReceivedTypo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202309052032476_AddDescriptionToCollections.cs" />
+    <Compile Include="Migrations\202309052032476_AddDescriptionToCollections.designer.cs">
+      <DependentUpon>202309052032476_AddDescriptionToCollections.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CollectionModels.cs" />
@@ -455,6 +467,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202308270308470_RemovedSwapFeedbackRelationship.resx">
       <DependentUpon>202308270308470_RemovedSwapFeedbackRelationship.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202309050350380_SwapsTableTrackFeedbackSent.resx">
+      <DependentUpon>202309050350380_SwapsTableTrackFeedbackSent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202309051914241_FixedSwapReceivedTypo.resx">
+      <DependentUpon>202309051914241_FixedSwapReceivedTypo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202309052032476_AddDescriptionToCollections.resx">
+      <DependentUpon>202309052032476_AddDescriptionToCollections.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

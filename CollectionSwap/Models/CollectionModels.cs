@@ -42,6 +42,7 @@ namespace CollectionSwap.Models
         public int Id { get; set; }
         [Required(ErrorMessage = "Please enter a name for this collection.")]
         public string Name { get; set; }
+        public string Description { get; set; }
         public string ItemListJSON { get; set; }
         public static void Create(CreateCollectionModel collection, ApplicationDbContext db)
         {
@@ -203,6 +204,7 @@ namespace CollectionSwap.Models
         public int Id { get; set; }
         [Required(ErrorMessage = "Please enter a name for this collection.")]
         public string Name { get; set; }
+        public string Description { get; set; }
         [Required]
         public string UserId { get; set; }
         [Required]
@@ -353,6 +355,7 @@ namespace CollectionSwap.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Description { get; set; }
         public List<string> ItemList { get; set; }
         public int SetSize { get; set; }
         public int Duplicates { get; set; }

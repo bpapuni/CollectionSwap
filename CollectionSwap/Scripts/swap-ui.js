@@ -9,6 +9,7 @@
 
     if ($(e).hasClass("selected")) {
         const placeholderItem = swapContainer.find(".your-selection").find(`[src='${selectedItem.attr("src")}']`).parent();
+        console.log(selectedItem.attr("src"));
         ClearItem(placeholderItem);
     }
     else if (selectedCount < swapSize - 1)
@@ -40,6 +41,7 @@ function ClearItem(e) {
     }
 
     $(e).addClass("placeholder");
+    $(e).find("img").attr("src", "");
     selectedItem.removeClass("selected");
 
     if (selectedCount == 1) {
@@ -88,19 +90,10 @@ function acceptSwap(e, swapId) {
     const senderItems = swapContainer.find(".swap-item.selected > img").map(function () {
         return +$(this).data("item-id");
     }).get();
-    const requestedItems = swapContainer.find(".receiver-items .swap-item > img").map(function () {
-        return +$(this).data("item-id");
-    }).get();
 
     var swapRequestData = {
         SwapId: swapId,
-        ReceiverId: swapContainer.data("receiver-id"),
-        CollectionId: swapContainer.data("collection-id"),
-        SenderUserCollectionId: swapContainer.data("sender-collection-id"),
-        ReceiverUserCollectionId: swapContainer.data("receiver-collection-id"),
         SenderItems: JSON.stringify(senderItems),
-        RequestedItems: JSON.stringify(requestedItems),
-        //StartDate: new Date().toISOString(),
         Status: "accepted"
     }
 
@@ -114,22 +107,13 @@ function acceptSwap(e, swapId) {
 
 function confirmSwap(e, swapId) {
     const swapContainer = $(e).parent().prev(".swap-container");
-    const senderItems = swapContainer.find(".swap-items").eq(1).find(".swap-item > img").map(function () {
-        return +$(this).data("item-id");
-    }).get();
     const requestedItems = swapContainer.find(".swap-items").eq(0).find(".swap-item > img").map(function () {
         return +$(this).data("item-id");
     }).get();
 
     var swapRequestData = {
         SwapId: swapId,
-        ReceiverId: swapContainer.data("receiver-id"),
-        CollectionId: swapContainer.data("collection-id"),
-        SenderUserCollectionId: swapContainer.data("sender-collection-id"),
-        ReceiverUserCollectionId: swapContainer.data("receiver-collection-id"),
-        SenderItems: JSON.stringify(senderItems),
         RequestedItems: JSON.stringify(requestedItems),
-        ////StartDate: new Date().toISOString(),
         Status: "confirmed"
     }
 
@@ -139,69 +123,20 @@ function confirmSwap(e, swapId) {
     });
 
     HandleFormSubmit("/Swap/ProcessSwap", "POST", formData);
-    //const swapButton = $(e);
-    //const acceptedSwap = serializedAcceptedSwaps.find(swap => swap.Id === id);
-
-    //var swapData = {
-    //    Id: acceptedSwap.Id,
-    //    SenderId: acceptedSwap.Sender.Id,
-    //    ReceiverId: acceptedSwap.Receiver.Id,
-    //    CollectionId: acceptedSwap.CollectionId,
-    //    SenderUserCollectionId: acceptedSwap.SenderUserCollectionId,
-    //    ReceiverUserCollectionId: acceptedSwap.ReceiverUserCollectionId,
-    //    SenderItemIdsJSON: acceptedSwap.SenderItemIdsJSON,
-    //    ReceiverItemIdsJSON: acceptedSwap.ReceiverItemIdsJSON,
-    //    StartDate: acceptedSwap.StartDate,
-    //    EndDate: new Date().toISOString(),
-    //    Status: "confirmed"
-    //}
-
-    //$.ajax({
-    //    url: "/Swap/ProcessSwap",
-    //    type: "POST",
-    //    data: swapData,
-    //    dataType: "json",
-    //    success: function (response) {
-    //        if (response.reloadPage) {
-    //            location.reload();
-    //        }
-    //    },
-    //    error: function (xhr, status, error) {
-    //    }
-    //})
 }
 
-function declineSwap(e, swapType, id) {
-    const swapButton = $(e);
-    const declinedSwap = swapType == "offered" ? serializedOfferedSwaps.find(swap => swap.Id === id) : serializedAcceptedSwaps.find(swap => swap.Id === id);
-
-    var swapData = {
-        Id: declinedSwap.Id,
-        SenderId: declinedSwap.Sender.Id,
-        ReceiverId: declinedSwap.Receiver.Id,
-        CollectionId: declinedSwap.CollectionId,
-        SenderUserCollectionId: declinedSwap.SenderUserCollectionId,
-        ReceiverUserCollectionId: declinedSwap.ReceiverUserCollectionId,
-        SenderItemIdsJSON: declinedSwap.SenderItemIdsJSON,
-        ReceiverItemIdsJSON: declinedSwap.ReceiverItemIdsJSON,
-        StartDate: declinedSwap.StartDate,
-        EndDate: null,
-        Status: "declined"
+function declineSwap(e, swapId) {
+    var swapRequestData = {
+        SwapId: swapId,
+        Status: $(e).text().split(" Swap")[0].toLowerCase() // cancel or decline
     }
 
-    $.ajax({
-        url: "/Swap/ProcessSwap",
-        type: "POST",
-        data: swapData,
-        dataType: "json",
-        success: function (response) {
-            if (response.reloadPage) {
-                location.reload();
-            }
-        },
-        error: function (xhr, status, error) {
-        }
-    })
+    const formData = new FormData();
+    Object.entries(swapRequestData).forEach(([key, value]) => {
+        formData.append(key, value);
+    });
+
+    HandleFormSubmit("/Swap/ProcessSwap", "POST", formData);
 }
 
 function toggleYourItems(e) {
