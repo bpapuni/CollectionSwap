@@ -421,7 +421,6 @@ namespace CollectionSwap.Controllers
             var partial = String.Empty;
             if (!ModelState.IsValid)
             {
-                ViewBag.ShouldDisplay = true;
                 partial = Helper.RenderViewToString(ControllerContext, "_EditCollection", editCollection, true);
                 return Json(new { PartialView = partial, RefreshTargets = new { first = "#edit-collection-container" } });
 
