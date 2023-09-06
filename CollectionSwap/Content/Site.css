@@ -1757,6 +1757,18 @@ input[type=number] {
     /*border: 1px solid black;*/
 }
 
+.swap-container:nth-of-type(4n-2) .swap-container-header {
+    background: var(--brand-green);
+}
+
+.swap-container:nth-of-type(4n-1) .swap-container-header {
+    background: var(--brand-orange);
+}
+
+.swap-container:nth-of-type(4n) .swap-container-header {
+    background: var(--brand-red);
+}
+
     .swap-container-header .header {
         font-family: 'Montserrat Alternates';
         font-weight: 600;
@@ -2078,6 +2090,7 @@ input[type=number] {
         content: "";
         position: absolute;
         right: 2rem;
+        top: -2rem;
         width: 14rem;
         height: 27rem;
         background: url('images/doodles/13.png') no-repeat;

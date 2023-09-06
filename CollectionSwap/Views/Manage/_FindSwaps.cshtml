@@ -14,18 +14,8 @@
         <div class="status-message">@statusMessage</div>
     }
     <span class="header">Find Swaps</span>
-    <br />
     <section class="column">
-        @*@if (Model.AcceptedSwaps != null && Model.AcceptedSwaps.Any())
-        {
-            <a href="/Manage/Offers"><h3>You have @(Model.AcceptedSwaps.Count == 1 ? "1 accepted offer" : Model.AcceptedSwaps.Count + " accepted offers")</h3></a>
-
-        }
-        @if (Model.OfferedSwaps != null && Model.OfferedSwaps.Any())
-        {
-            <a href="/Manage/Offers"><h3>You have @(Model.OfferedSwaps.Count == 1 ? "1 swap offer" : Model.OfferedSwaps.Count + " swap offers")</h3></a>
-        }*@
-        <h2>Select a collection to find swaps for:</h2>
+        <h3>Select a collection to find swaps for:</h3>
         <br />
         <div class="row gap-2">
             @foreach (UserCollection userCollection in Model.UserCollections)

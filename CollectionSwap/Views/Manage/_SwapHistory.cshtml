@@ -18,7 +18,7 @@
                     <tr>
                         <th>Collection Type</th>
                         <th>User</th>
-                        <th>Status</th>
+                        <th onclick="SortByStatus()">Status <i class="fa-solid fa-sort"></i></th>
                         <th>Items Sent</th>
                         <th>Items Received</th>
                         <th>Next Action</th>
@@ -93,19 +93,19 @@
                             @if (Swap.SenderId == User.Identity.GetUserId())
                             {
                                 <td>
-                                    <input data-swap-id="@Swap.Id" class="swap-confirm" type="checkbox" checked="@Swap.SenderConfirmSent" />
+                                    <input data-swap-id="@Swap.Id" data-type="sent" class="swap-confirm" type="checkbox" checked="@Swap.SenderConfirmSent" />
                                 </td>
                                 <td>
-                                    <input data-swap-id="@Swap.Id" class="swap-confirm" type="checkbox" checked="@Swap.SenderConfirmReceived" />
+                                    <input data-swap-id="@Swap.Id" data-type="received" class="swap-confirm" type="checkbox" checked="@Swap.SenderConfirmReceived" />
                                 </td>
                             }
                             else
                             {
                                 <td>
-                                    <input data-swap-id="@Swap.Id" class="swap-confirm" type="checkbox" checked="@Swap.ReceiverConfirmSent" />
+                                    <input data-swap-id="@Swap.Id" data-type="sent" class="swap-confirm" type="checkbox" checked="@Swap.ReceiverConfirmSent" />
                                 </td>
                                 <td>
-                                    <input data-swap-id="@Swap.Id" class="swap-confirm" type="checkbox" checked="@Swap.ReceiverConfirmReceived" />
+                                    <input data-swap-id="@Swap.Id" data-type="received" class="swap-confirm" type="checkbox" checked="@Swap.ReceiverConfirmReceived" />
                                 </td>
                             }
 

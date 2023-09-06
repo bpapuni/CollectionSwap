@@ -9,16 +9,17 @@
     var itemList = Model.ItemList;
     var senderCollectionId = Model.SenderCollectionId;
     var receiverCollectionId = Model.ReceiverCollectionId;
+    var selectionPool = Model.SenderItemIds;
+    var requestedItems = Model.ReceiverItemIds;
     var swapSize = Model.SwapSize;
     var swapStatus = Model.Status;
+    var rating = User.Identity.GetUserId() == Sender.Id ? Model.ReceiverRating : Model.SenderRating;
     var hasSentItems = Model.HasSentFeedback;
+
     var userId = User.Identity.GetUserId() == Sender.Id ? Receiver.Id : Sender.Id;
     var userName = User.Identity.GetUserId() == Sender.Id ? Receiver.UserName : Sender.UserName;
     var primaryHeader = User.Identity.GetUserId() == Sender.Id ? "You've requested the following items" : $"{@userName} has requested the following items";
     //var primaryItems = User.Identity.GetUserId() == Sender.Id ? Model.SenderItemIds : Model.ReceiverItemIds;
-    var requestedItems = Model.ReceiverItemIds;
-    var selectionPool = Model.SenderItemIds;
-    var rating = User.Identity.GetUserId() == Sender.Id ? Model.ReceiverRating : Model.SenderRating;
     var heading = swapStatus == "offered" ? "Offered Swap" : swapStatus == "confirmed" ? "Confirmed Swap" : User.Identity.GetUserId() == Receiver.Id ? "Offered Swap" : "Confirm Swap";
 }
 

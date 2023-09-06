@@ -310,7 +310,7 @@
                     else {
                         const formData = new FormData();
                         formData.append("id", $(this).data("swap-id"));
-                        formData.append("type", "received");
+                        formData.append("type", $(this).data("type"));
 
                         HandleFormSubmit("/Manage/ConfirmSentReceived", "POST", formData);
                     }
@@ -336,36 +336,9 @@
             feedbackOptions.eq(index).removeClass("d-none");
         }
 
-                //function ColourButtons() {
-                //    const buttons = $('input[type="submit"]');
+        function SortByStatus() {
 
-                //    buttons.each(function () {
-                //        const baseHue = Math.random() * 360;
-                //        const vibrantColor = chroma.hsl(baseHue, 30, 74); // Adjust saturation and lightness as needed
-                //        const buttonColor = vibrantColor.hex(); // Convert Chroma color to HEX format
-                //        const textColor = chroma.contrast(buttonColor, 'white') > 4.5 ? 'white' : 'black';
-                //        $(this).css('background-color', buttonColor);
-                //        $(this).css('color', textColor);
-                //    });
-                //}
-
-                    //const paintBlotches = document.querySelector('.manage-container-main');
-                    //const numBlotches = 30; // Adjust the number of blotches as needed
-
-                    //for (let i = 0; i < numBlotches; i++) {
-                    //    const blotch = document.createElement('div');
-                    //    const baseHue = Math.random() * 360;
-                    //    const vibrantColor = chroma.hsl(baseHue, 30, 74); // Adjust saturation and lightness as needed
-
-                    //    blotch.classList.add('paint-blotch');
-                    //    blotch.style.left = `${Math.random() * 100}%`;
-                    //    blotch.style.top = `${Math.random() * 100}%`;
-                    //    blotch.style.scale = `${Math.random() * 100}%`;
-                    //    blotch.style.backgroundColor = vibrantColor;
-                    //    //blotch.style.borderRadius = `${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% / ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100}% ${Math.random() * 100 }%`
-                    //    //blotch.style.animation = `animateBlotches ${(Math.random() * 3 + 2).toFixed(1)}s ${(Math.random() * 3).toFixed(1)}s infinite alternate`;
-                    //    paintBlotches.appendChild(blotch);
-                    //}
+        }
     </script>
     @Scripts.Render("~/bundles/jqueryval")
 }
