@@ -19,6 +19,7 @@ namespace CollectionSwap.Models
         public List<ApplicationUser> Users { get; set; }
         public List<Collection> Collections { get; set; }
         public List<UserCollection> UserCollections { get; set; }
+        public List<Swap> MatchingSwaps { get; set; }
         public List<Swap> OfferedSwaps { get; set; }
         public List<Swap> AcceptedSwaps { get; set; }
         public List<Swap> ConfirmedSwaps { get; set; }
@@ -27,26 +28,10 @@ namespace CollectionSwap.Models
 
     public class SwapViewModel
     {
-        public int Id { get; set; }
-        public string SenderId { get; set; }
-        public string ReceiverId { get; set; }
-        public int CollectionId { get; set; }
-        public List<string> ItemList { get; set; }
-        public int SenderCollectionId { get; set; }
-        public int ReceiverCollectionId { get; set; }
-        public List<int> SenderItemIds { get; set; }
-        public List<int> ReceiverItemIds { get; set; }
-        public List<int> RequestedItems { get; set; }
-        public double SenderRating { get; set; }
-        public double ReceiverRating { get; set; }
-        public int SwapSize { get; set; }
-        public string Status { get; set; }
-        public bool HasSentFeedback { get; set; }
-        [ForeignKey("SenderId")]
-        public ApplicationUser Sender { get; set; }
-        [ForeignKey("ReceiverId")]
-        public ApplicationUser Receiver { get; set; }
+        public Swap Swap { get; set; }
         public Address Address { get; set; }
+        public double Rating { get; set; }
+        public string DuplicateSwapItems { get; set; }
     }
 
     public class SwapHistoryViewModel
@@ -63,40 +48,45 @@ namespace CollectionSwap.Models
         [Required]
         public int CollectionId { get; set; }
         [Required]
-        public int SenderUserCollectionId { get; set; }
-        [Required]
-        public int ReceiverUserCollectionId { get; set; }
-        [Required]
         public string SenderId { get; set; }
         [Required]
-        public string ReceiverId { get; set; }
+        public int SenderCollectionId { get; set; }
         [Required]
-        public string SenderItemIdsJSON { get; set; }
-        [Required]
-        public string ReceiverItemIdsJSON { get; set; }
-        [Required]
-        public string Status { get; set; }
+        public string SenderRequestedItems { get; set; }
         [Required]
         public bool SenderConfirmSent { get; set; }
         [Required]
-        public bool ReceiverConfirmSent { get; set; }
-        [Required]
         public bool SenderConfirmReceived { get; set; }
-        [Required]
-        public bool ReceiverConfirmReceived { get; set; }
         [Required]
         public bool SenderFeedbackSent { get; set; }
         [Required]
+        public string ReceiverId { get; set; }
+        [Required]
+        public int ReceiverCollectionId { get; set; }
+        [Required]
+        public string ReceiverRequestedItems { get; set; }
+        [Required]
+        public bool ReceiverConfirmSent { get; set; }
+        [Required]
+        public bool ReceiverConfirmReceived { get; set; }
+        [Required]
         public bool ReceiverFeedbackSent { get; set; }
+        public int SwapSize { get; set; }
+        [Required]
+        public string Status { get; set; }
         [Required]
         public DateTimeOffset StartDate { get; set; }
         public DateTimeOffset? EndDate { get; set; }
-        [ForeignKey("SenderId")]
-        public ApplicationUser Sender { get; set; }
-        [ForeignKey("ReceiverId")]
-        public ApplicationUser Receiver { get; set; }
         [ForeignKey("CollectionId")]
         public Collection Collection { get; set; }
+        [ForeignKey("SenderId")]
+        public ApplicationUser Sender { get; set; }
+        [ForeignKey("SenderCollectionId")]
+        public UserCollection SenderCollection { get; set; }
+        [ForeignKey("ReceiverId")]
+        public ApplicationUser Receiver { get; set; }
+        [ForeignKey("ReceiverCollectionId")]
+        public UserCollection ReceiverCollection { get; set; }
         public class ProcessSwapResult
         {
             public bool Succeeded { get; set; }
@@ -112,12 +102,13 @@ namespace CollectionSwap.Models
                 {
                     case "offered":
                         this.CollectionId = request.CollectionId;
-                        this.SenderUserCollectionId = request.SenderUserCollectionId;
-                        this.ReceiverUserCollectionId = request.ReceiverUserCollectionId;
+                        this.SenderCollectionId = request.SenderUserCollectionId;
+                        this.ReceiverCollectionId = request.ReceiverUserCollectionId;
                         this.SenderId = userId;
                         this.ReceiverId = request.ReceiverId;
-                        this.SenderItemIdsJSON = request.SenderItems;
-                        this.ReceiverItemIdsJSON = request.RequestedItems;
+                        this.SenderRequestedItems = request.SenderItems;
+                        this.ReceiverRequestedItems = request.RequestedItems;
+                        this.SwapSize = request.SwapSize;
                         this.Status = request.Status;
                         this.StartDate = request.StartDate;
 
@@ -126,20 +117,20 @@ namespace CollectionSwap.Models
                         return new ProcessSwapResult { Succeeded = true, SuccessType = "offered" };
 
                     case "accepted":
-                        this.SenderItemIdsJSON = request.SenderItems;
+                        this.SenderRequestedItems = request.SenderItems;
                         this.Status = request.Status;
                         db.Entry(this).State = EntityState.Modified;
 
-                        HoldItems(this.ReceiverItemIdsJSON, db.UserCollections.Find(this.ReceiverUserCollectionId), this, db);
+                        HoldItems(this.ReceiverRequestedItems, db.UserCollections.Find(this.ReceiverCollectionId), this, db);
                         await db.SaveChangesAsync();
                         return new ProcessSwapResult { Succeeded = true, SuccessType = "accepted" };
 
                     case "confirmed":
-                        this.ReceiverItemIdsJSON = request.RequestedItems;
+                        this.ReceiverRequestedItems = request.RequestedItems;
                         this.Status = request.Status;
                         db.Entry(this).State = EntityState.Modified;
 
-                        HoldItems(this.SenderItemIdsJSON, db.UserCollections.Find(this.SenderUserCollectionId), this, db);
+                        HoldItems(this.SenderRequestedItems, db.UserCollections.Find(this.SenderCollectionId), this, db);
                         await db.SaveChangesAsync();
                         return new ProcessSwapResult { Succeeded = true, SuccessType = "confirmed" };
 
@@ -165,7 +156,8 @@ namespace CollectionSwap.Models
         public void Confirm(string type, string userId, ApplicationDbContext db)
         {
             var userType = String.Empty;
-            if (this.SenderId == userId) {
+            if (this.SenderId == userId)
+            {
                 userType = "sender";
 
                 if (type == "sent")
@@ -176,7 +168,7 @@ namespace CollectionSwap.Models
                 {
                     this.SenderConfirmReceived = true;
                 }
-            } 
+            }
             else if (this.ReceiverId == userId)
             {
                 userType = "receiver";
@@ -190,7 +182,7 @@ namespace CollectionSwap.Models
                     this.ReceiverConfirmReceived = true;
                 }
             }
-            
+
             if (this.SenderConfirmSent &&
                 this.SenderConfirmReceived &&
                 this.ReceiverConfirmSent &&
@@ -265,7 +257,7 @@ namespace CollectionSwap.Models
                                                                             .FirstOrDefault();
 
                     // Define the User Collection that will be getting updated as the senders
-                    userCollection = db.UserCollections.Find(swap.SenderUserCollectionId);
+                    userCollection = db.UserCollections.Find(swap.SenderCollectionId);
                     break;
 
                 case "receiver":
@@ -276,7 +268,7 @@ namespace CollectionSwap.Models
                                                                         .FirstOrDefault();
 
                     // Define the User Collection that will be getting updated as the receivers
-                    userCollection = db.UserCollections.Find(swap.ReceiverUserCollectionId);
+                    userCollection = db.UserCollections.Find(swap.ReceiverCollectionId);
                     break;
                 default:
                     break;
@@ -296,11 +288,74 @@ namespace CollectionSwap.Models
             db.HeldItems.Remove(heldItems);
             db.SaveChanges();
         }
+        public string Validate(string userId, List<Swap> usersSwaps, ApplicationDbContext db)
+        {
+            var offeredSwaps = usersSwaps.Where(swap => swap.Status == "offered").ToList();
+            var acceptedSwaps = usersSwaps.Where(swap => swap.Status == "accepted").ToList();
+            var yourItemList = SenderId == userId ? JsonConvert.DeserializeObject<List<int>>(SenderCollection.ItemCountJSON) : JsonConvert.DeserializeObject<List<int>>(ReceiverCollection.ItemCountJSON);
+            var DuplicateItems = new List<int>();
+
+            // pseudocode
+            // if offered and youre receiver check for duplicates
+            // if accepted and youre sender check for duplicates
+
+            if (Status == "offered" && Receiver.Id == userId)
+            {
+                var offeredItems = new List<int>();
+                foreach(var swap in offeredSwaps)
+                {
+                    var senderRequestedItems = JsonConvert.DeserializeObject<List<int>>(swap.ReceiverRequestedItems);
+                    offeredItems.AddRange(senderRequestedItems);
+                }
+
+                var offeredItemsCount = new int[yourItemList.Count];
+                foreach (var item in offeredItems)
+                {
+                    offeredItemsCount[item]++;
+                }
+
+                for (int i = 0; i < yourItemList.Count; i++)
+                {
+                    // check if you have enough of each item to swap
+                    if (yourItemList[i] > 0 && offeredItemsCount[i] > 0 && yourItemList[i] - offeredItemsCount[i] < 1)
+                    {
+                        DuplicateItems.Add(i);
+                    }
+                }
+            }
+
+            if (Status == "accepted" && Sender.Id == userId)
+            {
+                var acceptedItems = new List<int>();
+                foreach(var swap in acceptedSwaps)
+                {
+                    var receiverRequestedItems = JsonConvert.DeserializeObject<List<int>>(swap.SenderRequestedItems);
+                    acceptedItems.AddRange(receiverRequestedItems);
+                }
+
+                var acceptedItemsCount = new int[yourItemList.Count];
+                foreach(var item in acceptedItems)
+                {
+                    acceptedItemsCount[item]++;
+                }
+
+                for(int i = 0; i < yourItemList.Count; i++)
+                {
+                    // check if you have enough of each item to swap
+                    if (yourItemList[i] > 0 && acceptedItemsCount[i] > 0 && yourItemList[i] - acceptedItemsCount[i] < 1)
+                    {
+                        DuplicateItems.Add(i);
+                    }
+                }
+            }
+
+            return JsonConvert.SerializeObject(DuplicateItems);
+        }
     }
 
     public class SwapRequestViewModel
     {
-        public int SwapId { get; set;}
+        public int SwapId { get; set; }
         public string ReceiverId { get; set; }
         public int CollectionId { get; set; }
         public int SenderUserCollectionId { get; set; }
@@ -308,26 +363,7 @@ namespace CollectionSwap.Models
         public string SenderItems { get; set; }
         public string RequestedItems { get; set; }
         public DateTimeOffset StartDate { get; set; }
-        public string Status { get; set; }
-    }
-
-    public class OfferViewModel
-    {
-        [Required]
-        public string SenderId { get; set; }
-        [Required]
-        public string ReceiverId { get; set; }
-        [Required]
-        public int CollectionId { get; set; }
-        [Required]
-        public int SenderUserCollectionId { get; set; }
-        [Required]
-        public int ReceiverUserCollectionId { get; set; }
-        [Required]
-        public string SenderItems { get; set; }
-        [Required]
-        public string RequestedItems { get; set; }
-        [Required]
+        public int SwapSize { get; set; }
         public string Status { get; set; }
     }
 

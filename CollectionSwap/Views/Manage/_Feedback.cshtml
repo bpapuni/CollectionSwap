@@ -5,8 +5,8 @@
     string statusMessage = ViewBag.Status;
 
     var itemList = JsonConvert.DeserializeObject<List<string>>(Model.Swap.Collection.ItemListJSON);
-    var deserializedSentItems = User.Identity.GetUserId() == Model.Swap.SenderId ? JsonConvert.DeserializeObject<List<int>>(Model.Swap.SenderItemIdsJSON) : JsonConvert.DeserializeObject<List<int>>(Model.Swap.ReceiverItemIdsJSON);
-    var deserializedReceivedItems = User.Identity.GetUserId() == Model.Swap.SenderId ? JsonConvert.DeserializeObject<List<int>>(Model.Swap.ReceiverItemIdsJSON) : JsonConvert.DeserializeObject<List<int>>(Model.Swap.SenderItemIdsJSON);
+    var sentItems = User.Identity.GetUserId() == Model.Swap.SenderId ? JsonConvert.DeserializeObject<List<int>>(Model.Swap.SenderRequestedItems) : JsonConvert.DeserializeObject<List<int>>(Model.Swap.ReceiverRequestedItems);
+    var receivedItems = User.Identity.GetUserId() == Model.Swap.SenderId ? JsonConvert.DeserializeObject<List<int>>(Model.Swap.ReceiverRequestedItems) : JsonConvert.DeserializeObject<List<int>>(Model.Swap.SenderRequestedItems);
 
     var positiveFeedback = Model.Feedback != null ? JsonConvert.DeserializeObject<List<string>>(Model.Feedback.PositiveFeedback) : null;
     var neutralFeedback = Model.Feedback != null ? JsonConvert.DeserializeObject<List<string>>(Model.Feedback.NeutralFeedback) : null;
@@ -200,9 +200,9 @@
             <div class="feedback-swap-sent">
                 <span class="feedback-header">Sent</span>
                 <div class="feedback-swap-items">
-                    @for (int i = 0; i < Math.Min(3, deserializedSentItems.Count); i++)
+                    @for (int i = 0; i < Math.Min(3, sentItems.Count); i++)
                     {
-                        <img class="feedback-item" src="~/Collections/@Model.Swap.CollectionId/@itemList[deserializedSentItems[i]]" />
+                        <img class="feedback-item" src="~/Collections/@Model.Swap.CollectionId/@itemList[sentItems[i]]" />
                     }
                 </div>
             </div>
@@ -210,9 +210,9 @@
             <div class="feedback-swap-receiver">
                 <span class="feedback-header">Received</span>
                 <div class="feedback-swap-items">
-                    @for (int i = 0; i < Math.Min(3, deserializedReceivedItems.Count); i++)
+                    @for (int i = 0; i < Math.Min(3, receivedItems.Count); i++)
                     {
-                        <img class="feedback-item" src="~/Collections/@Model.Swap.CollectionId/@itemList[deserializedReceivedItems[i]]" />
+                        <img class="feedback-item" src="~/Collections/@Model.Swap.CollectionId/@itemList[receivedItems[i]]" />
                     }
                 </div>
             </div>

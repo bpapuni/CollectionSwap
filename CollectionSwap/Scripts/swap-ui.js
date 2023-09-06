@@ -74,6 +74,7 @@ function offerSwap(e) {
         SenderItems: JSON.stringify(senderItems),
         RequestedItems: JSON.stringify(requestedItems),
         StartDate: new Date().toISOString(),
+        SwapSize: +swapContainer.find(".swap-size").text(),
         Status: "offered"
     }
 

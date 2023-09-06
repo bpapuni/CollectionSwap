@@ -26,16 +26,6 @@ namespace CollectionSwap.Models
         public List<int> DuplicateItems { get; set; }
     }
 
-    public class MatchingSwap
-    {
-        public ApplicationUser Sender { get; set; }
-        public ApplicationUser Receiver { get; set; }
-        public int CollectionId { get; set; }
-        public int UserCollectionId { get; set; }
-        public List<int> SenderItemIds { get; set; }
-        public List<int> ReceiverItemIds { get; set; }
-    }
-
     public class Collection
     {
         [Key]
@@ -218,6 +208,7 @@ namespace CollectionSwap.Models
             var newUserCollection = new UserCollection()
             {
                 Name = collection.Name,
+                Description = collection.Description,
                 UserId = userId,
                 CollectionId = id,
                 ItemCountJSON = JsonConvert.SerializeObject(new List<int>(Enumerable.Repeat(0, JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON).Count)))
@@ -257,18 +248,18 @@ namespace CollectionSwap.Models
 
             return "User Collection deleted successfully.";
         }
-        public List<MatchingSwap> FindMatchingSwaps(ApplicationDbContext db)
+        public List<Swap> FindMatchingSwaps(ApplicationDbContext db)
         {
-            var currentUserId = this.User.Id;
+            var userId = this.User.Id;
             var potentialSwapList = FindPotentialSwaps(this, db);
 
-            PotentialSwap currentUserSwapper = potentialSwapList.Where(swap => swap.User.Id == currentUserId && swap.UserCollection == this).FirstOrDefault();
+            PotentialSwap currentUserSwapper = potentialSwapList.Where(swap => swap.User.Id == userId && swap.UserCollection == this).FirstOrDefault();
 
-            List<MatchingSwap> matchingSwaps = new List<MatchingSwap>();
+            List<Swap> matchingSwaps = new List<Swap>();
 
             if (currentUserSwapper == null)
             {
-                return new List<MatchingSwap>(); // User not found.
+                return new List<Swap>(); // User not found.
             }
 
 
@@ -276,28 +267,34 @@ namespace CollectionSwap.Models
             {
                 // Find all pending swaps for the current user
                 var pendingSwaps = db.Swaps
-                    .Where(swap => (swap.Status == "offered" || swap.Status == "accepted") && (swap.Sender.Id == currentUserId || swap.Receiver.Id == currentUserId))
-                    .Select(swap => new { swap.SenderUserCollectionId, swap.ReceiverUserCollectionId })
+                    .Where(swap => (swap.Status == "offered" || swap.Status == "accepted") && (swap.Sender.Id == userId || swap.Receiver.Id == userId))
+                    .Select(swap => new { swap.SenderCollectionId, swap.ReceiverCollectionId })
                     .ToList();
 
                 // Skip over this potentialSwap if it belongs to the current user or 
                 // if the current user already has a pending swap matching this potentialSwap
                 if (potentialSwap == currentUserSwapper) { continue; }
-                else if (pendingSwaps.Any(swap => (swap.SenderUserCollectionId == this.Id && swap.ReceiverUserCollectionId == potentialSwap.UserCollection.Id) || (swap.SenderUserCollectionId == potentialSwap.UserCollection.Id && swap.ReceiverUserCollectionId == this.Id))) { continue; }
+                else if (pendingSwaps.Any(swap => (swap.SenderCollectionId == this.Id && swap.ReceiverCollectionId == potentialSwap.UserCollection.Id) || (swap.SenderCollectionId == potentialSwap.UserCollection.Id && swap.ReceiverCollectionId == this.Id))) { continue; }
 
                 var currentUserNeededItems = currentUserSwapper.MissingItems.Intersect(potentialSwap.DuplicateItems).ToList();
                 var otherUserNeededItems = currentUserSwapper.DuplicateItems.Intersect(potentialSwap.MissingItems).ToList();
 
                 if (currentUserNeededItems.Any() && otherUserNeededItems.Any())
                 {
-                    MatchingSwap matchingSwap = new MatchingSwap
+                    var matchingSwap = new Swap
                     {
-                        Sender = db.Users.Find(currentUserId),
+                        Sender = db.Users.Find(userId),
                         Receiver = potentialSwap.User,
                         CollectionId = potentialSwap.Collection.Id,
-                        UserCollectionId = potentialSwap.UserCollection.Id,
-                        SenderItemIds = currentUserNeededItems,
-                        ReceiverItemIds = otherUserNeededItems
+                        Collection = potentialSwap.Collection,
+                        SenderCollectionId = this.Id,
+                        SenderCollection = this,
+                        SenderRequestedItems = JsonConvert.SerializeObject(currentUserNeededItems),
+                        ReceiverCollectionId = potentialSwap.UserCollection.Id,
+                        ReceiverCollection = potentialSwap.UserCollection,
+                        ReceiverRequestedItems = JsonConvert.SerializeObject(otherUserNeededItems),
+                        SwapSize = Math.Min(currentUserNeededItems.Count(), otherUserNeededItems.Count()),
+                        Status = "swap"
                     };
 
                     matchingSwaps.Add(matchingSwap);
@@ -305,8 +302,8 @@ namespace CollectionSwap.Models
             }
 
             matchingSwaps = matchingSwaps
-            .OrderByDescending(swap => Math.Min(swap.SenderItemIds.Count(), swap.ReceiverItemIds.Count()))
-            .ThenByDescending(swap => swap.SenderItemIds.Count())
+            .OrderByDescending(swap => swap.SwapSize)
+            //.ThenByDescending(swap => swap.SenderItemIds.Count())
             .ToList();
 
             return matchingSwaps;

@@ -1734,6 +1734,19 @@ input[type=number] {
     color: var(--danger);
 }
 
+.duplicate-items-error {
+    width: 43rem;
+    color: var(--brand-red);
+}
+
+.duplicate-items-error > p {
+    margin: 0;
+}
+
+.duplicate-items-error > p:nth-child(1) {
+    font-size: 1.125rem;
+}
+
 .swap-container {
     display: flex;
     flex-direction: column;
@@ -1930,7 +1943,7 @@ input[type=number] {
     display: flex;
     width: 7rem;
     border-radius: 0.5rem;
-    overflow: hidden;
+    /*overflow: hidden;*/
 }
 
 .swap-request-item {
@@ -1958,24 +1971,45 @@ input[type=number] {
     pointer-events: none;
 }
 
-    .swap-item.selected::after {
-        content: "\f058";
-        position: absolute;
-        right: 0;
-        display: flex;
-        align-items: flex-start;
-        justify-content: flex-end;
-        /*width: 100%;
+.swap-item.selected::after {
+    content: "\f058";
+    position: absolute;
+    right: -1rem;
+    top: -1rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    /*width: 100%;
         height: 100%;*/
-        padding: 0 0.5rem;
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        font-size: 1.5rem;
-        color: var(--brand-green);
-        background: black;
-        border-radius: 0 0 0 50%;
-        pointer-events: none;
-    }
+    padding: 0 0.5rem;
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: var(--brand-green);
+    background: white;
+    border-radius: 0 50%;
+    pointer-events: none;
+}
+
+.swap-item.attention::after {
+    content: "\f06a";
+    position: absolute;
+    right: -1rem;
+    top: -1rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    /*width: 100%;
+        height: 100%;*/
+    padding: 0 0.5rem;
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: var(--brand-red);
+    background: white;
+    border-radius: 0 50%;
+    pointer-events: none;
+}
 
 .swap-none-found {
     display: flex;

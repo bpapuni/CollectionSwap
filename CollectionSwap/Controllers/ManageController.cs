@@ -128,7 +128,7 @@ namespace CollectionSwap.Controllers
 
             if (id.HasValue && selectedCollection != null && selectedCollection.UserId == userId)
             {
-                ViewBag.MatchingSwaps = selectedCollection.FindMatchingSwaps(db);
+                model.MatchingSwaps = selectedCollection.FindMatchingSwaps(db);
                 ViewBag.SelectedCollection = selectedCollection;
             }
 
@@ -748,32 +748,25 @@ namespace CollectionSwap.Controllers
         {
             var partial = String.Empty;
             var userId = User.Identity.GetUserId();
+
+            // Get all swaps involving the user to update their swap history
             var swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
                                 .Include(s => s.Collection)
                                 .Include(s => s.Sender)
-                                .Include(s => s.Receiver).ToList();
+                                .Include(s => s.SenderCollection)
+                                .Include(s => s.Receiver)
+                                .Include(s => s.ReceiverCollection).ToList();
 
+            // Get the offered swap
             var offer = swaps.Where(s => s.Id == id).FirstOrDefault();
 
             var offerModel = new SwapViewModel
             {
-                Id = offer.Id,
-                Sender = db.Users.Where(u => u.Id == offer.SenderId).FirstOrDefault(),
-                Receiver = db.Users.Where(u => u.Id == offer.ReceiverId).FirstOrDefault(),
-                //SenderRating = db.Feedbacks.Where(fb => fb.SenderId == offer.SenderId).Any() ? (db.Feedbacks.Where(fb => fb.SenderId == offer.SenderId).Select(fb => fb.Rating).Average() * 2) / 2 : -1,
-                //ReceiverRating = db.Feedbacks.Where(fb => fb.SenderId == offer.ReceiverId).Any() ? (db.Feedbacks.Where(fb => fb.ReceiverId == offer.ReceiverId).Select(fb => fb.Rating).Average() * 2) / 2 : -1,
-                SenderRating = 5,
-                ReceiverRating = 5,
-                CollectionId = offer.CollectionId,
-                ItemList = JsonConvert.DeserializeObject<List<string>>(offer.Collection.ItemListJSON),
-                SenderCollectionId = offer.SenderUserCollectionId,
-                ReceiverCollectionId = offer.ReceiverUserCollectionId,
-                SenderItemIds = JsonConvert.DeserializeObject<List<int>>(offer.SenderItemIdsJSON),
-                ReceiverItemIds = JsonConvert.DeserializeObject<List<int>>(offer.ReceiverItemIdsJSON),
-                SwapSize = JsonConvert.DeserializeObject<List<int>>(offer.ReceiverItemIdsJSON).Count(),
-                Status = offer.Status,
-                HasSentFeedback = offer.Sender.Id == userId ? offer.SenderConfirmSent : offer.ReceiverConfirmSent,
-                Address = db.Addresses.Where(a => a.UserId != userId && (a.UserId == offer.SenderId || a.UserId == offer.ReceiverId)).FirstOrDefault()
+                ////SenderRating = db.Feedbacks.Where(fb => fb.SenderId == offer.SenderId).Any() ? (db.Feedbacks.Where(fb => fb.SenderId == offer.SenderId).Select(fb => fb.Rating).Average() * 2) / 2 : -1,
+                ////ReceiverRating = db.Feedbacks.Where(fb => fb.SenderId == offer.ReceiverId).Any() ? (db.Feedbacks.Where(fb => fb.ReceiverId == offer.ReceiverId).Select(fb => fb.Rating).Average() * 2) / 2 : -1,
+                Swap = offer,
+                Address = db.Addresses.Where(a => a.UserId != userId && (a.UserId == offer.SenderId || a.UserId == offer.ReceiverId)).FirstOrDefault(),
+                DuplicateSwapItems = offer.Validate(userId, swaps, db)
             };
 
             var shModel = new SwapHistoryViewModel
