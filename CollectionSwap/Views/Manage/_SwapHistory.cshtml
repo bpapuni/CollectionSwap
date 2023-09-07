@@ -16,7 +16,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Collection Type</th>
+                        <th>Collection Name</th>
                         <th>User</th>
                         <th onclick="SortByStatus()">Status <i class="fa-solid fa-sort"></i></th>
                         <th>Items Sent</th>
@@ -138,10 +138,10 @@
                                     </td>
                                     break;
                                 case "confirmed":
-                                    var hasPlacedFeedback = Swap.Sender.Id == User.Identity.GetUserId() ? Swap.SenderFeedbackSent : Swap.ReceiverFeedbackSent;
                                     var hasSentItems = Swap.Sender.Id == User.Identity.GetUserId() ? Swap.SenderConfirmSent : Swap.ReceiverConfirmSent;
                                     var hasReceivedItems = Swap.Sender.Id == User.Identity.GetUserId() ? Swap.SenderConfirmReceived : Swap.ReceiverConfirmReceived;
-                                    if (hasPlacedFeedback)
+                                    var hasSentFeedback = Swap.Sender.Id == User.Identity.GetUserId() ? Swap.SenderFeedbackSent : Swap.ReceiverFeedbackSent;
+                                    if (hasSentFeedback)
                                     {
                                         <td>
                                             <span>Complete</span><br />

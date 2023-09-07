@@ -183,13 +183,13 @@ namespace CollectionSwap.Models
                 }
             }
 
-            if (this.SenderConfirmSent &&
-                this.SenderConfirmReceived &&
-                this.ReceiverConfirmSent &&
-                this.ReceiverConfirmReceived)
-            {
-                this.Status = "completed";
-            }
+            //if (this.SenderConfirmSent &&
+            //    this.SenderConfirmReceived &&
+            //    this.ReceiverConfirmSent &&
+            //    this.ReceiverConfirmReceived)
+            //{
+            //    this.Status = "completed";
+            //}
 
             db.Entry(this).State = EntityState.Modified;
             db.SaveChanges();
@@ -384,8 +384,23 @@ namespace CollectionSwap.Models
             {
                 return this;
             }
+
+            var swap = db.Swaps.Find(this.SwapId);
+
             this.SenderId = userId;
-            this.ReceiverId = db.Swaps.Find(this.SwapId).SenderId == userId ? db.Swaps.Find(this.SwapId).ReceiverId : db.Swaps.Find(this.SwapId).SenderId;
+            this.ReceiverId = swap.SenderId == userId ? swap.ReceiverId : swap.SenderId;
+
+            if (swap.SenderId == userId)
+            {
+                swap.SenderFeedbackSent = true;
+            } 
+            else if (swap.ReceiverId == userId)
+            {
+                swap.ReceiverFeedbackSent = true;
+            }
+
+            swap.Status = swap.SenderFeedbackSent && swap.ReceiverFeedbackSent ? "completed" : swap.Status;
+            db.Entry(swap).State = EntityState.Modified;
 
             db.Feedbacks.Add(this);
             db.SaveChanges();

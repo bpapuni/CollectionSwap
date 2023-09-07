@@ -37,7 +37,7 @@
     <div class="row gap-1">
         <div class="feedback-module">
             <div>
-                <span class="feedback-header">How would you rate your swap with @(User.Identity.GetUserId() == Model.Swap.SenderId ? Model.Swap.Receiver.UserName : Model.Swap.Sender.UserName)?</span>
+                <span class="feedback-header">Rate your swap with @(User.Identity.GetUserId() == Model.Swap.SenderId ? Model.Swap.Receiver.UserName : Model.Swap.Sender.UserName)</span>
                 <div class="form-group">
                     <div class="star-rating-module">
                         @for (int i = 0; i < 5; i++)

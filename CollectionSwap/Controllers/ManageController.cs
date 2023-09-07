@@ -627,7 +627,8 @@ namespace CollectionSwap.Controllers
                     case "completed":
                         var hasSentItems = swap.Sender.Id == userId ? swap.SenderConfirmSent : swap.ReceiverConfirmSent;
                         var hasReceivedItems = swap.Sender.Id == userId ? swap.SenderConfirmReceived : swap.ReceiverConfirmReceived;
-                        if (hasSentItems && hasReceivedItems)
+                        var hasSentFeedback = swap.Sender.Id == userId ? swap.SenderFeedbackSent : swap.ReceiverFeedbackSent;
+                        if (hasSentItems && hasReceivedItems && !hasSentFeedback)
                         {
                             return Feedback(id.Value);
                         }
@@ -726,14 +727,11 @@ namespace CollectionSwap.Controllers
             var feedback = model.Create(userId, db);
             fbModel.Feedback = feedback;
 
-            shModel = new SwapHistoryViewModel
-            {
-                Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
+            shModel.Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
                                 .Include(s => s.Collection)
                                 .Include(s => s.Sender)
-                                .Include(s => s.Receiver).ToList(),
-                Feedback = fbModel
-            };
+                                .Include(s => s.Receiver).ToList();
+            shModel.Feedback = null;
 
             ViewBag.Status = "Thank you for your feedback";
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);

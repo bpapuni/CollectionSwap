@@ -32,12 +32,16 @@
     </span>
 </div>
 
-<section>
+<section class="@(swapStatus == "confirmed" && !hasSentItems ? "mailing" : "")">
     @if (swapStatus == "confirmed" && !hasSentItems)
     {
         <div class="mailing-instructions-container">
-            <span class="header">Please send your items to the following address:</span>
+            <div>
+                <span class="header"><i class="fa-solid fa-circle-exclamation"></i>Attention</span>
+                <p>It is expected that this is a contactless exchange</p>
+            </div>
             <div class="swap-instructions">
+                <b>Please mail your items to the following address:</b><br />
                 @Model.Address.FullName <br />
                 @Html.Raw(Model.Address.CompanyName != null ? Model.Address.CompanyName + "<br />" : "")
                 @Model.Address.LineOne<br />
@@ -47,7 +51,7 @@
             </div>
 
             <div class="column">
-                <b>Please be considerate</b>
+                <b>Be Considerate</b>
                 <span class="confirm-sent-items">Click <a href="/Manage/ConfirmSentReceived" data-swap-id="@id">here</a> to let @userName know when you've sent their items, or tick the checkbox on the previous page.</span>
             </div>
         </div>

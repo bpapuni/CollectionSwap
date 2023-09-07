@@ -194,7 +194,6 @@ namespace CollectionSwap.Models
         public int Id { get; set; }
         [Required(ErrorMessage = "Please enter a name for this collection.")]
         public string Name { get; set; }
-        public string Description { get; set; }
         [Required]
         public string UserId { get; set; }
         [Required]
@@ -202,13 +201,14 @@ namespace CollectionSwap.Models
         public string ItemCountJSON { get; set; }
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
+        [ForeignKey("CollectionId")]
+        public Collection Collection { get; set; }
         public static UserCollection Create(int id, string userId, ApplicationDbContext db)
         {
             var collection = db.Collections.Find(id);
             var newUserCollection = new UserCollection()
             {
                 Name = collection.Name,
-                Description = collection.Description,
                 UserId = userId,
                 CollectionId = id,
                 ItemCountJSON = JsonConvert.SerializeObject(new List<int>(Enumerable.Repeat(0, JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON).Count)))

@@ -21,7 +21,7 @@
         <div class="row gap-2">
             @foreach (UserCollection userCollection in Model.UserCollections)
             {
-                @Html.ActionLink(userCollection.Name, "FindSwaps", "Manage", new { id = userCollection.Id }, new { @class = $"user-collection {(selectedCollection != null && userCollection.Id == selectedCollection.Id ? "selected" : "")}" })
+                @Html.ActionLink(userCollection.Name, "FindSwaps", "Manage", new { id = userCollection.Id }, new { @class = $"submit-button user-collection {(selectedCollection != null && userCollection.Id == selectedCollection.Id ? "selected" : "")}" })
             }
         </div>
         <br />

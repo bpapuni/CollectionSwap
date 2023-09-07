@@ -113,7 +113,7 @@ textarea {
 
     .submit-button:hover {
         color: black;
-        background: var(--background);
+        background: white;
         border: 1px solid black;
         box-shadow: 0 2px 2px #00000099;
     }
@@ -173,7 +173,11 @@ main {
 }
 
     main.bg-split {
-        background: linear-gradient(to right, var(--background-accent) 50%, var(--background) 50%);
+        /*background: linear-gradient(to right, var(--background-accent) 50%, var(--background) 50%);*/
+        background: url('images/doodles/4.png') no-repeat;
+        background-size: 25%;
+        background-position-x: center;
+        background-position-y: bottom;
     }
 
 nav.bg-split {
@@ -663,11 +667,15 @@ button.close {
     }
 
 #feedback-container {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    /*min-width: 100%;*/
+    background: url('images/doodles/8.png') no-repeat;
+    background-size: 25%;
+    background-position-x: right;
+    background-position-y: 2rem;
 }
 
 .feedback-swap-preview {
@@ -1590,17 +1598,29 @@ section {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-width: 7.5rem;
+    /*min-width: 7.5rem;*/
     height: 5rem;
     padding: 1rem;
     color: black;
     text-decoration: none;
-    border-radius: 0.5rem;
-    border: 1px solid black;
+    /*border-radius: 0.5rem;
+    border: 1px solid black;*/
     background-color: white;
     transition: transform ease 0.2s, box-shadow ease 0.2s;
     cursor: pointer;
 }
+
+/*    .user-collection:nth-of-type(4n-2) {
+        background: var(--brand-green);
+    }
+
+    .user-collection:nth-of-type(4n-1) {
+        background: var(--brand-orange);
+    }
+
+    .user-collection:nth-of-type(4n) {
+        background: var(--brand-red);
+    }*/
 
     .user-collection.selected {
         box-shadow: 0 0 0 0.25rem #ACC89A;
@@ -2044,9 +2064,17 @@ input[type=number] {
 
 .mailing-instructions-container .header {
     display: flex;
+    align-items: center;
+    gap: 0.5rem;
     margin: 0;
     padding: 0;
-    font-size: 1rem;
+    color: var(--brand-red);
+    font-size: 1.5rem;
+    font-weight: 400;
+}
+
+.mailing-instructions-container p {
+    margin: 0;
 }
 
 /*.swap-yours {
@@ -2193,8 +2221,8 @@ input[type=number] {
         #register-container section.register.exclamation::after {
             content: url("data:image/svg+xml,%3Csvg width='62' height='53' viewBox='0 0 62 53' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M59.623 13.8479C62.3483 21.5586 56.6447 30.26 50.679 35.6043C44.0163 41.5781 34.7457 45.3637 24.4839 46.301C20.6589 46.6612 19.7123 42.6268 22.2818 41.1823C22.3011 41.1313 22.3252 41.0816 22.3537 41.0338C28.0701 31.1033 33.5514 21.044 39.5164 11.2204C41.5313 7.90201 44.8945 5.51437 50.0622 6.40974C52.3349 6.82985 54.4491 7.75688 56.1468 9.07771C57.8446 10.3985 59.0524 12.056 59.623 13.8479ZM47.5112 11.9945C45.9763 12.6573 45.166 15.2817 44.4925 16.4485C43.4806 18.2103 42.4588 19.9707 41.4469 21.7325C38.0782 27.574 34.7162 33.4165 31.3609 39.2599C43.0106 35.8138 53.2195 27.2463 53.1624 17.1839C53.1624 15.3334 51.0795 10.4462 47.551 12.0002L47.5112 11.9945Z' fill='%23231F20'/%3E%3Cpath d='M16.0308 16.7839C20.6487 20.7538 20.954 27.4367 19.7813 32.1775C18.4469 37.4519 14.7784 42.0606 9.41404 45.2016C7.42032 46.3787 5.26728 44.1897 6.12328 42.6677L6.1377 42.5665C5.34997 35.1399 4.37111 27.7019 3.76677 20.2696C3.56607 17.7632 4.45015 15.4748 7.7329 14.7197C9.16593 14.4077 10.7112 14.4365 12.1832 14.8027C13.6552 15.1688 14.9912 15.8568 16.0308 16.7839ZM8.51271 18.7144C7.92451 19.4962 8.52226 21.2809 8.61013 22.1591C8.74745 23.4732 8.8936 24.7965 9.06074 26.1148L10.4494 39.2181C15.5642 34.2211 17.8634 26.4879 13.787 20.4271C13.0331 19.311 9.88925 16.8854 8.51271 18.7144Z' fill='%23231F20'/%3E%3C/svg%3E%0A");
             position: absolute;
-            right: -35px;
-            bottom: 235px;
+            right: -50px;
+            bottom: 215px;
         }
 
         #register-container section.login-prompt.squiggle::before {
@@ -2342,6 +2370,13 @@ input[type=number] {
     width: 100%;
     padding-bottom: 1rem;
 }
+
+    #offer-container > section.mailing {
+        background: url('images/doodles/10.png') no-repeat;
+        background-size: 35%;
+        background-position-x: left;
+        background-position-y: bottom;
+    }
 
 .mailing-instructions-container {
     display: flex;
