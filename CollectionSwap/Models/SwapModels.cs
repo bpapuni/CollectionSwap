@@ -314,10 +314,10 @@ namespace CollectionSwap.Models
                 foreach (var item in receiverRequestedItems)
                 {
                     // Creates a list of all the items requested by the sender in their other swaps
-                    var sendersPendingSwapItems = pendingSwaps.SelectMany(swap => JsonConvert.DeserializeObject<List<int>>(swap.ReceiverRequestedItems)).ToList();
+                    var pendingSwapItems = pendingSwaps.SelectMany(swap => JsonConvert.DeserializeObject<List<int>>(swap.ReceiverRequestedItems)).ToList();
 
                     // If any items from 'this' swap are within the created list they are duplicate request items
-                    if (sendersPendingSwapItems.Contains(item))
+                    if (pendingSwapItems.Contains(item))
                     {
                         result.DuplicateRequestItems.Add(item);
                     }
@@ -327,10 +327,10 @@ namespace CollectionSwap.Models
                 foreach (var item in senderRequestedItems) // For each item in items offered to receiver
                 {
                     // Creates a list of all the items offered by the sender in their other swaps
-                    var sendersPendingSwapItems = pendingSwaps.SelectMany(swap => JsonConvert.DeserializeObject<List<int>>(swap.SenderRequestedItems)).ToList();
+                    var pendingSwapItems = pendingSwaps.SelectMany(swap => swap.Sender.Id == userId ? JsonConvert.DeserializeObject<List<int>>(swap.SenderRequestedItems) : JsonConvert.DeserializeObject<List<int>>(swap.ReceiverRequestedItems)).ToList();
                     var sendersItems = JsonConvert.DeserializeObject<List<int>>(this.SenderCollection.ItemCountJSON);
                     // Calculates the number of times an item has been offered
-                    var offeredItemCount = sendersPendingSwapItems.Count(i => i == item);
+                    var offeredItemCount = pendingSwapItems.Count(i => i == item);
 
                     // Checks if the sender has less inventory of an item than has been offered
                     if (sendersItems[item] <= offeredItemCount + 1)
@@ -347,10 +347,10 @@ namespace CollectionSwap.Models
                     foreach (var item in receiverRequestedItems)
                     {
                         // Creates a list of all the items requested by the sender in their other swaps
-                        var sendersPendingSwapItems = pendingSwaps.SelectMany(swap => JsonConvert.DeserializeObject<List<int>>(swap.ReceiverRequestedItems)).ToList();
+                        var pendingSwapItems = pendingSwaps.SelectMany(swap => JsonConvert.DeserializeObject<List<int>>(swap.ReceiverRequestedItems)).ToList();
 
                         // If any items from 'this' swap are within the created list they are duplicate request items
-                        if (sendersPendingSwapItems.Contains(item))
+                        if (pendingSwapItems.Contains(item))
                         {
                             result.DuplicateRequestItems.Add(item);
                         }
@@ -360,10 +360,10 @@ namespace CollectionSwap.Models
                     foreach (var item in senderRequestedItems) // For each item in items offered to receiver
                     {
                         // Creates a list of all the items offered by the sender in their other swaps
-                        var sendersPendingSwapItems = pendingSwaps.SelectMany(swap => JsonConvert.DeserializeObject<List<int>>(swap.SenderRequestedItems)).ToList();
+                        var pendingSwapItems = pendingSwaps.SelectMany(swap => JsonConvert.DeserializeObject<List<int>>(swap.SenderRequestedItems)).ToList();
                         var sendersItems = JsonConvert.DeserializeObject<List<int>>(this.SenderCollection.ItemCountJSON);
                         // Calculates the number of times an item has been offered
-                        var offeredItemCount = sendersPendingSwapItems.Count(i => i == item);
+                        var offeredItemCount = pendingSwapItems.Count(i => i == item);
 
                         // Checks if the sender has less inventory of an item than has been offered
                         if (sendersItems[item] <= offeredItemCount + 1)
@@ -407,25 +407,16 @@ namespace CollectionSwap.Models
             }
             else if (this.Status == "accepted") // Check if sender has items available to confirm swap
             {
-                //var sendersItems = JsonConvert.DeserializeObject<List<int>>(this.SenderCollection.ItemCountJSON);
-                //foreach (var item in senderRequestedItems)
-                //{
-                //    if (sendersItems[item] <= 1)
-                //    {
-                //        result.LowInventoryItems.Add(item);
-                //        result.IsValid = false;
-                //    }
-                //}
                 if (userId == this.SenderId)
                 {
                     // Checks if sender has already requested an item
                     foreach (var item in receiverRequestedItems)
                     {
                         // Creates a list of all the items requested by the sender in their other swaps
-                        var sendersPendingSwapItems = pendingSwaps.SelectMany(swap => JsonConvert.DeserializeObject<List<int>>(swap.ReceiverRequestedItems)).ToList();
+                        var pendingSwapItems = pendingSwaps.SelectMany(swap => JsonConvert.DeserializeObject<List<int>>(swap.ReceiverRequestedItems)).ToList();
 
                         // If any items from 'this' swap are within the created list they are duplicate request items
-                        if (sendersPendingSwapItems.Contains(item))
+                        if (pendingSwapItems.Contains(item))
                         {
                             result.DuplicateRequestItems.Add(item);
                         }
@@ -435,10 +426,10 @@ namespace CollectionSwap.Models
                     foreach (var item in senderRequestedItems) // For each item in items offered to receiver
                     {
                         // Creates a list of all the items offered by the sender in their other swaps
-                        var sendersPendingSwapItems = pendingSwaps.SelectMany(swap => JsonConvert.DeserializeObject<List<int>>(swap.SenderRequestedItems)).ToList();
+                        var pendingSwapItems = pendingSwaps.SelectMany(swap => JsonConvert.DeserializeObject<List<int>>(swap.SenderRequestedItems)).ToList();
                         var sendersItems = JsonConvert.DeserializeObject<List<int>>(this.SenderCollection.ItemCountJSON);
                         // Calculates the number of times an item has been offered
-                        var offeredItemCount = sendersPendingSwapItems.Count(i => i == item);
+                        var offeredItemCount = pendingSwapItems.Count(i => i == item);
 
                         // Checks if the sender has less inventory of an item than has been offered
                         if (sendersItems[item] <= offeredItemCount + 1)

@@ -38,15 +38,6 @@
 
                     @for (int i = 0; i < matchingSwaps.Count; i++)
                     {
-                        //var feedbacks = Model.Feedbacks?.Where(fb => fb.ReceiverId == matchingSwap.Receiver.Id).ToList();
-                        //var rating = feedbacks.Any() ? Math.Round(feedbacks.Select(fb => fb.Rating).Average() * 2) / 2 : -1;
-
-                        //SwapViewModel model = new SwapViewModel
-                        //{
-                        //    Swap = matchingSwap,
-                        //    Validation = matchingSwap
-                        //};
-
                         @Html.Partial("_Swap", matchingSwapViews[i]);
                     }
                 </div>
