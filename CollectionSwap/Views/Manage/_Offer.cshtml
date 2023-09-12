@@ -111,7 +111,7 @@
                         <span class="duplicate-missing-items-error">
                             @if (Validation.DuplicateRequestItems.Count > 0)
                             {
-                                <text><i class="fa-solid fa-circle-exclamation"></i> You have already requested the marked item(s) from one or more users.</text>
+                                <text><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from one or more users.</text>
                             }
                         </span>
 
@@ -214,7 +214,7 @@
                         @if (Validation.DuplicateRequestItems.Count > 0)
                         {
                             <span class="duplicate-missing-items-error">
-                                <text><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from several users.</text>
+                                <text><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from one or more users.</text>
                             </span>
                         }
 
@@ -234,11 +234,11 @@
 
                         @* Display any low inventory errors first as this is most important, if none exist, display any duplicate item request warnings to sender *@
                         <span class="duplicate-missing-items-error">
-                            @if (Validation.LowInventoryItems.Count > 0 && userId == Receiver.Id)
+                            @if (Validation.LowInventoryItems.Count > 0)
                             {
-                                <text><i class="fa-solid fa-circle-exclamation"></i> You do not have enough copies of the marked item(s) to accept this swap.</text>
+                                <text><i class="fa-solid fa-circle-exclamation"></i> You will not have enough copies of the marked item(s) to complete all pending swaps (this included).</text>
                             }
-                            else if (Validation.DuplicateOfferedItems.Count > 0 && userId == Receiver.Id)
+                            else if (Validation.DuplicateAcceptedItems.Count > 0)
                             {
 
                                 <text><i class="fa-solid fa-circle-exclamation"></i> Several users have requested these items.</text>
