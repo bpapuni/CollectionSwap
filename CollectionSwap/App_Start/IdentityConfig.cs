@@ -11,6 +11,14 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using CollectionSwap.Models;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System.Configuration;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Mail;
+using CollectionSwap.Migrations;
+using Microsoft.Owin.BuilderProperties;
 
 namespace CollectionSwap
 {

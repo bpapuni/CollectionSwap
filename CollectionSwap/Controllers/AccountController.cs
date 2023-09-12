@@ -11,6 +11,7 @@ using Microsoft.Owin.Security;
 using CollectionSwap.Models;
 using System.Web.UI.WebControls;
 using System.Data.Entity.Infrastructure;
+using CollectionSwap.Helpers;
 
 namespace CollectionSwap.Controllers
 {
@@ -95,10 +96,21 @@ namespace CollectionSwap.Controllers
             string userName;
             using (var db = new ApplicationDbContext())
             {
-                userName = db.Users.Where(user => user.Email == model.Email)
-                                   .Select(user => user.UserName).FirstOrDefault();
+                userName = db.Users.Where(u => u.Email == model.Email)
+                                   .Select(u => u.UserName).FirstOrDefault();
             }
             userName = String.IsNullOrEmpty(userName) ? "" : userName;
+
+            // Require the user to have a confirmed email before they can log on.
+            var user = await UserManager.FindByNameAsync(userName);
+            if (user != null)
+            {
+                if (!await UserManager.IsEmailConfirmedAsync(user.Id))
+                {
+                    ViewBag.errorMessage = "You must confirm your email before you can login.";
+                    return View("Error");
+                }
+            }
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
@@ -167,7 +179,6 @@ namespace CollectionSwap.Controllers
         public ActionResult Register()
         {
             return View("Login");
-
         }
 
         //
@@ -199,15 +210,26 @@ namespace CollectionSwap.Controllers
                     RoleManager.Create(role);
                     UserManager.AddToRole(user.Id, role.Name);
 
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    //await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    //await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    EmailSender.SendEmail(model.Email, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    return RedirectToLocal("Manage");
+
+                    //return RedirectToLocal("Manage");
+
+                    // Uncomment to debug locally 
+                    // TempData["ViewBagLink"] = callbackUrl;
+
+                    ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
+                                    + "before you can log in.";
+
+                    return View("Info");
+                    //return RedirectToAction("Index", "Home");
                 }
 
                 var errorCounter = 0;
