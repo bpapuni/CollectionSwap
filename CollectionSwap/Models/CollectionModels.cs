@@ -199,6 +199,7 @@ namespace CollectionSwap.Models
         [Required]
         public int CollectionId { get; set; }
         public string ItemCountJSON { get; set; }
+        public bool Charity { get; set; }
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
         [ForeignKey("CollectionId")]
@@ -221,6 +222,12 @@ namespace CollectionSwap.Models
         }
         public void Update(string property, string userId, string value, ApplicationDbContext db)
         {
+            // Return early if update method was somehow called by anyone besides the user
+            if (this.UserId != userId)
+            {
+                return;
+            }
+
             switch (property)
             {
                 case "Name":
@@ -233,7 +240,9 @@ namespace CollectionSwap.Models
                     deserializedItemCount[index] = jsonValue.quantity;
                     this.ItemCountJSON = JsonConvert.SerializeObject(deserializedItemCount);
                     break;
-
+                case "Charity":
+                    this.Charity = this.Charity ? false : true;
+                    break;
                 default:
                     break;
             }

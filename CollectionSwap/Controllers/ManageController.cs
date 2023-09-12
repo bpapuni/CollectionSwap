@@ -475,7 +475,7 @@ namespace CollectionSwap.Controllers
         }
 
         //
-        // GET: /Manage/ManageCollections/_UserCollection
+        // GET: /Manage/YourCollections
 
         [Authorize]
         public ActionResult UserCollection(int? id)
@@ -540,6 +540,15 @@ namespace CollectionSwap.Controllers
             ViewBag.Status = "Collection name updated successfully";
             partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container", second = "#user-collection-container" } });
+        }
+
+        [HttpPost]
+        [Authorize]
+        public void ToggleCharityCollection(int id)
+        {
+            var userId = User.Identity.GetUserId();
+            var userCollection = db.UserCollections.Find(id);
+            userCollection.Update("Charity", userId, null, db);
         }
 
         [HttpPost]

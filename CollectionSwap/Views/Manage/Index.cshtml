@@ -60,13 +60,12 @@
             var action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches").replace("SwapHistory", "SwapHistoryPartial");
 
             formData.append("id", partialId);
-            console.log(action);
             HandleFormSubmit(`/Manage/${action}`, "POST", formData);
         }
 
         // On back/forward navigation update the partial name and display the corresponding view
         $(window).on("popstate", function (e) {
-            partialName = partialName == "Index" ? "Account" : location.pathname.split("/Manage/").pop().split("/")[0]
+            partialName = partialName == "Index" ? "SwapHistory" : location.pathname.split("/Manage")[1] == "" ? "SwapHistory" : location.pathname.split("/Manage/").pop().split("/")[0]
             partialId = location.pathname.split("/Manage/").pop().split("/")[1];
             LoadPartial(partialName, `/Manage/${partialName}`)
             if (partialId) {
@@ -104,7 +103,6 @@
             var action = $(this).attr("href").split("/")[2];
             const id = $(this).attr("href").split("/")[3];
 
-            //console.log(controller, action, id);
             const historyEntry = id == undefined ? action : `${action}/${id}`;
             history.pushState({ partialName: action }, null, `/${controller}/${historyEntry}`);
 
@@ -183,7 +181,6 @@
                             if (`#${$(partialView).attr("id")}` === target || `.${$(partialView).attr("class")}` == target) {
                                 $(`${target}`).prop("outerHTML", $(partialView).prop("outerHTML"));
                             } else {
-                                console.log($(partialView));
                                 $(`${target}`).prop("outerHTML", $(partialView).find(target).prop("outerHTML"));
                             }
                             $(`${target}`).removeClass("d-none");
@@ -296,6 +293,7 @@
             HandleFormSubmit("/Manage/ConfirmSentReceived", "POST", formData);
         });
 
+        // Items sent / received checkbox listener
         $(document).on("change", ".swap-confirm", function () {
             if (this.checked) {
                 var status = $(this).closest("tr").find(".swap-capstone p").text();
@@ -318,6 +316,14 @@
             } else {
                 //this.checked = true;
             }
+        });
+
+        // Charity collection checkbox listener
+        $(document).on("change", ".charity-checkbox", function () {
+            const formData = new FormData();
+            formData.append("id", $(this).data("user-collection-id"));
+
+            HandleFormSubmit("/Manage/ToggleCharityCollection", "POST", formData);
         });
 
         function OpenFeedbackTab(e) {
