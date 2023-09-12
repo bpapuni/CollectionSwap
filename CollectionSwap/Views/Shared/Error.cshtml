@@ -4,6 +4,18 @@
     ViewBag.Title = "Error";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+@*<h1 class="text-danger">Error.</h1>
+<h2 class="text-danger">@ViewBag.errorMessage</h2>*@
+@*<span class="error header"><i class="fa-solid fa-circle-exclamation"></i>@ViewBag.errorMessage</span>*@
+<section class="confirm-email-module">
+    <div class="row">
+        <img src="~/Content/images/doodles/9.png" />
+        <div class="body">
+            <span class="header">Email Confirmation</span>
+            <span>We have sent an email to <strong>brent.papuni@gmail.com</strong> to confirm your identity. Please follow the link provided in the email to complete your registration.</span>
+            <hr />
+        </div>
+    </div>
+    <span>If you do not see the email, please check your spam folder. Or click <a href="#">here</a> to resend confirmation email.</span>
+</section>
 

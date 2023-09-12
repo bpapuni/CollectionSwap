@@ -20,6 +20,7 @@
     --danger-100: #a34c4c;
     --danger-500: #6d2929;
     --main-width: 1440px;
+    --container-box-shadow: 0 2px 5px #888;
 }
 
 *,
@@ -90,7 +91,7 @@ textarea {
     padding: 0.5rem;
     min-width: 100%;
     border-radius: 0.5rem;
-    border: 1px solid var(--lighter-shade);
+    border: none;
 }
 
 .submit-button {
@@ -626,9 +627,10 @@ button.close {
     #history-container table {
         flex-grow: 1;
         text-align: left;
-        background: #e8e8e8;
+        background: #ffffffaa;
         border-collapse: collapse;
         border-radius: 1rem;
+        box-shadow: var(--container-box-shadow);
         overflow: hidden;
     }
 
@@ -675,7 +677,7 @@ button.close {
     background: url('images/doodles/8.png') no-repeat;
     background-size: 25%;
     background-position-x: right;
-    background-position-y: 2rem;
+    background-position-y: bottom;
 }
 
 .feedback-swap-preview {
@@ -1153,12 +1155,12 @@ button.close {
     position: fixed;
     top: -3rem;
     left: 50%;
-    transform: translateX(-50%);
     padding: 0.5rem 1rem;
     color: darkgreen;
-    background: #c1dcb1;
     border: 1px solid darkgreen;
     border-radius: 1rem;
+    background: #c1dcb1;
+    transform: translateX(-50%);
     z-index: 999;
     animation: slide 3s ease-in;
 }
@@ -1441,6 +1443,11 @@ nav a {
     flex-direction: column;
     width: 100%;
     padding-inline: 1rem;
+}
+
+#account-container section {
+    /*background: white;
+    padding-inline: 1rem;*/
 }
 
 .header {
@@ -1754,17 +1761,13 @@ input[type=number] {
     color: var(--danger);
 }
 
-.duplicate-items-error {
+.duplicate-missing-items-error {
     width: 43rem;
     color: var(--brand-red);
 }
 
-.duplicate-items-error > p {
-    margin: 0;
-}
-
-.duplicate-items-error > p:nth-child(1) {
-    font-size: 1.125rem;
+.duplicate-missing-items-error text {
+    /*margin: 0 0 0 1rem;*/
 }
 
 .swap-container {
@@ -1882,13 +1885,12 @@ input[type=number] {
         margin: 0;
         font-weight: 500;
         font-size: 1.2rem;
-        padding: 1rem 0 0 1rem;
+        /*padding: 1rem 0 0 0;*/
     }
 
 .swap-your-items-button {
     display: flex;
     padding: 0.5rem;
-    margin: 1rem 0 0 0;
     color: white;
     outline: none;
     border: 1px solid black;
@@ -1933,15 +1935,27 @@ input[type=number] {
     display: flex;
     gap: 2rem 1.5rem;
     flex-wrap: wrap;
-    padding: 1rem;
+    padding: 1rem 0 0 0;
 }
 
 .selection-pool {
+    position: relative;
     display: flex;
     flex-direction: column;
     max-height: 30rem;
-    overflow: auto;
+    padding: 1rem;
+    border-bottom: 1px solid #ccc;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
+
+    .selection-pool.invalid::after {
+        position: absolute;
+        content: "";
+        width: calc(100% - 2rem);
+        height: calc(100% - 2rem);
+        background: #ffffff88;
+    }
 
 #offer-container .selection-pool {
     max-height: 100%;
@@ -1954,9 +1968,9 @@ input[type=number] {
         padding-right: 1rem;
     }
 
-.swap-items:not(:nth-child(3)) {
+/*.swap-items:not(:nth-child(3)) {
     border-bottom: 1px solid #ccc;
-}
+}*/
 
 .swap-item {
     position: relative;
@@ -2011,6 +2025,12 @@ input[type=number] {
     pointer-events: none;
 }
 
+.swap-item.attention.selected::after {
+    content: "\f058";
+    /*color: var(--brand-orange);*/
+    z-index: 99;
+}
+
 .swap-item.attention::after {
     content: "\f06a";
     position: absolute;
@@ -2020,7 +2040,7 @@ input[type=number] {
     align-items: flex-start;
     justify-content: flex-end;
     /*width: 100%;
-        height: 100%;*/
+    height: 100%;*/
     padding: 0 0.5rem;
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
@@ -2050,12 +2070,6 @@ input[type=number] {
     font-weight: 400;
     font-size: 1.5rem;
     line-height: 1.5rem;
-}
-
-.selection-pool.instructions {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
 }
 
 .swap-instructions {
@@ -2366,7 +2380,7 @@ input[type=number] {
     justify-content: flex-start;
     flex: 1;
     flex-wrap: nowrap;
-    gap: 1rem;
+    gap: 2rem;
     width: 100%;
     padding-bottom: 1rem;
 }
@@ -2387,11 +2401,74 @@ input[type=number] {
     padding: 1rem;
     background-color: white;
     border-radius: 1rem;
+    box-shadow: var(--container-box-shadow);
 }
 
 .confirm-sent-items {
     text-wrap: balance;
 }
+
+.error.header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 10rem;
+    padding: 0;
+    color: var(--brand-red);
+    font-size: 1.5rem;
+    font-weight: 400;
+}
+
+.confirm-email-module {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /*justify-content: center;*/
+    /*gap: 1rem;*/
+    flex-wrap: nowrap;
+    width: 50rem;
+    height: 15rem;
+    margin-top: 6rem;
+    padding: 0 1rem 1rem;
+    border-radius: 2rem;
+    background: white;
+    box-shadow: 0 2px 5px #888;
+}
+
+    .confirm-email-module > .row {
+        align-items: flex-end;
+        width: 100%;
+    }
+
+    .confirm-email-module img {
+        width: auto;
+        height: 11rem;
+        margin: 1rem;
+        object-fit: contain;
+    }
+
+.confirm-email-module .header {
+    margin: 0;
+}
+
+    .confirm-email-module .body {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        width: 80%;
+        margin-bottom: 2.3rem;
+    }
+
+    .confirm-email-module .body strong {
+        color: var(--brand-orange);
+    }
+
+    .confirm-email-module .body hr {
+        width: 95%;
+        margin: 1rem 0;
+        background: black;
+    }
 
 /*.feedback-options.negative-feedback {
     position: relative;

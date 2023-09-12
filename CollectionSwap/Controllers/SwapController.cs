@@ -28,9 +28,10 @@ namespace CollectionSwap.Controllers
                 Users = db.Users.ToList(),
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
-                OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
-                AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
-                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList(),
+                UserSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId).ToList(),
+                //OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
+                //AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
+                //ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList(),
                 Feedbacks = db.Feedbacks.ToList()
             };
 
@@ -47,9 +48,10 @@ namespace CollectionSwap.Controllers
                 Users = db.Users.ToList(),
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
-                OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
-                AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
-                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList(),
+                UserSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId).ToList(),
+                //OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
+                //AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
+                //ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList(),
                 Feedbacks = db.Feedbacks.ToList()
             };
 
@@ -108,9 +110,10 @@ namespace CollectionSwap.Controllers
                 Users = db.Users.ToList(),
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
-                OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
-                AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
-                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList(),
+                UserSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId).ToList(),
+                //OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
+                //AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
+                //ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList(),
                 Feedbacks = db.Feedbacks.ToList()
             };
 

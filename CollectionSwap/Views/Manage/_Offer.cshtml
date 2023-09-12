@@ -2,6 +2,8 @@
 @using Microsoft.AspNet.Identity
 @using Newtonsoft.Json;
 @{
+    var userId = User.Identity.GetUserId();
+
     var id = Model.Swap.Id;
     var Sender = Model.Swap.Sender;
     var Receiver = Model.Swap.Receiver;
@@ -15,14 +17,16 @@
     var receiverRequestedItems = JsonConvert.DeserializeObject<List<int>>(Model.Swap.ReceiverRequestedItems);
     var swapSize = Model.Swap.SwapSize;
     var swapStatus = Model.Swap.Status;
-    var duplicateItems = JsonConvert.DeserializeObject<List<int>>(Model.DuplicateSwapItems);
+    //var duplicateRequestedItems = Model.DuplicateSwapItems == null ? new List<int>() : JsonConvert.DeserializeObject<List<int>>(Model.DuplicateSwapItems["requestedItems"]);
+    //var duplicateOfferedItems = Model.DuplicateSwapItems == null ? new List<int>() : JsonConvert.DeserializeObject<List<int>>(Model.DuplicateSwapItems["offeredItems"]);
+    //var duplicateAcceptedItems = Model.DuplicateSwapItems == null ? new List<int>() : JsonConvert.DeserializeObject<List<int>>(Model.DuplicateSwapItems["acceptedItems"]);
     var rating = Model.Rating;
-    var hasSentItems = User.Identity.GetUserId() == Sender.Id ? Model.Swap.SenderFeedbackSent : Model.Swap.ReceiverFeedbackSent;
+    var hasSentItems = userId == Sender.Id ? Model.Swap.SenderConfirmSent : Model.Swap.ReceiverConfirmSent;
 
-    var userId = User.Identity.GetUserId() == Sender.Id ? Receiver.Id : Sender.Id;
-    var userName = User.Identity.GetUserId() == Sender.Id ? Receiver.UserName : Sender.UserName;
-    var primaryHeader = User.Identity.GetUserId() == Sender.Id ? "You've requested the following items" : $"{@userName} has requested the following items";
-    var heading = swapStatus == "offered" ? "Offered Swap" : swapStatus == "confirmed" ? "Confirmed Swap" : User.Identity.GetUserId() == Receiver.Id ? "Offered Swap" : "Confirm Swap";
+    var otherUserId = userId == Sender.Id ? Receiver.Id : Sender.Id;
+    var otherUserName = userId == Sender.Id ? Receiver.UserName : Sender.UserName;
+    var Validation = Model.Validation;
+    var heading = swapStatus == "offered" ? "Offered Swap" : swapStatus == "confirmed" ? "Confirmed Swap" : userId == Receiver.Id ? "Offered Swap" : "Confirm Swap";
 }
 
 <div class="row">
@@ -32,7 +36,10 @@
     </span>
 </div>
 
+@* If user hasn't sent items yet, add "mailing" to class list *@
 <section class="@(swapStatus == "confirmed" && !hasSentItems ? "mailing" : "")">
+
+    @* If user hasn't sent items yet, display mailing instructions *@
     @if (swapStatus == "confirmed" && !hasSentItems)
     {
         <div class="mailing-instructions-container">
@@ -52,101 +59,290 @@
 
             <div class="column">
                 <b>Be Considerate</b>
-                <span class="confirm-sent-items">Click <a href="/Manage/ConfirmSentReceived" data-swap-id="@id">here</a> to let @userName know when you've sent their items, or tick the checkbox on the previous page.</span>
+                <span class="confirm-sent-items">Click <a href="/Manage/ConfirmSentReceived" data-swap-id="@id">here</a> to let @otherUserName know when you've sent their items, or tick the checkbox on the previous page.</span>
             </div>
         </div>
     }
-<div class="column gap-1 flex-1">
-    @if (duplicateItems.Count > 0)
-    {
-        <span class="duplicate-items-error">
-            <p><i class="fa-solid fa-circle-exclamation"></i> Several users have requested these items.</p>
-            <p>If you do not have enough copies in your collection you'll be unable to confirm this swap.</p>
-        </span>
-    }
-    <div class="swap-container" data-collection-id="@collectionId" data-sender-id="@Sender.Id" data-receiver-id="@Receiver.Id" data-sender-collection-id="@senderCollectionId" data-receiver-collection-id="@receiverCollectionId">
-        <div class="swap-container-header">
-            <div class="swap-info">
-                <span class="swap-size">@swapSize</span>
-                <span>Swap for @swapSize</span>
-            </div>
-            <div class="swap-profile" data-user-id="@userId">
-                <div>
-                    <span class="header">Swap with @userName</span>
-                    @if (rating == -1)
-                    {
-                        <span class="new">New</span>
-                    }
-                    <span class="swap-rating">
-                        @for (int i = 0; i < Math.Floor(rating); i++)
-                        {
-                            <i class="fa fa-star"></i>
-                        }
-                        @if (rating % 1 == 0.5)
-                        {
-                            <i class="fa fa-star-half"></i>
-                        }
-                    </span>
+
+
+    <div class="column gap-1 flex-1">
+        @* Create swap container *@
+        <div class="swap-container" data-collection-id="@collectionId" data-sender-id="@Sender.Id" data-receiver-id="@Receiver.Id" data-sender-collection-id="@senderCollectionId" data-receiver-collection-id="@receiverCollectionId">
+
+            @* Container Header *@
+            <div class="swap-container-header">
+                <div class="swap-info">
+                    <span class="swap-size">@swapSize</span>
+                    <span>Swap for @swapSize</span>
                 </div>
-                <div class="swap-portrait">Pic</div>
+                <div class="swap-profile" data-user-id="@otherUserId">
+                    <div>
+                        <span class="header">Swap with @otherUserName</span>
+                        @if (rating == -1)
+                        {
+                            <span class="new">New</span>
+                        }
+                        <span class="swap-rating">
+                            @for (int i = 0; i < Math.Floor(rating); i++)
+                            {
+                                <i class="fa fa-star"></i>
+                            }
+                            @if (rating % 1 == 0.5)
+                            {
+                                <i class="fa fa-star-half"></i>
+                            }
+                        </span>
+                    </div>
+                    <div class="swap-portrait">Pic</div>
+                </div>
             </div>
-        </div>
+
+            @* Container Body *@
         <div class="swap-container-body">
             @if (swapStatus == "offered")
             {
-                <div class="selection-pool">
-                    <span class="header">@primaryHeader</span>
-                    <div class="swap-items receiver-items">
-                        @foreach (var itemId in receiverRequestedItems)
-                        {
-                            <div class="swap-item swap-request-item @(duplicateItems.Contains(itemId) ? "attention" : "")">
-                                <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
-                            </div>
-                        }
-                    </div>
-                </div>
-                if (User.Identity.GetUserId() == Receiver.Id)
+                if (userId == Sender.Id)
                 {
+                    @* Top row of offer for sender *@
                     <div class="selection-pool">
-                        <span class="header">Select @swapSize of their items in exchange</span>
-                        <div class="swap-items sender-items">
-                            @foreach (var itemId in senderRequestedItems)
+                        <span class="header">You've requested the following items</span>
+
+                        @* Display any duplicate item request warnings to sender *@
+                        <span class="duplicate-missing-items-error">
+                            @if (Validation.DuplicateRequestItems.Count > 0)
                             {
-                                <div class="swap-item swap-request-item @(duplicateItems.Contains(itemId) ? "attention" : "")" onclick="SelectItem(this)">
+                                <text><i class="fa-solid fa-circle-exclamation"></i> You have already requested the marked item(s) from one or more users.</text>
+                            }
+                        </span>
+
+                        @* Display items requested by the sender to the sender *@
+                        <div class="swap-items">
+                            @foreach (var itemId in receiverRequestedItems)
+                            {
+                                <div class="swap-item swap-request-item @(Validation.DuplicateRequestItems.Contains(itemId) ? "attention" : "")">
                                     <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
                                 </div>
                             }
                         </div>
                     </div>
 
-                    @*<div class="selection-pool">
-                            <span class="header">Select @swapSize of @userName's items</span>
-                            <div class="swap-items sender-items">
-                                @foreach (var itemId in @selectionPool)
+                    @* Second row of offer for sender *@
+                    <div class="selection-pool">
+                        <span class="header">@otherUserName will be offered to select @swapSize of your items</span>
+
+                        @* Display any duplicate item request warnings *@
+                        <span class="duplicate-missing-items-error">
+                            @if (Validation.LowInventoryItems.Count > 0)
+                            {
+                                <text><i class="fa-solid fa-circle-exclamation"></i> You will not have enough copies of the marked item(s) to complete all pending swaps (this included).</text>
+                            }
+                        </span>
+
+                        <div class="swap-items">
+                            @foreach (var itemId in senderRequestedItems)
+                            {
+                                <div class="swap-item @(Validation.LowInventoryItems.Contains(itemId) ? "attention" : "")">
+                                    <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (userId == Receiver.Id)
+                {
+                    @* Top row of offer for receiver *@
+                    <div class="selection-pool">
+                        <span class="header">@otherUserName has requested the following items</span>
+
+                        @* Display any low inventory errors first as this is most important, if none exist, display any duplicate item request warnings to receiver *@
+                        <span class="duplicate-missing-items-error">
+                            @if (Validation.LowInventoryItems.Count > 0)
+                            {
+                                <text><i class="fa-solid fa-circle-exclamation"></i> You do not have enough copies of the marked item(s) to accept this swap.</text>
+                            }
+                            else if (Validation.DuplicateOfferedItems.Count > 0)
+                            {
+
+                                <text><i class="fa-solid fa-circle-exclamation"></i> Several users have requested these items.</text>
+                                <text>If you do not have enough copies in your collection you'll be unable to accept this swap.</text>
+                            }
+                        </span>
+
+                        @* Display items requested by the sender to the receiver *@
+                        <div class="swap-items">
+                            @foreach (var itemId in receiverRequestedItems)
+                            {
+                                <div class="swap-item swap-request-item @(Validation.LowInventoryItems.Contains(itemId) || Validation.DuplicateRequestItems.Contains(itemId) ? "attention" : "")">
+                                    <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    @* Second row of offer for receiver *@
+                    <div class="selection-pool @(Validation.IsValid ? "" : "invalid")">
+                        <span class="header">Select @swapSize of @otherUserName's items in exchange</span>
+
+                        @* Display any duplicate item request warnings to receiver *@
+                        <span class="duplicate-missing-items-error">
+                            @if (Validation.DuplicateRequestItems.Count > 0)
+                            {
+                                <text><i class="fa-solid fa-circle-exclamation"></i> You have already requested the marked item(s) from one or more users.</text>
+                            }
+                        </span>
+
+                        <div class="swap-items sender-items">
+                            @foreach (var itemId in senderRequestedItems)
+                            {
+                                <div class="swap-item swap-request-item @(Validation.DuplicateRequestItems.Contains(itemId) ? "attention" : "")" @(Validation.IsValid ? "onclick=SelectItem(this)" : "disabled")>
+                                    <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            else if (swapStatus == "accepted")
+            {
+                if (userId == Sender.Id)
+                {
+                    @* Top row of accepted swap for sender *@
+                    <div class="selection-pool">
+                        <span class="header">You've requested the following items</span>
+
+                        @* Display any duplicate item warnings *@
+                        @if (Validation.DuplicateRequestItems.Count > 0)
+                        {
+                            <span class="duplicate-missing-items-error">
+                                <text><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from several users.</text>
+                            </span>
+                        }
+
+                        <div class="swap-items">
+                            @foreach (var itemId in receiverRequestedItems)
+                            {
+                                <div class="swap-item @(Validation.DuplicateRequestItems.Contains(itemId) ? "attention" : "")">
+                                    <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    @* Second Row of accepted swap for sender *@
+                    <div class="selection-pool">
+                        <span class="header">@otherUserName has requested the following items in exchange</span>
+
+                        @* Display any low inventory errors first as this is most important, if none exist, display any duplicate item request warnings to sender *@
+                        <span class="duplicate-missing-items-error">
+                            @if (Validation.LowInventoryItems.Count > 0 && userId == Receiver.Id)
+                            {
+                                <text><i class="fa-solid fa-circle-exclamation"></i> You do not have enough copies of the marked item(s) to accept this swap.</text>
+                            }
+                            else if (Validation.DuplicateOfferedItems.Count > 0 && userId == Receiver.Id)
+                            {
+
+                                <text><i class="fa-solid fa-circle-exclamation"></i> Several users have requested these items.</text>
+                                <text>If you do not have enough copies in your collection you'll be unable to accept this swap.</text>
+                            }
+                        </span>
+
+                        <div class="swap-items">
+                            @* Display items requested by the sender to the sender *@
+                            @foreach (var itemId in senderRequestedItems)
+                            {
+                                <div class="swap-item @(Validation.DuplicateAcceptedItems.Contains(itemId) || Validation.LowInventoryItems.Contains(itemId)  ? "attention" : "")">
+                                    <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                else if (userId == Receiver.Id)
+                {
+                    @* Top row of accepted swap for receiver *@
+                    <div class="selection-pool">
+                        <span class="header">@otherUserName has requested the following items</span>
+
+                        @* Receivers accepted items are on hold, so low inventory error cannot occur. *@
+
+                        <div class="swap-items">
+                            @* Display items requested by the sender to the receiver *@
+                            @foreach (var itemId in receiverRequestedItems)
+                            {
+                                <div class="swap-item swap-request-item">
+                                    <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    @* Second Row of accepted swap for receiver *@
+                    <div class="selection-pool">
+                        <span class="header">You've requested the following items in exchange</span>
+
+                        @* Display any duplicate item warnings *@
+                        @if (Validation.DuplicateRequestItems.Count > 0)
+                        {
+                            <span class="duplicate-missing-items-error">
+                                <text><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from several users.</text>
+                            </span>
+                        }
+
+                        <div class="swap-items">
+                            @* Display items requested by the receiver to the sender *@
+                            @if (userId == Sender.Id)
+                            {
+                                foreach (var itemId in receiverRequestedItems)
                                 {
-                                    <div class="swap-item swap-request-item" onclick="SelectItem(this)">
+                                    <div class="swap-item @(Validation.DuplicateRequestItems.Contains(itemId) ? "attention" : "")">
                                         <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
                                     </div>
                                 }
-                            </div>
-                        </div>*@
+                            }
+                            @* Display items requested by the sender to the receiver *@
+                            else if (userId == Receiver.Id)
+                            {
+                                foreach (var itemId in senderRequestedItems)
+                                {
+                                    <div class="swap-item">
+                                        <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
                 }
             }
-            else
+            else if (swapStatus == "confirmed")
             {
+                @* Top row for confirmed swaps *@
                 <div class="selection-pool">
-                    <span class="header">@(swapStatus == "accepted" ? "You've requested the following items" : "Items you'll be receiving:")</span>
+                    <span class="header">Items you'll be receiving:</span>
+
+                    @* Display any duplicate item warnings *@
+                    @if (Validation.DuplicateRequestItems.Count > 0)
+                    {
+                        <span class="duplicate-missing-items-error">
+                            @if (userId == Sender.Id)
+                            {
+                                <text><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from several users.</text>
+                            }
+                        </span>
+                    }
+
                     <div class="swap-items">
-                        @if (User.Identity.GetUserId() == Sender.Id)
+                        @* Display items requested by the receiver to the sender *@
+                        @if (userId == Sender.Id)
                         {
                             foreach (var itemId in receiverRequestedItems)
                             {
-                                <div class="swap-item">
+                                <div class="swap-item @(Validation.DuplicateRequestItems.Contains(itemId) ? "attention" : "")">
                                     <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
                                 </div>
                             }
                         }
-                        else
+                        @* Display items requested by the sender to the receiver *@
+                        @if (userId == Receiver.Id)
                         {
                             foreach (var itemId in senderRequestedItems)
                             {
@@ -158,29 +354,52 @@
                     </div>
                 </div>
 
-                <div class="selection-pool @(swapStatus == "confirmed" ? "instructions" : "")">
-                    <div class="column">
-                        <span class="header">@(swapStatus == "accepted" ? @userName + " has requested the following items" : "Please send the following items:")</span>
-                        <div class="swap-items">
-                            @if (User.Identity.GetUserId() == Sender.Id)
+                @* Second Row for confirmed swaps *@
+                <div class="selection-pool">
+                    <span class="header">Please send the following items:</span>
+
+                    @* Display any duplicate item warnings *@
+                    @if (Validation.DuplicateRequestItems.Count > 0)
+                    {
+                        if (userId == Sender.Id)
+                        {
+                            <span class="duplicate-missing-items-error">
+                                <text><i class="fa-solid fa-circle-exclamation"></i> Several users have requested the marked item(s).</text>
+                                <text>If you do not have enough copies in your collection you'll be unable to confirm this swap.</text>
+                            </span>
+                        }
+                    }
+
+                    @* Display any low inventory errors to sender *@
+                    @if (Validation.LowInventoryItems.Count > 0 && userId == Sender.Id)
+                    {
+                        <span class="duplicate-missing-items-error">
+                            <text><i class="fa-solid fa-circle-exclamation"></i> You do not have enough copies of the marked item(s) to confirm this swap.</text>
+                            @*<text>If you do not have enough copies in your collection you'll be unable to confirm this swap.</text>*@
+                        </span>
+                    }
+
+                    <div class="swap-items">
+                        @* Display items requested by the sender to the sender *@
+                        @if (userId == Sender.Id)
+                        {
+                            foreach (var itemId in senderRequestedItems)
                             {
-                                foreach (var itemId in senderRequestedItems)
-                                {
-                                    <div class="swap-item @(duplicateItems.Contains(itemId) ? "attention" : "")">
-                                        <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
-                                    </div>
-                                }
+                                <div class="swap-item @(Validation.DuplicateAcceptedItems.Contains(itemId) ? "attention" : "")">
+                                    <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                                </div>
                             }
-                            else
+                        }
+                        @* Display items requested by the receiver to the receiver *@
+                        else if (userId == Receiver.Id)
+                        {
+                            foreach (var itemId in receiverRequestedItems)
                             {
-                                foreach (var itemId in receiverRequestedItems)
-                                {
-                                    <div class="swap-item swap-request-item">
-                                        <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
-                                    </div>
-                                }
+                                <div class="swap-item swap-request-item">
+                                    <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                                </div>
                             }
-                        </div>
+                        }
                     </div>
                 </div>
             }
@@ -197,33 +416,34 @@
                 </div>
             </div>
         </div>
-    </div>
+        </div>
 
-    <div class="row gap-1">
-        @if (swapStatus == "offered")
-        {
-            if (User.Identity.GetUserId() == Sender.Id)
+        @* Create swap buttons *@
+        <div class="row gap-1">
+            @if (swapStatus == "offered")
             {
-                <button class="submit-button" onclick="declineSwap(this, @id)">Cancel Swap</button>
+                if (userId == Sender.Id)
+                {
+                    <button class="submit-button" onclick="declineSwap(this, @id)">Cancel Swap</button>
+                }
+                else if (userId == Receiver.Id)
+                {
+                    <button class="submit-button accept" @Html.Raw(Validation.IsValid ? $"onclick=\"acceptSwap(this, {id})\"" : null) disabled>Items Selected (0/@swapSize)</button>
+                    <button class="submit-button" onclick="declineSwap(this, @id)">Decline Swap</button>
+                }
             }
-            else
+            else if (swapStatus == "accepted")
             {
-                <button class="submit-button accept" onclick="acceptSwap(this, @id)" disabled>Items Selected (0/@swapSize)</button>
-                <button class="submit-button" onclick="declineSwap(this, @id)">Decline Swap</button>
+                if (userId == Sender.Id)
+                {
+                    <button class="submit-button accept" @Html.Raw(Validation.IsValid ? $"onclick=\"confirmSwap(this, {id})\"" : "disabled")>Confirm Swap</button>
+                    <button class="submit-button" onclick="declineSwap(this, @id)">Decline Swap</button>
+                }
+                else if (userId == Receiver.Id)
+                {
+                    <button class="submit-button" onclick="declineSwap(this, @id)">Cancel Swap</button>
+                }
             }
-        }
-        else if (swapStatus == "accepted")
-        {
-            if (User.Identity.GetUserId() == Sender.Id)
-            {
-                <button class="submit-button accept" onclick="confirmSwap(this, @id)">Confirm Swap</button>
-                <button class="submit-button" onclick="declineSwap(this, @id)">Decline Swap</button>
-            }
-            else
-            {
-                <button class="submit-button" onclick="declineSwap(this, @id)">Cancel Swap</button>
-            }
-        }
+        </div>
     </div>
-</div>
 </section>

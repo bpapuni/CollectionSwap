@@ -100,9 +100,7 @@ namespace CollectionSwap.Controllers
                 Users = db.Users.ToList(),
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
-                OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
-                AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
-                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList(),
+                UserSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId).ToList(),
                 Feedbacks = db.Feedbacks.ToList()
             };
 
@@ -120,15 +118,13 @@ namespace CollectionSwap.Controllers
                 Users = db.Users.ToList(),
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
-                OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
-                AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
-                ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList(),
+                UserSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId || swap.Receiver.Id == userId).ToList(),
                 Feedbacks = db.Feedbacks.ToList()
             };
 
             if (id.HasValue && selectedCollection != null && selectedCollection.UserId == userId)
             {
-                model.MatchingSwaps = selectedCollection.FindMatchingSwaps(db);
+                (model.MatchingSwaps, model.MatchingSwapViews) = selectedCollection.FindMatchingSwaps(db);
                 ViewBag.SelectedCollection = selectedCollection;
             }
 
@@ -628,7 +624,7 @@ namespace CollectionSwap.Controllers
                         var hasSentItems = swap.Sender.Id == userId ? swap.SenderConfirmSent : swap.ReceiverConfirmSent;
                         var hasReceivedItems = swap.Sender.Id == userId ? swap.SenderConfirmReceived : swap.ReceiverConfirmReceived;
                         var hasSentFeedback = swap.Sender.Id == userId ? swap.SenderFeedbackSent : swap.ReceiverFeedbackSent;
-                        if (hasSentItems && hasReceivedItems && !hasSentFeedback)
+                        if (hasSentItems && hasReceivedItems/* && !hasSentFeedback*/)
                         {
                             return Feedback(id.Value);
                         }
@@ -764,7 +760,7 @@ namespace CollectionSwap.Controllers
                 ////ReceiverRating = db.Feedbacks.Where(fb => fb.SenderId == offer.ReceiverId).Any() ? (db.Feedbacks.Where(fb => fb.ReceiverId == offer.ReceiverId).Select(fb => fb.Rating).Average() * 2) / 2 : -1,
                 Swap = offer,
                 Address = db.Addresses.Where(a => a.UserId != userId && (a.UserId == offer.SenderId || a.UserId == offer.ReceiverId)).FirstOrDefault(),
-                DuplicateSwapItems = offer.Validate(userId, swaps, db)
+                Validation = offer.Validate(userId, db)
             };
 
             var shModel = new SwapHistoryViewModel

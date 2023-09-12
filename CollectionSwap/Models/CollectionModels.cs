@@ -248,20 +248,20 @@ namespace CollectionSwap.Models
 
             return "User Collection deleted successfully.";
         }
-        public List<Swap> FindMatchingSwaps(ApplicationDbContext db)
+        public (List<Swap>, List<SwapViewModel>) FindMatchingSwaps(ApplicationDbContext db)
         {
             var userId = this.User.Id;
             var potentialSwapList = FindPotentialSwaps(this, db);
 
-            PotentialSwap currentUserSwapper = potentialSwapList.Where(swap => swap.User.Id == userId && swap.UserCollection == this).FirstOrDefault();
+            var currentUserSwapper = potentialSwapList.Where(swap => swap.User.Id == userId && swap.UserCollection == this).FirstOrDefault();
 
-            List<Swap> matchingSwaps = new List<Swap>();
+            var matchingSwaps = new List<Swap>();
+            var matchingSwapViews = new List<SwapViewModel>();
 
             if (currentUserSwapper == null)
             {
-                return new List<Swap>(); // User not found.
+                return (new List<Swap>(), new List<SwapViewModel>()); // User not found.
             }
-
 
             foreach (var potentialSwap in potentialSwapList)
             {
@@ -289,15 +289,22 @@ namespace CollectionSwap.Models
                         Collection = potentialSwap.Collection,
                         SenderCollectionId = this.Id,
                         SenderCollection = this,
-                        SenderRequestedItems = JsonConvert.SerializeObject(currentUserNeededItems),
+                        SenderRequestedItems = JsonConvert.SerializeObject(otherUserNeededItems),           // Items requested from (not by) the sender
                         ReceiverCollectionId = potentialSwap.UserCollection.Id,
                         ReceiverCollection = potentialSwap.UserCollection,
-                        ReceiverRequestedItems = JsonConvert.SerializeObject(otherUserNeededItems),
+                        ReceiverRequestedItems = JsonConvert.SerializeObject(currentUserNeededItems),       // Items requested from (not by) the receiver
                         SwapSize = Math.Min(currentUserNeededItems.Count(), otherUserNeededItems.Count()),
                         Status = "swap"
                     };
 
+                    var matchingSwapView = new SwapViewModel
+                    {
+                        Swap = matchingSwap,
+                        Validation = matchingSwap.Validate(userId, db)
+                    };
+
                     matchingSwaps.Add(matchingSwap);
+                    matchingSwapViews.Add(matchingSwapView);
                 }
             }
 
@@ -306,7 +313,7 @@ namespace CollectionSwap.Models
             //.ThenByDescending(swap => swap.SenderItemIds.Count())
             .ToList();
 
-            return matchingSwaps;
+            return (matchingSwaps, matchingSwapViews);
         }
         private List<PotentialSwap> FindPotentialSwaps(UserCollection selectedCollection, ApplicationDbContext db)
         {
