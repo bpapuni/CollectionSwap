@@ -204,8 +204,8 @@ namespace CollectionSwap.Controllers
                         role.Name = "User";
                     }
                 }
-                //var result = await UserManager.CreateAsync(user, model.Password);
-                if (/*result.Succeeded*/false)
+                var result = await UserManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
                 {
                     RoleManager.Create(role);
                     UserManager.AddToRole(user.Id, role.Name);
@@ -216,30 +216,19 @@ namespace CollectionSwap.Controllers
                     // Send an email with this link
                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    //await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
                     EmailSender.SendEmail(model.Email, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-
-                    //return RedirectToLocal("Manage");
-
-                    // Uncomment to debug locally 
-                    // TempData["ViewBagLink"] = callbackUrl;
 
                     ViewBag.EmailRecipient = model.Email;
 
                     return View("Info");
-                    //return RedirectToAction("Index", "Home");
                 }
 
-                ViewBag.EmailRecipient = model.Email;
-                return View("Info");
-
-                //var errorCounter = 0;
-                //foreach (var error in result.Errors)
-                //{
-                //    ModelState.AddModelError(errorCounter == 0 ? "UsernameTaken" : "EmailTaken", error);
-                //    errorCounter++;
-                //}
+                var errorCounter = 0;
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(errorCounter == 0 ? "UsernameTaken" : "EmailTaken", error);
+                    errorCounter++;
+                }
             }
 
             // If we got this far, something failed, redisplay form
