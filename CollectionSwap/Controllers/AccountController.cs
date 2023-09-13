@@ -225,8 +225,7 @@ namespace CollectionSwap.Controllers
                     // Uncomment to debug locally 
                     // TempData["ViewBagLink"] = callbackUrl;
 
-                    ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
-                                    + "before you can log in.";
+                    ViewBag.EmailRecipient = model.Email;
 
                     return View("Info");
                     //return RedirectToAction("Index", "Home");
