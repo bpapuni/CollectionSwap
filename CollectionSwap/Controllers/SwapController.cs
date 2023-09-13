@@ -80,6 +80,9 @@ namespace CollectionSwap.Controllers
 
             switch (result.SuccessType)
             {
+                case "charity":
+                    TempData["Status"] = "You've requested these items";
+                    return RedirectToAction("DisplaySwapMatches", "Manage", new { id = request.ReceiverUserCollectionId });
                 case "offered":
                     TempData["Status"] = "Your swap request has been sent";
                     return RedirectToAction("DisplaySwapMatches", "Manage", new { id = request.SenderUserCollectionId });

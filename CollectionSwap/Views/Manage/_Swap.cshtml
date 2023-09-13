@@ -38,7 +38,7 @@
                 <span>Swap for @swapSize</span>
             }
         </div>
-        <div class="swap-profile" data-user-id="@otherUserId">
+        <div class="swap-profile" data-user-id="@(swapStatus == "charity" ? Sender.Id : Receiver.Id)">
             <div>
                 @if (swapStatus == "charity")
                 {
@@ -193,7 +193,7 @@
 </div>
 @if (swapStatus == "charity")
 {
-    <button class="submit-button chartiy" onclick="RequestDonation(this)">Request Items</button>
+    <button class="submit-button charity" onclick="RequestDonation(this)">Request Items</button>
 }
 else if (swapStatus == "swap")
 {

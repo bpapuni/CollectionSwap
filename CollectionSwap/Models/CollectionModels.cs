@@ -276,7 +276,7 @@ namespace CollectionSwap.Models
             {
                 // Find all pending swaps for the current user
                 var pendingSwaps = db.Swaps
-                    .Where(swap => (swap.Status == "offered" || swap.Status == "accepted") && (swap.Sender.Id == userId || swap.Receiver.Id == userId))
+                    .Where(swap => (swap.Status == "offered" || swap.Status == "accepted" || swap.Status == "charity") && (swap.Sender.Id == userId || swap.Receiver.Id == userId))
                     .Select(swap => new { swap.SenderCollectionId, swap.ReceiverCollectionId })
                     .ToList();
 
@@ -288,7 +288,38 @@ namespace CollectionSwap.Models
                 var currentUserNeededItems = currentUserSwapper.MissingItems.Intersect(potentialSwap.DuplicateItems).ToList();
                 var otherUserNeededItems = currentUserSwapper.DuplicateItems.Intersect(potentialSwap.MissingItems).ToList();
 
-                if (currentUserNeededItems.Any() && otherUserNeededItems.Any())
+                if (potentialSwap.UserCollection.Charity)
+                {
+                    var matchingSwap = new Swap
+                    {
+                        Sender = potentialSwap.UserCollection.User,
+                        Receiver = db.Users.Find(userId),
+                        CollectionId = potentialSwap.UserCollection.Collection.Id,
+                        Collection = potentialSwap.UserCollection.Collection,
+                        SenderCollectionId = potentialSwap.UserCollection.Id,
+                        SenderCollection = potentialSwap.UserCollection,
+                        SenderRequestedItems = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<List<int>>(potentialSwap.UserCollection.ItemCountJSON)
+                                            .Select((value, index) => new { Value = value, Index = index })
+                                            .Where(item => item.Value != 0)
+                                            .Select(item => item.Index)
+                                            .ToList()),                                         // Items donated by the sender
+                        ReceiverCollectionId = this.Id,
+                        ReceiverCollection = this,
+                        ReceiverRequestedItems = JsonConvert.SerializeObject(new List<int>()),      // Nothing in exchange
+                        SwapSize = 0,
+                        Status = "charity"
+                    };
+
+                    var matchingSwapView = new SwapViewModel
+                    {
+                        Swap = matchingSwap,
+                        Validation = matchingSwap.Validate(userId, db)
+                    };
+
+                    matchingSwaps.Add(matchingSwap);
+                    matchingSwapViews.Add(matchingSwapView);
+                }
+                else if (currentUserNeededItems.Any() && otherUserNeededItems.Any())
                 {
                     var matchingSwap = new Swap
                     {
@@ -315,40 +346,6 @@ namespace CollectionSwap.Models
                     matchingSwaps.Add(matchingSwap);
                     matchingSwapViews.Add(matchingSwapView);
                 }
-            }
-
-            var charitableCollections = db.UserCollections.Where(uc => uc.CollectionId == this.CollectionId && uc.Charity == true).ToList();
-
-            foreach (var collection in charitableCollections)
-            {
-                var matchingSwap = new Swap
-                {
-                    Sender = collection.User,
-                    Receiver = db.Users.Find(userId),
-                    CollectionId = collection.Collection.Id,
-                    Collection = collection.Collection,
-                    SenderCollectionId = collection.Id,
-                    SenderCollection = collection,
-                    SenderRequestedItems = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<List<int>>(collection.ItemCountJSON)
-                                            .Select((value, index) => new { Value = value, Index = index })
-                                            .Where(item => item.Value != 0)
-                                            .Select(item => item.Index)
-                                            .ToList()),                                         // Items donated by the sender
-                    ReceiverCollectionId = this.Id,
-                    ReceiverCollection = this,
-                    ReceiverRequestedItems = JsonConvert.SerializeObject(new List<int>()),      // Nothing in exchange
-                    SwapSize = 0,
-                    Status = "charity"
-                };
-
-                var matchingSwapView = new SwapViewModel
-                {
-                    Swap = matchingSwap,
-                    Validation = matchingSwap.Validate(userId, db)
-                };
-
-                matchingSwaps.Add(matchingSwap);
-                matchingSwapViews.Add(matchingSwapView);
             }
 
             matchingSwaps = matchingSwaps

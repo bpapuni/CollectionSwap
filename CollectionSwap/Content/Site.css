@@ -1014,6 +1014,10 @@ button.close {
     border-radius: 50%;
 }
 
+.swap-prog-container > *:not(.swap-capstone).hidden::after {
+    background: transparent;
+}
+
 .swap-prog-container > *:not(.swap-capstone).prog-index-1 {
     background: #ABECA4;
 }
@@ -1024,6 +1028,10 @@ button.close {
 
     .swap-prog-container > *:not(.swap-capstone).prog-index-1::after {
         background: #48A43E;
+    }
+
+    .swap-prog-container > *:not(.swap-capstone).hidden.prog-index-1::after {
+        background: transparent;
     }
 
 .swap-prog-container > *:not(.swap-capstone).prog-index-2 {
@@ -1040,6 +1048,10 @@ button.close {
 
     .swap-prog-container > *:not(.swap-capstone).prog-index-3::after {
         background: #3F8F36;
+    }
+
+    .swap-prog-container > *:not(.swap-capstone).hidden.prog-index-3::after {
+        background: transparent;
     }
 
 .swap-prog-container > *:not(.swap-capstone).prog-index-4 {

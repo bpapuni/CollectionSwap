@@ -17,9 +17,6 @@
     var receiverRequestedItems = JsonConvert.DeserializeObject<List<int>>(Model.Swap.ReceiverRequestedItems);
     var swapSize = Model.Swap.SwapSize;
     var swapStatus = Model.Swap.Status;
-    //var duplicateRequestedItems = Model.DuplicateSwapItems == null ? new List<int>() : JsonConvert.DeserializeObject<List<int>>(Model.DuplicateSwapItems["requestedItems"]);
-    //var duplicateOfferedItems = Model.DuplicateSwapItems == null ? new List<int>() : JsonConvert.DeserializeObject<List<int>>(Model.DuplicateSwapItems["offeredItems"]);
-    //var duplicateAcceptedItems = Model.DuplicateSwapItems == null ? new List<int>() : JsonConvert.DeserializeObject<List<int>>(Model.DuplicateSwapItems["acceptedItems"]);
     var rating = Model.Rating;
     var hasSentItems = userId == Sender.Id ? Model.Swap.SenderConfirmSent : Model.Swap.ReceiverConfirmSent;
 

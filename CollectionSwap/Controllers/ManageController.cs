@@ -624,25 +624,16 @@ namespace CollectionSwap.Controllers
             if (id.HasValue)
             {
                 var swap = db.Swaps.Find(id);
-                switch (swap.Status)
+                var hasSentItems = swap.Sender.Id == userId ? swap.SenderConfirmSent : swap.ReceiverConfirmSent;
+                var hasReceivedItems = swap.Sender.Id == userId ? swap.SenderConfirmReceived : swap.ReceiverConfirmReceived;
+                var hasSentFeedback = swap.Sender.Id == userId ? swap.SenderFeedbackSent : swap.ReceiverFeedbackSent;
+                if (hasSentItems && hasReceivedItems/* && !hasSentFeedback*/)
                 {
-                    case "offered":
-                    case "accepted":
-                    case "confirmed":
-                    case "completed":
-                        var hasSentItems = swap.Sender.Id == userId ? swap.SenderConfirmSent : swap.ReceiverConfirmSent;
-                        var hasReceivedItems = swap.Sender.Id == userId ? swap.SenderConfirmReceived : swap.ReceiverConfirmReceived;
-                        var hasSentFeedback = swap.Sender.Id == userId ? swap.SenderFeedbackSent : swap.ReceiverFeedbackSent;
-                        if (hasSentItems && hasReceivedItems/* && !hasSentFeedback*/)
-                        {
-                            return Feedback(id.Value);
-                        }
-                        else
-                        {
-                            return Offer(id.Value);
-                        }
-                    default:
-                        break;
+                    return Feedback(id.Value);
+                }
+                else
+                {
+                    return Offer(id.Value);
                 }
             }
 

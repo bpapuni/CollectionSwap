@@ -57,6 +57,26 @@ function ToggleSwapItems(e) {
     $(e).closest(".swap-container-body").find(".your-items").toggleClass("d-none");
 }
 
+function RequestDonation(e) {
+    const swapContainer = $(e).prev(".swap-container");
+
+    var swapRequestData = {
+        ReceiverId: swapContainer.find(".swap-profile").data("user-id"),        // This will be stored as SenderId in database as the donater is the sender
+        CollectionId: swapContainer.data("collection-id"),
+        SenderUserCollectionId: swapContainer.data("sender-collection-id"),
+        ReceiverUserCollectionId: swapContainer.data("receiver-collection-id"),
+        StartDate: new Date().toISOString(),
+        Status: "charity"
+    }
+
+    const formData = new FormData();
+    Object.entries(swapRequestData).forEach(([key, value]) => {
+        formData.append(key, value);
+    });
+
+    HandleFormSubmit("/Swap/ProcessSwap", "POST", formData);
+}
+
 function offerSwap(e) {
     const swapContainer = $(e).prev(".swap-container");
     const senderItems = swapContainer.find(".your-items .swap-item > img").map(function () {

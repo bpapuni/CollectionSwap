@@ -2,6 +2,7 @@
 @using Microsoft.AspNet.Identity
 @{
     string statusMessage = ViewBag.Status;
+    var userId = User.Identity.GetUserId();
 }
 
 <div class="scroll-snap-row">
@@ -30,7 +31,7 @@
                     {
                         <tr>
                             <td>@Swap.Collection.Name</td>
-                            @if (Swap.SenderId == User.Identity.GetUserId())
+                            @if (Swap.SenderId == userId)
                             {
                                 <td>@Swap.Receiver.UserName</td>
                             }
@@ -40,8 +41,38 @@
                             }
                             @switch (@Swap.Status)
                             {
+                                case "charity":
+                                    if (Swap.SenderId == userId)
+                                    {
+                                        <td class="swap-status" title="You offered this swap, waiting for @Swap.Receiver.UserName to accept or decline.">@Html.Partial("_SwapProgress", Swap)</td>
+                                    }
+                                    else
+                                    {
+                                        <td class="swap-status" title="You've requested these items, waiting @Swap.Sender.UserName to accept or decline.">@Html.Partial("_SwapProgress", Swap)</td>
+                                    }
+                                    break;
+                                case "charity-confirmed":
+                                    if (Swap.SenderId == userId)
+                                    {
+                                        <td class="swap-status" title="You offered this swap, waiting for @Swap.Receiver.UserName to accept or decline.">@Html.Partial("_SwapProgress", Swap)</td>
+                                    }
+                                    else
+                                    {
+                                        <td class="swap-status" title="@Swap.Sender.UserName has accepted your request.">@Html.Partial("_SwapProgress", Swap)</td>
+                                    }
+                                    break;
+                                case "charity-completed":
+                                    if (Swap.SenderId == userId)
+                                    {
+                                        <td class="swap-status" title="You offered this swap, waiting for @Swap.Receiver.UserName to accept or decline.">@Html.Partial("_SwapProgress", Swap)</td>
+                                    }
+                                    else
+                                    {
+                                        <td class="swap-status" title="Swap complete">@Html.Partial("_SwapProgress", Swap)</td>
+                                    }
+                                    break;
                                 case "offered":
-                                    if (Swap.SenderId == User.Identity.GetUserId())
+                                    if (Swap.SenderId == userId)
                                     {
                                         <td class="swap-status" title="You offered this swap, waiting for @Swap.Receiver.UserName to accept or decline.">@Html.Partial("_SwapProgress", Swap)</td>
                                     }
@@ -51,7 +82,7 @@
                                     }
                                     break;
                                 case "accepted":
-                                    if (Swap.SenderId == User.Identity.GetUserId())
+                                    if (Swap.SenderId == userId)
                                     {
                                         <td class="swap-status" title="The swap has been accepted, waiting for you to confirm.">@Html.Partial("_SwapProgress", Swap)</td>
                                     }
@@ -61,7 +92,7 @@
                                     }
                                     break;
                                 case "confirmed":
-                                    if (Swap.SenderId == User.Identity.GetUserId())
+                                    if (Swap.SenderId == userId)
                                     {
                                         if (Swap.ReceiverConfirmSent)
                                         {
@@ -90,7 +121,7 @@
                                 default:
                                     break;
                             }
-                            @if (Swap.SenderId == User.Identity.GetUserId())
+                            @if (Swap.SenderId == userId)
                             {
                                 <td>
                                     <input data-swap-id="@Swap.Id" data-type="sent" class="swap-confirm" type="checkbox" checked="@Swap.SenderConfirmSent" />
@@ -113,7 +144,7 @@
                             {
                                 case "offered":
                                     <td>
-                                        @if (Swap.SenderId == User.Identity.GetUserId())
+                                        @if (Swap.SenderId == userId)
                                         {
                                             <span>Waiting for @Swap.Receiver.UserName</span><br />
                                             <a href="/Manage/SwapHistory/@Swap.Id" class="swap-offer">(View Offer)</a>
@@ -126,7 +157,7 @@
                                     break;
                                 case "accepted":
                                     <td>
-                                        @if (Swap.SenderId == User.Identity.GetUserId())
+                                        @if (Swap.SenderId == userId)
                                         {
                                             <a href="/Manage/SwapHistory/@Swap.Id" class="swap-offer">Confirm Swap</a>
                                         }
@@ -138,9 +169,9 @@
                                     </td>
                                     break;
                                 case "confirmed":
-                                    var hasSentItems = Swap.Sender.Id == User.Identity.GetUserId() ? Swap.SenderConfirmSent : Swap.ReceiverConfirmSent;
-                                    var hasReceivedItems = Swap.Sender.Id == User.Identity.GetUserId() ? Swap.SenderConfirmReceived : Swap.ReceiverConfirmReceived;
-                                    var hasSentFeedback = Swap.Sender.Id == User.Identity.GetUserId() ? Swap.SenderFeedbackSent : Swap.ReceiverFeedbackSent;
+                                    var hasSentItems = Swap.Sender.Id == userId ? Swap.SenderConfirmSent : Swap.ReceiverConfirmSent;
+                                    var hasReceivedItems = Swap.Sender.Id == userId ? Swap.SenderConfirmReceived : Swap.ReceiverConfirmReceived;
+                                    var hasSentFeedback = Swap.Sender.Id == userId ? Swap.SenderFeedbackSent : Swap.ReceiverFeedbackSent;
                                     if (hasSentFeedback)
                                     {
                                         <td>

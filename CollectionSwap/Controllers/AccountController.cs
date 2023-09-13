@@ -178,7 +178,7 @@ namespace CollectionSwap.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            return View("Login");
+            return RedirectToAction("Login");
         }
 
         //
@@ -204,8 +204,8 @@ namespace CollectionSwap.Controllers
                         role.Name = "User";
                     }
                 }
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                //var result = await UserManager.CreateAsync(user, model.Password);
+                if (/*result.Succeeded*/false)
                 {
                     RoleManager.Create(role);
                     UserManager.AddToRole(user.Id, role.Name);
@@ -231,12 +231,15 @@ namespace CollectionSwap.Controllers
                     //return RedirectToAction("Index", "Home");
                 }
 
-                var errorCounter = 0;
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(errorCounter == 0 ? "UsernameTaken" : "EmailTaken", error);
-                    errorCounter++;
-                }
+                ViewBag.EmailRecipient = model.Email;
+                return View("Info");
+
+                //var errorCounter = 0;
+                //foreach (var error in result.Errors)
+                //{
+                //    ModelState.AddModelError(errorCounter == 0 ? "UsernameTaken" : "EmailTaken", error);
+                //    errorCounter++;
+                //}
             }
 
             // If we got this far, something failed, redisplay form
