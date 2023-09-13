@@ -109,17 +109,17 @@ namespace CollectionSwap.Models
                 switch (request.Status)
                 {
                     case "charity":
-                        var senderItemCount = JsonConvert.DeserializeObject<List<int>>(db.UserCollections.Where(uc => uc.Id == request.SenderUserCollectionId).FirstOrDefault().ItemCountJSON);
-                        senderItemCount = senderItemCount
-                                            .SelectMany((value, index) => Enumerable.Repeat(index, value))
-                                            .ToList();
+                        //var senderItemCount = JsonConvert.DeserializeObject<List<int>>(db.UserCollections.Where(uc => uc.Id == request.SenderUserCollectionId).FirstOrDefault().ItemCountJSON);
+                        //senderItemCount = senderItemCount
+                        //                    .SelectMany((value, index) => Enumerable.Repeat(index, value))
+                        //                    .ToList();
 
                         this.CollectionId = request.CollectionId;
                         this.SenderCollectionId = request.SenderUserCollectionId;
                         this.ReceiverCollectionId = request.ReceiverUserCollectionId;
-                        this.SenderId = request.ReceiverId;                             // Sender and receiver are switched for donated items
+                        this.SenderId = request.ReceiverId;                                         // Sender and receiver are switched for donated items
                         this.ReceiverId = userId;
-                        this.SenderRequestedItems = JsonConvert.SerializeObject(senderItemCount);
+                        this.SenderRequestedItems = JsonConvert.SerializeObject(new List<int>());   // Empty list that will be live updated 
                         this.ReceiverRequestedItems = JsonConvert.SerializeObject(new List<int>());
                         this.SwapSize = 0;
                         this.Status = request.Status;

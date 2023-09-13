@@ -219,7 +219,6 @@ namespace CollectionSwap.Controllers
                     EmailSender.SendEmail(model.Email, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
                     ViewBag.EmailRecipient = model.Email;
-
                     return View("Info");
                 }
 

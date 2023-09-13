@@ -44,7 +44,7 @@
                                 case "charity":
                                     if (Swap.SenderId == userId)
                                     {
-                                        <td class="swap-status" title="You offered this swap, waiting for @Swap.Receiver.UserName to accept or decline.">@Html.Partial("_SwapProgress", Swap)</td>
+                                        <td class="swap-status" title="@Swap.Receiver.UserName has requested your items.">@Html.Partial("_SwapProgress", Swap)</td>
                                     }
                                     else
                                     {
@@ -142,6 +142,19 @@
 
                             @switch (@Swap.Status)
                             {
+                                case "charity":
+                                    <td>
+                                        @if (Swap.SenderId == userId)
+                                        {
+                                            <a href="/Manage/SwapHistory/@Swap.Id" class="swap-offer">Review Offer</a>
+                                        }
+                                        else
+                                        {
+                                            <span>Waiting for @Swap.Sender.UserName</span><br />
+                                            <a href="/Manage/SwapHistory/@Swap.Id" class="swap-offer">(View Offer)</a>
+                                        }
+                                    </td>
+                                    break;
                                 case "offered":
                                     <td>
                                         @if (Swap.SenderId == userId)

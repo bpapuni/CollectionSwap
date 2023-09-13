@@ -611,12 +611,17 @@ namespace CollectionSwap.Controllers
         {
             var partial = String.Empty;
             var userId = User.Identity.GetUserId();
-            var shModel = new SwapHistoryViewModel
-            {
-                Swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId)
+            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId)
                                 .Include(swap => swap.Collection)
                                 .Include(swap => swap.Sender)
-                                .Include(swap => swap.Receiver).ToList(),
+                                .Include(swap => swap.SenderCollection)
+                                .Include(swap => swap.Receiver)
+                                .Include(swap => swap.ReceiverCollection)
+                                .ToList();
+
+            var shModel = new SwapHistoryViewModel
+            {
+                Swaps = ProcessCharityRequests(swaps),
                 Feedback = null,
                 Offer = null
             };
@@ -642,6 +647,64 @@ namespace CollectionSwap.Controllers
             return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" } }, JsonRequestBehavior.AllowGet);
         }
 
+        private List<Swap> ProcessCharityRequests(List<Swap> swaps)
+        {
+            var userId = User.Identity.GetUserId();
+
+            // Returns all swaps for receivers, or all swaps excluding charity for senders
+            var processedSwaps = swaps
+                .Where(s => (s.Sender.Id == userId && s.Status.Contains("charity") == true) == false)
+                .ToList();
+
+            var charitySwaps = swaps
+                .Where(s => s.Sender.Id == userId && s.Status.Contains("charity") == true)
+                .ToList();
+
+            // Creates a list of all user collections marked as charity
+            var charityCollectionsIds = charitySwaps
+                .Select(s => s.SenderCollection.Id)
+                .Distinct()
+                .ToList();
+
+            foreach (var id in charityCollectionsIds)
+            {
+                // Create a List<int> of items being given away
+                var charityItems = JsonConvert.DeserializeObject<List<int>>(swaps.Select(s => s.SenderCollection).Where(s => s.Id == id).FirstOrDefault().ItemCountJSON)
+                    .Select((value, index) => new { Value = value, Index = index })
+                    .Where(item => item.Value != 0)
+                    .Select(item => item.Index)
+                    .ToList();
+
+
+                var requestedSwaps = charitySwaps.Where(s => s.SenderCollection.Id == id).ToList();
+
+                // Creates a List<List<int>> (list of lists) of all receivers item counts
+                var receiversItemCountAndRequestDate = requestedSwaps
+                    .Select(s => new { Id = s.Id, ItemCount = JsonConvert.DeserializeObject<List<int>>(s.ReceiverCollection.ItemCountJSON), Date = s.StartDate })
+                    .ToList();
+
+                // Create List<List<int>> (list of lists) of the items each receiver is missing that are available in the charity items
+                var missingItems = receiversItemCountAndRequestDate
+                    .Select(innerList => new
+                    {
+                        id = innerList.Id,
+                        Items = innerList.ItemCount
+                        .Select((value, index) => new { Value = value, Index = index })
+                        .Where(item => item.Value == 0 && charityItems.Contains(item.Index))
+                        .Select(item => item.Index)
+                        .ToList(),
+                        Date = innerList.Date
+                    })
+                    .OrderByDescending(obj => obj.Items.Count())
+                    .ThenBy(obj => obj.Date)
+                    .FirstOrDefault();
+
+                processedSwaps.Add(swaps.Where(s => s.Id == missingItems.id).FirstOrDefault());
+            }
+
+            return processedSwaps;
+        }
+
         [HttpPost]
         [Authorize]
         public ActionResult ConfirmSentReceived(int id, string type)
@@ -650,14 +713,19 @@ namespace CollectionSwap.Controllers
             var swap = db.Swaps.Find(id);
             swap.Confirm(type, userId, db);
 
-            var shModel = new SwapHistoryViewModel
-            {
-                Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
+            var swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
                                 .Include(s => s.Collection)
                                 .Include(s => s.Sender)
-                                .Include(s => s.Receiver).ToList(),
+                                .Include(s => s.SenderCollection)
+                                .Include(s => s.Receiver)
+                                .Include(s => s.ReceiverCollection)
+                                .ToList();
+
+            var shModel = new SwapHistoryViewModel
+            {
+                Swaps = ProcessCharityRequests(swaps),
                 Feedback = null,
-                Offer = null,
+                Offer = null
             };
 
             var partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
@@ -673,6 +741,14 @@ namespace CollectionSwap.Controllers
             var partial = String.Empty;
             var userId = User.Identity.GetUserId();
 
+            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId)
+                                            .Include(swap => swap.Collection)
+                                            .Include(swap => swap.Sender)
+                                            .Include(swap => swap.SenderCollection)
+                                            .Include(swap => swap.Receiver)
+                                            .Include(swap => swap.ReceiverCollection)
+                                            .ToList();
+
             var fbModel = new FeedbackViewModel
             {
                 Swap = db.Swaps.Find(id),
@@ -681,11 +757,9 @@ namespace CollectionSwap.Controllers
 
             var shModel = new SwapHistoryViewModel
             {
-                Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
-                                .Include(s => s.Collection)
-                                .Include(s => s.Sender)
-                                .Include(s => s.Receiver).ToList(),
-                Feedback = fbModel
+                Swaps = ProcessCharityRequests(swaps),
+                Feedback = fbModel,
+                Offer = null
             };
 
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
@@ -699,19 +773,25 @@ namespace CollectionSwap.Controllers
             var partial = String.Empty;
             var userId = User.Identity.GetUserId();
 
+            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId)
+                                            .Include(swap => swap.Collection)
+                                            .Include(swap => swap.Sender)
+                                            .Include(swap => swap.SenderCollection)
+                                            .Include(swap => swap.Receiver)
+                                            .Include(swap => swap.ReceiverCollection)
+                                            .ToList();
+
             var fbModel = new FeedbackViewModel
             {
                 Swap = db.Swaps.Find(model.SwapId),
-                //Feedback = model
+                Feedback = null
             };
 
             var shModel = new SwapHistoryViewModel
             {
-                Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
-                                .Include(s => s.Collection)
-                                .Include(s => s.Sender)
-                                .Include(s => s.Receiver).ToList(),
-                Feedback = fbModel
+                Swaps = ProcessCharityRequests(swaps),
+                Feedback = fbModel,
+                Offer = null
             };
 
             if (!ModelState.IsValid)
@@ -744,12 +824,13 @@ namespace CollectionSwap.Controllers
             var userId = User.Identity.GetUserId();
 
             // Get all swaps involving the user to update their swap history
-            var swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
-                                .Include(s => s.Collection)
-                                .Include(s => s.Sender)
-                                .Include(s => s.SenderCollection)
-                                .Include(s => s.Receiver)
-                                .Include(s => s.ReceiverCollection).ToList();
+            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId)
+                                            .Include(swap => swap.Collection)
+                                            .Include(swap => swap.Sender)
+                                            .Include(swap => swap.SenderCollection)
+                                            .Include(swap => swap.Receiver)
+                                            .Include(swap => swap.ReceiverCollection)
+                                            .ToList();
 
             // Get the offered swap
             var offer = swaps.Where(s => s.Id == id).FirstOrDefault();
@@ -765,7 +846,8 @@ namespace CollectionSwap.Controllers
 
             var shModel = new SwapHistoryViewModel
             {
-                Swaps = swaps,
+                Swaps = ProcessCharityRequests(swaps),
+                Feedback = null,
                 Offer = offerModel
             };
 
@@ -781,6 +863,13 @@ namespace CollectionSwap.Controllers
         {
             var partial = String.Empty;
             var userId = User.Identity.GetUserId();
+            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId)
+                                            .Include(swap => swap.Collection)
+                                            .Include(swap => swap.Sender)
+                                            .Include(swap => swap.SenderCollection)
+                                            .Include(swap => swap.Receiver)
+                                            .Include(swap => swap.ReceiverCollection)
+                                            .ToList();
 
             var fbModel = new FeedbackViewModel
             {
@@ -790,11 +879,9 @@ namespace CollectionSwap.Controllers
 
             var shModel = new SwapHistoryViewModel
             {
-                Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
-                                .Include(s => s.Collection)
-                                .Include(s => s.Sender)
-                                .Include(s => s.Receiver).ToList(),
-                Feedback = fbModel
+                Swaps = ProcessCharityRequests(swaps),
+                Feedback = fbModel,
+                Offer = null
             };
 
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
