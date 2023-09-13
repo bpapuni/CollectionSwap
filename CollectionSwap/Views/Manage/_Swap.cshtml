@@ -28,12 +28,27 @@
     @* Container Header *@
     <div class="swap-container-header">
         <div class="swap-info">
-            <span class="swap-size">@swapSize</span>
-            <span>Swap for @swapSize</span>
+            @if (swapStatus == "charity")
+            {
+                <span class="swap-size">Free</span>
+            }
+            else if (swapStatus == "swap")
+            {
+                <span class="swap-size">@swapSize</span>
+                <span>Swap for @swapSize</span>
+            }
         </div>
         <div class="swap-profile" data-user-id="@otherUserId">
             <div>
-                <span class="header">Swap with @otherUserName</span>
+                @if (swapStatus == "charity")
+                {
+                    <span class="header">Donation from @Sender.UserName</span>
+                }
+                else if (swapStatus == "swap")
+                {
+                    <span class="header">Swap with @otherUserName</span>
+                }
+
                 @if (rating == -1)
                 {
                     <span class="new">New</span>
@@ -54,8 +69,64 @@
     </div>
 
     @* Container Body *@
-    <div class="swap-container-body">
+<div class="swap-container-body">
 
+    @if (swapStatus == "charity")
+    {
+        @* Top row of swap *@
+        <div class="selection-pool">
+            <div>
+                <span class="header">@Sender.UserName is giving these items away</span>
+            </div>
+
+            <div class="swap-items">
+                @foreach (var itemId in senderRequestedItems) // Opposite to normal, we actually need to display the items you'd normall request
+                {
+                    <div class="swap-item swap-request-item @(Validation.DuplicateRequestItems.Contains(itemId) ? "attention" : "")" onclick="SelectItem(this)">
+                        <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                    </div>
+                }
+            </div>
+        </div>
+
+        @* Hidden, your selection *@
+        <div class="your-selection d-none">
+            <span class="header">Your Selection</span>
+            <div class="swap-items">
+                @for (var i = 0; i < swapSize; i++)
+                {
+                    <div class="swap-item placeholder" onclick="ClearItem(this)">
+                        <img src="" />
+                    </div>
+                }
+            </div>
+        </div>
+
+        @* Hidden, second row of swap *@
+        <div class="selection-pool your-items d-none">
+            <span class="header">@otherUserName will be offered to select @swapSize of your items</span>
+
+            @* Display any duplicate item request warnings *@
+            <span class="duplicate-missing-items-error">
+                @if (Validation.LowInventoryItems.Count > 0)
+                {
+                    <text><i class="fa-solid fa-circle-exclamation"></i> One or more users have already requested the marked item(s) from you.<br />
+                        You currently will have enough duplicates to complete all requested swaps (this included).</text>
+                }
+            </span>
+
+            <div class="swap-items">
+                @foreach (var itemId in senderRequestedItems)
+                {
+                    <div class="swap-item @(Validation.LowInventoryItems.Contains(itemId) ? "attention" : "")">
+                        <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else if (swapStatus == "swap")
+    {
         @* Top row of swap *@
         <div class="selection-pool">
             <div>
@@ -81,7 +152,7 @@
             </div>
         </div>
 
-        @* Hidden, your selection *@ 
+        @* Hidden, your selection *@
         <div class="your-selection d-none">
             <span class="header">Your Selection</span>
             <div class="swap-items">
@@ -103,7 +174,7 @@
                 @if (Validation.LowInventoryItems.Count > 0)
                 {
                     <text><i class="fa-solid fa-circle-exclamation"></i> One or more users have already requested the marked item(s) from you.<br />
-                    You currently will have enough duplicates to complete all requested swaps (this included).</text>
+                        You currently will have enough duplicates to complete all requested swaps (this included).</text>
                 }
             </span>
 
@@ -116,7 +187,15 @@
                 }
             </div>
         </div>
+    }
 
-    </div>
 </div>
-<button class="submit-button offer" onclick="offerSwap(this)" disabled>Items Selected (0/@swapSize)</button>
+</div>
+@if (swapStatus == "charity")
+{
+    <button class="submit-button chartiy" onclick="RequestDonation(this)">Request Items</button>
+}
+else if (swapStatus == "swap")
+{
+    <button class="submit-button offer" onclick="offerSwap(this)" disabled>Items Selected (0/@swapSize)</button>
+}

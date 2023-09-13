@@ -317,6 +317,40 @@ namespace CollectionSwap.Models
                 }
             }
 
+            var charitableCollections = db.UserCollections.Where(uc => uc.CollectionId == this.CollectionId && uc.Charity == true).ToList();
+
+            foreach (var collection in charitableCollections)
+            {
+                var matchingSwap = new Swap
+                {
+                    Sender = collection.User,
+                    Receiver = db.Users.Find(userId),
+                    CollectionId = collection.Collection.Id,
+                    Collection = collection.Collection,
+                    SenderCollectionId = collection.Id,
+                    SenderCollection = collection,
+                    SenderRequestedItems = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<List<int>>(collection.ItemCountJSON)
+                                            .Select((value, index) => new { Value = value, Index = index })
+                                            .Where(item => item.Value != 0)
+                                            .Select(item => item.Index)
+                                            .ToList()),                                         // Items donated by the sender
+                    ReceiverCollectionId = this.Id,
+                    ReceiverCollection = this,
+                    ReceiverRequestedItems = JsonConvert.SerializeObject(new List<int>()),      // Nothing in exchange
+                    SwapSize = 0,
+                    Status = "charity"
+                };
+
+                var matchingSwapView = new SwapViewModel
+                {
+                    Swap = matchingSwap,
+                    Validation = matchingSwap.Validate(userId, db)
+                };
+
+                matchingSwaps.Add(matchingSwap);
+                matchingSwapViews.Add(matchingSwapView);
+            }
+
             matchingSwaps = matchingSwaps
             .OrderByDescending(swap => swap.SwapSize)
             //.ThenByDescending(swap => swap.SenderItemIds.Count())
