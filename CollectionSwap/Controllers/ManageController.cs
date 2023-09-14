@@ -611,13 +611,7 @@ namespace CollectionSwap.Controllers
         {
             var partial = String.Empty;
             var userId = User.Identity.GetUserId();
-            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId)
-                                .Include(swap => swap.Collection)
-                                .Include(swap => swap.Sender)
-                                .Include(swap => swap.SenderCollection)
-                                .Include(swap => swap.Receiver)
-                                .Include(swap => swap.ReceiverCollection)
-                                .ToList();
+            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId).ToList();
 
             var shModel = new SwapHistoryViewModel
             {
@@ -701,13 +695,7 @@ namespace CollectionSwap.Controllers
             var swap = db.Swaps.Find(id);
             await swap.Confirm(type, userId, db);
 
-            var swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
-                                .Include(s => s.Collection)
-                                .Include(s => s.Sender)
-                                .Include(s => s.SenderCollection)
-                                .Include(s => s.Receiver)
-                                .Include(s => s.ReceiverCollection)
-                                .ToList();
+            var swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId).ToList();
 
             var shModel = new SwapHistoryViewModel
             {
@@ -729,13 +717,7 @@ namespace CollectionSwap.Controllers
             var partial = String.Empty;
             var userId = User.Identity.GetUserId();
 
-            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId)
-                                            .Include(swap => swap.Collection)
-                                            .Include(swap => swap.Sender)
-                                            .Include(swap => swap.SenderCollection)
-                                            .Include(swap => swap.Receiver)
-                                            .Include(swap => swap.ReceiverCollection)
-                                            .ToList();
+            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId).ToList();
 
             var fbModel = new FeedbackViewModel
             {
@@ -761,13 +743,7 @@ namespace CollectionSwap.Controllers
             var partial = String.Empty;
             var userId = User.Identity.GetUserId();
 
-            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId)
-                                            .Include(swap => swap.Collection)
-                                            .Include(swap => swap.Sender)
-                                            .Include(swap => swap.SenderCollection)
-                                            .Include(swap => swap.Receiver)
-                                            .Include(swap => swap.ReceiverCollection)
-                                            .ToList();
+            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId).ToList();
 
             var fbModel = new FeedbackViewModel
             {
@@ -791,10 +767,7 @@ namespace CollectionSwap.Controllers
             var feedback = model.Create(userId, db);
             fbModel.Feedback = feedback;
 
-            shModel.Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
-                                .Include(s => s.Collection)
-                                .Include(s => s.Sender)
-                                .Include(s => s.Receiver).ToList();
+            shModel.Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId).ToList();
             //shModel.Feedback = null;
 
             ViewBag.Status = "Thank you for your feedback";
@@ -812,13 +785,7 @@ namespace CollectionSwap.Controllers
             var userId = User.Identity.GetUserId();
 
             // Get all swaps involving the user to update their swap history
-            var usersSwaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
-                                            .Include(s => s.Collection)
-                                            .Include(s => s.Sender)
-                                            .Include(s => s.SenderCollection)
-                                            .Include(s => s.Receiver)
-                                            .Include(s => s.ReceiverCollection)
-                                            .ToList();
+            var usersSwaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId).ToList();
 
             // Get the offered swap
             var swap = usersSwaps.Where(s => s.Id == id).FirstOrDefault();
@@ -849,13 +816,7 @@ namespace CollectionSwap.Controllers
         {
             var partial = String.Empty;
             var userId = User.Identity.GetUserId();
-            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId)
-                                            .Include(swap => swap.Collection)
-                                            .Include(swap => swap.Sender)
-                                            .Include(swap => swap.SenderCollection)
-                                            .Include(swap => swap.Receiver)
-                                            .Include(swap => swap.ReceiverCollection)
-                                            .ToList();
+            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId).ToList();
 
             var fbModel = new FeedbackViewModel
             {

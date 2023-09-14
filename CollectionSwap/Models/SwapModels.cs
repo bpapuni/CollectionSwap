@@ -89,15 +89,15 @@ namespace CollectionSwap.Models
         public DateTimeOffset StartDate { get; set; }
         public DateTimeOffset? EndDate { get; set; }
         [ForeignKey("CollectionId")]
-        public Collection Collection { get; set; }
+        public virtual Collection Collection { get; set; }
         [ForeignKey("SenderId")]
-        public ApplicationUser Sender { get; set; }
+        public virtual ApplicationUser Sender { get; set; }
         [ForeignKey("SenderCollectionId")]
-        public UserCollection SenderCollection { get; set; }
+        public virtual UserCollection SenderCollection { get; set; }
         [ForeignKey("ReceiverId")]
-        public ApplicationUser Receiver { get; set; }
+        public virtual ApplicationUser Receiver { get; set; }
         [ForeignKey("ReceiverCollectionId")]
-        public UserCollection ReceiverCollection { get; set; }
+        public virtual UserCollection ReceiverCollection { get; set; }
         public class ProcessSwapResult
         {
             public bool Succeeded { get; set; }
@@ -123,9 +123,9 @@ namespace CollectionSwap.Models
                         this.CollectionId = request.CollectionId;
                         this.SenderCollectionId = request.SenderUserCollectionId;
                         this.ReceiverCollectionId = request.ReceiverUserCollectionId;
-                        this.SenderId = request.ReceiverId;                                                 // Sender and receiver are switched for donated items
+                        this.SenderId = request.ReceiverId;                                         // Sender and receiver are switched for donated items
                         this.ReceiverId = userId;
-                        this.SenderRequestedItems = JsonConvert.SerializeObject(senderItemCount);           // Snapshot of the items the sender has on offer 
+                        this.SenderRequestedItems = JsonConvert.SerializeObject(senderItemCount);   // Snapshot of the items the sender has on offer 
                         this.ReceiverRequestedItems = JsonConvert.SerializeObject(new List<int>());
                         this.SwapSize = 0;
                         this.Status = request.Status;
@@ -136,6 +136,8 @@ namespace CollectionSwap.Models
 
                     case "charity-confirmed":
                         var declinedSwaps = db.Swaps.Where(s => s.Id != this.Id && s.SenderCollectionId == this.SenderCollectionId && s.Status == "charity").ToList();
+
+                        // Decline all requests that weren't accepted
                         foreach (var swap in declinedSwaps)
                         {
                             swap.SenderDisplaySwap = false;
@@ -149,6 +151,7 @@ namespace CollectionSwap.Models
                             };
                             await swap.ProcessAsync(userId, declineRequest, db);
                         }
+
                         senderItemCount = JsonConvert.DeserializeObject<List<int>>(db.UserCollections.Where(uc => uc.Id == request.SenderUserCollectionId).FirstOrDefault().ItemCountJSON);
                         senderItemCount = senderItemCount
                                             .SelectMany((value, index) => Enumerable.Repeat(index, value))
@@ -191,9 +194,14 @@ namespace CollectionSwap.Models
 
                         HoldItems(this.SenderRequestedItems, db.UserCollections.Find(this.SenderCollectionId), this, db);
                         break;
-
+                    case "charity-canceled":
                     case "canceled":
-                        if (userId == this.SenderId)
+                        if (this.Status == "offered" || this.Status == "requested")
+                        {
+                            this.SenderDisplaySwap = false;
+                            this.ReceiverDisplaySwap = false;
+                        }
+                        else if (userId == this.SenderId)
                         {
                             this.SenderDisplaySwap = false;
                         }
@@ -241,8 +249,7 @@ namespace CollectionSwap.Models
 
                     if (isCharity)
                     {
-                        await ReleaseItems(this, db);
-                        db.UserCollections.Find(this.SenderCollectionId).Delete(db);
+                        await db.UserCollections.Find(this.SenderCollectionId).Delete(db);
                     }
                 }
                 else if (type == "received")

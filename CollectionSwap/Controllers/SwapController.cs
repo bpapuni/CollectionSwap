@@ -74,6 +74,9 @@ namespace CollectionSwap.Controllers
                 case "charity-confirmed":
                     TempData["Status"] = "You've confirmed this request";
                     return RedirectToAction("SwapHistoryPartial", "Manage");
+                case "charity-canceled":
+                    TempData["Status"] = "You've canceled this request";
+                    return RedirectToAction("SwapHistoryPartial", "Manage");
                 case "offered":
                     TempData["Status"] = "Your swap request has been sent";
                     return RedirectToAction("DisplaySwapMatches", "Manage", new { id = request.SenderUserCollectionId });

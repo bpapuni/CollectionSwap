@@ -16,6 +16,7 @@ using System.Drawing.Imaging;
 using System.Drawing;
 using Newtonsoft.Json.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace CollectionSwap.Models
 {
@@ -76,15 +77,6 @@ namespace CollectionSwap.Models
                     db.SaveChanges();
                 }
             }
-        }
-        public void Refresh(ApplicationDbContext db)
-        {
-            string path = HostingEnvironment.MapPath("~/Collections/" + this.Id);
-            string[] files = Directory.GetFiles(path);
-            files = files.Select(fileName => Path.GetFileName(fileName)).ToArray();
-            var orderedFiles = files.OrderBy(f => f.Length);
-            this.ItemListJSON = JsonConvert.SerializeObject(orderedFiles);
-            db.SaveChanges();
         }
         public void Update(string Name, ApplicationDbContext db)
         {
@@ -195,9 +187,9 @@ namespace CollectionSwap.Models
         public bool Archived { get; set; }
         public bool Charity { get; set; }
         [ForeignKey("UserId")]
-        public ApplicationUser User { get; set; }
+        public virtual ApplicationUser User { get; set; }
         [ForeignKey("CollectionId")]
-        public Collection Collection { get; set; }
+        public virtual Collection Collection { get; set; }
         public static UserCollection Create(int id, string userId, ApplicationDbContext db)
         {
             var collection = db.Collections.Find(id);
@@ -243,13 +235,28 @@ namespace CollectionSwap.Models
             db.Entry(this).State = EntityState.Modified;
             db.SaveChanges();
         }
-        public string Delete(ApplicationDbContext db)
+        public async Task<bool> Delete(ApplicationDbContext db)
         {
+            var affectedSwaps = db.Swaps.Where(swap => (swap.SenderCollectionId == this.Id || swap.ReceiverCollectionId == this.Id)).ToList();
+            var offeredSwaps = affectedSwaps.Where(swap => swap.Status == "offered");
+            var acceptedSwaps = affectedSwaps.Where(swap => swap.Status == "accepted");
+            var confirmedSwaps = affectedSwaps.Where(swap => swap.Status == "confirmed");
+
+            foreach(var swap in affectedSwaps)
+            {
+                if (offeredSwaps.Contains(swap) || acceptedSwaps.Contains(swap))
+                {
+                    await swap.ProcessAsync(this.UserId, new SwapRequestViewModel { Status = "canceled" }, db);
+                }
+
+                // Prevent deleting until confirmed swaps are done
+            }
+
             this.Archived = true;
             db.Entry(this).State = EntityState.Modified;
             db.SaveChanges();
 
-            return "User Collection deleted successfully.";
+            return true;
         }
         public List<SwapViewModel> FindMatchingSwaps(ApplicationDbContext db)
         {
@@ -259,7 +266,7 @@ namespace CollectionSwap.Models
             // Find all pending swaps the user is involved with to eliminate duplicate swap offers
             var pendingSwaps = db.Swaps
                     .Where(swap => (swap.Status == "offered" || swap.Status == "accepted" || swap.Status == "requested") && (swap.Sender.Id == userId || swap.Receiver.Id == userId))
-                    .Select(swap => new { sUC = swap.SenderCollectionId, rUC = (int)swap.ReceiverCollectionId })
+                    .Select(swap => new { sUC = swap.SenderCollectionId, rUC = swap.ReceiverCollectionId })
                     .ToList();
             // Get users current items
             var senderItems = JsonConvert.DeserializeObject<List<int>>(this.ItemCountJSON);
@@ -280,7 +287,8 @@ namespace CollectionSwap.Models
             foreach (var uc in matchingUserCollections)
             {
                 // If the user has a pending swap with the matching user collection already, pass over this collection
-                var potentialSwap = new { sUC = this.Id, rUC = uc.Id };
+                // If the uc is flagged as charity the sender and receiver user collections are swapped
+                var potentialSwap = uc.Charity ? new { sUC = uc.Id, rUC = this.Id } : new { sUC = this.Id, rUC = uc.Id };
                 if (pendingSwaps.Contains(potentialSwap))
                 {
                     continue;
