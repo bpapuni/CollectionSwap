@@ -29,9 +29,6 @@ namespace CollectionSwap.Controllers
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
                 UserSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId).ToList(),
-                //OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
-                //AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
-                //ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList(),
                 Feedbacks = db.Feedbacks.ToList()
             };
 
@@ -49,9 +46,6 @@ namespace CollectionSwap.Controllers
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
                 UserSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId).ToList(),
-                //OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
-                //AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
-                //ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList(),
                 Feedbacks = db.Feedbacks.ToList()
             };
 
@@ -83,6 +77,9 @@ namespace CollectionSwap.Controllers
                 case "charity":
                     TempData["Status"] = "You've requested these items";
                     return RedirectToAction("DisplaySwapMatches", "Manage", new { id = request.ReceiverUserCollectionId });
+                case "charity-confirmed":
+                    TempData["Status"] = "You've confirmed this request";
+                    return RedirectToAction("SwapHistoryPartial", "Manage");
                 case "offered":
                     TempData["Status"] = "Your swap request has been sent";
                     return RedirectToAction("DisplaySwapMatches", "Manage", new { id = request.SenderUserCollectionId });
@@ -92,10 +89,10 @@ namespace CollectionSwap.Controllers
                 case "confirmed":
                     TempData["Status"] = "You've confirmed this swap";
                     return RedirectToAction("SwapHistoryPartial", "Manage");
-                case "cancel":
+                case "canceled":
                     TempData["Status"] = "You've canceled this swap";
                     return RedirectToAction("SwapHistoryPartial", "Manage");
-                case "decline":
+                case "declined":
                     TempData["Status"] = "You've declined this swap";
                     return RedirectToAction("SwapHistoryPartial", "Manage");
                 default:

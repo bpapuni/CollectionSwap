@@ -674,6 +674,7 @@ button.close {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
+    gap: 1rem;
     background: url('images/doodles/8.png') no-repeat;
     background-size: 25%;
     background-position-x: right;
@@ -952,6 +953,11 @@ button.close {
         background: #ccc;
     }
 
+    /* Progress background */
+    .swap-prog-container.declined::after {
+        background: linear-gradient(90deg, #D1787866 0%, #D1787899 25%, #CA6D6D99 25%, #CA6D6Daa 50%, #C36262aa 50%, #C36262aa 75%, #BC5959aa 75%, #BC5959cc 100%);
+    }
+
 .swap-capstone {
     position: absolute;
     top: calc((var(--_size) / 2) * 0.1);
@@ -963,6 +969,10 @@ button.close {
     background: #308427;
     border-radius: 50%;
     z-index: calc(var(--_segments) + 1);
+}
+
+.swap-prog-container.declined .swap-capstone {
+    background: #8B2929;
 }
 
     .swap-capstone.prog-index-1 {
@@ -977,9 +987,9 @@ button.close {
         left: calc(0.1rem + (100% - (var(--_size) / 2)) / var(--_segments) * 3);
     }
 
-    .swap-capstone.prog-index-4 {
-        left: calc(0.1rem + (100% - (var(--_size) / 2)) / var(--_segments) * 4);
-    }
+.swap-capstone.prog-index-4 {
+    left: calc(0.1rem + 100% - (var(--_size) / 2));
+}
 
 .swap-capstone > * {
     margin-top: 1rem;
@@ -992,6 +1002,7 @@ button.close {
     text-transform: capitalize;
 }
 
+/* Stage 1 milestone */
 .swap-prog-1::before {
     content: "";
     position: absolute;
@@ -1003,6 +1014,7 @@ button.close {
     z-index: 1;
 }
 
+/* Stage 2 - 5 milestones */
 .swap-prog-container > *:not(.swap-capstone)::after {
     content: "";
     position: absolute;
@@ -1060,6 +1072,15 @@ button.close {
 
     .swap-prog-container > *:not(.swap-capstone).prog-index-4::after {
         background: #48A43E;
+    }
+
+.swap-prog-container.declined > *:not(.swap-capstone) {
+    background: transparent;
+}
+
+    .swap-prog-container.declined > *:not(.swap-capstone)::before,
+    .swap-prog-container.declined > *:not(.swap-capstone)::after {
+        background: #B55050;
     }
 
 .swap-prog-container > *:not(.swap-capstone) {

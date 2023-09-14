@@ -622,24 +622,12 @@ namespace CollectionSwap.Controllers
             var shModel = new SwapHistoryViewModel
             {
                 Swaps = ProcessCharityRequests(swaps),
-                Feedback = null,
                 Offer = null
             };
 
             if (id.HasValue)
             {
-                var swap = db.Swaps.Find(id);
-                var hasSentItems = swap.Sender.Id == userId ? swap.SenderConfirmSent : swap.ReceiverConfirmSent;
-                var hasReceivedItems = swap.Sender.Id == userId ? swap.SenderConfirmReceived : swap.ReceiverConfirmReceived;
-                var hasSentFeedback = swap.Sender.Id == userId ? swap.SenderFeedbackSent : swap.ReceiverFeedbackSent;
-                if (hasSentItems && hasReceivedItems/* && !hasSentFeedback*/)
-                {
-                    return Feedback(id.Value);
-                }
-                else
-                {
-                    return Offer(id.Value);
-                }
+                return Offer(id.Value);
             }
 
             ViewBag.Status = TempData["Status"];
@@ -724,7 +712,7 @@ namespace CollectionSwap.Controllers
             var shModel = new SwapHistoryViewModel
             {
                 Swaps = ProcessCharityRequests(swaps),
-                Feedback = null,
+                //Feedback = null,
                 Offer = null
             };
 
@@ -758,7 +746,7 @@ namespace CollectionSwap.Controllers
             var shModel = new SwapHistoryViewModel
             {
                 Swaps = ProcessCharityRequests(swaps),
-                Feedback = fbModel,
+                //Feedback = fbModel,
                 Offer = null
             };
 
@@ -790,7 +778,7 @@ namespace CollectionSwap.Controllers
             var shModel = new SwapHistoryViewModel
             {
                 Swaps = ProcessCharityRequests(swaps),
-                Feedback = fbModel,
+                //Feedback = fbModel,
                 Offer = null
             };
 
@@ -807,7 +795,7 @@ namespace CollectionSwap.Controllers
                                 .Include(s => s.Collection)
                                 .Include(s => s.Sender)
                                 .Include(s => s.Receiver).ToList();
-            shModel.Feedback = null;
+            //shModel.Feedback = null;
 
             ViewBag.Status = "Thank you for your feedback";
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
@@ -824,30 +812,28 @@ namespace CollectionSwap.Controllers
             var userId = User.Identity.GetUserId();
 
             // Get all swaps involving the user to update their swap history
-            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId)
-                                            .Include(swap => swap.Collection)
-                                            .Include(swap => swap.Sender)
-                                            .Include(swap => swap.SenderCollection)
-                                            .Include(swap => swap.Receiver)
-                                            .Include(swap => swap.ReceiverCollection)
+            var usersSwaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
+                                            .Include(s => s.Collection)
+                                            .Include(s => s.Sender)
+                                            .Include(s => s.SenderCollection)
+                                            .Include(s => s.Receiver)
+                                            .Include(s => s.ReceiverCollection)
                                             .ToList();
 
             // Get the offered swap
-            var offer = swaps.Where(s => s.Id == id).FirstOrDefault();
+            var swap = usersSwaps.Where(s => s.Id == id).FirstOrDefault();
 
             var offerModel = new SwapViewModel
             {
-                ////SenderRating = db.Feedbacks.Where(fb => fb.SenderId == offer.SenderId).Any() ? (db.Feedbacks.Where(fb => fb.SenderId == offer.SenderId).Select(fb => fb.Rating).Average() * 2) / 2 : -1,
-                ////ReceiverRating = db.Feedbacks.Where(fb => fb.SenderId == offer.ReceiverId).Any() ? (db.Feedbacks.Where(fb => fb.ReceiverId == offer.ReceiverId).Select(fb => fb.Rating).Average() * 2) / 2 : -1,
-                Swap = offer,
-                Address = db.Addresses.Where(a => a.UserId != userId && (a.UserId == offer.SenderId || a.UserId == offer.ReceiverId)).FirstOrDefault(),
-                Validation = offer.Validate(userId, db)
+                Swap = swap,
+                Feedback = db.Feedbacks.Where(fb => fb.SenderId == userId && fb.SwapId == id).FirstOrDefault(),
+                Address = db.Addresses.Where(a => a.UserId != userId && (a.UserId == swap.SenderId || a.UserId == swap.ReceiverId)).FirstOrDefault(),
+                Validation = swap.Validate(userId, db)
             };
 
             var shModel = new SwapHistoryViewModel
             {
-                Swaps = ProcessCharityRequests(swaps),
-                Feedback = null,
+                Swaps = ProcessCharityRequests(usersSwaps),
                 Offer = offerModel
             };
 
@@ -880,7 +866,7 @@ namespace CollectionSwap.Controllers
             var shModel = new SwapHistoryViewModel
             {
                 Swaps = ProcessCharityRequests(swaps),
-                Feedback = fbModel,
+                //Feedback = fbModel,
                 Offer = null
             };
 

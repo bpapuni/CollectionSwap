@@ -77,6 +77,23 @@ function RequestDonation(e) {
     HandleFormSubmit("/Swap/ProcessSwap", "POST", formData);
 }
 
+function ConfirmDonation(e, swapId) {
+    const swapContainer = $(e).parent().prev(".swap-container");
+
+    var swapRequestData = {
+        SwapId: swapId,
+        SenderUserCollectionId: swapContainer.data("sender-collection-id"),
+        Status: "charity-confirmed"
+    }
+
+    const formData = new FormData();
+    Object.entries(swapRequestData).forEach(([key, value]) => {
+        formData.append(key, value);
+    });
+
+    HandleFormSubmit("/Swap/ProcessSwap", "POST", formData);
+}
+
 function offerSwap(e) {
     const swapContainer = $(e).prev(".swap-container");
     const senderItems = swapContainer.find(".your-items .swap-item > img").map(function () {
@@ -146,10 +163,10 @@ function confirmSwap(e, swapId) {
     HandleFormSubmit("/Swap/ProcessSwap", "POST", formData);
 }
 
-function declineSwap(e, swapId) {
+function DeclineSwap(e, swapId) {
     var swapRequestData = {
         SwapId: swapId,
-        Status: $(e).text().split(" Swap")[0].toLowerCase() // cancel or decline
+        Status: $(e).data("type") // cancel or decline
     }
 
     const formData = new FormData();
