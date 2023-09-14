@@ -2,7 +2,7 @@
 @using Microsoft.AspNet.Identity
 @{
     var otherUserSent = ((Model.SenderId == User.Identity.GetUserId() && Model.ReceiverConfirmSent) || (Model.ReceiverId == User.Identity.GetUserId() && Model.SenderConfirmSent));
-    var progIndex = Model.Status == "charity" || Model.Status == "offered" ? 0 :
+    var progIndex = Model.Status == "requested" || Model.Status == "offered" ? 0 :
                     Model.Status == "charity-accepted" || Model.Status == "accepted" ? 1 :
                     Model.Status == "charity-confirmed" ? 2 :
                     Model.Status == "confirmed" ? otherUserSent ? 3 : 2 :

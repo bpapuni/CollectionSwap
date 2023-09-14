@@ -199,6 +199,7 @@ namespace CollectionSwap.Models
         [Required]
         public int CollectionId { get; set; }
         public string ItemCountJSON { get; set; }
+        public bool Archived { get; set; }
         public bool Charity { get; set; }
         [ForeignKey("UserId")]
         public ApplicationUser User { get; set; }
@@ -251,8 +252,8 @@ namespace CollectionSwap.Models
         }
         public string Delete(ApplicationDbContext db)
         {
-            UserCollection userCollection = db.UserCollections.Find(this.Id);
-            db.UserCollections.Remove(userCollection);
+            this.Archived = true;
+            db.Entry(this).State = EntityState.Modified;
             db.SaveChanges();
 
             return "User Collection deleted successfully.";
@@ -276,7 +277,7 @@ namespace CollectionSwap.Models
             {
                 // Find all pending swaps for the current user
                 var pendingSwaps = db.Swaps
-                    .Where(swap => (swap.Status == "offered" || swap.Status == "accepted" || swap.Status == "charity") && (swap.Sender.Id == userId || swap.Receiver.Id == userId))
+                    .Where(swap => (swap.Status == "offered" || swap.Status == "accepted" || swap.Status == "requested") && (swap.Sender.Id == userId || swap.Receiver.Id == userId))
                     .Select(swap => new { swap.SenderCollectionId, swap.ReceiverCollectionId })
                     .ToList();
 

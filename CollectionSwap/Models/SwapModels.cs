@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -106,14 +107,15 @@ namespace CollectionSwap.Models
         }
         public async Task<ProcessSwapResult> ProcessAsync(string userId, SwapRequestViewModel request, ApplicationDbContext db)
         {
-            var isCharity = this.SenderRequestedItems == "[]" || this.ReceiverRequestedItems == "[]";
             try
             {
                 string response = string.Empty;
                 var senderItemCount = new List<int>();
-                switch (request.Status)
+                var isCharity = this.SenderRequestedItems == null || this.SenderRequestedItems == "[]" || this.ReceiverRequestedItems == null || this.ReceiverRequestedItems == "[]";
+                var swapStatus = isCharity ? $"charity-{request.Status}" : request.Status;
+                switch (swapStatus)
                 {
-                    case "charity":
+                    case "charity-requested":
                         senderItemCount = JsonConvert.DeserializeObject<List<int>>(db.UserCollections.Where(uc => uc.Id == request.SenderUserCollectionId).FirstOrDefault().ItemCountJSON);
                         senderItemCount = senderItemCount
                                             .SelectMany((value, index) => Enumerable.Repeat(index, value))
@@ -200,13 +202,13 @@ namespace CollectionSwap.Models
                         {
                             this.ReceiverDisplaySwap = false;
                         }
-                        ReleaseItems(this, db);
+                        await ReleaseItems(this, db);
                         this.Status = request.Status;
                         db.Entry(this).State = EntityState.Modified;
                         break;
 
                     case "declined":
-                        ReleaseItems(this, db);
+                        await ReleaseItems(this, db);
                         this.Status = request.Status;
                         db.Entry(this).State = EntityState.Modified;
                         break;
@@ -216,14 +218,14 @@ namespace CollectionSwap.Models
                 }
 
                 await db.SaveChangesAsync();
-                return new ProcessSwapResult { Succeeded = true, SuccessType = request.Status };
+                return new ProcessSwapResult { Succeeded = true, SuccessType = swapStatus };
             }
             catch (Exception ex)
             {
                 return new ProcessSwapResult { Succeeded = false, Error = ex.Message };
             }
         }
-        public void Confirm(string type, string userId, ApplicationDbContext db)
+        public async Task Confirm(string type, string userId, ApplicationDbContext db)
         {
             var isCharity = this.SenderRequestedItems == "[]" || this.ReceiverRequestedItems == "[]";
             var userType = String.Empty;
@@ -237,6 +239,12 @@ namespace CollectionSwap.Models
                     this.SenderConfirmReceived = isCharity ? true : this.SenderConfirmReceived;
                     this.ReceiverConfirmSent = isCharity ? true : this.ReceiverConfirmSent;
                     this.SenderFeedbackSent = isCharity ? true : this.SenderFeedbackSent;
+
+                    if (isCharity)
+                    {
+                        await ReleaseItems(this, db);
+                        db.UserCollections.Find(this.SenderCollectionId).Delete(db);
+                    }
                 }
                 else if (type == "received")
                 {
@@ -286,7 +294,7 @@ namespace CollectionSwap.Models
             db.HeldItems.Add(heldItems);
             db.SaveChanges();
         }
-        private void ReleaseItems(Swap swap, ApplicationDbContext db)
+        private async Task<bool> ReleaseItems(Swap swap, ApplicationDbContext db)
         {
             var heldItems = db.HeldItems.Include("UserCollection").Where(hi => hi.Swap.Id == swap.Id).ToList();
 
@@ -303,11 +311,13 @@ namespace CollectionSwap.Models
 
                 userCollection.ItemCountJSON = JsonConvert.SerializeObject(deserializedItems);
                 db.Entry(userCollection).State = EntityState.Modified;
-                db.SaveChanges();
+                await db.SaveChangesAsync();
             }
 
             db.HeldItems.RemoveRange(heldItems);
-            db.SaveChanges();
+            await db.SaveChangesAsync();
+
+            return true;
         }
         private void SwapItems(Swap swap, string userType, ApplicationDbContext db)
         {

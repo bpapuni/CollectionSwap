@@ -32,6 +32,7 @@
     var otherUserName = userId == sender.Id ? receiver.UserName : sender.UserName;
     var Validation = Model.Validation;
     var heading = 
+        swapStatus == "charity-requested" || swapStatus == "charity-canceled" ? "Requested Items" : 
         swapStatus == "charity-confirmed" || swapStatus == "charity-completed" ? "Donated Items" : 
         swapStatus == "charity-declined" ? "Requested Items" : 
         swapStatus == "offered" ? "Offered Swap" : 
@@ -76,7 +77,7 @@
             </div>
         </div>
     }
-    else if ((hasSentItems && hasReceivedItems && !isCharity) || (isCharity && userId == receiver.Id))
+    else if ((hasSentItems && hasReceivedItems && !isCharity) || (hasReceivedItems && isCharity && userId == receiver.Id))
     {
         var fbViewModel = new FeedbackViewModel { Swap = Model.Swap, Feedback = feedback };
         <div id="feedback-container">
@@ -248,7 +249,23 @@
                     </div>
                 </div>
             }
-            else if (swapStatus == "charity-declined")
+            else if (swapStatus == "charity-canceled")
+            {
+                @* Top row of offer for sender *@
+                <div class="selection-pool">
+                    <span class="header">Items @otherUserName requested:</span>
+
+                    <div class="swap-items">
+                        @foreach (var itemId in senderRequestedItems)
+                        {
+                            <div class="swap-item">
+                                <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            else if (swapStatus == "charity-requested" || swapStatus == "charity-declined")
             {
                 @* Top row of offer for sender *@
                 <div class="selection-pool">
@@ -257,7 +274,7 @@
                     <div class="swap-items">
                         @foreach (var itemId in senderRequestedItems)
                         {
-                            <div class="swap-item @(Validation.LowInventoryItems.Contains(itemId) ? "attention" : "")">
+                            <div class="swap-item">
                                 <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
                             </div>
                         }
@@ -708,7 +725,7 @@
 
         @* Create swap buttons *@
         <div class="row gap-1">
-            @if (swapStatus == "charity-offered")
+            @if (swapStatus == "charity-requested")
             {
                 if (userId == sender.Id)
                 {

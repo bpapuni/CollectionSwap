@@ -81,7 +81,7 @@ namespace CollectionSwap.Controllers
                 Logins = await UserManager.GetLoginsAsync(userId),
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId),
                 Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId).ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId && uc.Archived == false).ToList(),
                 ChangeAddress = db.Addresses.Where(address => address.UserId == userId).FirstOrDefault()
             };
 
@@ -99,7 +99,7 @@ namespace CollectionSwap.Controllers
             {
                 Users = db.Users.ToList(),
                 Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId && uc.Archived == false).ToList(),
                 UserSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId).ToList(),
                 Feedbacks = db.Feedbacks.ToList()
             };
@@ -117,7 +117,7 @@ namespace CollectionSwap.Controllers
             {
                 Users = db.Users.ToList(),
                 Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId && uc.Archived == false).ToList(),
                 UserSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId || swap.Receiver.Id == userId).ToList(),
                 Feedbacks = db.Feedbacks.ToList()
             };
@@ -467,7 +467,7 @@ namespace CollectionSwap.Controllers
             var model = new YourCollectionViewModel
             {
                 Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId).ToList(),
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId && uc.Archived == false).ToList(),
             };
 
             partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", model, true);
@@ -485,7 +485,7 @@ namespace CollectionSwap.Controllers
             var ycModel = new YourCollectionViewModel
             {
                 Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId).ToList()
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId && uc.Archived == false).ToList(),
             };
 
             if (!id.HasValue)
@@ -576,7 +576,7 @@ namespace CollectionSwap.Controllers
             var ycViewModel = new YourCollectionViewModel
             {
                 Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId).ToList()
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId && uc.Archived == false).ToList(),
             };
 
             partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
@@ -595,7 +595,7 @@ namespace CollectionSwap.Controllers
             var ycViewModel = new YourCollectionViewModel
             {
                 Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId).ToList()
+                UserCollections = db.UserCollections.Where(uc => uc.UserId == userId && uc.Archived == false).ToList(),
             };
 
             partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
@@ -695,11 +695,11 @@ namespace CollectionSwap.Controllers
 
         [HttpPost]
         [Authorize]
-        public ActionResult ConfirmSentReceived(int id, string type)
+        public async Task<ActionResult> ConfirmSentReceived(int id, string type)
         {
             var userId = User.Identity.GetUserId();
             var swap = db.Swaps.Find(id);
-            swap.Confirm(type, userId, db);
+            await swap.Confirm(type, userId, db);
 
             var swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId)
                                 .Include(s => s.Collection)

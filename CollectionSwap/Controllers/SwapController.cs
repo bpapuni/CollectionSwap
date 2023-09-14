@@ -74,7 +74,7 @@ namespace CollectionSwap.Controllers
 
             switch (result.SuccessType)
             {
-                case "charity":
+                case "charity-requested":
                     TempData["Status"] = "You've requested these items";
                     return RedirectToAction("DisplaySwapMatches", "Manage", new { id = request.ReceiverUserCollectionId });
                 case "charity-confirmed":

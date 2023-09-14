@@ -255,6 +255,10 @@
     <Compile Include="Migrations\202309132244027_AddBoolToDisplaySwapInSwapHistory.designer.cs">
       <DependentUpon>202309132244027_AddBoolToDisplaySwapInSwapHistory.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202309140623067_AddArchiveBoolToUserCollection.cs" />
+    <Compile Include="Migrations\202309140623067_AddArchiveBoolToUserCollection.designer.cs">
+      <DependentUpon>202309140623067_AddArchiveBoolToUserCollection.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CollectionModels.cs" />
@@ -473,7 +477,6 @@
     <Content Include="Views\Home\Support.cshtml" />
     <Content Include="Views\Manage\_SwapProgress.cshtml" />
     <Content Include="Views\Manage\_CreateUserCollection.cshtml" />
-    <Content Include="Views\Manage\_Feedback %28backup%29.cshtml" />
     <Content Include="Views\Manage\_FindSwaps.cshtml" />
     <Content Include="Views\Manage\_Offer.cshtml" />
     <Content Include="Views\Shared\Info.cshtml" />
@@ -543,6 +546,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202309132244027_AddBoolToDisplaySwapInSwapHistory.resx">
       <DependentUpon>202309132244027_AddBoolToDisplaySwapInSwapHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202309140623067_AddArchiveBoolToUserCollection.resx">
+      <DependentUpon>202309140623067_AddArchiveBoolToUserCollection.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

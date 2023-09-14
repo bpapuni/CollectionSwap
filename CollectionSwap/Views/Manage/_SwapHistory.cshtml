@@ -43,7 +43,7 @@
                             }
                             @switch (swapStatus)
                             {
-                                case "charity-offered":
+                                case "charity-requested":
                                     if (swap.SenderId == userId)
                                     {
                                         <td class="swap-status" title="@swap.Receiver.UserName has requested your items.">@Html.Partial("_SwapProgress", swap)</td>
@@ -72,6 +72,9 @@
                                     {
                                         <td class="swap-status" title="Swap complete">@Html.Partial("_SwapProgress", swap)</td>
                                     }
+                                    break;
+                                case "charity-canceled":
+                                    <td class="swap-status" title="@swap.Receiver.UserName canceled their request.">@Html.Partial("_SwapProgress", swap)</td>
                                     break;
                                 case "charity-declined":
                                     <td class="swap-status" title="@swap.Sender.UserName has donated the items to another user">@Html.Partial("_SwapProgress", swap)</td>
@@ -155,99 +158,111 @@
                                 var hasSentFeedback = userId == swap.SenderId ? swap.SenderFeedbackSent : swap.ReceiverFeedbackSent;
                                 switch (swapStatus)
                                 {
-                                    case "charity-offered":
-                                    <td>
-                                        @if (swap.SenderId == userId)
+                                    case "charity-requested":
+                                        <td>
+                                            @if (swap.SenderId == userId)
+                                            {
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">Review Request</a>
+                                            }
+                                            else
+                                            {
+                                                <span>Waiting for @swap.Sender.UserName</span><br />
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Request)</a>
+                                            }
+                                        </td>
+                                        break;
+                                    case "charity-canceled":
+                                        <td>
+                                            <span>Canceled</span><br />
+                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Request)</a>
+                                        </td>
+                                        break;
+                                    case "charity-declined":
+                                        <td>
+                                            <span>Declined</span><br />
+                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Request)</a>
+                                        </td>
+                                        break;
+                                    case "charity-confirmed":
+                                        if (hasSentFeedback)
                                         {
-                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">Review Offer</a>
+                                            <td>
+                                                <span>Complete</span><br />
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Swap)</a>
+                                            </td>
+                                        }
+                                        else if (hasSentItems && hasReceivedItems)
+                                        {
+                                            <td><a href="/Manage/SwapHistory/@swap.Id">Provide Feedback</a></td>
+                                        }
+                                        else if (hasSentItems)
+                                        {
+                                            <td>
+                                                <span>Waiting to receive items</span><br />
+                                                <a href="/Manage/SwapHistory/@swap.Id">(View Swap)</a>
+                                            </td>
                                         }
                                         else
                                         {
-                                            <span>Waiting for @swap.Sender.UserName</span><br />
-                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Offer)</a>
+                                            <td><a href="/Manage/SwapHistory/@swap.Id">View Mailing Instructions</a></td>
                                         }
-                                    </td>
-                                    break;
-                                case "charity-confirmed":
-                                    if (hasSentFeedback)
-                                    {
+                                        break;
+                                    case "offered":
+                                        <td>
+                                            @if (swap.SenderId == userId)
+                                            {
+                                                <span>Waiting for @swap.Receiver.UserName</span><br />
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Offer)</a>
+                                            }
+                                            else
+                                            {
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">Review Offer</a>
+                                            }
+                                        </td>
+                                        break;
+                                    case "accepted":
+                                        <td>
+                                            @if (swap.SenderId == userId)
+                                            {
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">Confirm Swap</a>
+                                            }
+                                            else
+                                            {
+                                                <span>Waiting for @swap.Sender.UserName</span><br />
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Offer)</a>
+                                            }
+                                        </td>
+                                        break;
+                                    case "confirmed":
+                                        if (hasSentFeedback)
+                                        {
+                                            <td>
+                                                <span>Complete</span><br />
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Swap)</a>
+                                            </td>
+                                        }
+                                        else if (hasSentItems && hasReceivedItems)
+                                        {
+                                            <td><a href="/Manage/SwapHistory/@swap.Id">Provide Feedback</a></td>
+                                        }
+                                        else if (hasSentItems)
+                                        {
+                                            <td>
+                                                <span>Waiting to receive items</span><br />
+                                                <a href="/Manage/SwapHistory/@swap.Id">(View Swap)</a>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td><a href="/Manage/SwapHistory/@swap.Id">View Mailing Instructions</a></td>
+                                        }
+                                        break;
+                                    default:
                                         <td>
                                             <span>Complete</span><br />
                                             <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Swap)</a>
                                         </td>
-                                    }
-                                    else if (hasSentItems && hasReceivedItems)
-                                    {
-                                        <td><a href="/Manage/SwapHistory/@swap.Id">Provide Feedback</a></td>
-                                    }
-                                    else if (hasSentItems)
-                                    {
-                                        <td>
-                                            <span>Waiting to receive items</span><br />
-                                            <a href="/Manage/SwapHistory/@swap.Id">(View Swap)</a>
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        <td><a href="/Manage/SwapHistory/@swap.Id">View Mailing Instructions</a></td>
-                                    }
-                                    break;
-                                case "offered":
-                                    <td>
-                                        @if (swap.SenderId == userId)
-                                        {
-                                            <span>Waiting for @swap.Receiver.UserName</span><br />
-                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Offer)</a>
-                                        }
-                                        else
-                                        {
-                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">Review Offer</a>
-                                        }
-                                    </td>
-                                    break;
-                                case "accepted":
-                                    <td>
-                                        @if (swap.SenderId == userId)
-                                        {
-                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">Confirm Swap</a>
-                                        }
-                                        else
-                                        {
-                                            <span>Waiting for @swap.Sender.UserName</span><br />
-                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Offer)</a>
-                                        }
-                                    </td>
-                                    break;
-                                case "confirmed":
-                                    if (hasSentFeedback)
-                                    {
-                                        <td>
-                                            <span>Complete</span><br />
-                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Swap)</a>
-                                        </td>
-                                    }
-                                    else if (hasSentItems && hasReceivedItems)
-                                    {
-                                        <td><a href="/Manage/SwapHistory/@swap.Id">Provide Feedback</a></td>
-                                    }
-                                    else if (hasSentItems)
-                                    {
-                                        <td>
-                                            <span>Waiting to receive items</span><br />
-                                            <a href="/Manage/SwapHistory/@swap.Id">(View Swap)</a>
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        <td><a href="/Manage/SwapHistory/@swap.Id">View Mailing Instructions</a></td>
-                                    }
-                                    break;
-                                default:
-                                    <td>
-                                        <span>Complete</span><br />
-                                        <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Swap)</a>
-                                    </td>
-                                    break;
+                                        break;
                                 }
                             }
                         </tr>

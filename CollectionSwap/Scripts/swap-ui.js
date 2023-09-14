@@ -66,7 +66,7 @@ function RequestDonation(e) {
         SenderUserCollectionId: swapContainer.data("sender-collection-id"),
         ReceiverUserCollectionId: swapContainer.data("receiver-collection-id"),
         StartDate: new Date().toISOString(),
-        Status: "charity"
+        Status: "requested"
     }
 
     const formData = new FormData();
@@ -83,7 +83,7 @@ function ConfirmDonation(e, swapId) {
     var swapRequestData = {
         SwapId: swapId,
         SenderUserCollectionId: swapContainer.data("sender-collection-id"),
-        Status: "charity-confirmed"
+        Status: "confirmed"
     }
 
     const formData = new FormData();
