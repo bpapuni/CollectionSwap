@@ -5,13 +5,13 @@
 @{
     ViewBag.Title = "Find Swaps";
     var userSwaps = Model.UserSwaps;
-    var matchingSwaps = Model.MatchingSwaps;
+    //var matchingSwaps = Model.MatchingSwaps;
     var matchingSwapViews = Model.MatchingSwapViews;
     var selectedCollection = ViewBag.SelectedCollection;
     string statusMessage = ViewBag.Status;
 }
 
-<div id="find-swaps-container" class="@(matchingSwaps == null || matchingSwaps.Count == 0 ? "no-swaps" : "")">
+<div id="find-swaps-container" class="@(matchingSwapViews == null || matchingSwapViews.Count == 0 ? "no-swaps" : "")">
     @if (!String.IsNullOrEmpty(statusMessage))
     {
         <div class="status-message">@statusMessage</div>
@@ -29,14 +29,14 @@
         <br />
 
         @*Available Swaps*@
-        @if (matchingSwaps != null)
+        @if (matchingSwapViews != null)
         {
-            if (matchingSwaps.Count > 0)
+            if (matchingSwapViews.Count > 0)
             {
                 <div class="column gap-1 min-width-100">
                     <h3>Available Swaps:</h3>
 
-                    @for (int i = 0; i < matchingSwaps.Count; i++)
+                    @for (int i = 0; i < matchingSwapViews.Count; i++)
                     {
                         @Html.Partial("_Swap", matchingSwapViews[i]);
                     }

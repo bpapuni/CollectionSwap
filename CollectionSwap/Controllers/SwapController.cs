@@ -49,12 +49,6 @@ namespace CollectionSwap.Controllers
                 Feedbacks = db.Feedbacks.ToList()
             };
 
-            if (id.HasValue && selectedCollection != null && selectedCollection.UserId == userId)
-            {
-                ViewBag.MatchingSwaps = selectedCollection.FindMatchingSwaps(db);
-                ViewBag.SelectedCollection = selectedCollection;
-            }
-
             var partial = Helper.RenderViewToString(ControllerContext, "~/Views/Manage/_FindSwaps.cshtml", model, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#find-swaps-container" } }, JsonRequestBehavior.AllowGet);
         }
@@ -101,37 +95,34 @@ namespace CollectionSwap.Controllers
             
         }
 
-        [Authorize]
-        public ActionResult Offers()
-        {
-            var userId = User.Identity.GetUserId();
-            var model = new FindSwapsViewModel
-            {
-                Users = db.Users.ToList(),
-                Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
-                UserSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId).ToList(),
-                //OfferedSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId && swap.Status == "offered").ToList(),
-                //AcceptedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "accepted").ToList(),
-                //ConfirmedSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId && swap.Status == "confirmed").ToList(),
-                Feedbacks = db.Feedbacks.ToList()
-            };
+        //[Authorize]
+        //public ActionResult Offers()
+        //{
+        //    var userId = User.Identity.GetUserId();
+        //    var model = new FindSwapsViewModel
+        //    {
+        //        Users = db.Users.ToList(),
+        //        Collections = db.Collections.ToList(),
+        //        UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
+        //        UserSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId).ToList(),
+        //        Feedbacks = db.Feedbacks.ToList()
+        //    };
 
-            return View(model);
-        }
+        //    return View(model);
+        //}
 
-        [Authorize]
-        public ActionResult History()
-        {
-            var currentUserId = User.Identity.GetUserId();
-            ViewBag.UserSwaps = db.Swaps
-                                    .Include(s => s.Sender) // Eagerly load the Sender property
-                                    .Include(s => s.Receiver) // Eagerly load the Receiver property
-                                    .Include(s => s.Collection) // Eagerly load the Collection property
-                                    .Where(swap => swap.Sender.Id == currentUserId || swap.Receiver.Id == currentUserId)
-                                    .ToList();
+        //[Authorize]
+        //public ActionResult History()
+        //{
+        //    var currentUserId = User.Identity.GetUserId();
+        //    ViewBag.UserSwaps = db.Swaps
+        //                            .Include(s => s.Sender) // Eagerly load the Sender property
+        //                            .Include(s => s.Receiver) // Eagerly load the Receiver property
+        //                            .Include(s => s.Collection) // Eagerly load the Collection property
+        //                            .Where(swap => swap.Sender.Id == currentUserId || swap.Receiver.Id == currentUserId)
+        //                            .ToList();
 
-            return View();
-        }
+        //    return View();
+        //}
     }
 }

@@ -124,7 +124,7 @@ namespace CollectionSwap.Controllers
 
             if (id.HasValue && selectedCollection != null && selectedCollection.UserId == userId)
             {
-                (model.MatchingSwaps, model.MatchingSwapViews) = selectedCollection.FindMatchingSwaps(db);
+                model.MatchingSwapViews = selectedCollection.FindMatchingSwaps(db);
                 ViewBag.SelectedCollection = selectedCollection;
             }
 

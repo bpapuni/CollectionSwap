@@ -251,7 +251,7 @@ namespace CollectionSwap.Models
 
             return "User Collection deleted successfully.";
         }
-        public (List<Swap>, List<SwapViewModel>) FindMatchingSwaps(ApplicationDbContext db)
+        public List<SwapViewModel> FindMatchingSwaps(ApplicationDbContext db)
         {
             var userId = this.User.Id;
             // Find all user collections of the same type that don't belong to the user
@@ -274,8 +274,7 @@ namespace CollectionSwap.Models
                 .SelectMany((value, index) => Enumerable.Repeat(index, Math.Max(value - 1, 0))
                 .Where(i => value > 1))
                 .ToList();
-            
-            var matchingSwaps = new List<Swap>();
+
             var matchingSwapViews = new List<SwapViewModel>();
 
             foreach (var uc in matchingUserCollections)
@@ -339,8 +338,7 @@ namespace CollectionSwap.Models
                         Validation = matchingSwap.Validate(userId, db)
                     };
 
-                    // Add both to lists to be returned as MatchingSwaps
-                    matchingSwaps.Add(matchingSwap);
+                    // Add the view to the list to be returned as MatchingSwaps
                     matchingSwapViews.Add(matchingSwapView);
                 }
                 // If sender has cards that the receiver needs AND vice-versa create the swap
@@ -367,18 +365,18 @@ namespace CollectionSwap.Models
                         Validation = matchingSwap.Validate(userId, db)
                     };
 
-                    // Add both to lists to be returned as MatchingSwaps
-                    matchingSwaps.Add(matchingSwap);
+                    // Add the view to the list to be returned as MatchingSwaps
                     matchingSwapViews.Add(matchingSwapView);
                 }
             }
 
             // Sort the swaps from highest swap size to lowest
-            matchingSwaps = matchingSwaps
-            .OrderByDescending(swap => swap.SwapSize)
-            .ToList();
+            matchingSwapViews = matchingSwapViews
+                .OrderBy(view => view.Swap.SwapSize == 0 ? 0 : 1)   // If SwapSize is 0, swap is charitable, so display it first
+                .ThenByDescending(view => view.Swap.SwapSize)       // Then order by SwapSize
+                .ToList();
 
-            return (matchingSwaps, matchingSwapViews);
+            return matchingSwapViews;
         }
     }
 

@@ -31,7 +31,6 @@ namespace CollectionSwap.Models
         public List<Collection> Collections { get; set; }
         public List<UserCollection> UserCollections { get; set; }
         public List<Swap> UserSwaps { get; set; }
-        public List<Swap> MatchingSwaps { get; set; }
         public List<SwapViewModel> MatchingSwapViews { get; set; }
         public List<Feedback> Feedbacks { get; set; }
     }
@@ -369,11 +368,12 @@ namespace CollectionSwap.Models
             var result = new ValidateResult();
             var senderRequestedItems = JsonConvert.DeserializeObject<List<int>>(this.SenderRequestedItems);     // Items requested from (not by) the sender
             var receiverRequestedItems = JsonConvert.DeserializeObject<List<int>>(this.ReceiverRequestedItems); // Items requested from (not by) the receiver
+            // Find all swaps (not including this swap) where this swaps user collection id is involved            
             var pendingSwaps = db.Swaps
                 .Include("Collection")
                 .Include("Sender")
                 .Include("Receiver")
-                .Where(swap => (this.SenderCollectionId == swap.SenderCollectionId || this.SenderCollectionId == swap.ReceiverCollectionId || this.ReceiverCollectionId == swap.SenderCollectionId || this.ReceiverCollectionId == swap.ReceiverCollectionId) && (swap.Status == "offered" || swap.Status == "accepted"))
+                .Where(swap => this.Id != swap.Id && (this.SenderCollectionId == swap.SenderCollectionId || this.SenderCollectionId == swap.ReceiverCollectionId || this.ReceiverCollectionId == swap.SenderCollectionId || this.ReceiverCollectionId == swap.ReceiverCollectionId) && (swap.Status == "offered" || swap.Status == "accepted"))
                 .ToList();
 
             if (this.Status == "swap") // Check if matching swap contains an item already requested in another swap by the sender

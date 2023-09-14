@@ -458,14 +458,7 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Collections\Edit.cshtml" />
     <Content Include="Views\Collections\Create.cshtml" />
-    <Content Include="Views\UserCollections\Create.cshtml" />
-    <Content Include="Views\UserCollections\_Items.cshtml" />
-    <Content Include="Views\UserCollections\Edit.cshtml" />
-    <Content Include="Views\Swap\UserCollection.cshtml" />
     <Content Include="Views\Manage\_Swap.cshtml" />
-    <Content Include="Views\Swap\Offers.cshtml" />
-    <Content Include="Views\Swap\History.cshtml" />
-    <Content Include="Views\Swap\_PastSwap.cshtml" />
     <Content Include="Views\Manage\_Account.cshtml" />
     <Content Include="Views\Manage\_ManageCollections.cshtml" />
     <Content Include="Views\Manage\_YourCollections.cshtml" />
