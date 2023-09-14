@@ -259,7 +259,7 @@ namespace CollectionSwap.Models
             // Find all pending swaps the user is involved with to eliminate duplicate swap offers
             var pendingSwaps = db.Swaps
                     .Where(swap => (swap.Status == "offered" || swap.Status == "accepted" || swap.Status == "requested") && (swap.Sender.Id == userId || swap.Receiver.Id == userId))
-                    .Select(swap => new { sUC = swap.SenderCollectionId, rUC = swap.ReceiverCollectionId })
+                    .Select(swap => new { sUC = swap.SenderCollectionId, rUC = (int)swap.ReceiverCollectionId })
                     .ToList();
             // Get users current items
             var senderItems = JsonConvert.DeserializeObject<List<int>>(this.ItemCountJSON);
