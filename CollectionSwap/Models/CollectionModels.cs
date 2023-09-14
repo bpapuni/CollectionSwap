@@ -14,18 +14,11 @@ using System.Collections.ObjectModel;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Drawing.Imaging;
 using System.Drawing;
+using Newtonsoft.Json.Linq;
+using System.Reflection;
 
 namespace CollectionSwap.Models
 {
-    public class PotentialSwap
-    {
-        public ApplicationUser User { get; set; }
-        public Collection Collection { get; set; }
-        public UserCollection UserCollection { get; set; }
-        public List<int> MissingItems { get; set; }
-        public List<int> DuplicateItems { get; set; }
-    }
-
     public class Collection
     {
         [Key]
@@ -261,138 +254,131 @@ namespace CollectionSwap.Models
         public (List<Swap>, List<SwapViewModel>) FindMatchingSwaps(ApplicationDbContext db)
         {
             var userId = this.User.Id;
-            var potentialSwapList = FindPotentialSwaps(this, db);
-
-            var currentUserSwapper = potentialSwapList.Where(swap => swap.User.Id == userId && swap.UserCollection == this).FirstOrDefault();
-
+            // Find all user collections of the same type that don't belong to the user
+            var matchingUserCollections = db.UserCollections.Where(uc => uc.CollectionId == this.CollectionId && uc.Archived == false && uc.UserId != userId).ToList();
+            // Find all pending swaps the user is involved with to eliminate duplicate swap offers
+            var pendingSwaps = db.Swaps
+                    .Where(swap => (swap.Status == "offered" || swap.Status == "accepted" || swap.Status == "requested") && (swap.Sender.Id == userId || swap.Receiver.Id == userId))
+                    .Select(swap => new { sUC = swap.SenderCollectionId, rUC = swap.ReceiverCollectionId })
+                    .ToList();
+            // Get users current items
+            var senderItems = JsonConvert.DeserializeObject<List<int>>(this.ItemCountJSON);
+            // Get users missing items
+            var missingItems = senderItems
+                .Select((value, index) => new { Value = value, Index = index })
+                .Where(item => item.Value == 0)
+                .Select(item => item.Index)
+                .ToList();
+            // Get users duplicate items
+            var duplicateItems = senderItems
+                .SelectMany((value, index) => Enumerable.Repeat(index, Math.Max(value - 1, 0))
+                .Where(i => value > 1))
+                .ToList();
+            
             var matchingSwaps = new List<Swap>();
             var matchingSwapViews = new List<SwapViewModel>();
 
-            if (currentUserSwapper == null)
+            foreach (var uc in matchingUserCollections)
             {
-                return (new List<Swap>(), new List<SwapViewModel>()); // User not found.
-            }
+                // If the user has a pending swap with the matching user collection already, pass over this collection
+                var potentialSwap = new { sUC = this.Id, rUC = uc.Id };
+                if (pendingSwaps.Contains(potentialSwap))
+                {
+                    continue;
+                }
 
-            foreach (var potentialSwap in potentialSwapList)
-            {
-                // Find all pending swaps for the current user
-                var pendingSwaps = db.Swaps
-                    .Where(swap => (swap.Status == "offered" || swap.Status == "accepted" || swap.Status == "requested") && (swap.Sender.Id == userId || swap.Receiver.Id == userId))
-                    .Select(swap => new { swap.SenderCollectionId, swap.ReceiverCollectionId })
+                // Get items in matching user collection
+                var ucItems = JsonConvert.DeserializeObject<List<int>>(uc.ItemCountJSON);
+                // Get the items missing from the matching user collection
+                var ucMissingItems = ucItems
+                    .Select((value, index) => new { Value = value, Index = index })
+                    .Where(item => item.Value == 0)
+                    .Select(item => item.Index)
                     .ToList();
+                // Get the duplicate items in the matching user collection
+                var ucDuplicateItems = ucItems
+                .SelectMany((value, index) => Enumerable.Repeat(index, Math.Max(value - 1, 0))
+                .Where(i => value > 1))
+                .ToList();
+                // Items in both the users missing items AND matching user collection duplicate items are the senders needed items
+                var senderNeededItems = missingItems.Intersect(ucDuplicateItems).ToList();
+                // Items in both the users duplicate items AND matching user collection's missing items are the receivers needed items
+                var receiverNeededItems = duplicateItems.Intersect(ucMissingItems).ToList();
 
-                // Skip over this potentialSwap if it belongs to the current user or 
-                // if the current user already has a pending swap matching this potentialSwap
-                if (potentialSwap == currentUserSwapper) { continue; }
-                else if (pendingSwaps.Any(swap => (swap.SenderCollectionId == this.Id && swap.ReceiverCollectionId == potentialSwap.UserCollection.Id) || (swap.SenderCollectionId == potentialSwap.UserCollection.Id && swap.ReceiverCollectionId == this.Id))) { continue; }
-
-                var currentUserNeededItems = currentUserSwapper.MissingItems.Intersect(potentialSwap.DuplicateItems).ToList();
-                var otherUserNeededItems = currentUserSwapper.DuplicateItems.Intersect(potentialSwap.MissingItems).ToList();
-
-                if (potentialSwap.UserCollection.Charity)
+                var matchingSwap = new Swap();
+                // If the matching user collection is flagged for charity switch sender and receivers roles
+                if (uc.Charity)
                 {
-                    var matchingSwap = new Swap
-                    {
-                        Sender = potentialSwap.UserCollection.User,
-                        Receiver = db.Users.Find(userId),
-                        CollectionId = potentialSwap.UserCollection.Collection.Id,
-                        Collection = potentialSwap.UserCollection.Collection,
-                        SenderCollectionId = potentialSwap.UserCollection.Id,
-                        SenderCollection = potentialSwap.UserCollection,
-                        SenderRequestedItems = JsonConvert.SerializeObject(JsonConvert.DeserializeObject<List<int>>(potentialSwap.UserCollection.ItemCountJSON)
-                                            .Select((value, index) => new { Value = value, Index = index })
-                                            .Where(item => item.Value != 0)
-                                            .Select(item => item.Index)
-                                            .ToList()),                                         // Items donated by the sender
-                        ReceiverCollectionId = this.Id,
-                        ReceiverCollection = this,
-                        ReceiverRequestedItems = JsonConvert.SerializeObject(new List<int>()),      // Nothing in exchange
-                        SwapSize = 0,
-                        Status = "charity"
-                    };
+                    // sender is now the other user and needs none of the receiver's (user's) items
+                    senderNeededItems = new List<int>();
+                    // All items in the senders user collection are needed by the receiver
+                    receiverNeededItems
+                        .Select((value, index) => new { Value = value, Index = index })
+                        .Where(item => item.Value != 0)
+                        .Select(item => item.Index)
+                        .ToList();
 
+                    // Create the swap
+                    matchingSwap.Sender = uc.User;
+                    matchingSwap.Receiver = this.User;
+                    matchingSwap.CollectionId = this.Collection.Id;
+                    matchingSwap.Collection = this.Collection;
+                    matchingSwap.SenderCollectionId = uc.Id;
+                    matchingSwap.SenderCollection = uc;
+                    matchingSwap.SenderRequestedItems = JsonConvert.SerializeObject(receiverNeededItems);
+                    matchingSwap.ReceiverCollectionId = this.Id;
+                    matchingSwap.ReceiverCollection = this;
+                    matchingSwap.ReceiverRequestedItems = JsonConvert.SerializeObject(new List<int>());
+                    matchingSwap.SwapSize = 0;
+                    matchingSwap.Status = "charity";
+
+                    // Create corresponding swap view to display the swap with its validation
                     var matchingSwapView = new SwapViewModel
                     {
                         Swap = matchingSwap,
                         Validation = matchingSwap.Validate(userId, db)
                     };
 
+                    // Add both to lists to be returned as MatchingSwaps
                     matchingSwaps.Add(matchingSwap);
                     matchingSwapViews.Add(matchingSwapView);
                 }
-                else if (currentUserNeededItems.Any() && otherUserNeededItems.Any())
+                // If sender has cards that the receiver needs AND vice-versa create the swap
+                else if (senderNeededItems.Any() && receiverNeededItems.Any())
                 {
-                    var matchingSwap = new Swap
-                    {
-                        Sender = db.Users.Find(userId),
-                        Receiver = potentialSwap.User,
-                        CollectionId = potentialSwap.Collection.Id,
-                        Collection = potentialSwap.Collection,
-                        SenderCollectionId = this.Id,
-                        SenderCollection = this,
-                        SenderRequestedItems = JsonConvert.SerializeObject(otherUserNeededItems),           // Items requested from (not by) the sender
-                        ReceiverCollectionId = potentialSwap.UserCollection.Id,
-                        ReceiverCollection = potentialSwap.UserCollection,
-                        ReceiverRequestedItems = JsonConvert.SerializeObject(currentUserNeededItems),       // Items requested from (not by) the receiver
-                        SwapSize = Math.Min(currentUserNeededItems.Count(), otherUserNeededItems.Count()),
-                        Status = "swap"
-                    };
+                    // Create the swap
+                    matchingSwap.Sender = this.User;
+                    matchingSwap.Receiver = uc.User;
+                    matchingSwap.CollectionId = this.Collection.Id;
+                    matchingSwap.Collection = this.Collection;
+                    matchingSwap.SenderCollectionId = this.Id;
+                    matchingSwap.SenderCollection = this;
+                    matchingSwap.SenderRequestedItems = JsonConvert.SerializeObject(receiverNeededItems);
+                    matchingSwap.ReceiverCollectionId = uc.Id;
+                    matchingSwap.ReceiverCollection = uc;
+                    matchingSwap.ReceiverRequestedItems = JsonConvert.SerializeObject(senderNeededItems);
+                    matchingSwap.SwapSize = Math.Min(senderNeededItems.Count(), receiverNeededItems.Count());
+                    matchingSwap.Status = "swap";
 
+                    // Create corresponding swap view to display the swap with its validation
                     var matchingSwapView = new SwapViewModel
                     {
                         Swap = matchingSwap,
                         Validation = matchingSwap.Validate(userId, db)
                     };
 
+                    // Add both to lists to be returned as MatchingSwaps
                     matchingSwaps.Add(matchingSwap);
                     matchingSwapViews.Add(matchingSwapView);
                 }
             }
 
+            // Sort the swaps from highest swap size to lowest
             matchingSwaps = matchingSwaps
             .OrderByDescending(swap => swap.SwapSize)
-            //.ThenByDescending(swap => swap.SenderItemIds.Count())
             .ToList();
 
             return (matchingSwaps, matchingSwapViews);
-        }
-        private List<PotentialSwap> FindPotentialSwaps(UserCollection selectedCollection, ApplicationDbContext db)
-        {
-            var swappers = db.Users.ToList();
-            List<PotentialSwap> swapList = new List<PotentialSwap>();
-            foreach (var swapper in swappers)
-            {
-                List<int> missingItems = new List<int>();
-                List<int> duplicateItems = new List<int>();
-
-                List<UserCollection> userCollections = db.UserCollections.Where(uc => uc.User.Id == swapper.Id && uc.CollectionId == selectedCollection.CollectionId).ToList();
-
-                foreach (var userCollection in userCollections)
-                {
-                    List<int> items = JsonConvert.DeserializeObject<List<int>>(userCollection.ItemCountJSON);
-
-                    missingItems = items.Select((value, index) => new { value, index })
-                                              .Where(item => item.value == 0)
-                                              .Select(item => item.index)
-                                              .ToList();
-
-                    duplicateItems = items.SelectMany((value, index) => Enumerable.Repeat(index, Math.Max(value - 1, 0))
-                                                .Where(i => value > 1))
-                                                .ToList();
-
-                    PotentialSwap newSwap = new PotentialSwap
-                    {
-                        User = swapper,
-                        Collection = db.Collections.Find(selectedCollection.CollectionId),
-                        UserCollection = userCollection,
-                        MissingItems = missingItems,
-                        DuplicateItems = duplicateItems
-                    };
-                    swapList.Add(newSwap);
-                }
-            }
-
-            return swapList;
         }
     }
 

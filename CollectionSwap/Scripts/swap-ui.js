@@ -94,7 +94,7 @@ function ConfirmDonation(e, swapId) {
     HandleFormSubmit("/Swap/ProcessSwap", "POST", formData);
 }
 
-function offerSwap(e) {
+function OfferSwap(e) {
     const swapContainer = $(e).prev(".swap-container");
     const senderItems = swapContainer.find(".your-items .swap-item > img").map(function () {
         return +$(this).data("item-id");

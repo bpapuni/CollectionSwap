@@ -111,7 +111,7 @@ namespace CollectionSwap.Models
             {
                 string response = string.Empty;
                 var senderItemCount = new List<int>();
-                var isCharity = this.SenderRequestedItems == null || this.SenderRequestedItems == "[]" || this.ReceiverRequestedItems == null || this.ReceiverRequestedItems == "[]";
+                var isCharity = request.Status != "offered" && (this.SenderRequestedItems == null || this.SenderRequestedItems == "[]" || this.ReceiverRequestedItems == null || this.ReceiverRequestedItems == "[]");
                 var swapStatus = isCharity ? $"charity-{request.Status}" : request.Status;
                 switch (swapStatus)
                 {
@@ -370,11 +370,11 @@ namespace CollectionSwap.Models
             var senderRequestedItems = JsonConvert.DeserializeObject<List<int>>(this.SenderRequestedItems);     // Items requested from (not by) the sender
             var receiverRequestedItems = JsonConvert.DeserializeObject<List<int>>(this.ReceiverRequestedItems); // Items requested from (not by) the receiver
             var pendingSwaps = db.Swaps
-                    .Include("Collection")
-                    .Include("Sender")
-                    .Include("Receiver")
-                    .Where(swap => swap.Id != this.Id && (swap.Sender.Id == userId || swap.Receiver.Id == userId) && (swap.Status == "offered" || swap.Status == "accepted") && swap.Collection.Id == this.CollectionId)
-                    .ToList();
+                .Include("Collection")
+                .Include("Sender")
+                .Include("Receiver")
+                .Where(swap => (this.SenderCollectionId == swap.SenderCollectionId || this.SenderCollectionId == swap.ReceiverCollectionId || this.ReceiverCollectionId == swap.SenderCollectionId || this.ReceiverCollectionId == swap.ReceiverCollectionId) && (swap.Status == "offered" || swap.Status == "accepted"))
+                .ToList();
 
             if (this.Status == "swap") // Check if matching swap contains an item already requested in another swap by the sender
             {
