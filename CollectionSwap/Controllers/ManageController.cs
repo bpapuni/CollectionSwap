@@ -617,16 +617,7 @@ namespace CollectionSwap.Controllers
 
             var shModel = new SwapHistoryViewModel
             {
-                Swaps = ProcessCharityRequests(swaps)
-                    .OrderBy(swap => swap.Status == "declined" ? 0 : 1)
-                    .ThenBy(swap => swap.Status == "canceled" ? 0 : 1)
-                    .ThenBy(swap => swap.Status == "requested" ? 0 : 1)
-                    .ThenBy(swap => swap.Status == "offered" ? 0 : 1)
-                    .ThenBy(swap => swap.Status == "accepted" ? 0 : 1)
-                    .ThenBy(swap => swap.Status == "confirmed" ? 0 : 1)
-                    .ThenBy(swap => swap.Status == "completed" ? 0 : 1)
-                    .ThenByDescending(swap => swap.EndDate)
-                    .ToList(),
+                Swaps = ProcessCharityRequests(swaps),
                 Offer = null
             };
 
@@ -695,6 +686,17 @@ namespace CollectionSwap.Controllers
                 processedSwaps.Add(swaps.Where(s => s.Id == missingItems.id).FirstOrDefault());
             }
 
+            processedSwaps = processedSwaps
+                    .OrderBy(swap => swap.Status == "declined" ? 0 : 1)
+                    .ThenBy(swap => swap.Status == "canceled" ? 0 : 1)
+                    .ThenBy(swap => swap.Status == "requested" ? 0 : 1)
+                    .ThenBy(swap => swap.Status == "offered" ? 0 : 1)
+                    .ThenBy(swap => swap.Status == "accepted" ? 0 : 1)
+                    .ThenBy(swap => swap.Status == "confirmed" ? 0 : 1)
+                    .ThenBy(swap => swap.Status == "completed" ? 0 : 1)
+                    .ThenByDescending(swap => swap.EndDate)
+                    .ToList();
+
             return processedSwaps;
         }
 
@@ -745,7 +747,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.Status = TempData["Status"];
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" } }, JsonRequestBehavior.AllowGet);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container table" } }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -767,34 +769,6 @@ namespace CollectionSwap.Controllers
 
             var partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" } });
-        }
-
-        //
-        // GET: /Manage/SwapHistory
-
-        [Authorize]
-        public ActionResult Feedback(int id)
-        {
-            var partial = String.Empty;
-            var userId = User.Identity.GetUserId();
-
-            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId).ToList();
-
-            var fbModel = new FeedbackViewModel
-            {
-                Swap = db.Swaps.Find(id),
-                Feedback = db.Feedbacks.Where(fb => fb.SenderId == userId && fb.SwapId == id).FirstOrDefault()
-            };
-
-            var shModel = new SwapHistoryViewModel
-            {
-                Swaps = ProcessCharityRequests(swaps),
-                //Feedback = fbModel,
-                Offer = null
-            };
-
-            partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#feedback-container" }, ScrollTarget = "#feedback-container" }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -866,11 +840,8 @@ namespace CollectionSwap.Controllers
             };
 
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#offer-container" }, ScrollTarget = "#offer-container" }, JsonRequestBehavior.AllowGet);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#offer-container" }, ScrollTarget = "#offer-container" }, JsonRequestBehavior.AllowGet);
         }
-
-        //
-        // GET: /Manage/SwapHistory
 
         [Authorize]
         public ActionResult Instructions(int id)

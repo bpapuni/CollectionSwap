@@ -343,6 +343,8 @@
         }
 
         $(document).on("click", ".swap-history-filters > span", function () {
+            $(".swap-history-filters > span").removeClass("selected");
+            $(this).addClass("selected");
             const formData = new FormData();
             formData.append("displayStatus", $(this).data("status"));
 
