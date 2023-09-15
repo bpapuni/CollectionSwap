@@ -259,6 +259,14 @@
     <Compile Include="Migrations\202309140623067_AddArchiveBoolToUserCollection.designer.cs">
       <DependentUpon>202309140623067_AddArchiveBoolToUserCollection.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202309150124038_UpdatedCollectionModel.cs" />
+    <Compile Include="Migrations\202309150124038_UpdatedCollectionModel.designer.cs">
+      <DependentUpon>202309150124038_UpdatedCollectionModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202309150127022_UpdatedCollectionModelAgain.cs" />
+    <Compile Include="Migrations\202309150127022_UpdatedCollectionModelAgain.designer.cs">
+      <DependentUpon>202309150127022_UpdatedCollectionModelAgain.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CollectionModels.cs" />
@@ -542,6 +550,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202309140623067_AddArchiveBoolToUserCollection.resx">
       <DependentUpon>202309140623067_AddArchiveBoolToUserCollection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202309150124038_UpdatedCollectionModel.resx">
+      <DependentUpon>202309150124038_UpdatedCollectionModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202309150127022_UpdatedCollectionModelAgain.resx">
+      <DependentUpon>202309150127022_UpdatedCollectionModelAgain.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

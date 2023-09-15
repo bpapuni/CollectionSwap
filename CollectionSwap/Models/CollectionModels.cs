@@ -28,7 +28,7 @@ namespace CollectionSwap.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public string ItemListJSON { get; set; }
-        public static void Create(CreateCollectionModel collection, ApplicationDbContext db)
+        public static bool Create(CreateCollectionModel collection, ApplicationDbContext db)
         {
             if (collection.fileInput != null && collection.fileInput.ContentLength > 0)
             {
@@ -38,23 +38,13 @@ namespace CollectionSwap.Models
                     var entryList = archive.Entries.ToList();
                     entryList = entryList.OrderBy(entry => entry.Name.Length).ToList();
 
-                    // Save the collection to the database so it is allocated an Id
-                    Collection newCollection = new Collection()
-                    {
-                        Name = collection.Name
+
+                    var newCollection = new Collection 
+                    { 
+                        Name = collection.Name,
+                        Description = collection.Description,
                     };
-                    db.Collections.Add(newCollection);
-                    db.SaveChanges();
-
-                    // Specify the path where to save the uploaded file on the server
-                    string extractPath = HostingEnvironment.MapPath("~/Collections/" + newCollection.Id);
-
-                    // Ensure the target directory exists; create it if it doesn't
-                    if (!Directory.Exists(extractPath))
-                    {
-                        Directory.CreateDirectory(extractPath);
-                    }
-
+                    string extractPath = null;
                     List<string> fileNames = new List<string>();
                     int i = 1;
                     // Loop through the entries in the archive and add file names to the list
@@ -62,21 +52,46 @@ namespace CollectionSwap.Models
                     {
                         if (!string.IsNullOrEmpty(entry.Name))
                         {
-                            string fileName = i.ToString() + Path.GetExtension(entry.Name);
-                            string extractedFilePath = Path.Combine(extractPath, fileName);
-                            entry.ExtractToFile(extractedFilePath, true);
+                            string fileExtension = Path.GetExtension(entry.Name).ToLower();
 
-                            fileNames.Add(fileName);
-                            i++;
+                            // Check if the file extension is jpg or png
+                            if (fileExtension == ".jpg" || fileExtension == ".png")
+                            {
+                                // Ensure the target directory exists; create it if it doesn't
+                                if (extractPath == null)
+                                {
+                                    // Generate the extractPath only once when a valid file is found
+                                    db.Collections.Add(newCollection);
+                                    db.SaveChanges(); // SaveChanges here to generate the newCollection.Id
+                                    extractPath = HostingEnvironment.MapPath("~/Collections/" + newCollection.Id);
+
+                                    if (!Directory.Exists(extractPath))
+                                    {
+                                        Directory.CreateDirectory(extractPath);
+                                    }
+                                }
+
+                                string fileName = i.ToString() + fileExtension;
+                                string extractedFilePath = Path.Combine(extractPath, fileName);
+                                entry.ExtractToFile(extractedFilePath, true);
+
+                                fileNames.Add(fileName);
+                                i++;
+                            }
                         }
                     }
 
-                    var orderedFiles = fileNames.OrderBy(f => f.Length);
-                    newCollection.ItemListJSON = JsonConvert.SerializeObject(orderedFiles);
-                    db.Entry(newCollection).State = EntityState.Modified;
-                    db.SaveChanges();
+                    if (fileNames.Count() > 0)
+                    {
+                        var orderedFiles = fileNames.OrderBy(f => f.Length);
+                        newCollection.ItemListJSON = JsonConvert.SerializeObject(orderedFiles);
+                        db.Entry(newCollection).State = EntityState.Modified;
+                        db.SaveChanges();
+                        return true;
+                    }
                 }
             }
+            return false;
         }
         public void Update(string Name, ApplicationDbContext db)
         {
@@ -165,6 +180,7 @@ namespace CollectionSwap.Models
         [Display(Name = "New Collection Name")]
         [Required(ErrorMessage = "Please enter a name for this collection.")]
         public string Name { get; set; }
+        [StringLength(60, ErrorMessage = "Description must be shorter than 60 characters.")]
         [Display(Name = "Description (optional)")]
         public string Description { get; set; }
 

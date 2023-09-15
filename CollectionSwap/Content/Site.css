@@ -1611,6 +1611,16 @@ section {
     color: red;
 }
 
+
+#create-collection-form > .form-group:nth-of-type(2) > .field-validation-error {
+    height: 3rem;
+}
+
+#create-collection-form > .form-group:nth-of-type(3) > .field-validation-valid,
+#create-collection-form > .form-group:nth-of-type(3) > .field-validation-error {
+    height: 3rem;
+}
+
 .field-validation-valid {
     height: 1.5rem;
 }

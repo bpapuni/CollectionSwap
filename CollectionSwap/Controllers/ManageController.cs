@@ -299,15 +299,17 @@ namespace CollectionSwap.Controllers
             if (!ModelState.IsValid)
             {
                 model.Collections = db.Collections.ToList();
-                ViewBag.ShouldDisplay = true;
                 partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
                 return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container" } });
             }
 
-            Collection.Create(model.CreateCollection, db);
+            var success = Collection.Create(model.CreateCollection, db);
+            if (!success)
+            {
+                ModelState.AddModelError("CreateCollection.fileInput", "Selected zip file did not contain any images.");
+            }
             model.Collections = db.Collections.ToList();
 
-            ViewBag.ShouldDisplay = true;
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container" } });
         }
@@ -566,11 +568,11 @@ namespace CollectionSwap.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult DeleteUserCollection(int id)
+        public async Task<ActionResult> DeleteUserCollection(int id)
         {
             var partial = String.Empty;
-            UserCollection userCollection = db.UserCollections.Find(id);
-            userCollection.Delete(db);
+            var userCollection = db.UserCollections.Find(id);
+            await userCollection.Delete(db);
 
             var userId = User.Identity.GetUserId();
             var ycViewModel = new YourCollectionViewModel
