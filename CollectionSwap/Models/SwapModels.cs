@@ -27,7 +27,7 @@ namespace CollectionSwap.Models
 
     public class FindSwapsViewModel
     {
-        public List<ApplicationUser> Users { get; set; }
+        //public List<ApplicationUser> Users { get; set; }
         public List<Collection> Collections { get; set; }
         public List<UserCollection> UserCollections { get; set; }
         public List<Swap> UserSwaps { get; set; }

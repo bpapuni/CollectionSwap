@@ -25,7 +25,7 @@ namespace CollectionSwap.Controllers
             var userId = User.Identity.GetUserId();
             var model = new FindSwapsViewModel
             {
-                Users = db.Users.ToList(),
+                //Users = db.Users.ToList(),
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
                 UserSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId).ToList(),
@@ -42,7 +42,7 @@ namespace CollectionSwap.Controllers
             var selectedCollection = db.UserCollections.Find(id);
             var model = new FindSwapsViewModel
             {
-                Users = db.Users.ToList(),
+                //Users = db.Users.ToList(),
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
                 UserSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId).ToList(),

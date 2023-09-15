@@ -97,13 +97,13 @@ namespace CollectionSwap.Controllers
             var userId = User.Identity.GetUserId();
             var model = new FindSwapsViewModel
             {
-                Users = db.Users.ToList(),
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.UserId == userId && uc.Archived == false).ToList(),
                 UserSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId).ToList(),
-                Feedbacks = db.Feedbacks.ToList()
+                Feedbacks = db.Feedbacks.ToList(),
             };
 
+            ViewBag.User = db.Users.Find(userId);
             var partial = Helper.RenderViewToString(ControllerContext, "_FindSwaps", model, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#find-swaps-container" } });
         }
@@ -115,11 +115,10 @@ namespace CollectionSwap.Controllers
             var selectedCollection = db.UserCollections.Find(id);
             var model = new FindSwapsViewModel
             {
-                Users = db.Users.ToList(),
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.UserId == userId && uc.Archived == false).ToList(),
                 UserSwaps = db.Swaps.Where(swap => swap.Sender.Id == userId || swap.Receiver.Id == userId).ToList(),
-                Feedbacks = db.Feedbacks.ToList()
+                Feedbacks = db.Feedbacks.ToList(),
             };
 
             if (id.HasValue && selectedCollection != null && selectedCollection.UserId == userId)
@@ -128,6 +127,7 @@ namespace CollectionSwap.Controllers
                 ViewBag.SelectedCollection = selectedCollection;
             }
 
+            ViewBag.User = db.Users.Find(userId);
             ViewBag.Status = TempData["Status"];
             var partial = Helper.RenderViewToString(ControllerContext, "_FindSwaps", model, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#find-swaps-container" } }, JsonRequestBehavior.AllowGet);

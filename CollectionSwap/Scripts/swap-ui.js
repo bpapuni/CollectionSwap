@@ -9,7 +9,6 @@
 
     if ($(e).hasClass("selected")) {
         const placeholderItem = swapContainer.find(".your-selection").find(`[src='${selectedItem.attr("src")}']`).parent();
-        console.log(selectedItem.attr("src"));
         ClearItem(placeholderItem);
     }
     else if (selectedCount < swapSize - 1)
@@ -18,6 +17,7 @@
         //swapContainer.find(".your-selection").removeClass("d-none");
         placeHolders.eq(0).toggleClass("placeholder").find("img").data(("item-id"), selectedItem.data("item-id")).attr("src", selectedItem.attr("src"));
         requestButton.text(`Items Selected (${selectedCount + 1}/${swapSize})`);
+        requestButton.val(`Items Selected (${selectedCount + 1}/${swapSize})`);
         requestButton.attr("disabled", "");
     }
     else if (selectedCount === swapSize - 1)
@@ -25,7 +25,10 @@
         $(e).toggleClass("selected");
         placeHolders.eq(0).toggleClass("placeholder").find("img").data(("item-id"), selectedItem.data("item-id")).attr("src", selectedItem.attr("src"));
         requestButton.text(buttonText);
-        requestButton.removeAttr("disabled");
+        requestButton.val(buttonText);
+        if (requestButton.prop("tagName").toLowerCase() === "button") {
+            requestButton.removeAttr("disabled");
+        }
     }
 }
 
@@ -49,6 +52,7 @@ function ClearItem(e) {
     }
 
     requestButton.text(`Items Selected (${selectedCount - 1}/${swapSize})`);
+    requestButton.val(`Items Selected (${selectedCount - 1}/${swapSize})`);
     requestButton.attr("disabled", "");
 }
 
@@ -123,7 +127,7 @@ function OfferSwap(e) {
     HandleFormSubmit("/Swap/ProcessSwap", "POST", formData);
 }
 
-function acceptSwap(e, swapId) {
+function AcceptSwap(e, swapId) {
     const swapContainer = $(e).parent().prev(".swap-container");
     const senderItems = swapContainer.find(".swap-item.selected > img").map(function () {
         return +$(this).data("item-id");

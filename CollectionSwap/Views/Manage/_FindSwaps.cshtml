@@ -1,13 +1,11 @@
 ﻿@model CollectionSwap.Models.FindSwapsViewModel
 @using CollectionSwap.Models
-@using Microsoft.AspNet.Identity
-@using Newtonsoft.Json;
 @{
     ViewBag.Title = "Find Swaps";
     var userSwaps = Model.UserSwaps;
-    //var matchingSwaps = Model.MatchingSwaps;
     var matchingSwapViews = Model.MatchingSwapViews;
     var selectedCollection = ViewBag.SelectedCollection;
+    var userAddress = ViewBag.User.Address;
     string statusMessage = ViewBag.Status;
 }
 
@@ -18,6 +16,14 @@
     }
     <span class="header">Find Swaps</span>
     <section class="column">
+        @if (userAddress == null)
+        {
+            <div>
+                <strong>Added your address?</strong><br />
+                <span>Before you can request a swap you must <a href="/Manage/Account">add your mailing address</a></span>
+            </div>
+            <br />
+        }
         <h3>Select a collection to find swaps for:</h3>
         <br />
         <div class="row gap-2">

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -159,6 +160,12 @@ namespace CollectionSwap.Models
                 this.UserId = userId;
                 this.Created = DateTimeOffset.UtcNow;
                 db.Addresses.Add(this);
+
+                var user = db.Users.Find(userId);
+
+                user.Address = this;
+                db.Entry(user).State = EntityState.Modified;
+
                 await db.SaveChangesAsync();
                 return new CreateAddressResult { Succeeded = true };
             }

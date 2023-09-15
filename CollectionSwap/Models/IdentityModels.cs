@@ -40,6 +40,7 @@ namespace CollectionSwap.Models
 
             return status;
         }
+        public virtual Address Address { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
