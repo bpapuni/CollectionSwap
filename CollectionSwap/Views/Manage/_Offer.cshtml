@@ -24,9 +24,7 @@
     var hasReceivedItems = userId == sender.Id ? Model.Swap.SenderConfirmReceived : Model.Swap.ReceiverConfirmReceived;
 
     var feedback = Model.Feedback;
-    var positiveFeedback = feedback != null ? JsonConvert.DeserializeObject<List<string>>(feedback.PositiveFeedback) : null;
-    var neutralFeedback = feedback != null ? JsonConvert.DeserializeObject<List<string>>(feedback.NeutralFeedback) : null;
-    var negativeFeedback = feedback != null ? JsonConvert.DeserializeObject<List<string>>(feedback.NegativeFeedback) : null;
+    var commenets = feedback != null ? JsonConvert.DeserializeObject<List<string>>(feedback.Comments) : null;
 
     var otherUserId = userId == sender.Id ? receiver.Id : sender.Id;
     var otherUserName = userId == sender.Id ? receiver.UserName : sender.UserName;

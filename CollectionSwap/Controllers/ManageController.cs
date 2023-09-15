@@ -617,7 +617,16 @@ namespace CollectionSwap.Controllers
 
             var shModel = new SwapHistoryViewModel
             {
-                Swaps = ProcessCharityRequests(swaps),
+                Swaps = ProcessCharityRequests(swaps)
+                    .OrderBy(swap => swap.Status == "declined" ? 0 : 1)
+                    .ThenBy(swap => swap.Status == "canceled" ? 0 : 1)
+                    .ThenBy(swap => swap.Status == "requested" ? 0 : 1)
+                    .ThenBy(swap => swap.Status == "offered" ? 0 : 1)
+                    .ThenBy(swap => swap.Status == "accepted" ? 0 : 1)
+                    .ThenBy(swap => swap.Status == "confirmed" ? 0 : 1)
+                    .ThenBy(swap => swap.Status == "completed" ? 0 : 1)
+                    .ThenByDescending(swap => swap.EndDate)
+                    .ToList(),
                 Offer = null
             };
 
@@ -687,6 +696,56 @@ namespace CollectionSwap.Controllers
             }
 
             return processedSwaps;
+        }
+
+        [HttpPost]
+        [Authorize]
+        public ActionResult FilterSwaps(string displayStatus)
+        {
+            var partial = String.Empty;
+            var userId = User.Identity.GetUserId();
+            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId).ToList();
+
+            switch (displayStatus)
+            {
+                case "all":
+                    break;
+                case "offered":
+                    swaps = swaps.Where(swap => swap.Status == "offered").ToList();
+                    break;
+                case "accepted":
+                    swaps = swaps.Where(swap => swap.Status == "accepted").ToList();
+                    break;
+                case "confirmed":
+                    swaps = swaps.Where(swap => swap.Status == "confirmed").ToList();
+                    break;
+                case "completed":
+                    swaps = swaps.Where(swap => swap.Status == "completed").ToList();
+                    break;
+                default:
+                    swaps = new List<Swap>();
+                    break;
+            }
+
+            swaps = swaps.OrderBy(swap => swap.Status == "declined" ? 0 : 1)
+                .ThenBy(swap => swap.Status == "canceled" ? 0 : 1)
+                .ThenBy(swap => swap.Status == "requested" ? 0 : 1)
+                .ThenBy(swap => swap.Status == "offered" ? 0 : 1)
+                .ThenBy(swap => swap.Status == "accepted" ? 0 : 1)
+                .ThenBy(swap => swap.Status == "confirmed" ? 0 : 1)
+                .ThenBy(swap => swap.Status == "completed" ? 0 : 1)
+                .ThenByDescending(swap => swap.EndDate)
+                .ToList();
+
+            var shModel = new SwapHistoryViewModel
+            {
+                Swaps = ProcessCharityRequests(swaps),
+                Offer = null
+            };
+
+            ViewBag.Status = TempData["Status"];
+            partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" } }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]

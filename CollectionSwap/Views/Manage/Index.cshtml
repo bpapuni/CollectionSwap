@@ -342,6 +342,13 @@
             feedbackOptions.eq(index).removeClass("d-none");
         }
 
+        $(document).on("click", ".swap-history-filters > span", function () {
+            const formData = new FormData();
+            formData.append("displayStatus", $(this).data("status"));
+
+            HandleFormSubmit("/Manage/FilterSwaps", "POST", formData);
+        });
+
         function SortByStatus() {
 
         }

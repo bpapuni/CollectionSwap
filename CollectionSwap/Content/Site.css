@@ -625,6 +625,7 @@ button.close {
 }
 
     #history-container table {
+        width: 100%;
         flex-grow: 1;
         text-align: left;
         background: #ffffffaa;
@@ -638,6 +639,10 @@ button.close {
         border-top: 1px solid #ccc;
         height: 4rem;
     }
+
+        #history-container table th:not(:nth-of-type(4), :nth-of-type(5)) {
+            width: 13rem;
+        }
     
     #history-container table tr > * {
         padding: 0.5rem 1rem;
@@ -651,10 +656,46 @@ button.close {
     }
 
     #history-container thead {
-        /*white-space: nowrap;*/
         background: var(--brand-yellow);
         border-radius: 1rem;
     }
+
+.swap-history-filters {
+    display: flex;
+    margin-bottom: 1rem;
+    font-weight: 400;
+}
+
+    .swap-history-filters > span {
+        display: flex;
+        justify-content: center;
+        min-width: 4rem;
+        margin: 0;
+        padding: 0.5rem 1rem;
+        border-top: 1px solid #D0D5DD;
+        border-left: 1px solid #D0D5DD;
+        border-bottom: 1px solid #D0D5DD;
+        background: white;
+        cursor: pointer;
+    }
+
+        .swap-history-filters > span:hover {
+            background: #ffffffaa;
+        }
+
+    .swap-history-filters > span:first-of-type {
+        border-radius: 0.75rem 0 0 0.75rem;
+    }
+
+    .swap-history-filters > span:last-of-type {
+        border-right: 1px solid #D0D5DD;
+        border-radius: 0 0.75rem 0.75rem 0;
+    }
+
+        .swap-history-filters > span.selected {
+            font-weight: 700;
+            background: #ffffffaa;
+        }
 
 .swap-history-doodle {
     display: flex;
@@ -933,7 +974,7 @@ button.close {
 }
 
 .swap-prog-container {
-    --_size: 2.3rem;
+    --_size: 1.4rem;
     --_segments: 4;
     position: relative;
     display: flex;

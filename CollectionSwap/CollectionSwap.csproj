@@ -271,6 +271,10 @@
     <Compile Include="Migrations\202309150220030_AddAddressToUserModel.designer.cs">
       <DependentUpon>202309150220030_AddAddressToUserModel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202309150337294_ChangeFeedbackToComments.cs" />
+    <Compile Include="Migrations\202309150337294_ChangeFeedbackToComments.designer.cs">
+      <DependentUpon>202309150337294_ChangeFeedbackToComments.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CollectionModels.cs" />
@@ -563,6 +567,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202309150220030_AddAddressToUserModel.resx">
       <DependentUpon>202309150220030_AddAddressToUserModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202309150337294_ChangeFeedbackToComments.resx">
+      <DependentUpon>202309150337294_ChangeFeedbackToComments.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

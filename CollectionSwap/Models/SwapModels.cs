@@ -573,9 +573,7 @@ namespace CollectionSwap.Models
         public string ReceiverId { get; set; }
         [Required(ErrorMessage = "You must select a rating")]
         public int Rating { get; set; }
-        public string PositiveFeedback { get; set; }
-        public string NeutralFeedback { get; set; }
-        public string NegativeFeedback { get; set; }
+        public string Comments { get; set; }
         public Feedback Create(string userId, ApplicationDbContext db)
         {
             if (db.Feedbacks.Find(this.Id) != null)
