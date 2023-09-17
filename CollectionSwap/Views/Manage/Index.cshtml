@@ -78,7 +78,7 @@
         });
 
         // Automatically submit the form when changing an items image
-        $(document).on("change", "#items input[type='file']", function () {
+        $(document).on("change", "#items input[type='file'], #sponsor-image-upload", function (e) {
             $(this).closest("form").submit();
         });
 
@@ -351,8 +351,17 @@
             HandleFormSubmit("/Manage/FilterSwaps", "POST", formData);
         });
 
-        function SortByStatus() {
+        function SaveSponsorStatement(e, collectionId) {
+            const self = $(e);
+            const statement = $(".sponsor-statement.admin");
+            if (statement.text().includes("<")) {
+                statement.prop("innerHTML", statement.text());
+            }
+            const formData = new FormData();
+            formData.append("id", collectionId);
+            formData.append("statement", statement.prop("innerHTML"));
 
+            HandleFormSubmit("/Manage/SaveSponsorStatement", "POST", formData);
         }
     </script>
     @Scripts.Render("~/bundles/jqueryval")

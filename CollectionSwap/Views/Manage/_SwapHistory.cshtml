@@ -27,9 +27,10 @@
                     <tr>
                         <th>Collection Name</th>
                         <th>User</th>
-                        <th onclick="SortByStatus()">Status <i class="fa-solid fa-sort"></i></th>
+                        <th>Status</th>
                         <th>Items Sent</th>
                         <th>Items Received</th>
+                        <th onclick="SortByDate(@displayableSwaps)">Start Date <i class="fa-solid fa-sort"></i></th>
                         <th>Next Action</th>
                     </tr>
                 </thead>
@@ -158,7 +159,9 @@
                                     <input data-swap-id="@swap.Id" data-type="received" class="swap-confirm" type="checkbox" checked="@swap.ReceiverConfirmReceived" @Html.Raw(swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "")/>
                                 </td>
                             }
-
+                            <td>
+                                @swap.StartDate.ToLocalTime().ToString("dd/MM/yyyy")
+                            </td>
                             @{
                                 var hasSentItems = userId == swap.SenderId ? swap.SenderConfirmSent : swap.ReceiverConfirmSent;
                                 var hasReceivedItems = userId == swap.SenderId ? swap.SenderConfirmReceived : swap.ReceiverConfirmReceived;
@@ -277,10 +280,6 @@
                 </tbody>
             </table>
         </section>
-
-        <div class="swap-history-doodle">
-            <img src="~/Content/images/doodles/6.png" />
-        </div>
     </div>
 
     @*<div id="feedback-container" class="d-none">

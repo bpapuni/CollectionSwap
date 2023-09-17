@@ -61,6 +61,7 @@ namespace CollectionSwap.Models
         public DbSet<HeldItems> HeldItems { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<Sponsor> Sponsors { get; set; }
     }
 
     public class ApplicationRole : IdentityRole

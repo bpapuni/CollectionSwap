@@ -35,7 +35,7 @@ namespace CollectionSwap.Models
     {
         public List<Collection> Collections { get; set; }
         public List<UserCollection> UserCollections { get; set; }
-        public UserCollectionModel EditCollection { get; set; }
+        public UserCollection EditCollection { get; set; }
     }
 
     public class FeedbackViewModel

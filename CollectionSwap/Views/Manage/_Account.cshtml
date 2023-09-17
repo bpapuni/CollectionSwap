@@ -8,10 +8,9 @@
     {
         <div class="status-message">@statusMessage</div>
     }
-    <span class="header">Account Settings</span>
-
-    <section>
-        <div class="row min-width-100 gap-4">
+    <section class="gap-2">
+        <div>
+            <span class="header">Change Email</span>
             @using (Html.BeginForm("ChangeEmail", "Manage", null, FormMethod.Post, new { id = "change-email-form" }))
             {
                 @Html.AntiForgeryToken()
@@ -39,9 +38,9 @@
                 <span class="success-message">@ViewBag.ChangeEmailStatus</span>
                 <input class="submit-button" type="submit" value="Update Email" />
             }
-
-            @*@using (Html.BeginForm("ChangePassword", "Manage", null, FormMethod.Post, new { id = "change-password-form" }))
-                {*@
+        </div>
+        <div>
+            <span class="header">Change Password</span>
             <form action="/Manage/ChangePassword" id="change-password-form" method="post">
                 @Html.AntiForgeryToken()
                 <div class="row">
@@ -80,7 +79,6 @@
                 <span class="success-message">@ViewBag.ChangePasswordStatus</span>
                 <input class="submit-button" type="submit" value="Update Password" />
             </form>
-            @*}*@
         </div>
     </section>
 
@@ -97,7 +95,7 @@
                     <span>
                         <strong>Keep it Safe:</strong>
                         Consider using a business address or P.O. box for mailing collectibles, ensuring your home address remains private.
-                    </span>
+                    </span><br />
                 </div>
             </div>
             <div class="row gap-4">

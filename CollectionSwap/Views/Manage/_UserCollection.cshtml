@@ -1,75 +1,115 @@
-﻿@model CollectionSwap.Models.UserCollectionModel
-@using CollectionSwap.Models
+﻿@model CollectionSwap.Models.UserCollection
 @using Newtonsoft.Json;
 @{
     List<string> items = JsonConvert.DeserializeObject<List<string>>(Model.Collection.ItemListJSON);
-    int[] userItems = JsonConvert.DeserializeObject<int[]>(Model.UserCollection.ItemCountJSON);
+    int[] userItems = JsonConvert.DeserializeObject<int[]>(Model.ItemCountJSON);
     string statusMessage = ViewBag.Status;
+    var sponsor = Model.Collection.Sponsor;
 }
 
 <div class="row">
     <button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-angle-left"></i></button>
 
     <span class="header">
-        Update Your @Model.UserCollection.Name Collection
+        Update Your @Model.Name Collection
     </span>
 </div>
 
-<section class="column">
-    <span>
-        <strong>Completed a swap?</strong> <br />
-        Tick the 'Items Received' checkbox in Swap History to automatically update this collection with your new items.
-    </span>
+<section>
+    <div class="collection-items-container">
+        <span>
+            <strong>Completed a swap?</strong> <br />
+            Tick the 'Items Received' checkbox in Swap History to automatically update this collection with your new items.
+        </span>
 
-    <br />
+        <br />
 
-    <div>
-        <strong>No longer collecting?</strong> <input data-user-collection-id="@Model.UserCollection.Id" class="charity-checkbox" type="checkbox" checked="@Model.UserCollection.Charity" /> <br />
-        If you'd like to donate your items to another collector bla bla bla
-    </div>
-
-    <br />
-    @using (Html.BeginForm("ChangeUserCollectionName", "Manage", null, FormMethod.Post))
-    {
-        <div class="form-group">
-            @Html.AntiForgeryToken()
-            @Html.HiddenFor(model => model.UserCollection.Id)
-            @Html.HiddenFor(model => model.UserCollection.UserId)
-
-            @Html.LabelFor(model => model.UserCollection.Name)
-            @Html.TextBoxFor(model => model.UserCollection.Name, new { @class = "" })
-            @Html.ValidationMessageFor(model => model.UserCollection.Name, "", new { @class = "text-danger" })
-            <input class="submit-button" type="submit" value="Update Name" />
+        <div>
+            <strong>No longer collecting?</strong> <input data-user-collection-id="@Model.Id" class="charity-checkbox" type="checkbox" checked="@Model.Charity" /> <br />
+            If you'd like to donate your items to another collector bla bla bla
         </div>
-    }
-    <br />
-    <div id="collection-items" class="row gap-2" style="">
-        @foreach (var item in items)
+
+        <br />
+        @using (Html.BeginForm("ChangeUserCollectionName", "Manage", null, FormMethod.Post))
         {
-            var imagePath = $"~/Collections/{Model.UserCollection.CollectionId}";
-            var itemId = items.IndexOf(item);
+            <div class="form-group">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Id)
+                @Html.HiddenFor(model => model.UserId)
 
-            <div class="column align-items-center">
-                <div class="item-container @(userItems[itemId] < 1 ? "item-not-owned" : "")">
-                    <img class="item" src="@Url.Content(imagePath)/@item" />
-                </div>
-                <div class="item-quantity column align-items-center">
-                    Quantity:
-                    @using (Html.BeginForm("UpdateItemCount", "Manage", null, FormMethod.Post))
-                    {
-                        @Html.AntiForgeryToken()
-                        @Html.Hidden("index", itemId)
-                        @Html.Hidden("userId", Model.UserCollection.UserId)
-                        @Html.Hidden("ucId", Model.UserCollection.Id)
-
-                        <div class="row align-items-center">
-                            <button class="counter counter-minus" type="submit"><i class="fa fa-minus-circle"></i></button>
-                            <input type="number" id="@itemId" name="quantity" min="0" max="99" value="@userItems[itemId]" />
-                            <button class="counter counter-add" type="submit"><i class="fa fa-plus-circle"></i></button>
-                        </div>
-                    }
-                </div>
+                @Html.LabelFor(model => model.Name)
+                @Html.TextBoxFor(model => model.Name, new { @class = "" })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                <input class="submit-button" type="submit" value="Update Name" />
             </div>
         }
+        <br />
+        <div id="collection-items" class="row gap-2" style="">
+            @foreach (var item in items)
+            {
+                var imagePath = $"~/Collections/{Model.CollectionId}";
+                var itemId = items.IndexOf(item);
+
+                <div class="column align-items-center">
+                    <div class="item-container @(userItems[itemId] < 1 ? "item-not-owned" : "")">
+                        <img class="item" src="@Url.Content(imagePath)/@item" />
+                    </div>
+                    <div class="item-quantity column align-items-center">
+                        Quantity:
+                        @using (Html.BeginForm("UpdateItemCount", "Manage", null, FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("index", itemId)
+                            @Html.Hidden("userId", Model.UserId)
+                            @Html.Hidden("ucId", Model.Id)
+
+                            <div class="row align-items-center">
+                                <button class="counter counter-minus" type="submit"><i class="fa fa-minus-circle"></i></button>
+                                <input type="number" id="@itemId" name="quantity" min="0" max="99" value="@userItems[itemId]" />
+                                <button class="counter counter-add" type="submit"><i class="fa fa-plus-circle"></i></button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="user-collection-sponsor-container">
+        <div>
+            <div class="sponsor-logo">
+                @if (User.IsInRole("Admin"))
+                {
+                    using (Html.BeginForm("EditSponsorImage", "Manage", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(Model => Model.Id)
+                        <label for="sponsor-image-upload"><img src="@(sponsor != null && sponsor.Image != null ?  $"/Sponsors/{Model.CollectionId}/{sponsor.Image}" : "/Content/images/doodles/3.png")" alt="Sponsor Logo" /></label>
+                        <input class="d-none" type="file" id="sponsor-image-upload" name="fileInput" accept=".png, .jpg">
+                    }
+                }
+                <label for="sponsor-image-upload">Click to Edit Image</label>
+            </div>
+            <hr />
+            @if (sponsor != null && sponsor.Statement != null)
+            {
+                <div class="sponsor-statement @(User.IsInRole("Admin") ? "admin" : "")" role="textbox" @Html.Raw(User.IsInRole("Admin") ? "contenteditable" : "")>
+                    @Html.Raw(System.Net.WebUtility.HtmlDecode(sponsor.Statement))
+                </div>
+            }
+            else
+            {
+                <div class="sponsor-statement @(User.IsInRole("Admin") ? "admin" : "")" role="textbox" @Html.Raw(User.IsInRole("Admin") ? "contenteditable" : "")>
+                    <strong>Sponsor Statement:</strong><br />
+                    [Company Name] is proud to sponsor this unique collection of emotion-themed cards.<br /><br />
+                    Our commitment to this project is a reflection of our dedication to promoting emotional intelligence and understanding.<br /><br />
+                    We are excited about the opportunity to support the creators behind these cards and their mission to celebrate the diverse spectrum of human emotions.<br /><br />
+                    As we continue our association with this project, we are eager to contribute to a more emotionally aware world, much like we contribute to the growth and success of our business partners.<br /><br />
+                    Thank you for being a part of this journey with us.<br /><br />
+
+                    [Company Name]
+                </div>
+            }
+        </div>
+        <button class="submit-button" onclick="SaveSponsorStatement(this, @Model.Id)">Save Statement</button>
     </div>
 </section>

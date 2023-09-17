@@ -17,6 +17,8 @@ using System.Drawing;
 using Newtonsoft.Json.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Runtime.Remoting.Lifetime;
+using System.Web.Mvc;
 
 namespace CollectionSwap.Models
 {
@@ -28,6 +30,7 @@ namespace CollectionSwap.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public string ItemListJSON { get; set; }
+        public virtual Sponsor Sponsor { get; set; }
         public static bool Create(CreateCollectionModel collection, ApplicationDbContext db)
         {
             if (collection.fileInput != null && collection.fileInput.ContentLength > 0)
@@ -415,10 +418,48 @@ namespace CollectionSwap.Models
         public string Type { get; set; }
     }
 
-    public class UserCollectionModel
+    public class Sponsor
     {
-        public Collection Collection { get; set; }
-        public UserCollection UserCollection { get; set; }
+        public int Id { get; set; }
+        public int CollectionId { get; set; }
+        public string Statement { get; set; }
+        public string Url { get; set; }
+        public string Image { get; set; }
+        public void EditImage(int collectionId, HttpPostedFileBase fileInput, ApplicationDbContext db)
+        {
+            if (fileInput != null && fileInput.ContentLength > 0)
+            {
+                string fileExtension = Path.GetExtension(fileInput.FileName).ToLower();
+
+                // Check if the file extension is jpg or png
+                if (fileExtension == ".jpg" || fileExtension == ".png")
+                {
+                    string fileName = "sponsor-logo" + fileExtension;
+                    string cacheBuster = DateTime.UtcNow.Ticks.ToString();
+                    this.CollectionId = collectionId;
+                    this.Image = fileName + $"?time={cacheBuster}";
+
+                    if (this.Id == 0)
+                    {
+                        // Generate the new sponsor id
+                        db.Sponsors.Add(this);
+                    }
+                    else
+                    {
+                        db.Entry(this).State = EntityState.Modified;
+                    }
+                    db.SaveChanges();
+
+                    var extractPath = HostingEnvironment.MapPath("~/Sponsors/" + collectionId);
+                    if (!Directory.Exists(extractPath))
+                    {
+                        Directory.CreateDirectory(extractPath);
+                    }
+
+                    fileInput.SaveAs(extractPath + '/' + fileName);
+                }                
+            }
+        }
     }
 
     public class HeldItems

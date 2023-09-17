@@ -496,13 +496,8 @@ namespace CollectionSwap.Controllers
                 return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container" } }, JsonRequestBehavior.AllowGet);
             }
             var userCollection = db.UserCollections.Find(id);
-            var ucModel = new UserCollectionModel
-            {
-                Collection = db.Collections.Find(userCollection.CollectionId),
-                UserCollection = userCollection
-            };
 
-            ycModel.EditCollection = ucModel;
+            ycModel.EditCollection = userCollection;
             partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycModel, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container", /*second = "#create-user-collection-container",*/ third = "#user-collection-container" }, ScrollTarget = "#user-collection-container" }, JsonRequestBehavior.AllowGet);
         }
@@ -510,15 +505,11 @@ namespace CollectionSwap.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult ChangeUserCollectionName([Bind(Prefix = "UserCollection")] UserCollection model)
+        public ActionResult ChangeUserCollectionName(UserCollection model)
         {
             var partial = String.Empty;
             var userCollection = db.UserCollections.Find(model.Id);
-            var ucModel = new UserCollectionModel
-            {
-                Collection = db.Collections.Find(userCollection.CollectionId),
-                UserCollection = userCollection
-            };
+
             var ycViewModel = new YourCollectionViewModel
             {
                 Collections = db.Collections.ToList()
@@ -526,18 +517,17 @@ namespace CollectionSwap.Controllers
 
             if (!ModelState.IsValid)
             {
-                ycViewModel.UserCollections = db.UserCollections.Where(uc => uc.UserId == model.UserId).ToList();
-                ycViewModel.EditCollection = ucModel;
+                ycViewModel.UserCollections = db.UserCollections.Where(uc => uc.UserId == model.UserId && uc.Archived == false).ToList();
+                ycViewModel.EditCollection = userCollection;
 
                 partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
                 return Json(new { PartialView = partial, RefreshTargets = new { first = "#user-collection-container" } });
             }
 
             userCollection.Update("Name", model.UserId, model.Name, db);
-            ucModel.UserCollection = userCollection;
 
-            ycViewModel.UserCollections = db.UserCollections.Where(uc => uc.UserId == model.UserId).ToList();
-            ycViewModel.EditCollection = ucModel;
+            ycViewModel.UserCollections = db.UserCollections.Where(uc => uc.UserId == model.UserId && uc.Archived == false).ToList();
+            ycViewModel.EditCollection = userCollection;
 
             ViewBag.Status = "Collection name updated successfully";
             partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
@@ -867,6 +857,63 @@ namespace CollectionSwap.Controllers
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#feedback-container" }, ScrollTarget = "#feedback-container" }, JsonRequestBehavior.AllowGet);
         }
 
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public ActionResult EditSponsorImage(int id, HttpPostedFileBase fileInput)
+        {
+            var partial = String.Empty;
+            var userCollection = db.UserCollections.Find(id);
+            var sponsor = db.Sponsors.Where(s => s.CollectionId == userCollection.CollectionId).FirstOrDefault() ?? new Sponsor();
+            sponsor.EditImage(userCollection.CollectionId, fileInput, db);
+
+            var ycViewModel = new YourCollectionViewModel
+            {
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.ToList(),
+                EditCollection = userCollection
+            };
+
+            ViewBag.Status = "Sponsor statement updated successfully";
+            partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".user-collection-sponsor-container" } });
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        [Authorize(Roles = "Admin")]
+        public ActionResult SaveSponsorStatement(int id, string statement)
+        {
+            var partial = String.Empty;         
+            var userCollection = db.UserCollections.Find(id);
+            var sponsor = db.Sponsors.Where(s => s.CollectionId == userCollection.CollectionId).FirstOrDefault() ?? new Sponsor();
+            sponsor.CollectionId = userCollection.CollectionId;
+            sponsor.Statement = HttpUtility.HtmlEncode(statement);
+
+            if (sponsor.Id == 0)
+            {
+                db.Sponsors.Add(sponsor);
+            }
+            else
+            {
+                db.Entry(sponsor).State = EntityState.Modified;
+            };
+
+            userCollection.Collection.Sponsor = sponsor;
+            db.Entry(userCollection.Collection).State = EntityState.Modified;
+
+            db.SaveChanges();
+
+            var ycViewModel = new YourCollectionViewModel
+            {
+                Collections = db.Collections.ToList(),
+                UserCollections = db.UserCollections.ToList(),
+                EditCollection = userCollection
+            };
+
+            ViewBag.Status = "Sponsor statement updated successfully";
+            partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".user-collection-sponsor-container" } });
+        }
 
 
         //

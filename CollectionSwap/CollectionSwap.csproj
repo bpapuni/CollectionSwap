@@ -275,6 +275,14 @@
     <Compile Include="Migrations\202309150337294_ChangeFeedbackToComments.designer.cs">
       <DependentUpon>202309150337294_ChangeFeedbackToComments.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202309161025080_CreateSponsor.cs" />
+    <Compile Include="Migrations\202309161025080_CreateSponsor.designer.cs">
+      <DependentUpon>202309161025080_CreateSponsor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202309170107266_CreateCollectionSponsorRelationship.cs" />
+    <Compile Include="Migrations\202309170107266_CreateCollectionSponsorRelationship.designer.cs">
+      <DependentUpon>202309170107266_CreateCollectionSponsorRelationship.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CollectionModels.cs" />
@@ -570,6 +578,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202309150337294_ChangeFeedbackToComments.resx">
       <DependentUpon>202309150337294_ChangeFeedbackToComments.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202309161025080_CreateSponsor.resx">
+      <DependentUpon>202309161025080_CreateSponsor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202309170107266_CreateCollectionSponsorRelationship.resx">
+      <DependentUpon>202309170107266_CreateCollectionSponsorRelationship.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

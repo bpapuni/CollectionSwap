@@ -4,19 +4,21 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.CreateCollection.Name)
-        @Html.TextBoxFor(model => model.CreateCollection.Name)
-        @Html.ValidationMessageFor(model => model.CreateCollection.Name)
+    <div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.CreateCollection.Name)
+            @Html.TextBoxFor(model => model.CreateCollection.Name)
+            @Html.ValidationMessageFor(model => model.CreateCollection.Name)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.CreateCollection.Description)
+            @Html.TextAreaFor(model => model.CreateCollection.Description, new { rows = 4, maxlength = "60" })
+            @Html.ValidationMessageFor(model => model.CreateCollection.Description)
+        </div>
+        <div class="form-group">
+            @Html.TextBoxFor(model => model.CreateCollection.fileInput, new { type = "file", accept = ".zip" })
+            @Html.ValidationMessageFor(model => model.CreateCollection.fileInput)
+        </div>
     </div>
-    <div class="form-group">
-        @Html.LabelFor(model => model.CreateCollection.Description)
-        @Html.TextAreaFor(model => model.CreateCollection.Description, new { rows = 5, maxlength = "60" })
-        @Html.ValidationMessageFor(model => model.CreateCollection.Description)
-    </div>
-    <div class="form-group">
-        @Html.TextBoxFor(model => model.CreateCollection.fileInput, new { type = "file", accept = ".zip" })
-        @Html.ValidationMessageFor(model => model.CreateCollection.fileInput)
-        <input class="submit-button" type="submit" value="Create Collection" />
-    </div>
+    <input class="submit-button" type="submit" value="Create Collection" />
 }
