@@ -37,4 +37,17 @@
         <div class="container-half">
         </div>
     </section>
+    <section class="sponsors">
+
+        @using (Html.BeginForm("UploadSponsorImage", "Manage", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "edit-sponsor-form" }))
+        {
+            @Html.AntiForgeryToken()
+            @*@Html.HiddenFor(Model => Model.Id)*@
+            <label class="admin" for="sponsor-image-upload">
+                <img class="sponsor-image" src="/Content/images/doodles/3.png" alt="Sponsor Logo" />
+            </label>
+            <input class="d-none" type="file" id="sponsor-image-upload" name="fileInput" accept=".png, .jpg">
+            <label class="admin" for="sponsor-image-upload">Click to Edit Image</label>
+        }
+    </section>
 </div>

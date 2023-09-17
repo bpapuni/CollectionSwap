@@ -199,6 +199,7 @@ h1, h2, h3, h4 {
 
 #home-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     flex: 1;
     width: 100%;
@@ -211,6 +212,12 @@ h1, h2, h3, h4 {
         min-width: 60rem;
     }
 
+    #home-container > section.sponsors {
+        display: flex;
+        max-height: 15rem;
+        overflow: hidden;
+    }
+
     #home-container .container-half {
         display: flex;
         flex-direction: column;
@@ -221,7 +228,7 @@ h1, h2, h3, h4 {
 
         #home-container .container-half:nth-child(2) {
             align-items: flex-start;
-            height: 40rem;
+            height: 35rem;
             margin-top: -8rem;
             margin-left: -5rem;
             background: url('images/doodles/5.png') no-repeat;
@@ -1647,23 +1654,39 @@ nav a {
 }
 
 #edit-collection-container {
-    position: relative;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     padding-inline: 0.5rem;
 }
 
-#edit-collection-container section {
-    flex-direction: column;
-}
+    #edit-collection-container .collection-items {
+        padding: 1rem;
+        background: #FFFFFFaa;
+        border-radius: 1rem;
+        box-shadow: var(--container-box-shadow);
+    }
+
+    #edit-collection-container section {
+        display: flex;
+        flex-direction: row;
+        gap: 2rem;
+        gap: 2rem;
+        flex-wrap: nowrap;
+    }
+
+    .collection-items-container {
+        padding: 1rem;
+        background: #FFFFFFaa;
+        border-radius: 1rem;
+        box-shadow: var(--container-box-shadow);
+    }
 
 .edit-collection-form {
     flex: 0.2;
 }
 
 #user-collection-container {
-    position: relative;
     display: flex;
     flex-direction: column;
     max-width: 100%;
@@ -1675,13 +1698,6 @@ nav a {
     flex-wrap: nowrap;
     gap: 2rem;
 }
-
-    #user-collection-container .collection-items-container {
-        background: #FFFFFFaa;
-        padding: 1rem;
-        border-radius: 1rem;
-        box-shadow: var(--container-box-shadow);
-    }
 
 .user-collection-sponsor-container {
     display: flex;
@@ -1703,10 +1719,14 @@ nav a {
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        margin: 0.5rem 0 1.5rem 0;
+    }
+
+    .user-collection-sponsor-container .sponsor-logo.admin {
         margin: 0.5rem 0;
     }
 
-        .user-collection-sponsor-container .sponsor-logo * {
+        .user-collection-sponsor-container .sponsor-logo *.admin {
             cursor: pointer;
         }
 

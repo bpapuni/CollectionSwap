@@ -78,8 +78,24 @@
         });
 
         // Automatically submit the form when changing an items image
-        $(document).on("change", "#items input[type='file'], #sponsor-image-upload", function (e) {
-            $(this).closest("form").submit();
+        $(document).on("change", "#items input[type='file'], #sponsor-image-upload", async function (e) {
+            e.preventDefault();
+            if ($(this).attr("id") == "sponsor-image-upload") {
+                const formData = new FormData($("#edit-sponsor-form")[0]);
+                const response = await fetch("/Manage/UploadSponsorImage", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const imagePath = await response.text();
+                    $(".sponsor-image").attr("src", `/temp/${imagePath}`);
+                }
+            }
+            else
+            {
+                $(this).closest("form").submit();
+            }
         });
 
         // Subnav click listeners
@@ -351,17 +367,18 @@
             HandleFormSubmit("/Manage/FilterSwaps", "POST", formData);
         });
 
-        function SaveSponsorStatement(e, collectionId) {
-            const self = $(e);
+        function EditSponsor(e) {
+            const form = $("#edit-sponsor-form")[0];
+
             const statement = $(".sponsor-statement.admin");
             if (statement.text().includes("<")) {
                 statement.prop("innerHTML", statement.text());
             }
-            const formData = new FormData();
-            formData.append("id", collectionId);
+
+            const formData = new FormData(form);
             formData.append("statement", statement.prop("innerHTML"));
 
-            HandleFormSubmit("/Manage/SaveSponsorStatement", "POST", formData);
+            HandleFormSubmit("/Manage/EditSponsor", "POST", formData);
         }
     </script>
     @Scripts.Render("~/bundles/jqueryval")

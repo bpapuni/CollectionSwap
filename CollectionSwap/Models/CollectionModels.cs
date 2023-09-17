@@ -128,9 +128,18 @@ namespace CollectionSwap.Models
                 Image img = Image.FromStream(fileInput.InputStream);
                 img.Save(filePath, ImageFormat.Png);
 
-                List<string> updatedItemList = JsonConvert.DeserializeObject<List<string>>(this.ItemListJSON);
+                var updatedItemList = JsonConvert.DeserializeObject<List<string>>(this.ItemListJSON);
                 updatedItemList.Add(newFileName.ToString() + ".png");
                 this.ItemListJSON = JsonConvert.SerializeObject(updatedItemList);
+
+                var affectedUserCollections = db.UserCollections.Where(uc => uc.CollectionId == this.Id).ToList();
+                foreach (var userCollection in affectedUserCollections)
+                {
+                    var itemList = JsonConvert.DeserializeObject<List<int>>(userCollection.ItemCountJSON);
+                    itemList.Add(0);
+                    userCollection.ItemCountJSON = JsonConvert.SerializeObject(itemList);
+                    db.Entry(userCollection).State = EntityState.Modified;
+                }
 
                 db.Entry(this).State = EntityState.Modified;
                 db.SaveChanges();
@@ -160,9 +169,19 @@ namespace CollectionSwap.Models
             {
                 File.Delete(filePath);
 
-                List<string> updatedItemList = JsonConvert.DeserializeObject<List<string>>(this.ItemListJSON);
+                var updatedItemList = JsonConvert.DeserializeObject<List<string>>(this.ItemListJSON);
+                var itemIndex = updatedItemList.IndexOf(fileName);
                 updatedItemList.Remove(fileName);
                 this.ItemListJSON = JsonConvert.SerializeObject(updatedItemList);
+
+                var affectedUserCollections = db.UserCollections.Where(uc => uc.CollectionId == this.Id).ToList();
+                foreach (var userCollection in affectedUserCollections)
+                {
+                    var itemList = JsonConvert.DeserializeObject<List<int>>(userCollection.ItemCountJSON);
+                    itemList.RemoveAt(itemIndex);
+                    userCollection.ItemCountJSON = JsonConvert.SerializeObject(itemList);
+                    db.Entry(userCollection).State = EntityState.Modified;
+                }
 
                 db.Entry(this).State = EntityState.Modified;
                 db.SaveChanges();
@@ -425,7 +444,29 @@ namespace CollectionSwap.Models
         public string Statement { get; set; }
         public string Url { get; set; }
         public string Image { get; set; }
-        public void EditImage(int collectionId, HttpPostedFileBase fileInput, ApplicationDbContext db)
+        public string UploadImage(int collectionId, HttpPostedFileBase fileInput, ApplicationDbContext db)
+        {
+            if (fileInput != null && fileInput.ContentLength > 0)
+            {
+                string fileExtension = Path.GetExtension(fileInput.FileName).ToLower();
+
+                // Check if the file extension is jpg or png
+                if (fileExtension == ".jpg" || fileExtension == ".png")
+                {
+                    string fileName = "temp-logo" + fileExtension;
+                    string cacheBuster = DateTime.UtcNow.Ticks.ToString();
+                    var extractPath = HostingEnvironment.MapPath("~/temp");
+                    if (!Directory.Exists(extractPath))
+                    {
+                        Directory.CreateDirectory(extractPath);
+                    }
+                    fileInput.SaveAs(extractPath + '/' + fileName);
+                    return fileName;
+                }
+            }
+            return string.Empty;
+        }
+        public void Edit(int collectionId, HttpPostedFileBase fileInput, string statement, ApplicationDbContext db)
         {
             if (fileInput != null && fileInput.ContentLength > 0)
             {
@@ -437,6 +478,7 @@ namespace CollectionSwap.Models
                     string fileName = "sponsor-logo" + fileExtension;
                     string cacheBuster = DateTime.UtcNow.Ticks.ToString();
                     this.CollectionId = collectionId;
+                    this.Statement = HttpUtility.HtmlEncode(statement);
                     this.Image = fileName + $"?time={cacheBuster}";
 
                     if (this.Id == 0)
@@ -448,6 +490,11 @@ namespace CollectionSwap.Models
                     {
                         db.Entry(this).State = EntityState.Modified;
                     }
+
+                    var collection = db.Collections.Find(collectionId);
+                    collection.Sponsor = this;
+                    db.Entry(collection).State = EntityState.Modified;
+
                     db.SaveChanges();
 
                     var extractPath = HostingEnvironment.MapPath("~/Sponsors/" + collectionId);

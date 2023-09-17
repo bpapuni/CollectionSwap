@@ -17,6 +17,10 @@
 
 <section>
     <div class="collection-items-container">
+        @if (!String.IsNullOrEmpty(statusMessage))
+        {
+            <div class="status-message">@statusMessage</div>
+        }
         <span>
             <strong>Completed a swap?</strong> <br />
             Tick the 'Items Received' checkbox in Swap History to automatically update this collection with your new items.
@@ -74,42 +78,21 @@
             }
         </div>
     </div>
-    <div class="user-collection-sponsor-container">
-        <div>
-            <div class="sponsor-logo">
-                @if (User.IsInRole("Admin"))
+    @if (sponsor != null)
+    {
+        <div class="user-collection-sponsor-container">
+            <div>
+                <div class="sponsor-logo">
+                    <img src="@(sponsor.Image != null ? $"/Sponsors/{Model.CollectionId}/{sponsor.Image}" : "/Content/images/doodles/3.png")" alt="Sponsor Logo" />
+                </div>
+                <hr />
+                @if (sponsor.Statement != null)
                 {
-                    using (Html.BeginForm("EditSponsorImage", "Manage", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        @Html.HiddenFor(Model => Model.Id)
-                        <label for="sponsor-image-upload"><img src="@(sponsor != null && sponsor.Image != null ?  $"/Sponsors/{Model.CollectionId}/{sponsor.Image}" : "/Content/images/doodles/3.png")" alt="Sponsor Logo" /></label>
-                        <input class="d-none" type="file" id="sponsor-image-upload" name="fileInput" accept=".png, .jpg">
-                    }
+                    <div class="sponsor-statement" role="textbox">
+                        @Html.Raw(System.Net.WebUtility.HtmlDecode(sponsor.Statement))
+                    </div>
                 }
-                <label for="sponsor-image-upload">Click to Edit Image</label>
             </div>
-            <hr />
-            @if (sponsor != null && sponsor.Statement != null)
-            {
-                <div class="sponsor-statement @(User.IsInRole("Admin") ? "admin" : "")" role="textbox" @Html.Raw(User.IsInRole("Admin") ? "contenteditable" : "")>
-                    @Html.Raw(System.Net.WebUtility.HtmlDecode(sponsor.Statement))
-                </div>
-            }
-            else
-            {
-                <div class="sponsor-statement @(User.IsInRole("Admin") ? "admin" : "")" role="textbox" @Html.Raw(User.IsInRole("Admin") ? "contenteditable" : "")>
-                    <strong>Sponsor Statement:</strong><br />
-                    [Company Name] is proud to sponsor this unique collection of emotion-themed cards.<br /><br />
-                    Our commitment to this project is a reflection of our dedication to promoting emotional intelligence and understanding.<br /><br />
-                    We are excited about the opportunity to support the creators behind these cards and their mission to celebrate the diverse spectrum of human emotions.<br /><br />
-                    As we continue our association with this project, we are eager to contribute to a more emotionally aware world, much like we contribute to the growth and success of our business partners.<br /><br />
-                    Thank you for being a part of this journey with us.<br /><br />
-
-                    [Company Name]
-                </div>
-            }
         </div>
-        <button class="submit-button" onclick="SaveSponsorStatement(this, @Model.Id)">Save Statement</button>
-    </div>
+    }
 </section>

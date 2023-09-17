@@ -373,7 +373,7 @@ namespace CollectionSwap.Controllers
 
             Collection collection = db.Collections.Find(model.Id);
             collection.Update(model.Name, db);
-            mcViewModel.EditCollection.Collection = collection;
+            mcViewModel.EditCollection = new EditCollectionModel { Collection = collection };
 
             ViewBag.Status = "Collection name updated successfully";
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcViewModel, true);
@@ -391,9 +391,9 @@ namespace CollectionSwap.Controllers
 
             if (!ModelState.IsValidField("FileInput"))
             {
-                model.Collection = collection;
-                mcViewModel.Collections = db.Collections.ToList();
-                mcViewModel.EditCollection = model;
+                //model.Collection = collection;
+                //mcViewModel.Collections = db.Collections.ToList();
+                //mcViewModel.EditCollection = model;
 
                 partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcViewModel, true);
                 return Json(new { PartialView = partial, RefreshTargets = new { first = "#edit-collection-container" } });
@@ -430,7 +430,7 @@ namespace CollectionSwap.Controllers
                 Collections = db.Collections.ToList(),
                 CreateCollection = new CreateCollectionModel(),
                 EditCollection = new EditCollectionModel { Collection = collection }
-            };
+        };
 
             ViewBag.ShouldDisplay = true;
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
@@ -452,8 +452,7 @@ namespace CollectionSwap.Controllers
                 EditCollection = new EditCollectionModel { Collection = collection }
             };
 
-            ViewBag.ShouldDisplay = true;
-            ViewBag.EditCollectionStatus = "Item successfully removed from collection.";
+            ViewBag.Status = "Item successfully removed from collection.";
             var partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container", second = "#edit-collection-container" } });
         }
@@ -857,62 +856,35 @@ namespace CollectionSwap.Controllers
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#feedback-container" }, ScrollTarget = "#feedback-container" }, JsonRequestBehavior.AllowGet);
         }
 
-        [ValidateAntiForgeryToken]
+        [HttpPost]
         [Authorize(Roles = "Admin")]
-        public ActionResult EditSponsorImage(int id, HttpPostedFileBase fileInput)
+        public string UploadSponsorImage(int id, HttpPostedFileBase fileInput)
         {
             var partial = String.Empty;
             var userCollection = db.UserCollections.Find(id);
-            var sponsor = db.Sponsors.Where(s => s.CollectionId == userCollection.CollectionId).FirstOrDefault() ?? new Sponsor();
-            sponsor.EditImage(userCollection.CollectionId, fileInput, db);
-
-            var ycViewModel = new YourCollectionViewModel
-            {
-                Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.ToList(),
-                EditCollection = userCollection
-            };
-
-            ViewBag.Status = "Sponsor statement updated successfully";
-            partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = ".user-collection-sponsor-container" } });
+            var sponsor = db.Sponsors.Where(s => s.CollectionId == id).FirstOrDefault() ?? new Sponsor();
+            return sponsor.UploadImage(id, fileInput, db);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [ValidateInput(false)]
         [Authorize(Roles = "Admin")]
-        public ActionResult SaveSponsorStatement(int id, string statement)
+        public ActionResult EditSponsor(int id, HttpPostedFileBase fileInput, string statement)
         {
-            var partial = String.Empty;         
-            var userCollection = db.UserCollections.Find(id);
-            var sponsor = db.Sponsors.Where(s => s.CollectionId == userCollection.CollectionId).FirstOrDefault() ?? new Sponsor();
-            sponsor.CollectionId = userCollection.CollectionId;
-            sponsor.Statement = HttpUtility.HtmlEncode(statement);
+            var partial = String.Empty;
+            var sponsor = db.Sponsors.Where(s => s.CollectionId == id).FirstOrDefault() ?? new Sponsor();
+            sponsor.Edit(id, fileInput, statement, db);
 
-            if (sponsor.Id == 0)
-            {
-                db.Sponsors.Add(sponsor);
-            }
-            else
-            {
-                db.Entry(sponsor).State = EntityState.Modified;
-            };
-
-            userCollection.Collection.Sponsor = sponsor;
-            db.Entry(userCollection.Collection).State = EntityState.Modified;
-
-            db.SaveChanges();
-
-            var ycViewModel = new YourCollectionViewModel
+            var mcModel = new ManageCollectionsViewModel
             {
                 Collections = db.Collections.ToList(),
-                UserCollections = db.UserCollections.ToList(),
-                EditCollection = userCollection
+                EditCollection = new EditCollectionModel { Collection = db.Collections.Find(id) }
             };
 
             ViewBag.Status = "Sponsor statement updated successfully";
-            partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = ".user-collection-sponsor-container" } });
+            partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcModel, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container", second = ".user-collection-sponsor-container" } });
         }
 
 
