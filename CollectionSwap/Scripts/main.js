@@ -171,10 +171,8 @@ function HandleFormSubmit(url, type, formData) {
             }
 
             if (result.FormResetTarget) {
-                $(".sponsor-image.placeholder", result.FormResetTarget).prop("src", "/Content/images/scrollbar.png");
-                $("label.admin", result.FormResetTarget).addClass("placeholder");
-                $("#edit-sponsor-form").css({ display: "none" });
-                $("#add-sponsor-form").css({ display: "flex" });
+                console.log("Fired");
+                ResetHomePageSponsorForms();
                 $(":input", result.FormResetTarget)
                     .not(":button, :submit, :reset, :hidden")
                     .val("")
@@ -400,3 +398,16 @@ $(document).on("change", ".add-sponsor input[type='file'], .user-collection-spon
         reader.readAsDataURL(this.files[0]);
     }
 });
+
+$(document).on("reset", ".add-sponsor form", ResetHomePageSponsorForms);
+
+function ResetHomePageSponsorForms() {
+    const editSponsorForm = $("#edit-sponsor-form");
+    const addSponsorForm = $("#add-sponsor-form");
+    editSponsorForm.find(".sponsor-image.placeholder").prop("src", "/Content/images/scrollbar.png");
+    addSponsorForm.find(".sponsor-image.placeholder").prop("src", "/Content/images/scrollbar.png");
+    editSponsorForm.find("label.admin").addClass("placeholder");
+    addSponsorForm.find("label.admin").addClass("placeholder");
+    $("#edit-sponsor-form").css({ display: "none" });
+    $("#add-sponsor-form").css({ display: "flex" });
+}

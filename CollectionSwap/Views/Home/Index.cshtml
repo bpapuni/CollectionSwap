@@ -98,7 +98,10 @@
                     </div>
                 </div>
                 @Html.Hidden("Id", -1)
-                <input class="submit-button" type="submit" value="Edit Sponsor" />
+                <div class="row gap-1">
+                    <input class="submit-button" type="submit" value="Edit Sponsor" />
+                    <input class="submit-button clear" type="reset" value="Clear" />
+                </div>
             }
 
             using (Html.BeginForm("AddHomePageSponsor", "Manage", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "add-sponsor-form" }))
@@ -121,7 +124,10 @@
                     </div>
                 </div>
                 @Html.Hidden("Id", -1)
-                <input class="submit-button" type="submit" value="Add Sponsor" />
+                <div class="row gap-1">
+                    <input class="submit-button" type="submit" value="Add Sponsor" />
+                    <input class="submit-button clear" type="reset" value="Clear" />
+                </div>
             }
         }
     </section>
