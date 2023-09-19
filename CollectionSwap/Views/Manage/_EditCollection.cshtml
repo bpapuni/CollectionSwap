@@ -81,7 +81,7 @@
                         @Html.AntiForgeryToken()
                         @Html.Hidden("id", Model.Collection.Id)
                         <label class="admin" for="sponsor-image-upload">
-                            <img class="sponsor-image" src="@(sponsor != null && sponsor.Image != null ?  $"/Sponsors/{Model.Collection.Id}/{sponsor.Image}" : "/Content/images/doodles/3.png")" alt="Sponsor Logo" />
+                            <img class="sponsor-image placeholder" src="@(sponsor != null && sponsor.Image != null ?  $"/Sponsors/{Model.Collection.Id}/{sponsor.Image}" : "/Content/images/doodles/3.png")" alt="Sponsor Logo" />
                         </label>
                         <input class="d-none" type="file" id="sponsor-image-upload" name="fileInput" accept=".png, .jpg">
                     }

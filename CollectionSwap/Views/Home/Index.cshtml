@@ -1,8 +1,15 @@
-﻿@{
+﻿@model CollectionSwap.Models.CreateSponsorModel
+@{
     ViewBag.Title = "Home Page";
+    string statusMessage = ViewBag.Status;
+    var sponsors = ViewBag.Sponsors;
 }
 
 <div id="home-container">
+    @if (!String.IsNullOrEmpty(statusMessage))
+    {
+        <div class="status-message">@statusMessage</div>
+    }
     <section>
         <div class="container-half">
             <div>
@@ -37,17 +44,90 @@
         <div class="container-half">
         </div>
     </section>
-    <section class="sponsors">
+    <section class="add-sponsor">
+        <div class="sponsors">
+            @if (sponsors.Count > 0)
+            {
+                <div class="header">
+                    <span>Proudly partnered with:</span>
 
-        @using (Html.BeginForm("UploadSponsorImage", "Manage", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "edit-sponsor-form" }))
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <button class="edit-sponsors-button" onclick="EditHomeSponsors(this)">Edit</button>
+                    }
+                </div>
+                <div class="body">
+                    @foreach (var sponsor in sponsors)
+                    {
+                        var url = sponsor.Url == null ? "#" : sponsor.Url.StartsWith("http://") || sponsor.Url.StartsWith("https://") ? sponsor.Url : $"http://{sponsor.Url}";
+                        <div>
+                            <a href="@url"><img data-id="@sponsor.Id" class="sponsor-image" src="/Sponsors/0/@sponsor.Image" /></a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                using (Html.BeginForm("DeleteHomePageSponsor", "Manage", new { id = sponsor.Id }, FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <button class="button-icon button-icon-trash" type="submit" onclick="return confirm('Are you sure you want to remove this sponsor?')"><i class="fa-solid fa-trash"></i></button>
+                                }
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        @if (User.IsInRole("Admin"))
         {
-            @Html.AntiForgeryToken()
-            @*@Html.HiddenFor(Model => Model.Id)*@
-            <label class="admin" for="sponsor-image-upload">
-                <img class="sponsor-image" src="/Content/images/doodles/3.png" alt="Sponsor Logo" />
-            </label>
-            <input class="d-none" type="file" id="sponsor-image-upload" name="fileInput" accept=".png, .jpg">
-            <label class="admin" for="sponsor-image-upload">Click to Edit Image</label>
+            using (Html.BeginForm("EditHomePageSponsor", "Manage", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "edit-sponsor-form" }))
+            {
+                @Html.AntiForgeryToken()
+                <span class="header">Edit Sponsor</span>
+                <div>
+                    <div class="form-group">
+                        @Html.Label("Image")
+                        <label class="admin placeholder" for="edit-sponsor-image-upload">
+                            <img class="sponsor-image placeholder" src="~/Content/images/scrollbar.png" alt="Sponsor Logo" />
+                        </label>
+                        <input class="d-none" type="file" id="edit-sponsor-image-upload" name="fileInput" accept=".png, .jpg">
+                        @Html.ValidationMessageFor(model => model.FileInput)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Url)
+                        @Html.TextBoxFor(model => model.Url)
+                        @Html.ValidationMessageFor(model => model.Url)
+                    </div>
+                </div>
+                @Html.Hidden("Id", -1)
+                <input class="submit-button" type="submit" value="Edit Sponsor" />
+            }
+
+            using (Html.BeginForm("AddHomePageSponsor", "Manage", null, FormMethod.Post, new { enctype = "multipart/form-data", id = "add-sponsor-form" }))
+            {
+                @Html.AntiForgeryToken()
+                <span class="header">Add Sponsor</span>
+                <div>
+                    <div class="form-group">
+                        @Html.Label("Image")
+                        <label class="admin placeholder" for="add-sponsor-image-upload">
+                            <img class="sponsor-image placeholder" src="~/Content/images/scrollbar.png" alt="Sponsor Logo" />
+                        </label>
+                        <input class="d-none" type="file" id="add-sponsor-image-upload" name="fileInput" accept=".png, .jpg">
+                        @Html.ValidationMessageFor(model => model.FileInput)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Url)
+                        @Html.TextBoxFor(model => model.Url)
+                        @Html.ValidationMessageFor(model => model.Url)
+                    </div>
+                </div>
+                @Html.Hidden("Id", -1)
+                <input class="submit-button" type="submit" value="Add Sponsor" />
+            }
         }
     </section>
 </div>
+
+@section scripts {
+    <script src="~/Scripts/main.js"></script>
+    @Scripts.Render("~/bundles/jqueryval")
+}

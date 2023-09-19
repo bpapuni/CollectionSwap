@@ -444,7 +444,7 @@ namespace CollectionSwap.Models
         public string Statement { get; set; }
         public string Url { get; set; }
         public string Image { get; set; }
-        public string UploadImage(int collectionId, HttpPostedFileBase fileInput, ApplicationDbContext db)
+        public void Edit(int collectionId, HttpPostedFileBase fileInput, string statement, string url, ApplicationDbContext db)
         {
             if (fileInput != null && fileInput.ContentLength > 0)
             {
@@ -453,38 +453,26 @@ namespace CollectionSwap.Models
                 // Check if the file extension is jpg or png
                 if (fileExtension == ".jpg" || fileExtension == ".png")
                 {
-                    string fileName = "temp-logo" + fileExtension;
+                    string fileName = this.Id != 0 ? this.Image.Split('?')[0] : Guid.NewGuid().ToString() + fileExtension;
                     string cacheBuster = DateTime.UtcNow.Ticks.ToString();
-                    var extractPath = HostingEnvironment.MapPath("~/temp");
-                    if (!Directory.Exists(extractPath))
-                    {
-                        Directory.CreateDirectory(extractPath);
-                    }
-                    fileInput.SaveAs(extractPath + '/' + fileName);
-                    return fileName;
-                }
-            }
-            return string.Empty;
-        }
-        public void Edit(int collectionId, HttpPostedFileBase fileInput, string statement, ApplicationDbContext db)
-        {
-            if (fileInput != null && fileInput.ContentLength > 0)
-            {
-                string fileExtension = Path.GetExtension(fileInput.FileName).ToLower();
-
-                // Check if the file extension is jpg or png
-                if (fileExtension == ".jpg" || fileExtension == ".png")
-                {
-                    string fileName = "sponsor-logo" + fileExtension;
-                    string cacheBuster = DateTime.UtcNow.Ticks.ToString();
+                    
                     this.CollectionId = collectionId;
-                    this.Statement = HttpUtility.HtmlEncode(statement);
                     this.Image = fileName + $"?time={cacheBuster}";
+
+                    if (statement != null)
+                    {
+                        this.Statement = HttpUtility.HtmlEncode(statement);
+                    }
+                    if (url != null)
+                    {
+                        this.Url = HttpUtility.HtmlEncode(url);
+                    }
 
                     if (this.Id == 0)
                     {
                         // Generate the new sponsor id
                         db.Sponsors.Add(this);
+                        db.SaveChanges();
                     }
                     else
                     {
@@ -492,8 +480,10 @@ namespace CollectionSwap.Models
                     }
 
                     var collection = db.Collections.Find(collectionId);
-                    collection.Sponsor = this;
-                    db.Entry(collection).State = EntityState.Modified;
+                    if (collection != null) { 
+                        collection.Sponsor = this;
+                        db.Entry(collection).State = EntityState.Modified;
+                    }
 
                     db.SaveChanges();
 
@@ -506,7 +496,33 @@ namespace CollectionSwap.Models
                     fileInput.SaveAs(extractPath + '/' + fileName);
                 }                
             }
+            // If no file is uploaded, admin has only editted the url
+            else if (this.Id != 0)
+            {
+                this.Url = url;
+                db.Entry(this).State = EntityState.Modified;
+                db.SaveChanges();
+            }
         }
+        public void Delete(ApplicationDbContext db)
+        {
+            string filePath = HostingEnvironment.MapPath("~/Sponsors/0/" + this.Image.Split('?')[0]);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+                db.Sponsors.Remove(this);
+                db.SaveChanges();
+            }
+        }
+    }
+
+    public class CreateSponsorModel
+    {
+        public int Id { get; set; }
+        public string Url { get; set; }
+        public string Image { get; set; }
+        [Required(ErrorMessage = "Please select a .jpg or .png file.")]
+        public HttpPostedFileBase FileInput { get; set; }
     }
 
     public class HeldItems

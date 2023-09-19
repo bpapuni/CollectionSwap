@@ -200,36 +200,167 @@ h1, h2, h3, h4 {
 #home-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     flex: 1;
     width: 100%;
-    margin-top: 10rem;
+    /*margin-top: 10rem;*/
     font-family: 'Montserrat Alternates';
 }
 
     #home-container > section {
         display: flex;
+        align-items: flex-end;
         min-width: 60rem;
     }
 
-    #home-container > section.sponsors {
-        display: flex;
-        max-height: 15rem;
-        overflow: hidden;
-    }
+        #home-container > section.add-sponsor {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: nowrap;
+            margin-top: 1rem;
+        }
+
+.add-sponsor .sponsors {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 5rem;
+    margin-top: 5rem;
+}
+
+.add-sponsor.editing .sponsors::after {
+    content: "";
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border: 1px dashed grey;
+    border-radius: 1rem;
+    pointer-events: none;
+}
+
+.add-sponsor .sponsors .button-icon-trash {
+    display: none;
+}
+
+.add-sponsor.editing .sponsors .button-icon-trash {
+    display: block;
+}
+
+
+
+.add-sponsor .sponsors .header {
+    position: relative;
+    /*align-items: center;*/
+    justify-content: center;
+    display: flex;
+    width: 100%;
+    margin: 0 0 1rem 0;
+}
+
+.add-sponsor .sponsors .body {
+    display: flex;
+    gap: 2rem;
+}
+
+.edit-sponsors-button {
+    position: absolute;
+    right: -4rem;
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.add-sponsor .sponsors .body > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.add-sponsor .sponsors img {
+    max-height: 4rem;
+    object-fit: contain;
+}
+
+.add-sponsor > form {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    width: 20rem;
+    margin-bottom: 0.5rem;
+}
+
+.add-sponsor.editing > #add-sponsor-form {
+    display: flex;
+}
+
+        .add-sponsor > form label.admin {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            height: 6rem;
+            cursor: pointer;
+        }
+
+            .add-sponsor > form label.admin.placeholder::before {
+                content: "Upload Image";
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                border: 1px dashed black;
+                border-radius: 0.5rem
+            }
+
+            .add-sponsor > form label.admin::before {
+                content: "";
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                border: 1px dashed black;
+                border-radius: 0.5rem
+            }
+
+            .add-sponsor > form label.admin img {
+                height: 100%;
+                border-radius: 0.5rem;
+                object-fit: contain;
+            }
+
+        .add-sponsor > form > div {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: var(--container-box-shadow);
+        }
 
     #home-container .container-half {
         display: flex;
         flex-direction: column;
         align-items: flex-end;
-        justify-content: flex-start;
+        justify-content: flex-end;
+        height: 35rem;
         flex: 1;
     }
 
         #home-container .container-half:nth-child(2) {
             align-items: flex-start;
-            height: 35rem;
-            margin-top: -8rem;
+            /*margin-top: -8rem;*/
             margin-left: -5rem;
             background: url('images/doodles/5.png') no-repeat;
             background-position: top;
@@ -440,13 +571,12 @@ section.mugshots img {
             height: 30px;
         }
 
-    #home-container button {
-        position: relative;
-        margin-top: 3rem;
+#home-container button.submit-button {
+    position: relative;
+    margin-top: 3rem;
+}
 
-    }
-
-        #home-container button::after {
+        #home-container button.submit-button::after {
             content: url("data:image/svg+xml,%3Csvg width='109' height='99' viewBox='0 0 109 99' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11.4697 80.8537C16.7655 82.663 21.0841 82.1222 25.9201 79.666C26.7383 79.6954 25.8625 80.763 25.6544 81.0851C23.7205 83.8569 19.9166 84.5736 16.8715 84.8914C25.1001 89.0548 35.1899 92.0967 43.4404 89.4439C53.0633 86.6162 61.6751 75.8929 60.4037 62.505C53.8463 60.7898 46.8576 57.0471 42.4368 50.1009C37.3756 40.5545 44.684 34.0271 52.3779 39.0182C58.6176 43.0674 62.9061 51.138 64.568 59.505C91.2107 61.6894 102.958 30.4923 92.3279 0.685006C92.3138 0.648864 92.3054 0.610057 92.3032 0.570956C92.3011 0.531855 92.3053 0.49328 92.3156 0.457592C92.3259 0.421903 92.3421 0.389849 92.3631 0.363389C92.3842 0.336928 92.4096 0.316617 92.438 0.303697C92.4648 0.288712 92.4941 0.280885 92.5244 0.280672C92.5546 0.280458 92.585 0.287863 92.6139 0.302455C92.6428 0.317046 92.6696 0.338531 92.6926 0.365654C92.7157 0.392777 92.7346 0.424995 92.7483 0.460424C104.926 31.2079 92.603 64.2289 65.0348 63.186C65.8534 73.1223 61.8514 82.4286 55.8111 87.8461C45.0945 97.7325 28.3532 95.1439 16.3981 86.4695C16.9598 88.1846 18.0046 89.6281 18.5706 91.3352C19.2322 93.3338 19.2707 97.1936 18.3414 96.1578C17.6807 94.2565 16.9089 92.4099 16.0329 90.6344C15.1712 88.8224 14.1551 86.8051 13.2306 85.0401L13.0489 84.7091L11.2376 81.3321C11.2077 81.2795 11.1902 81.2182 11.1871 81.1559C11.1841 81.0936 11.1957 81.0331 11.2205 80.982C11.2453 80.9309 11.2822 80.8914 11.3265 80.8686C11.3709 80.8457 11.4207 80.8406 11.4697 80.8537ZM54.8844 47.7978C49.045 38.4217 39.9541 41.723 46.9879 50.2846C50.7211 54.2505 55.1 57.0701 59.7354 58.4928C58.7625 54.5725 57.1027 50.913 54.8844 47.7978Z' fill='%233666C2'/%3E%3Cpath d='M96.6258 47.6066C96.601 47.5794 96.5716 47.56 96.5404 47.5501C96.5093 47.5402 96.4772 47.5402 96.4473 47.5501C96.4174 47.5599 96.3906 47.5793 96.3693 47.6064C96.348 47.6336 96.333 47.6676 96.3255 47.7054C94.9233 54.5854 90.0994 60.1885 85.1982 61.5254C85.154 61.5367 85.1164 61.5692 85.0929 61.6164C85.0694 61.6635 85.0619 61.7217 85.0719 61.7791C85.0822 61.8365 85.1072 61.8897 85.1429 61.9301C85.1786 61.9705 85.2229 61.9959 85.269 62.0024C91.3115 62.8171 95.936 54.8386 96.749 48.042C96.7587 47.9644 96.7514 47.8832 96.7278 47.8069C96.7042 47.7306 96.6651 47.6621 96.6148 47.6085L96.6258 47.6066Z' fill='%233666C2'/%3E%3Cpath d='M39.2363 35.5632C35.876 35.6636 34.7557 41.3174 36.9066 44.5271C36.9206 44.5492 36.9398 44.5654 36.961 44.5728C36.9822 44.5803 37.0042 44.5786 37.0234 44.5682C37.0426 44.5577 37.0579 44.5391 37.0668 44.5153C37.0757 44.4914 37.0777 44.4638 37.0724 44.437C36.4827 41.0127 36.9391 37.575 39.2983 35.7917C39.317 35.7793 39.3312 35.7588 39.3385 35.7337C39.3459 35.7085 39.3459 35.6802 39.3387 35.6535C39.3314 35.6267 39.3173 35.6032 39.2987 35.5868C39.28 35.5704 39.258 35.5621 39.2363 35.5632Z' fill='%233666C2'/%3E%3Cpath d='M96.8773 45.3492C97.1433 45.3333 97.3867 45.1919 97.5599 44.9527C97.6926 44.7806 97.7776 44.5576 97.8039 44.3128C97.8288 44.0758 97.7951 43.8288 97.7074 43.6046C97.5893 43.3001 97.4022 43.0413 97.1718 42.8635C96.9531 42.9849 96.7602 43.1637 96.6048 43.3887C96.4997 43.5393 96.4327 43.7277 96.4114 43.9324C96.39 44.1372 96.4153 44.3502 96.4842 44.5473C96.5873 44.8328 96.7195 45.1025 96.8773 45.3492Z' fill='%233666C2'/%3E%3Cpath d='M37.6574 46.6988C37.6513 46.6794 37.6406 46.6624 37.6268 46.6503C37.613 46.6382 37.5969 46.6317 37.5808 46.6317C37.5647 46.6316 37.5494 46.638 37.5372 46.65C37.525 46.662 37.5164 46.6789 37.5128 46.6983C37.4703 46.9032 37.4624 47.1204 37.4895 47.3365C37.5276 47.6286 37.6094 47.9135 37.7304 48.1756C37.8509 48.4366 38.0094 48.6691 38.1967 48.8598C38.3345 49.0035 38.4922 49.1121 38.6597 49.1787C38.6749 49.1839 38.6907 49.1834 38.705 49.1772C38.7193 49.1711 38.7315 49.1596 38.74 49.1442C38.7486 49.1288 38.7531 49.1102 38.753 49.0906C38.753 49.0711 38.7483 49.0516 38.7397 49.0345C38.6393 48.8633 38.5552 48.7039 38.4711 48.5444C38.3574 48.3285 38.2547 48.1106 38.152 47.8928C38.0493 47.6749 37.9522 47.4561 37.8574 47.2188C37.7898 47.0565 37.7243 46.8902 37.6574 46.6988Z' fill='%233666C2'/%3E%3Cpath d='M45.5801 84.6582C41.5477 86.7622 35.358 87.5274 30.9792 85.5964C30.9695 85.5903 30.9586 85.5892 30.949 85.5933C30.9393 85.5973 30.9316 85.6062 30.9276 85.6179C30.9237 85.6297 30.9237 85.6433 30.9277 85.6559C30.9317 85.6684 30.9394 85.6789 30.9491 85.6849C34.9823 88.9002 42.1602 88.0808 45.6207 84.7454C45.6275 84.7383 45.6319 84.7283 45.6332 84.717C45.6345 84.7057 45.6326 84.6939 45.6278 84.6835C45.623 84.6732 45.6156 84.665 45.6069 84.6604C45.5982 84.6557 45.5887 84.655 45.5801 84.6582Z' fill='%233666C2'/%3E%3C/svg%3E%0A");
             position: absolute;
             right: -100px;
@@ -1567,10 +1697,11 @@ nav a {
         flex: 1;
     }
 
-    #account-container section form {
+    #account-container form > div {
         background: #FFFFFFaa;
         width: 100%;
         padding: 1rem;
+        margin-bottom: 1rem;
         border-radius: 1rem;
         box-shadow: var(--container-box-shadow);
     }

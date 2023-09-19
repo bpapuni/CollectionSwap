@@ -856,15 +856,14 @@ namespace CollectionSwap.Controllers
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#feedback-container" }, ScrollTarget = "#feedback-container" }, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public string UploadSponsorImage(int id, HttpPostedFileBase fileInput)
-        {
-            var partial = String.Empty;
-            var userCollection = db.UserCollections.Find(id);
-            var sponsor = db.Sponsors.Where(s => s.CollectionId == id).FirstOrDefault() ?? new Sponsor();
-            return sponsor.UploadImage(id, fileInput, db);
-        }
+        //[HttpPost]
+        //[Authorize(Roles = "Admin")]
+        //public string UploadSponsorImage(int id, HttpPostedFileBase fileInput)
+        //{
+        //    var partial = String.Empty;
+        //    var sponsor = db.Sponsors.Where(s => s.CollectionId == id).FirstOrDefault() ?? new Sponsor();
+        //    return sponsor.UploadImage(fileInput, db);
+        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -874,7 +873,7 @@ namespace CollectionSwap.Controllers
         {
             var partial = String.Empty;
             var sponsor = db.Sponsors.Where(s => s.CollectionId == id).FirstOrDefault() ?? new Sponsor();
-            sponsor.Edit(id, fileInput, statement, db);
+            sponsor.Edit(id, fileInput, statement, null, db);
 
             var mcModel = new ManageCollectionsViewModel
             {
@@ -885,6 +884,52 @@ namespace CollectionSwap.Controllers
             ViewBag.Status = "Sponsor statement updated successfully";
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcModel, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container", second = ".user-collection-sponsor-container" } });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public ActionResult AddHomePageSponsor(CreateSponsorModel model)
+        {
+            var partial = String.Empty;
+            var sponsor = new Sponsor();
+            sponsor.Edit(0, model.FileInput, null, model.Url, db);
+
+            ViewBag.Status = "Sponsor added successfully";
+            ViewBag.Sponsors = db.Sponsors.Where(s => s.CollectionId == 0).ToList();
+            partial = Helper.RenderViewToString(ControllerContext, "/Views/Home/Index.cshtml", null, false);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".add-sponsor .body" }, FormResetTarget = "#add-sponsor-form" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public ActionResult EditHomePageSponsor(CreateSponsorModel model)
+        {
+            var partial = String.Empty;
+            var sponsor = db.Sponsors.Find(model.Id);
+            sponsor.Edit(0, model.FileInput, null, model.Url, db);
+
+            ViewBag.Status = "Sponsor editted successfully";
+            ViewBag.Sponsors = db.Sponsors.Where(s => s.CollectionId == 0).ToList();
+            partial = Helper.RenderViewToString(ControllerContext, "/Views/Home/Index.cshtml", null, false);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".add-sponsor .body" }, FormResetTarget = "#edit-sponsor-form" });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public ActionResult DeleteHomePageSponsor(int id)
+        {
+            var partial = String.Empty;
+            var sponsor = db.Sponsors.Find(id);
+            sponsor.Delete(db);
+
+            ViewBag.Status = "Sponsor successfully removed";
+            //return RedirectToAction("Index", "Home");
+            ViewBag.Sponsors = db.Sponsors.Where(s => s.CollectionId == 0).ToList();
+            partial = Helper.RenderViewToString(ControllerContext, "/Views/Home/Index.cshtml", null, false);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".add-sponsor .body" } });
         }
 
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CollectionSwap.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,8 +9,11 @@ namespace CollectionSwap.Controllers
 {
     public class HomeController : Controller
     {
+        private ApplicationDbContext db = new ApplicationDbContext();
+
         public ActionResult Index()
         {
+            ViewBag.Sponsors = db.Sponsors.Where(s => s.CollectionId == 0).ToList();
             return View();
         }
 
