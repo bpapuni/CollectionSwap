@@ -74,6 +74,16 @@
                     }
                 </div>
             }
+            else if (User.IsInRole("Admin"))
+            {
+                <div class="header">
+                    <span>Proudly partnered with:</span>
+
+                    <button class="edit-sponsors-button" onclick="EditHomeSponsors(this)">Edit</button>
+                </div>
+                <div class="body">
+                </div>
+            }
         </div>
 
         @if (User.IsInRole("Admin"))
