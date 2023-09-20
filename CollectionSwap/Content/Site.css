@@ -995,17 +995,9 @@ button.close {
         user-select: none;
     }
 
-.positive-feedback li.selected {
-    background: var(--brand-green-alt);
-}
-
-.neutral-feedback li.selected {
-    background: #fffda1;
-}
-
-.negative-feedback li.selected {
-    background: #ff9999;
-}
+    .feedback-list li.selected {
+        background: var(--brand-green-alt);
+    }
 
 .feedback-module a {
     position: relative;
@@ -1699,6 +1691,59 @@ nav a {
     width: 100%;
     padding: 0 1rem 1rem 1rem;
 }
+
+    #account-container section.feedback {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        min-height: 16rem;
+        padding: 1rem;
+        background: #FFFFFFaa;
+        border-radius: 1rem;
+        box-shadow: var(--container-box-shadow);
+    }
+
+        #account-container section.feedback > div {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+        }
+
+            #account-container section.feedback > div > div {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+                width: 22rem;
+                background: #ededed;
+                border: 1px solid #D0D5DD;
+                border-radius: 0.5rem;
+            }
+
+        #account-container section.feedback > div > div > * {
+            display: flex;
+            /*flex: 1;*/
+            padding: 0.5rem;
+            /*background: #ff7575a6;*/
+        }
+
+        #account-container section.feedback .rating {
+            gap: 0.25rem;
+            color: #ffc926;
+            font-size: 1.5rem;
+        }
+
+        #account-container section.feedback .profile {
+            margin-top: auto;
+        }
+
+.view-all-feedback-button {
+    margin-left: auto;
+    margin-bottom: 0.25rem;
+    color: black;
+    line-height: 1rem;
+    text-decoration: none;
+}  
 
     #account-container section > div {
         display: flex;

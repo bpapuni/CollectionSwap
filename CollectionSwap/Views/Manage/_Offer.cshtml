@@ -34,7 +34,7 @@
         swapStatus == "charity-confirmed" || swapStatus == "charity-completed" ? "Donated Items" :
         swapStatus == "charity-declined" ? "Requested Items" :
         swapStatus == "offered" ? "Offered Swap" :
-        swapStatus == "confirmed" && ((userId == sender.Id && !Model.Swap.SenderFeedbackSent) || (userId == receiver.Id && !Model.Swap.ReceiverFeedbackSent)) ? "Confirmed Swap" :
+        swapStatus == "confirmed" && ((userId == sender.Id && Model.Swap.SenderFeedback == null) || (userId == receiver.Id && Model.Swap.ReceiverFeedback == null)) ? "Confirmed Swap" :
         swapStatus == "confirmed" || swapStatus == "completed" ? "Completed Swap" :
         swapStatus == "canceled" ? "Canceled Swap" :
         swapStatus == "declined" ? "Declined Swap" :
@@ -100,7 +100,7 @@
             <div class="swap-container-header">
                 <div class="swap-info">
                     <span class="swap-size">@swapSize</span>
-                    <span>Swap for @swapSize</span>
+                    <span>for @swapSize Swap</span>
                 </div>
                 <div class="swap-profile" data-user-id="@otherUserId">
                     <div>

@@ -94,27 +94,15 @@ $(document).on("submit", ".manage-container-main form, #home-container form", fu
 
     if (this.id == "feedback-form") {
         var rating = $(".star-button.selected").length > 0 ? $(".star-button.selected").length : null;
-        var positiveFeedbackValues = [];
-        var neutralFeedbackValues = [];
-        var negativeFeedbackValues = [];
+        var comments = [];
 
         $("#Feedback_Rating").val(rating);
 
-        $(".positive-feedback .selected").each(function () {
-            positiveFeedbackValues.push($(this).text());
+        $(".feedback-list .selected").each(function () {
+            comments.push($(this).text());
         });
 
-        $(".neutral-feedback .selected").each(function () {
-            neutralFeedbackValues.push($(this).text());
-        });
-
-        $(".negative-feedback .selected").each(function () {
-            negativeFeedbackValues.push($(this).text());
-        });
-
-        $("#Feedback_PositiveFeedback").val(JSON.stringify(positiveFeedbackValues));
-        $("#Feedback_NeutralFeedback").val(JSON.stringify(neutralFeedbackValues));
-        $("#Feedback_NegativeFeedback").val(JSON.stringify(negativeFeedbackValues));
+        $("#Feedback_Comments").val(JSON.stringify(comments));
         formData = new FormData(this);
     }
     HandleFormSubmit($(this).attr("action"), $(this).attr("method"), formData);
@@ -168,6 +156,11 @@ function HandleFormSubmit(url, type, formData) {
                     $(document).scrollTop(0);
                     $(result.ScrollTarget).parent().css("scroll-snap-type", "x mandatory")
                 });
+            }
+
+            if (result.ScrollRowBack) {
+                var button = $(".scroll-row-button");
+                ScrollRowBack(button);
             }
 
             if (result.FormResetTarget) {
@@ -300,22 +293,6 @@ $(document).on("change", ".charity-checkbox", function () {
 
     HandleFormSubmit("/Manage/ToggleCharityCollection", "POST", formData);
 });
-
-function OpenFeedbackTab(e) {
-    const feedbackTabs = $(".feedback-tab");
-    const feedbackOptions = $(".feedback-options");
-    const index = feedbackTabs.index(e);
-
-    feedbackTabs.each((i, e) => {
-        $(e).removeClass("active-tab");
-    });
-    $(e).addClass("active-tab");
-
-    feedbackOptions.each((i, e) => {
-        $(e).addClass("d-none");
-    });
-    feedbackOptions.eq(index).removeClass("d-none");
-}
 
 $(document).on("click", ".swap-history-filters > span", function () {
     $(".swap-history-filters > span").removeClass("selected");

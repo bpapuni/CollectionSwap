@@ -204,6 +204,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\SwapController.cs" />
     <Compile Include="Helpers\EmailSender.cs" />
+    <Compile Include="Helpers\HashGenerator.cs" />
     <Compile Include="Helpers\Helper.cs" />
     <Compile Include="Helpers\CaseInsensitiveCompareAttribute.cs" />
     <Compile Include="Helpers\EmailWithoutSpecialCharsAttribute.cs" />
@@ -282,6 +283,18 @@
     <Compile Include="Migrations\202309170107266_CreateCollectionSponsorRelationship.cs" />
     <Compile Include="Migrations\202309170107266_CreateCollectionSponsorRelationship.designer.cs">
       <DependentUpon>202309170107266_CreateCollectionSponsorRelationship.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202309192308524_CreateFeedbackUserRelationship.cs" />
+    <Compile Include="Migrations\202309192308524_CreateFeedbackUserRelationship.designer.cs">
+      <DependentUpon>202309192308524_CreateFeedbackUserRelationship.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202309200245566_CreateSwapFeedbackRelationship.cs" />
+    <Compile Include="Migrations\202309200245566_CreateSwapFeedbackRelationship.designer.cs">
+      <DependentUpon>202309200245566_CreateSwapFeedbackRelationship.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202309200402036_AddDateToFeedback.cs" />
+    <Compile Include="Migrations\202309200402036_AddDateToFeedback.designer.cs">
+      <DependentUpon>202309200402036_AddDateToFeedback.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -503,6 +516,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="temp\" />
+    <Folder Include="Views\Members\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />
@@ -585,6 +599,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202309170107266_CreateCollectionSponsorRelationship.resx">
       <DependentUpon>202309170107266_CreateCollectionSponsorRelationship.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202309192308524_CreateFeedbackUserRelationship.resx">
+      <DependentUpon>202309192308524_CreateFeedbackUserRelationship.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202309200245566_CreateSwapFeedbackRelationship.resx">
+      <DependentUpon>202309200245566_CreateSwapFeedbackRelationship.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202309200402036_AddDateToFeedback.resx">
+      <DependentUpon>202309200402036_AddDateToFeedback.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

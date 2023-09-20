@@ -73,6 +73,7 @@ namespace CollectionSwap.Controllers
                 : "";
 
             var userId = User.Identity.GetUserId();
+            var receivedFeedback = db.Feedbacks.Where(f => f.Receiver.Id == userId).ToList();
             var model = new IndexViewModel
             {
                 HasPassword = HasPassword(),
@@ -82,7 +83,8 @@ namespace CollectionSwap.Controllers
                 BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId),
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.UserId == userId && uc.Archived == false).ToList(),
-                ChangeAddress = db.Addresses.Where(address => address.UserId == userId).FirstOrDefault()
+                ChangeAddress = db.Addresses.Where(address => address.UserId == userId).ToList().LastOrDefault(),
+                RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).ToList()
             };
 
             return View(model);
@@ -140,9 +142,11 @@ namespace CollectionSwap.Controllers
         public ActionResult AccountPartial()
         {
             var userId = User.Identity.GetUserId();
+            var receivedFeedback = db.Feedbacks.Where(f => f.Receiver.Id == userId).ToList();
             var model = new IndexViewModel
             {
                 ChangeAddress = db.Addresses.Where(address => address.UserId == userId).ToList().LastOrDefault(),
+                RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).ToList()
             };
 
             var partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
@@ -156,7 +160,7 @@ namespace CollectionSwap.Controllers
         {
             var userId = User.Identity.GetUserId();
             var partial = String.Empty;
-            model.ChangeAddress = db.Addresses.Where(address => address.UserId == userId).FirstOrDefault();
+            model.ChangeAddress = db.Addresses.Where(address => address.UserId == userId).ToList().LastOrDefault();
 
             if (!ModelState.IsValid)
             {
@@ -778,25 +782,23 @@ namespace CollectionSwap.Controllers
             var shModel = new SwapHistoryViewModel
             {
                 Swaps = ProcessCharityRequests(swaps),
-                //Feedback = fbModel,
-                Offer = null
             };
 
             if (!ModelState.IsValid)
             {
                 partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
-                return Json(new { PartialView = partial, RefreshTargets = new { first = "#feedback-container" } });
+                return Json(new { PartialView = partial, RefreshTargets = new { first = "#offer-container" } });
             }
 
             var feedback = model.Create(userId, db);
             fbModel.Feedback = feedback;
 
-            shModel.Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId).ToList();
-            //shModel.Feedback = null;
+            //shModel.Swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId).ToList();
+            //shModel.Offer = null;
 
             ViewBag.Status = "Thank you for your feedback";
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" } });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".status-container", second = $"tr:has(a[href='/Manage/SwapHistory/{model.SwapId}'])" }, ScrollRowBack = true });
         }
 
         //
@@ -817,7 +819,7 @@ namespace CollectionSwap.Controllers
             var offerModel = new SwapViewModel
             {
                 Swap = swap,
-                Feedback = db.Feedbacks.Where(fb => fb.SenderId == userId && fb.SwapId == id).FirstOrDefault(),
+                Feedback = db.Feedbacks.Where(fb => fb.Sender.Id == userId && fb.SwapId == id).FirstOrDefault(),
                 Address = db.Addresses.Where(a => a.UserId != userId && (a.UserId == swap.SenderId || a.UserId == swap.ReceiverId)).FirstOrDefault(),
                 Validation = swap.Validate(userId, db)
             };
@@ -842,7 +844,7 @@ namespace CollectionSwap.Controllers
             var fbModel = new FeedbackViewModel
             {
                 Swap = db.Swaps.Find(id),
-                Feedback = db.Feedbacks.Where(fb => fb.SenderId == userId && fb.SwapId == id).FirstOrDefault()
+                Feedback = db.Feedbacks.Where(fb => fb.Sender.Id == userId && fb.SwapId == id).FirstOrDefault()
             };
 
             var shModel = new SwapHistoryViewModel
@@ -855,15 +857,6 @@ namespace CollectionSwap.Controllers
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container", second = "#feedback-container" }, ScrollTarget = "#feedback-container" }, JsonRequestBehavior.AllowGet);
         }
-
-        //[HttpPost]
-        //[Authorize(Roles = "Admin")]
-        //public string UploadSponsorImage(int id, HttpPostedFileBase fileInput)
-        //{
-        //    var partial = String.Empty;
-        //    var sponsor = db.Sponsors.Where(s => s.CollectionId == id).FirstOrDefault() ?? new Sponsor();
-        //    return sponsor.UploadImage(fileInput, db);
-        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]

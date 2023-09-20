@@ -8,10 +8,12 @@
 
 <div class="scroll-snap-row">
     <div id="history-container">
-        @if (!String.IsNullOrEmpty(statusMessage))
-        {
-            <div class="status-message">@statusMessage</div>
-        }
+        <div class="status-container">
+            @if (!String.IsNullOrEmpty(statusMessage))
+            {
+                <div class="status-message">@statusMessage</div>
+            }
+        </div>
         <span class="header">Swap History</span>
 
         <section class="column">
@@ -163,9 +165,10 @@
                                 @swap.StartDate.ToLocalTime().ToString("dd/MM/yyyy")
                             </td>
                             @{
+                                var isCharity = swap.ReceiverRequestedItems == "[]";
                                 var hasSentItems = userId == swap.SenderId ? swap.SenderConfirmSent : swap.ReceiverConfirmSent;
                                 var hasReceivedItems = userId == swap.SenderId ? swap.SenderConfirmReceived : swap.ReceiverConfirmReceived;
-                                var hasSentFeedback = userId == swap.SenderId ? swap.SenderFeedbackSent : swap.ReceiverFeedbackSent;
+                                var hasSentFeedback = userId == swap.SenderId ? isCharity || swap.SenderFeedback != null : swap.ReceiverFeedback != null;
                                 switch (swapStatus)
                                 {
                                     case "charity-requested":

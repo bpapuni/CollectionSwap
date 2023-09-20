@@ -22,6 +22,7 @@ namespace CollectionSwap.Models
         public Address ChangeAddress { get; set; }
         public List<Collection> Collections { get; set; }
         public List<UserCollection> UserCollections { get; set; }
+        public List<Feedback> RecentFeedback { get; set; }
     }
 
     public class ManageCollectionsViewModel

@@ -1,6 +1,9 @@
 ﻿@model CollectionSwap.Models.IndexViewModel
+@using CollectionSwap.Helpers
+@using Newtonsoft.Json;
 @{
     string statusMessage = ViewBag.Status;
+    var recentFeedback = Model.RecentFeedback;
 }
 
 <div id="account-container">
@@ -157,4 +160,59 @@
             <input class="submit-button" type="submit" value="Update Address" />
         }
     </section>
+
+    @if (recentFeedback.Count > 0)
+    {
+        <span class="header">
+            Recent Feedback
+        </span>
+
+
+        <section class="feedback">
+            @{ 
+                var userIdHash = HashGenerator.Create(recentFeedback[0].Receiver.Id);
+            }
+            <a class="view-all-feedback-button" href="@userIdHash">View all feedback</a>
+            <div>
+                @foreach (var feedback in recentFeedback)
+                {
+                    userIdHash = HashGenerator.Create(feedback.Sender.Id);
+                    var comments = JsonConvert.DeserializeObject<List<string>>(feedback.Comments);
+                    <div>
+                        <div class="rating">
+                            @for (int i = 0; i < feedback.Rating; i++)
+                            {
+                                <i class="fa-solid fa-star"></i>
+                            }
+                            @for (int i = 0; i < 5 - feedback.Rating; i++)
+                            {
+                                <i class="fa-regular fa-star"></i>
+                            }
+                        </div>
+                        <div class="comments">
+                            @if (comments.Count == 0)
+                            {
+                                <text>User chose not to leave any comments</text>
+                            }
+                            else
+                            {
+                                <ul class="feedback-list">
+                                    @foreach (var comment in comments)
+                                    {
+                                        <li>@comment</li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                        <div class="profile">
+                            <span>
+                                By: <a href="/Members/@userIdHash">@feedback.Sender.UserName</a><br />
+                                @feedback.DatePlaced.ToString("dd/MM/yyyy")
+                            </span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
 </div>

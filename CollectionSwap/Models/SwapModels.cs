@@ -66,8 +66,7 @@ namespace CollectionSwap.Models
         public bool SenderConfirmSent { get; set; }
         [Required]
         public bool SenderConfirmReceived { get; set; }
-        [Required]
-        public bool SenderFeedbackSent { get; set; }
+        public virtual Feedback SenderFeedback { get; set; }
         public bool SenderDisplaySwap { get; set; } = true;
         [Required]
         public string ReceiverId { get; set; }
@@ -79,8 +78,7 @@ namespace CollectionSwap.Models
         public bool ReceiverConfirmSent { get; set; }
         [Required]
         public bool ReceiverConfirmReceived { get; set; }
-        [Required]
-        public bool ReceiverFeedbackSent { get; set; }
+        public virtual Feedback ReceiverFeedback { get; set; }
         public bool ReceiverDisplaySwap { get; set; } = true;
         public int SwapSize { get; set; }
         [Required]
@@ -240,18 +238,21 @@ namespace CollectionSwap.Models
             {
                 userType = "sender";
 
+                // If user has clicked the sent items checkbox
                 if (type == "sent")
                 {
                     this.SenderConfirmSent = true;
+                    // If this was a charitable swap, flag sender sender confirm received and receiver confirm sent as true
+                    // as these actions do not need to be manually completed
                     this.SenderConfirmReceived = isCharity ? true : this.SenderConfirmReceived;
                     this.ReceiverConfirmSent = isCharity ? true : this.ReceiverConfirmSent;
-                    this.SenderFeedbackSent = isCharity ? true : this.SenderFeedbackSent;
 
                     if (isCharity)
                     {
                         await db.UserCollections.Find(this.SenderCollectionId).Delete(db);
                     }
                 }
+                // If user has clicked the received items checkbox
                 else if (type == "received")
                 {
                     this.SenderConfirmReceived = true;
@@ -261,10 +262,12 @@ namespace CollectionSwap.Models
             {
                 userType = "receiver";
 
+                // If user has clicked the sent items checkbox
                 if (type == "sent")
                 {
                     this.ReceiverConfirmSent = true;
                 }
+                // If user has clicked the received items checkbox
                 else if (type == "received")
                 {
                     this.ReceiverConfirmReceived = true;
@@ -569,35 +572,71 @@ namespace CollectionSwap.Models
     {
         public int Id { get; set; }
         public int SwapId { get; set; }
-        public string SenderId { get; set; }
-        public string ReceiverId { get; set; }
         [Required(ErrorMessage = "You must select a rating")]
         public int Rating { get; set; }
         public string Comments { get; set; }
+        public DateTimeOffset DatePlaced { get; set; }
+        public virtual ApplicationUser Sender { get; set; }
+        public virtual ApplicationUser Receiver { get; set; }
+        public static List<string> Options
+        {
+            get
+            {
+                return new List<string>
+                {
+                    "Swap accepted quickly",
+                    "Swap took a long time to be accepted",
+                    "Items arrived quickly",
+                    "Items took too long to arrive",
+                    "Items packaged well",
+                    "Items packaged poorly",
+                    "Items in good condition",
+                    "Items in poor condition",
+                    "Generous swapper",
+                    "Expected items were missing",
+                    "Would gladly swap with again",
+                    "Would not swap with again",
+                    "User came to my residence",
+                };
+            }
+        }
         public Feedback Create(string userId, ApplicationDbContext db)
         {
+            var comments = JsonConvert.DeserializeObject<List<string>>(this.Comments);
+
+            // Guard clause that prevents the user from submitting a comment not contained within our feedback options
+            foreach (var comment in comments) 
+            { 
+                if (!Options.Contains(comment))
+                {
+                    return null;
+                }
+            }
+
             if (db.Feedbacks.Find(this.Id) != null)
             {
                 return this;
             }
 
             var swap = db.Swaps.Find(this.SwapId);
+            var isCharity = swap.ReceiverRequestedItems == "[]";
 
-            this.SenderId = userId;
-            this.ReceiverId = swap.SenderId == userId ? swap.ReceiverId : swap.SenderId;
+            this.Sender = db.Users.Find(userId);
+            this.Receiver = db.Users.Find(swap.SenderId == userId ? swap.ReceiverId : swap.SenderId);
 
-            if (swap.SenderId == userId)
+            if (swap.Sender.Id == userId)
             {
-                swap.SenderFeedbackSent = true;
+                swap.SenderFeedback = this;
             } 
             else if (swap.ReceiverId == userId)
             {
-                swap.ReceiverFeedbackSent = true;
+                swap.ReceiverFeedback = this;
             }
 
-            swap.Status = swap.SenderFeedbackSent && swap.ReceiverFeedbackSent ? "completed" : swap.Status;
+            swap.Status = (swap.SenderFeedback != null && swap.ReceiverFeedback != null) || (isCharity && swap.ReceiverFeedback != null) ? "completed" : swap.Status;
             db.Entry(swap).State = EntityState.Modified;
 
+            this.DatePlaced = DateTime.UtcNow;
             db.Feedbacks.Add(this);
             db.SaveChanges();
 

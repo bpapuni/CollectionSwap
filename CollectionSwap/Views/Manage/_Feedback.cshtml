@@ -1,4 +1,5 @@
 ﻿@model CollectionSwap.Models.FeedbackViewModel
+@using CollectionSwap.Models
 @using Microsoft.AspNet.Identity
 @using Newtonsoft.Json
 @{
@@ -10,9 +11,10 @@
 
     var comments = Model.Feedback != null ? JsonConvert.DeserializeObject<List<string>>(Model.Feedback.Comments) : null;
 
-    var hasPlacedFeedback = sender.Id == userId ? Model.Swap.SenderFeedbackSent : Model.Swap.ReceiverFeedbackSent;
-    var hasSentItems = sender.Id == userId ? Model.Swap.SenderConfirmSent : Model.Swap.ReceiverConfirmSent;
-    var hasReceivedItems = sender.Id == userId ? Model.Swap.SenderConfirmReceived : Model.Swap.ReceiverConfirmReceived;
+    var isCharity = Model.Swap.ReceiverRequestedItems == "[]";
+    var hasPlacedFeedback = userId == sender.Id ? isCharity || Model.Swap.SenderFeedback != null : Model.Swap.ReceiverFeedback != null;
+    var hasSentItems = userId == sender.Id ? Model.Swap.SenderConfirmSent : Model.Swap.ReceiverConfirmSent;
+    var hasReceivedItems = userId == sender.Id ? Model.Swap.SenderConfirmReceived : Model.Swap.ReceiverConfirmReceived;
 
     var heading = hasSentItems && hasReceivedItems && hasPlacedFeedback ? "Completed Swap" : "Swap Feedback";
 }
@@ -56,22 +58,7 @@
                 <ul class="feedback-list">
                     @{
 
-                        List<string> options = new List<string> 
-                        {
-                            "Swap accepted quickly",
-                            "Swap took a long time to be accepted",
-                            "Items arrived quickly",
-                            "Items took too long to arrive",
-                            "Items packaged well",
-                            "Items packaged poorly",
-                            "Items in good condition",
-                            "Items in poor condition",
-                            "Generous swapper",
-                            "Expected items were missing",
-                            "Would gladly swap with again",
-                            "Would not swap with again",
-                            "User came to my residence",
-                        };
+                        var options = Feedback.Options;
 
                         if (comments != null)
                         {

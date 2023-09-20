@@ -95,37 +95,6 @@ namespace CollectionSwap.Controllers
                 default:
                     return Json(new { reloadPage = false });
             }
-            
         }
-
-        //[Authorize]
-        //public ActionResult Offers()
-        //{
-        //    var userId = User.Identity.GetUserId();
-        //    var model = new FindSwapsViewModel
-        //    {
-        //        Users = db.Users.ToList(),
-        //        Collections = db.Collections.ToList(),
-        //        UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
-        //        UserSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId).ToList(),
-        //        Feedbacks = db.Feedbacks.ToList()
-        //    };
-
-        //    return View(model);
-        //}
-
-        //[Authorize]
-        //public ActionResult History()
-        //{
-        //    var currentUserId = User.Identity.GetUserId();
-        //    ViewBag.UserSwaps = db.Swaps
-        //                            .Include(s => s.Sender) // Eagerly load the Sender property
-        //                            .Include(s => s.Receiver) // Eagerly load the Receiver property
-        //                            .Include(s => s.Collection) // Eagerly load the Collection property
-        //                            .Where(swap => swap.Sender.Id == currentUserId || swap.Receiver.Id == currentUserId)
-        //                            .ToList();
-
-        //    return View();
-        //}
     }
 }
