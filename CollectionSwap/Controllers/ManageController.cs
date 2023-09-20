@@ -646,25 +646,25 @@ namespace CollectionSwap.Controllers
 
             // Creates a list of all user collections marked as charity
             var charityCollectionsIds = charitySwaps
-                .Select(s => s.SenderCollection.Id)
+                .Select(s => s.SenderCollectionId)
                 .Distinct()
                 .ToList();
 
             foreach (var id in charityCollectionsIds)
             {
                 // Create a List<int> of items being given away
-                var charityItems = JsonConvert.DeserializeObject<List<int>>(swaps.Select(s => s.SenderCollection).Where(s => s.Id == id).FirstOrDefault().ItemCountJSON)
+                var charityItems = JsonConvert.DeserializeObject<List<int>>(swaps.Select(s => db.UserCollections.Find(s.SenderCollectionId)).Where(s => s.Id == id).FirstOrDefault().ItemCountJSON)
                     .Select((value, index) => new { Value = value, Index = index })
                     .Where(item => item.Value != 0)
                     .Select(item => item.Index)
                     .ToList();
 
 
-                var requestedSwaps = charitySwaps.Where(s => s.SenderCollection.Id == id).ToList();
+                var requestedSwaps = charitySwaps.Where(s => s.SenderCollectionId == id).ToList();
 
                 // Creates a List<List<int>> (list of lists) of all receivers item counts
                 var receiversItemCountAndRequestDate = requestedSwaps
-                    .Select(s => new { Id = s.Id, ItemCount = JsonConvert.DeserializeObject<List<int>>(s.ReceiverCollection.ItemCountJSON), Date = s.StartDate })
+                    .Select(s => new { Id = s.Id, ItemCount = JsonConvert.DeserializeObject<List<int>>(db.UserCollections.Find(s.ReceiverCollectionId).ItemCountJSON), Date = s.StartDate })
                     .ToList();
 
                 // Create List<List<int>> (list of lists) of the items each receiver is missing that are available in the charity items

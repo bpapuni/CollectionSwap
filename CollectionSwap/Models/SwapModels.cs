@@ -231,7 +231,6 @@ namespace CollectionSwap.Models
                 return new ProcessSwapResult { Succeeded = false, Error = ex.Message };
             }
         }
-
         public void Confirm(string type, string userId, ApplicationDbContext db)
         {
             var isCharity = this.SenderRequestedItems == "[]" || this.ReceiverRequestedItems == "[]";
@@ -406,7 +405,7 @@ namespace CollectionSwap.Models
                 {
                     // Creates a list of all the items offered by the sender in their other swaps
                     var pendingSwapItems = pendingSwaps.SelectMany(swap => swap.Sender.Id == userId ? JsonConvert.DeserializeObject<List<int>>(swap.SenderRequestedItems) : JsonConvert.DeserializeObject<List<int>>(swap.ReceiverRequestedItems)).ToList();
-                    var sendersItems = JsonConvert.DeserializeObject<List<int>>(this.SenderCollection.ItemCountJSON);
+                    var sendersItems = JsonConvert.DeserializeObject<List<int>>(db.UserCollections.Find(this.SenderCollectionId).ItemCountJSON);
                     // Calculates the number of times an item has been offered
                     var offeredItemCount = pendingSwapItems.Count(i => i == item);
 
@@ -439,7 +438,7 @@ namespace CollectionSwap.Models
                     {
                         // Creates a list of all the items offered by the sender in their other swaps
                         var pendingSwapItems = pendingSwaps.SelectMany(swap => JsonConvert.DeserializeObject<List<int>>(swap.SenderRequestedItems)).ToList();
-                        var sendersItems = JsonConvert.DeserializeObject<List<int>>(this.SenderCollection.ItemCountJSON);
+                        var sendersItems = JsonConvert.DeserializeObject<List<int>>(db.UserCollections.Find(this.SenderCollectionId).ItemCountJSON);
                         // Calculates the number of times an item has been offered
                         var offeredItemCount = pendingSwapItems.Count(i => i == item);
 
@@ -470,7 +469,7 @@ namespace CollectionSwap.Models
                     {
                         // Creates a list of all the items offered by the receiver in their other swaps
                         var receiversPendingSwapItems = pendingSwaps.SelectMany(swap => JsonConvert.DeserializeObject<List<int>>(swap.ReceiverRequestedItems)).ToList();
-                        var receiversItems = JsonConvert.DeserializeObject<List<int>>(this.ReceiverCollection.ItemCountJSON);
+                        var receiversItems = JsonConvert.DeserializeObject<List<int>>(db.UserCollections.Find(this.ReceiverCollectionId).ItemCountJSON);
                         // Calculates the number of times an item has been offered
                         var offeredItemCount = receiversPendingSwapItems.Count(i => i == item);
 
@@ -505,7 +504,7 @@ namespace CollectionSwap.Models
                     {
                         // Creates a list of all the items offered by the sender in their other swaps
                         var pendingSwapItems = pendingSwaps.SelectMany(swap => JsonConvert.DeserializeObject<List<int>>(swap.SenderRequestedItems)).ToList();
-                        var sendersItems = JsonConvert.DeserializeObject<List<int>>(this.SenderCollection.ItemCountJSON);
+                        var sendersItems = JsonConvert.DeserializeObject<List<int>>(db.UserCollections.Find(this.SenderCollectionId).ItemCountJSON);
                         // Calculates the number of times an item has been offered
                         var offeredItemCount = pendingSwapItems.Count(i => i == item);
 
@@ -536,7 +535,7 @@ namespace CollectionSwap.Models
                     {
                         // Creates a list of all the items offered by the receiver in their other swaps
                         var receiversPendingSwapItems = pendingSwaps.SelectMany(swap => JsonConvert.DeserializeObject<List<int>>(swap.ReceiverRequestedItems)).ToList();
-                        var receiversItems = JsonConvert.DeserializeObject<List<int>>(this.ReceiverCollection.ItemCountJSON);
+                        var receiversItems = JsonConvert.DeserializeObject<List<int>>(db.UserCollections.Find(this.ReceiverCollectionId).ItemCountJSON);
                         // Calculates the number of times an item has been offered
                         var offeredItemCount = receiversPendingSwapItems.Count(i => i == item);
 

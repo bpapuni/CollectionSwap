@@ -375,10 +375,10 @@ namespace CollectionSwap.Models
                     matchingSwap.CollectionId = this.Collection.Id;
                     matchingSwap.Collection = this.Collection;
                     matchingSwap.SenderCollectionId = uc.Id;
-                    matchingSwap.SenderCollection = uc;
+                    //matchingSwap.SenderCollection = uc;
                     matchingSwap.SenderRequestedItems = JsonConvert.SerializeObject(receiverNeededItems);
                     matchingSwap.ReceiverCollectionId = this.Id;
-                    matchingSwap.ReceiverCollection = this;
+                    //matchingSwap.ReceiverCollection = this;
                     matchingSwap.ReceiverRequestedItems = JsonConvert.SerializeObject(new List<int>());
                     matchingSwap.SwapSize = 0;
                     matchingSwap.Status = "charity";
@@ -402,10 +402,10 @@ namespace CollectionSwap.Models
                     matchingSwap.CollectionId = this.Collection.Id;
                     matchingSwap.Collection = this.Collection;
                     matchingSwap.SenderCollectionId = this.Id;
-                    matchingSwap.SenderCollection = this;
+                    //matchingSwap.SenderCollection = this;
                     matchingSwap.SenderRequestedItems = JsonConvert.SerializeObject(receiverNeededItems);
                     matchingSwap.ReceiverCollectionId = uc.Id;
-                    matchingSwap.ReceiverCollection = uc;
+                    //matchingSwap.ReceiverCollection = uc;
                     matchingSwap.ReceiverRequestedItems = JsonConvert.SerializeObject(senderNeededItems);
                     matchingSwap.SwapSize = Math.Min(senderNeededItems.Count(), receiverNeededItems.Count());
                     matchingSwap.Status = "swap";
