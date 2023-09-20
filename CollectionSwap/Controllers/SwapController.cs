@@ -42,7 +42,6 @@ namespace CollectionSwap.Controllers
             var selectedCollection = db.UserCollections.Find(id);
             var model = new FindSwapsViewModel
             {
-                //Users = db.Users.ToList(),
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.User.Id == userId).ToList(),
                 UserSwaps = db.Swaps.Where(swap => swap.Receiver.Id == userId).ToList(),
@@ -55,12 +54,12 @@ namespace CollectionSwap.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult> ProcessSwap(SwapRequestViewModel request)
+        public ActionResult ProcessSwap(SwapRequestViewModel request)
         {
             var userId = User.Identity.GetUserId();
             var swap = db.Swaps.Find(request.SwapId) == null ? new Swap() : db.Swaps.Find(request.SwapId);
 
-            var result = await swap.ProcessAsync(userId, request, db);
+            var result = swap.ProcessSwap(userId, request, db);
             if (!result.Succeeded)
             {
                 return Json(new { reloadPage = false });
@@ -88,7 +87,8 @@ namespace CollectionSwap.Controllers
                     return RedirectToAction("SwapHistoryPartial", "Manage");
                 case "canceled":
                     TempData["Status"] = "You've canceled this swap";
-                    return RedirectToAction("SwapHistoryPartial", "Manage");
+                    //return RedirectToAction("SwapHistoryPartial", "Manage");
+                    return Json(new { ScrollRowBack = true });
                 case "declined":
                     TempData["Status"] = "You've declined this swap";
                     return RedirectToAction("SwapHistoryPartial", "Manage");

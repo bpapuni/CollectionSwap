@@ -14,9 +14,9 @@ namespace CollectionSwap
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             //routes.MapRoute(
-            //    name: "LoadPartial",
-            //    url: "Manage/LoadPartial/{id}",
-            //    defaults: new { controller = "Manage", action = "LoadPartial", id = UrlParameter.Optional }
+            //    name: "MemberProfile",
+            //    url: "Manage/Member/{username}/{id}",
+            //    defaults: new { controller = "Members", action = "DisplayProfile", id = UrlParameter.Optional }
             //);
 
             routes.MapRoute(

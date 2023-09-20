@@ -48,6 +48,7 @@ namespace CollectionSwap.Models
     {
         public List<Swap> Swaps { get; set; }
         public SwapViewModel Offer { get; set; }
+        public List<Feedback> UserFeedbacks { get; set; }
     }
 
     public class Swap
@@ -102,7 +103,7 @@ namespace CollectionSwap.Models
             public string SuccessType { get; set; }
             public string Error { get; set; }
         }
-        public async Task<ProcessSwapResult> ProcessAsync(string userId, SwapRequestViewModel request, ApplicationDbContext db)
+        public ProcessSwapResult ProcessSwap(string userId, SwapRequestViewModel request, ApplicationDbContext db)
         {
             try
             {
@@ -140,14 +141,14 @@ namespace CollectionSwap.Models
                         {
                             swap.SenderDisplaySwap = false;
                             db.Entry(this).State = EntityState.Modified;
-                            await db.SaveChangesAsync();
+                            db.SaveChanges();
 
                             var declineRequest = new SwapRequestViewModel
                             {
                                 SwapId = swap.Id,
                                 Status = "declined"
                             };
-                            await swap.ProcessAsync(userId, declineRequest, db);
+                            swap.ProcessSwap(userId, declineRequest, db);
                         }
 
                         senderItemCount = JsonConvert.DeserializeObject<List<int>>(db.UserCollections.Where(uc => uc.Id == request.SenderUserCollectionId).FirstOrDefault().ItemCountJSON);
@@ -207,13 +208,13 @@ namespace CollectionSwap.Models
                         {
                             this.ReceiverDisplaySwap = false;
                         }
-                        await ReleaseItems(this, db);
+                        ReleaseItems(this, db);
                         this.Status = request.Status;
                         db.Entry(this).State = EntityState.Modified;
                         break;
 
                     case "declined":
-                        await ReleaseItems(this, db);
+                        ReleaseItems(this, db);
                         this.Status = request.Status;
                         db.Entry(this).State = EntityState.Modified;
                         break;
@@ -222,7 +223,7 @@ namespace CollectionSwap.Models
                         break;
                 }
 
-                await db.SaveChangesAsync();
+                db.SaveChanges();
                 return new ProcessSwapResult { Succeeded = true, SuccessType = swapStatus };
             }
             catch (Exception ex)
@@ -230,7 +231,8 @@ namespace CollectionSwap.Models
                 return new ProcessSwapResult { Succeeded = false, Error = ex.Message };
             }
         }
-        public async Task Confirm(string type, string userId, ApplicationDbContext db)
+
+        public void Confirm(string type, string userId, ApplicationDbContext db)
         {
             var isCharity = this.SenderRequestedItems == "[]" || this.ReceiverRequestedItems == "[]";
             var userType = String.Empty;
@@ -249,7 +251,7 @@ namespace CollectionSwap.Models
 
                     if (isCharity)
                     {
-                        await db.UserCollections.Find(this.SenderCollectionId).Delete(db);
+                        db.UserCollections.Find(this.SenderCollectionId).Delete(db);
                     }
                 }
                 // If user has clicked the received items checkbox
@@ -303,7 +305,7 @@ namespace CollectionSwap.Models
             db.HeldItems.Add(heldItems);
             db.SaveChanges();
         }
-        private async Task<bool> ReleaseItems(Swap swap, ApplicationDbContext db)
+        private void ReleaseItems(Swap swap, ApplicationDbContext db)
         {
             var heldItems = db.HeldItems.Include("UserCollection").Where(hi => hi.Swap.Id == swap.Id).ToList();
 
@@ -320,13 +322,11 @@ namespace CollectionSwap.Models
 
                 userCollection.ItemCountJSON = JsonConvert.SerializeObject(deserializedItems);
                 db.Entry(userCollection).State = EntityState.Modified;
-                await db.SaveChangesAsync();
+                db.SaveChanges();
             }
 
             db.HeldItems.RemoveRange(heldItems);
-            await db.SaveChangesAsync();
-
-            return true;
+            db.SaveChanges();
         }
         private void SwapItems(Swap swap, string userType, ApplicationDbContext db)
         {
@@ -578,25 +578,34 @@ namespace CollectionSwap.Models
         public DateTimeOffset DatePlaced { get; set; }
         public virtual ApplicationUser Sender { get; set; }
         public virtual ApplicationUser Receiver { get; set; }
-        public static List<string> Options
+        public static List<string> PositiveComments
         {
             get
             {
                 return new List<string>
                 {
                     "Swap accepted quickly",
-                    "Swap took a long time to be accepted",
                     "Items arrived quickly",
-                    "Items took too long to arrive",
                     "Items packaged well",
-                    "Items packaged poorly",
                     "Items in good condition",
-                    "Items in poor condition",
-                    "Generous swapper",
-                    "Expected items were missing",
+                    "Swapper donated cards",
                     "Would gladly swap with again",
+                };
+            }
+        }
+        public static List<string> NegativeComments
+        {
+            get
+            {
+                return new List<string>
+                {
+                    "Swap took a long time to be accepted",
+                    "Items took too long to arrive",
+                    "Items packaged poorly",
+                    "Items in poor condition",
+                    "Expected items were missing",
                     "Would not swap with again",
-                    "User came to my residence",
+                    "User came to my address",
                 };
             }
         }
@@ -607,7 +616,7 @@ namespace CollectionSwap.Models
             // Guard clause that prevents the user from submitting a comment not contained within our feedback options
             foreach (var comment in comments) 
             { 
-                if (!Options.Contains(comment))
+                if (!PositiveComments.Contains(comment) && !NegativeComments.Contains(comment))
                 {
                     return null;
                 }

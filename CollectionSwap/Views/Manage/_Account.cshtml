@@ -169,14 +169,10 @@
 
 
         <section class="feedback">
-            @{ 
-                var userIdHash = HashGenerator.Create(recentFeedback[0].Receiver.Id);
-            }
-            <a class="view-all-feedback-button" href="@userIdHash">View all feedback</a>
+            <a class="view-all-feedback-button" href="/Manage/Member/@recentFeedback[0].Receiver.UserName">View all feedback</a>
             <div>
                 @foreach (var feedback in recentFeedback)
                 {
-                    userIdHash = HashGenerator.Create(feedback.Sender.Id);
                     var comments = JsonConvert.DeserializeObject<List<string>>(feedback.Comments);
                     <div>
                         <div class="rating">
@@ -202,11 +198,12 @@
                                         <li>@comment</li>
                                     }
                                 </ul>
+                                @*<a href="/Members/@userIdHash/@feedback.Id">...View More</a>*@
                             }
                         </div>
                         <div class="profile">
                             <span>
-                                By: <a href="/Members/@userIdHash">@feedback.Sender.UserName</a><br />
+                                By: <a href="/Manage/Member/@feedback.Sender.UserName">@feedback.Sender.UserName</a><br />
                                 @feedback.DatePlaced.ToString("dd/MM/yyyy")
                             </span>
                         </div>

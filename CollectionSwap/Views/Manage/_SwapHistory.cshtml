@@ -7,13 +7,13 @@
 }
 
 <div class="scroll-snap-row">
+    <div class="status-container">
+        @if (!String.IsNullOrEmpty(statusMessage))
+        {
+            <div class="status-message">@statusMessage</div>
+        }
+    </div>
     <div id="history-container">
-        <div class="status-container">
-            @if (!String.IsNullOrEmpty(statusMessage))
-            {
-                <div class="status-message">@statusMessage</div>
-            }
-        </div>
         <span class="header">Swap History</span>
 
         <section class="column">
@@ -155,10 +155,10 @@
                             else if (userId == swap.ReceiverId)
                             {
                                 <td>
-                                    <input data-swap-id="@swap.Id" data-type="sent" class="swap-confirm" type="checkbox" checked="@swap.ReceiverConfirmSent" @Html.Raw(swap.ReceiverRequestedItems == "[]" || swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "")/>
+                                    <input data-swap-id="@swap.Id" data-type="sent" class="swap-confirm" type="checkbox" checked="@swap.ReceiverConfirmSent" @Html.Raw(swap.ReceiverRequestedItems == "[]" || swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "") />
                                 </td>
                                 <td>
-                                    <input data-swap-id="@swap.Id" data-type="received" class="swap-confirm" type="checkbox" checked="@swap.ReceiverConfirmReceived" @Html.Raw(swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "")/>
+                                    <input data-swap-id="@swap.Id" data-type="received" class="swap-confirm" type="checkbox" checked="@swap.ReceiverConfirmReceived" @Html.Raw(swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "") />
                                 </td>
                             }
                             <td>
@@ -284,18 +284,16 @@
             </table>
         </section>
     </div>
-
-    @*<div id="feedback-container" class="d-none">
-        @if (Model.Offer.Feedback != null)
-        {
-            @Html.Partial("_Feedback", Model.Offer.Feedback)
-        }
-    </div>*@
-
     <div id="offer-container" class="d-none">
         @if (Model.Offer != null)
         {
             @Html.Partial("_Offer", Model.Offer)
+        }
+    </div>
+    <div id="profile-container" class="d-none">
+        @if (Model.UserFeedbacks != null)
+        {
+            @Html.Partial("_Profile", Model.UserFeedbacks)
         }
     </div>
 </div>

@@ -9,7 +9,7 @@
     var sender = Model.Swap.Sender;
     var receiver = Model.Swap.Receiver;
 
-    var comments = Model.Feedback != null ? JsonConvert.DeserializeObject<List<string>>(Model.Feedback.Comments) : null;
+    var userComments = Model.Feedback != null ? JsonConvert.DeserializeObject<List<string>>(Model.Feedback.Comments) : null;
 
     var isCharity = Model.Swap.ReceiverRequestedItems == "[]";
     var hasPlacedFeedback = userId == sender.Id ? isCharity || Model.Swap.SenderFeedback != null : Model.Swap.ReceiverFeedback != null;
@@ -58,28 +58,49 @@
                 <ul class="feedback-list">
                     @{
 
-                        var options = Feedback.Options;
+                        var positiveComments = Feedback.PositiveComments;
+                        var negativeComments = Feedback.NegativeComments;
 
-                        if (comments != null)
+                        if (userComments != null)
                         {
-                            foreach (var option in options)
+                            <span class="feedback-header">Positive Feedback</span>
+                            foreach (var comment in positiveComments)
                             {
-                                if (comments.Contains(option))
+                                if (userComments.Contains(comment))
                                 {
-                                    <li class="selected">@option</li>
+                                    <li class="selected">@comment</li>
                                 }
                                 else
                                 {
 
-                                    <li>@option</li>
+                                    <li>@comment</li>
+                                }
+                            }
+                            <span class="feedback-header">Negative Feedback</span>
+                            foreach (var comment in negativeComments)
+                            {
+                                if (userComments.Contains(comment))
+                                {
+                                    <li class="selected">@comment</li>
+                                }
+                                else
+                                {
+
+                                    <li>@comment</li>
                                 }
                             }
                         }
                         else
                         {
-                            foreach (var option in options)
+                            <span class="feedback-header">Positive Feedback</span>
+                            foreach (var comment in positiveComments)
                             {
-                                <li>@option</li>
+                                <li>@comment</li>
+                            }
+                            <span class="feedback-header">Negative Feedback</span>
+                            foreach (var comment in negativeComments)
+                            {
+                                <li>@comment</li>
                             }
                         }
                     }

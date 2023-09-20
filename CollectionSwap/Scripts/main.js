@@ -199,7 +199,7 @@ function ScrollRowBack(e) {
     scrollRow.animate({ scrollLeft: 0 }, 250, "swing", () => {
         $(document).scrollTop(0);
         scrollRow.css("scroll-snap-type", "x mandatory");
-        scrollRow.children().not(":first").addClass("d-none");
+        scrollRow.children("div:gt(1)").addClass("d-none");
     });
 }
 

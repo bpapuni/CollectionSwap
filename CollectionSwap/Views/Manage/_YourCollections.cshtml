@@ -6,11 +6,13 @@
 }
 
 <div class="scroll-snap-row">
-    <div id="your-collections-container">
+    <div class="status-container">
         @if (!String.IsNullOrEmpty(statusMessage))
         {
             <div class="status-message">@statusMessage</div>
         }
+    </div>
+    <div id="your-collections-container">
         <span class="header">
             Your Collections
         </span>

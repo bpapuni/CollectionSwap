@@ -273,7 +273,7 @@ namespace CollectionSwap.Models
             db.Entry(this).State = EntityState.Modified;
             db.SaveChanges();
         }
-        public async Task<bool> Delete(ApplicationDbContext db)
+        public void Delete(ApplicationDbContext db)
         {
             var affectedSwaps = db.Swaps.Where(swap => (swap.SenderCollectionId == this.Id || swap.ReceiverCollectionId == this.Id)).ToList();
             var offeredSwaps = affectedSwaps.Where(swap => swap.Status == "offered");
@@ -284,17 +284,23 @@ namespace CollectionSwap.Models
             {
                 if (offeredSwaps.Contains(swap) || acceptedSwaps.Contains(swap))
                 {
-                    await swap.ProcessAsync(this.UserId, new SwapRequestViewModel { Status = "canceled" }, db);
+                    swap.ProcessSwap(this.UserId, new SwapRequestViewModel { Status = "canceled" }, db);
                 }
 
                 // Prevent deleting until confirmed swaps are done
             }
 
-            this.Archived = true;
-            db.Entry(this).State = EntityState.Modified;
-            db.SaveChanges();
+            if (affectedSwaps.Count == 0)
+            {
+                db.UserCollections.Remove(this);
+            }
+            else
+            {
+                this.Archived = true;
+                db.Entry(this).State = EntityState.Modified;
+            }
 
-            return true;
+            db.SaveChanges();
         }
         public List<SwapViewModel> FindMatchingSwaps(ApplicationDbContext db)
         {
