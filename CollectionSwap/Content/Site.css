@@ -2278,17 +2278,27 @@ input[type=number] {
     /*border: 1px solid black;*/
 }
 
-    .swap-profile > div:nth-child(1) {
+    .swap-profile > .rating {
         display: flex;
         flex-direction: column;
         align-items: flex-end;
         justify-content: flex-end;
     }
-    
-    .swap-profile > div:nth-child(1) > * {
-        margin: 0;
-        padding: 0;
-    }
+
+        .swap-profile > .rating > .header {
+            margin: 0;
+            padding: 0;
+        }
+
+.new-swapper {
+    margin: 0;
+    padding: 0 0.5rem;
+    /*color: #ffdb00;*/
+    font-weight: 900;
+    background: #ffc926;
+    /*border: 2px solid #ffc926;*/
+    border-radius: 0.5rem;
+}
 
     .swap-rating {
         color: gold;
@@ -2549,69 +2559,6 @@ input[type=number] {
     margin: 0;
 }
 
-/*.swap-yours {
-    font-weight: 200;
-    display: flex;
-    flex-direction: column;
-}
-
-.swap-theirs {
-    font-weight: 200;
-    display: flex;
-    flex-direction: column;
-}
-
-.swap-offered-buttons {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 0.9rem;
-    width: 20rem;
-    height: var(--_button-size);
-    padding: 0.9rem;
-    background-color: #b0c1af;
-}
-
-.accept-swap, .confirm-swap, .decline-swap {
-    padding: 0.8rem;
-    width: auto;
-    aspect-ratio: auto;
-    border: 1px solid var(--darkest-shade);
-    border-radius: 0.5rem;
-    font-size: 0.9rem;
-    flex-grow: 1;
-    color: var(--light-shade);
-    background-color: var(--dark-shade);
-    transition: transform 0.3s ease-in-out;
-}
-
-.accept-swap:hover, .confirm-swap:hover, .decline-swap:hover {*/
-/*transform: scale(100.5%);*/
-/*box-shadow: 0 2px 5px #888;
-    color: var(--darkest-shade);
-    background-color: var(--neutral-shade);
-}
-
-.decline-swap {
-    color: var(--lighterer-shade);
-    background-color: var(--danger-100);
-}
-
-.decline-swap:hover {
-    color: var(--lighterer-shade);
-    background: var(--danger-50);
-    border: 1px solid var(--danger-500);
-}
-
-.swap-offers, .swap-accepted {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    width: clamp(40.5rem, 80rem, 100%);
-}*/
 #find-swaps-container {
     position: relative;
     display: flex;
@@ -2910,4 +2857,106 @@ input[type=number] {
         width: 95%;
         margin: 1rem 0;
         background: black;
-    }
+    }
+
+.feedback-bar-chart {
+    width: 50%;
+    /*height: 16rem;*/
+    padding: 1rem;
+    background: #ffffffaa;
+    border-radius: 1rem;
+    box-shadow: var(--container-box-shadow);
+}
+
+    .feedback-bar-chart .header {
+        display: flex;
+        align-items: center;
+        /*justify-content: space-between;*/
+        margin: 0;
+        font-weight: 400;
+    }
+
+    .feedback-bar-chart .body {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        margin-top: 1rem;
+    }
+
+    .feedback-bar-chart .body > div {
+        display: flex;
+        align-items: center;
+    }
+
+        .feedback-bar-chart .body > div > span {
+            width: 5rem;
+            font-weight: 700;
+        }
+
+        .feedback-bar-chart .body .bar {
+            position: relative;
+            display: flex;
+            align-items: center;
+            flex: 1;
+            height: 1.3rem;
+            background: #ededed;
+            /*border: 1px solid #D0D5DD;*/
+            border-radius: 0.2rem;
+        }
+
+        .feedback-bar-chart .body .bar-fill {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            background: #ffc926;
+            border-radius: 0.2rem;
+        }
+
+        .feedback-bar-chart .body text {
+            position: absolute;
+            left: 0.5rem;
+            text-align: center;
+            line-height: 0.7rem;
+        }
+
+#profile-container .feedback {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+    #profile-container .feedback i {
+        color: #ffc926;
+    }
+
+#profile-container > section {
+    display: flex;
+    flex-direction: column;
+}
+
+#profile-container .feedback > div {
+    padding: 1rem;
+    background: #ffffffaa;
+    border-radius: 1rem;
+    box-shadow: var(--container-box-shadow);
+}
+
+    #profile-container .feedback > div:nth-of-type(2n) {
+        background: #f3f2ed;
+    }
+
+.feedback-bar-chart .header i {
+    font-size: 1.5rem;
+    color: #ffc926;
+}
+
+        .feedback-bar-chart .header .overall-rating {
+            display: flex;
+            justify-content: space-between;
+            flex: 1;
+            padding-left: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #999;
+        }

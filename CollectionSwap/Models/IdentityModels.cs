@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
@@ -41,6 +42,17 @@ namespace CollectionSwap.Models
             return status;
         }
         public virtual Address Address { get; set; }
+        public double Rating
+        {
+            get
+            {
+                using (ApplicationDbContext db = new ApplicationDbContext())
+                {
+                    var rating = db.Feedbacks.Where(f => f.Receiver.Id == this.Id).Select(f => f.Rating).ToList();
+                    return rating.Count == 0 ? -1 : rating.Average();
+                }
+            }
+        }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>

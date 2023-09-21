@@ -1,5 +1,4 @@
 ﻿@model CollectionSwap.Models.IndexViewModel
-@using CollectionSwap.Helpers
 @using Newtonsoft.Json;
 @{
     string statusMessage = ViewBag.Status;
@@ -206,7 +205,7 @@
                             </div>
                             <div class="profile">
                                 <span>
-                                    By: <a class="load-content" href="/Manage/Member/@feedback.Sender.UserName">@feedback.Sender.UserName</a><br />
+                                    <strong>By: <a class="load-content" href="/Manage/Member/@feedback.Sender.UserName">@feedback.Sender.UserName</a></strong><br />
                                     @feedback.DatePlaced.ToString("dd/MM/yyyy")
                                 </span>
                             </div>

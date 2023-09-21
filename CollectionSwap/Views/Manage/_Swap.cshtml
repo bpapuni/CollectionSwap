@@ -18,7 +18,7 @@
     var userId = sender.Id;
     var otherUserId = receiver.Id;
     var otherUserName = receiver.UserName;
-    var rating = Model.Rating;
+    var rating = userId == sender.Id ? receiver.Rating : sender.Rating;
     var Validation = Model.Validation;
 }
 
@@ -39,7 +39,7 @@
             }
         </div>
         <div class="swap-profile" data-user-id="@(swapStatus == "charity" ? sender.Id : receiver.Id)">
-            <div>
+            <div class="rating">
                 @if (swapStatus == "charity")
                 {
                     <span class="header">
@@ -55,20 +55,30 @@
 
                 @if (rating == -1)
                 {
-                    <span class="new">New</span>
+                    <span class="new-swapper">New</span>
                 }
-                <span class="swap-rating">
-                    @for (int i = 0; i < Math.Floor(rating); i++)
-                    {
-                        <i class="fa fa-star"></i>
-                    }
-                    @if (rating % 1 == 0.5)
-                    {
-                        <i class="fa fa-star-half"></i>
-                    }
-                </span>
+                else
+                {
+                    <span class="swap-rating">
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            if (i < Math.Floor(rating))
+                            {
+                                <i class="fa-solid fa-star"></i>
+                            }
+                            else if (i < Math.Ceiling(rating))
+                            {
+                                <i class="fa-solid fa-star-half-alt"></i>
+                            }
+                            else
+                            {
+                                <i class="fa-regular fa-star"></i>
+                            }
+                        }
+                    </span>
+                }
             </div>
-            <div class="swap-portrait">Pic</div>
+            @*<div class="swap-portrait">Pic</div>*@
         </div>
     </div>
 

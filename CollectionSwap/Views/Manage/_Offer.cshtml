@@ -19,12 +19,12 @@
     var swapSize = Model.Swap.SwapSize;
     var isCharity = swapSize == 0;
     var swapStatus = isCharity ? $"charity-{Model.Swap.Status}" : Model.Swap.Status;
-    var rating = Model.Rating;
+    var rating = userId == sender.Id ? receiver.Rating : sender.Rating;
     var hasSentItems = userId == sender.Id ? Model.Swap.SenderConfirmSent : Model.Swap.ReceiverConfirmSent;
     var hasReceivedItems = userId == sender.Id ? Model.Swap.SenderConfirmReceived : Model.Swap.ReceiverConfirmReceived;
 
     var feedback = Model.Feedback;
-    var commenets = feedback != null ? JsonConvert.DeserializeObject<List<string>>(feedback.Comments) : null;
+    var comments = feedback != null ? JsonConvert.DeserializeObject<List<string>>(feedback.Comments) : null;
 
     var otherUserId = userId == sender.Id ? receiver.Id : sender.Id;
     var otherUserName = userId == sender.Id ? receiver.UserName : sender.UserName;
@@ -103,26 +103,35 @@
                     <span>for @swapSize Swap</span>
                 </div>
                 <div class="swap-profile" data-user-id="@otherUserId">
-                    <div>
+                    <div class="rating">
                         <span class="header">
                             Swap with <a class="load-content" href="/Manage/Member/@otherUserName">@otherUserName</a>
                         </span>
                         @if (rating == -1)
                         {
-                            <span class="new">New</span>
+                            <span class="new-swapper">New</span>
                         }
-                        <span class="swap-rating">
-                            @for (int i = 0; i < Math.Floor(rating); i++)
-                            {
-                                <i class="fa fa-star"></i>
-                            }
-                            @if (rating % 1 == 0.5)
-                            {
-                                <i class="fa fa-star-half"></i>
-                            }
-                        </span>
+                        else
+                        {
+                            <span class="swap-rating">
+                                @for (int i = 0; i < 5; i++)
+                                {
+                                    if (i < Math.Floor(rating))
+                                    {
+                                        <i class="fa-solid fa-star"></i>
+                                    }
+                                    else if (i < Math.Ceiling(rating))
+                                    {
+                                        <i class="fa-solid fa-star-half-alt"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa-regular fa-star"></i>
+                                    }
+                                }
+                            </span>
+                        }
                     </div>
-                    <div class="swap-portrait">Pic</div>
                 </div>
             </div>
 

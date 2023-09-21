@@ -53,7 +53,7 @@
                     Duplicates = duplicates
                 };
                 <div class="column align-items-center gap-1">
-                    <a class="collection-button" href=@Url.Content($"/Manage/YourCollections/{userCollection.Id}")>
+                    <a class="collection-button load-content" href=@Url.Content($"/Manage/YourCollections/{userCollection.Id}")>
                         @Html.Partial("_CollectionButton", collectionButton)
                     </a>
 

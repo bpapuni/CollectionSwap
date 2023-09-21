@@ -1,18 +1,115 @@
-﻿@{
+﻿@using CollectionSwap.Models;
+@using Newtonsoft.Json;
+@using System.Linq;
+@{
     ViewBag.Title = "Profile";
-    var feedbacks = ViewBag.Feedbacks;
-    var username = Request.Form["id"];
+    var feedbacks = ViewBag.Feedbacks as List<Feedback>;
+    var ratings = new List<Feedback>[5];
+    ratings[4] = feedbacks.Count > 0 ? feedbacks.Where(f => f.Rating == 5).ToList() : null;
+    ratings[3] = feedbacks.Count > 0 ? feedbacks.Where(f => f.Rating == 4).ToList() : null;
+    ratings[2] = feedbacks.Count > 0 ? feedbacks.Where(f => f.Rating == 3).ToList() : null;
+    ratings[1] = feedbacks.Count > 0 ? feedbacks.Where(f => f.Rating == 2).ToList() : null;
+    ratings[0] = feedbacks.Count > 0 ? feedbacks.Where(f => f.Rating == 1).ToList() : null;
+    double average = feedbacks.Count > 0 ? feedbacks.Select(f => f.Rating).Average() : 0;
+    var username = Request.Form["username"];
 }
 
 <div class="row">
     <button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-angle-left"></i></button>
     <span class="header">
-        @username
+        @username's Feedback
     </span>
 </div>
 
-@foreach (var feedback in feedbacks)
-{
-    @feedback.Sender.UserName
-}
+@*@foreach (var feedback in feedbacks)
+    {
+        @feedback.Sender.UserName
+    }*@
 
+<section>
+    @if (feedbacks.Count > 0)
+    {
+        <div class="feedback-bar-chart">
+            <div class="header">
+                <span>
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        if (i < Math.Floor(average))
+                        {
+                            <i class="fa-solid fa-star"></i>
+                        }
+                        else if (i < Math.Ceiling(average))
+                        {
+                            <i class="fa-solid fa-star-half-alt"></i>
+                        }
+                        else
+                        {
+                            <i class="fa-regular fa-star"></i>
+                        }
+                    }
+                </span>
+                <div class="overall-rating">
+                    <span>@Math.Round(average, 1) out of 5 Stars</span>
+                    <span>Based on @feedbacks.Count Reviews</span>
+                </div>
+            </div>
+
+            <div class="body">
+                @for (int i = 0; i < 5; i++)
+                {
+                    <div>
+                        @{
+                            var width = ratings[4 - i].Count / (double)feedbacks.Count * 100;
+                        }
+                        <span>@(5 - i) Stars</span>
+                        <span class="bar">
+                            <text>@ratings[4 - i].Count</text>
+                            <span class="bar-fill" style="width: @($"{width}%")"></span>
+                        </span>
+                    </div>
+                }
+            </div>
+
+        </div>
+
+        <div class="feedback">
+            @foreach (var feedback in feedbacks)
+            {
+                var comments = JsonConvert.DeserializeObject<List<string>>(feedback.Comments);
+                <div>
+                    <div class="rating">
+                        @for (int i = 0; i < feedback.Rating; i++)
+                        {
+                            <i class="fa-solid fa-star"></i>
+                        }
+                        @for (int i = 0; i < 5 - feedback.Rating; i++)
+                        {
+                            <i class="fa-regular fa-star"></i>
+                        }
+                    </div>
+                    <div class="comments">
+                        @if (comments.Count == 0)
+                        {
+                            <text>User chose not to leave any comments</text>
+                        }
+                        else
+                        {
+                            <ul class="feedback-list">
+                                @foreach (var comment in comments)
+                                {
+                                    <li>@comment</li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                    <div class="profile">
+                        <span>
+                            <strong>By: @feedback.Sender.UserName</strong><br />
+                            @feedback.DatePlaced.ToString("dd/MM/yyyy")
+                        </span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</section>

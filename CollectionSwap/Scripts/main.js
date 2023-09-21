@@ -80,7 +80,7 @@ $(document).on("click", ".load-content", function (event) {
     history.pushState({ partialName: action }, null, `/${controller}/${historyEntry}`);
 
     const formData = new FormData();
-    formData.append("id", id);
+    formData.append(action == "Member" ? "username" : "id", id);
 
     action = action.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches").replace("SwapHistory", "SwapHistoryPartial");;
 
@@ -196,6 +196,8 @@ function ScrollRowBack(e) {
     history.pushState({ partialName: partialName }, null, `/Manage/${partialName}`);
 
     scrollRow.animate({ scrollLeft: 0 }, 250, "swing", () => {
+        var numChildren = scrollRow.children().length;
+        console.log(numChildren);
         $(document).scrollTop(0);
         scrollRow.css("scroll-snap-type", "x mandatory");
         scrollRow.children("div:gt(1)").addClass("d-none");
