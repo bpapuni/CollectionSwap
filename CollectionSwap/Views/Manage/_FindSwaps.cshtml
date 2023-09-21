@@ -16,7 +16,10 @@
             <div class="status-message">@statusMessage</div>
         }
     </div>
-    <div id="find-swaps-container" class="@(matchingSwapViews == null || matchingSwapViews.Count == 0 ? "no-swaps" : "")">
+    <div class="page-navigation">
+        <span class="header d-none"></span>
+    </div>
+    <div data-nav="Find Swaps" id="find-swaps-container" class="@(matchingSwapViews == null || matchingSwapViews.Count == 0 ? "no-swaps" : "")">
         <span class="header">Find Swaps</span>
         <section class="column">
             @if (userAddress == null)

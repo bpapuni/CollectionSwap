@@ -42,7 +42,7 @@
 }
 
 <div class="row">
-    <button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-angle-left"></i></button>
+    <button class="scroll-row-button" onclick="ScrollRowBack(null)"><i class="fa fa-angle-left"></i></button>
     <span class="header">
         @heading
     </span>
@@ -105,7 +105,7 @@
                 <div class="swap-profile" data-user-id="@otherUserId">
                     <div class="rating">
                         <span class="header">
-                            Swap with <a class="load-content" href="/Manage/Member/@otherUserName">@otherUserName</a>
+                            Swap with <a class="load-content" data-nav="Member Profile" href="/Manage/Member/@otherUserName">@otherUserName</a>
                         </span>
                         @if (rating == -1)
                         {

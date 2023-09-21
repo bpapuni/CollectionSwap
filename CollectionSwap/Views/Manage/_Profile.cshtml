@@ -15,16 +15,11 @@
 }
 
 <div class="row">
-    <button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-angle-left"></i></button>
+    <button class="scroll-row-button" onclick="ScrollRowBack(null)"><i class="fa fa-angle-left"></i></button>
     <span class="header">
         @username's Feedback
     </span>
 </div>
-
-@*@foreach (var feedback in feedbacks)
-    {
-        @feedback.Sender.UserName
-    }*@
 
 <section>
     @if (feedbacks.Count > 0)

@@ -12,7 +12,10 @@
             <div class="status-message">@statusMessage</div>
         }
     </div>
-    <div id="your-collections-container">
+    <div class="page-navigation">
+        <span class="header d-none"></span>
+    </div>
+    <div data-nav="Your Collections" id="your-collections-container">
         <span class="header">
             Your Collections
         </span>
@@ -67,12 +70,12 @@
         </section>
     </div>
 
-    <div id="create-user-collection-container" class="d-none">
+    <div data-nav="Create New Collection" id="create-user-collection-container" class="d-none">
         @Html.Partial("_CreateUserCollection", Model)
     </div>
 
 
-    <div id="user-collection-container" class="d-none">
+    <div data-nav="Edit Collection" id="user-collection-container" class="d-none">
         @if (Model.EditCollection != null)
         {
             @Html.Partial("_UserCollection", Model.EditCollection)

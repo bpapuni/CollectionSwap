@@ -519,7 +519,7 @@ namespace CollectionSwap.Controllers
 
             ycModel.EditCollection = userCollection;
             partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#user-collection-container" }, ScrollTarget = "#user-collection-container" }, JsonRequestBehavior.AllowGet);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container", second = "#user-collection-container" }, ScrollTarget = "#user-collection-container" }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]

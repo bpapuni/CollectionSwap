@@ -1,6 +1,7 @@
 ﻿@model CollectionSwap.Models.SwapHistoryViewModel
 @using Microsoft.AspNet.Identity
 @{
+    string navText = ViewBag.NavText;
     string statusMessage = ViewBag.Status;
     var userId = User.Identity.GetUserId();
     var displayableSwaps = Model.Swaps.Where(s => (s.Sender.Id == userId && s.SenderDisplaySwap) || (s.Receiver.Id == userId && s.ReceiverDisplaySwap));
@@ -13,7 +14,10 @@
             <div class="status-message">@statusMessage</div>
         }
     </div>
-    <div id="history-container">
+    <div class="page-navigation">
+        <span class="header d-none"></span>
+    </div>
+    <div data-nav="Swap History" id="history-container">
         <span class="header">Swap History</span>
 
         <section class="column">
@@ -45,11 +49,11 @@
                             <td>@swap.Collection.Name</td>
                             @if (swap.SenderId == userId)
                             {
-                                <td><a class="load-content" href="/Manage/Member/@swap.Receiver.UserName">@swap.Receiver.UserName</a></td>
+                                <td><a class="load-content" data-nav="View Swap" href="/Manage/Member/@swap.Receiver.UserName">@swap.Receiver.UserName</a></td>
                             }
                             else if (swap.ReceiverId == userId)
                             {
-                                <td><a class="load-content" href="/Manage/Member/@swap.Sender.UserName">@swap.Sender.UserName</a></td>
+                                <td><a class="load-content" data-nav="View Swap" href="/Manage/Member/@swap.Sender.UserName">@swap.Sender.UserName</a></td>
                             }
                             @switch (swapStatus)
                             {
@@ -175,25 +179,25 @@
                                         <td>
                                             @if (swap.SenderId == userId)
                                             {
-                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">Review Request</a>
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content" data-nav="View Swap">Review Request</a>
                                             }
                                             else
                                             {
                                                 <span>Waiting for @swap.Sender.UserName</span><br />
-                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">(View Request)</a>
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content" data-nav="View Swap">(View Request)</a>
                                             }
                                         </td>
                                         break;
                                     case "charity-canceled":
                                         <td>
                                             <span>Canceled</span><br />
-                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">(View Request)</a>
+                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content" data-nav="View Swap">(View Request)</a>
                                         </td>
                                         break;
                                     case "charity-declined":
                                         <td>
                                             <span>Declined</span><br />
-                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">(View Request)</a>
+                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content" data-nav="View Swap">(View Request)</a>
                                         </td>
                                         break;
                                     case "charity-confirmed":
@@ -201,7 +205,7 @@
                                         {
                                             <td>
                                                 <span>Complete</span><br />
-                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">(View Swap)</a>
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content" data-nav="View Swap">(View Swap)</a>
                                             </td>
                                         }
                                         else if (hasSentItems && hasReceivedItems)
@@ -225,11 +229,11 @@
                                             @if (swap.SenderId == userId)
                                             {
                                                 <span>Waiting for @swap.Receiver.UserName</span><br />
-                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">(View Offer)</a>
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content" data-nav="View Swap">(View Offer)</a>
                                             }
                                             else
                                             {
-                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">Review Offer</a>
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content" data-nav="View Swap">Review Offer</a>
                                             }
                                         </td>
                                         break;
@@ -237,12 +241,12 @@
                                         <td>
                                             @if (swap.SenderId == userId)
                                             {
-                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">Confirm Swap</a>
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content" data-nav="View Swap">Confirm Swap</a>
                                             }
                                             else
                                             {
                                                 <span>Waiting for @swap.Sender.UserName</span><br />
-                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">(View Offer)</a>
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content" data-nav="View Swap">(View Offer)</a>
                                             }
                                         </td>
                                         break;
@@ -251,7 +255,7 @@
                                         {
                                             <td>
                                                 <span>Complete</span><br />
-                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">(View Swap)</a>
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content" data-nav="View Swap">(View Swap)</a>
                                             </td>
                                         }
                                         else if (hasSentItems && hasReceivedItems)
@@ -273,7 +277,7 @@
                                     default:
                                         <td>
                                             <span>Complete</span><br />
-                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">(View Swap)</a>
+                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content" data-nav="View Swap">(View Swap)</a>
                                         </td>
                                         break;
                                 }
@@ -284,14 +288,13 @@
             </table>
         </section>
     </div>
-    <div id="offer-container" class="d-none">
+    <div data-nav="View Swap" id="offer-container" class="d-none">
         @if (Model.Offer != null)
         {
             @Html.Partial("_Offer", Model.Offer)
         }
     </div>
-
-    <div id="profile-container" class="d-none">
+    <div data-nav="Member Profile" id="profile-container" class="d-none">
         @if (ViewBag.ViewProfile == true)
         {
             @Html.Partial("_Profile")

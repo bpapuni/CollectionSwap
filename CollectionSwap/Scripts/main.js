@@ -68,13 +68,14 @@ $(document).on("click", ".manage-container-nav a", function (event) {
     LoadPartial(partialName, $(this).attr("href"));
 });
 
-// Anchor click listeners
-$(document).on("click", ".load-content", function (event) {
-    event.preventDefault();
+// Load content anchor click listeners
+$(document).on("click", ".load-content", function (e) {
+    e.preventDefault();
     $("#create-user-collection-container").addClass("d-none");
-    const controller = $(this).attr("href").split("/")[1];
-    var action = $(this).attr("href").split("/")[2];
-    const id = $(this).attr("href").split("/")[3];
+    const self = $(this);
+    const controller = self.attr("href").split("/")[1];
+    var action = self.attr("href").split("/")[2];
+    const id = self.attr("href").split("/")[3];
 
     const historyEntry = id == undefined ? action : `${action}/${id}`;
     history.pushState({ partialName: action }, null, `/${controller}/${historyEntry}`);
@@ -82,9 +83,19 @@ $(document).on("click", ".load-content", function (event) {
     const formData = new FormData();
     formData.append(action == "Member" ? "username" : "id", id);
 
-    action = action.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches").replace("SwapHistory", "SwapHistoryPartial");;
+    action = action.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches").replace("SwapHistory", "SwapHistoryPartial");
 
     HandleFormSubmit(`/${controller}/${action}`, "POST", formData);
+});
+
+// Breadcrumb navigation button click listeners
+$(document).on("click", ".navigation", function (e) {
+    e.preventDefault();
+    const self = $(this);
+    const navTarget = $("div[data-nav]").filter(function () {
+        return $(this).data("nav") === self.text();
+    });
+    ScrollRowBack(navTarget);
 });
 
 // Form submit listeners Handle loading form submission partial views
@@ -156,11 +167,12 @@ function HandleFormSubmit(url, type, formData) {
                 $(result.ScrollTarget).parent().animate({ scrollLeft: offset }, 250, "swing", () => {
                     $(result.ScrollTarget).parent().css("scroll-snap-type", "x mandatory")
                 });
+
+                UpdateNavText();
             }
 
             if (result.ScrollRowBack) {
-                var button = $(".scroll-row-button");
-                ScrollRowBack(button);
+                ScrollRowBack(null);
             }
 
             if (result.FormResetTarget) {
@@ -178,6 +190,7 @@ function HandleFormSubmit(url, type, formData) {
     });
 }
 
+// Add new user collection
 function OpenCreateUserCollection(e) {
     var scrollRow = $(e).closest(".scroll-snap-row");
     scrollRow.css("scroll-snap-type", "none");
@@ -187,27 +200,30 @@ function OpenCreateUserCollection(e) {
     scrollRow.animate({ scrollLeft: 1100 }, 200, "swing", () => {
         $(document).scrollTop(0);
         scrollRow.css("scroll-snap-type", "x mandatory")
+        UpdateNavText();
     });
 }
 
-function ScrollRowBack(e) {
-    var scrollRow = $(".scroll-snap-row");
-    var pages = scrollRow.children().length - 1;
-    var previousPageIndex = $(".scroll-snap-row").children("div.d-none:first").index() == -1 ? pages - 1 : $(".scroll-snap-row").children("div.d-none:first").index() - 2;
-    var offset = previousPageIndex == 0 ? 0 : 16 + (1120 + 48) * (previousPageIndex - 1);
+// Page navigation back button
+function ScrollRowBack(target) {
+    const scrollRow = $(".scroll-snap-row");
+    const pages = scrollRow.children().length - 3;                                // -1 cause we want 0 index, -2 for the first 2 elements we want to ignore
+    const currentPageIndex = pages - scrollRow.children("div.d-none").length;
+    const previousPageIndex = target == null ? currentPageIndex - 1 : $("div[data-nav]").index(target);
+    const offset = previousPageIndex == 0 ? 0 : 16 + (1120 + 48) * previousPageIndex;
 
-    scrollRow.children().css("scroll-snap-align", "none");
     scrollRow.css("scroll-snap-type", "none");
     history.pushState({ partialName: partialName }, null, `/Manage/${partialName}`);
 
     scrollRow.animate({ scrollLeft: offset }, 250, "swing", () => {
         $(document).scrollTop(0);
-        scrollRow.children().css("scroll-snap-align", "start");
         scrollRow.css("scroll-snap-type", "x mandatory");
-        scrollRow.children(`div:gt(${previousPageIndex})`).addClass("d-none");
+        scrollRow.children(`div[data-nav]:gt(${previousPageIndex})`).addClass("d-none");
+        UpdateNavText();
     });
 }
 
+// Plus / Minus item listener
 $(document).on("click", ".counter-add, .counter-minus", function () {
     let input = $(this).parent().find("[name='quantity']");
     let itemId = input.prop("id");
@@ -223,6 +239,7 @@ $(document).on("click", ".counter-add, .counter-minus", function () {
     }
 });
 
+// Item number input listener
 $(document).on("input", "#user-collection-container [type='number']", function () {
     let input = $(this);
     let itemId = input.prop("id");
@@ -257,6 +274,7 @@ $(document).on("click", ".star-button", function () {
     }
 });
 
+// Items sent button clicked from mailing container
 $(document).on("click", ".confirm-sent-items > a", function (event) {
     event.preventDefault();
     const formData = new FormData();
@@ -299,6 +317,7 @@ $(document).on("change", ".charity-checkbox", function () {
     HandleFormSubmit("/Manage/ToggleCharityCollection", "POST", formData);
 });
 
+// Swap history filter listeners
 $(document).on("click", ".swap-history-filters > span", function () {
     $(".swap-history-filters > span").removeClass("selected");
     $(this).addClass("selected");
@@ -308,6 +327,7 @@ $(document).on("click", ".swap-history-filters > span", function () {
     HandleFormSubmit("/Manage/FilterSwaps", "POST", formData);
 });
 
+// Edit sponsor on Manage Collections page
 function EditSponsor(e) {
     const form = $("#edit-sponsor-form")[0];
 
@@ -322,6 +342,7 @@ function EditSponsor(e) {
     HandleFormSubmit("/Manage/EditSponsor", "POST", formData);
 }
 
+// Edit sponsor on Home page
 function EditHomeSponsors(e) {
     const editButton = $(e);
     const buttontext = editButton.text();
@@ -337,6 +358,7 @@ function EditHomeSponsors(e) {
     }
 }
 
+// Edit sponsor button click listener on Home page
 $(document).on("click", ".add-sponsor.editing a", function (e) {
     e.preventDefault();
     const selectedImage = $(e.target);
@@ -392,4 +414,21 @@ function ResetHomePageSponsorForms() {
     addSponsorForm.find("label.admin").addClass("placeholder");
     $("#edit-sponsor-form").css({ display: "none" });
     $("#add-sponsor-form").css({ display: "flex" });
+}
+
+function UpdateNavText() {
+    const openPages = $("div[data-nav]").not(".d-none");
+    const navHtml = openPages
+        .map(function () {
+            return `<button class="navigation">${$(this).data("nav") }</button>`;
+        })
+        .get()
+        .join(" > ");
+
+    if (openPages.length > 1) {
+        $(".page-navigation > .header").html(navHtml).removeClass("d-none");
+    }
+    else {
+        $(".page-navigation > .header").html(navHtml).addClass("d-none");
+    }
 }

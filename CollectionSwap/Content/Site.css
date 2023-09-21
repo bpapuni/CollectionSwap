@@ -1329,7 +1329,7 @@ button.close {
     display: flex;
     flex-direction: row;
     gap: 0 4rem;
-    padding: 0 1rem 1rem 1rem;
+    padding: 0.5rem 1rem 1rem 1rem;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-behavior: auto;
@@ -1343,6 +1343,28 @@ button.close {
     .status-container {
         position: absolute;
     }
+
+.page-navigation {
+    position: absolute;
+    top: -1.5rem;
+    z-index: 99;
+}
+
+.page-navigation .header {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 400;
+}
+
+.page-navigation .header > button {
+    padding: 0;
+    color: black;
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
 
 .scroll-snap-row::-webkit-scrollbar {
     display: none;
@@ -1360,7 +1382,7 @@ button.close {
     width: 2.5rem;
     height: 2.5rem;
     padding-right: 0.5rem;
-    margin: 2.6rem 1rem 0 0;
+    margin: 2rem 1rem 1rem 0;
     font-size: 2rem;
     color: white;
     background: black;
@@ -1795,9 +1817,9 @@ nav a {
 .header {
     position: relative;
     font-size: 1.6rem;
-    line-height: 1.2;
+    line-height: 1.6;
     font-weight: 700;
-    margin: 3rem 0 1rem;
+    margin: 2rem 0 1rem;
 }
 
 .flex-1 {
@@ -2754,8 +2776,6 @@ input[type=number] {
     border-radius: 100%;
     z-index: 99;
 }
-
-
 
 #offer-container {
     display: flex;
