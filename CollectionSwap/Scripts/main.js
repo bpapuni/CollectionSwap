@@ -69,7 +69,7 @@ $(document).on("click", ".manage-container-nav a", function (event) {
 });
 
 // Anchor click listeners
-$(document).on("click", "a.collection-button, #history-container a, a.user-collection", function (event) {
+$(document).on("click", ".load-content", function (event) {
     event.preventDefault();
     $("#create-user-collection-container").addClass("d-none");
     const controller = $(this).attr("href").split("/")[1];
@@ -152,8 +152,8 @@ function HandleFormSubmit(url, type, formData) {
                 var offset = $(result.ScrollTarget).prop("offsetLeft");
                 $(result.ScrollTarget).parent().css("scroll-snap-type", "none");
 
+                $(document).scrollTop(0);
                 $(result.ScrollTarget).parent().animate({ scrollLeft: offset }, 250, "swing", () => {
-                    $(document).scrollTop(0);
                     $(result.ScrollTarget).parent().css("scroll-snap-type", "x mandatory")
                 });
             }
@@ -164,7 +164,6 @@ function HandleFormSubmit(url, type, formData) {
             }
 
             if (result.FormResetTarget) {
-                console.log("Fired");
                 ResetHomePageSponsorForms();
                 $(":input", result.FormResetTarget)
                     .not(":button, :submit, :reset, :hidden")

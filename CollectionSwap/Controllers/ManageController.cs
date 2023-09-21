@@ -89,13 +89,22 @@ namespace CollectionSwap.Controllers
 
             return View(model);
         }
+
         public ActionResult Member(string username, int? id)
         {
-            var user = db.Users.Where(u => u.UserName.ToLower() == username.ToLower()).FirstOrDefault();
+            var userId = User.Identity.GetUserId();
 
+            var receivedFeedback = db.Feedbacks.Where(f => f.Receiver.Id == userId).ToList();
+            var model = new IndexViewModel
+            {
+                ChangeAddress = db.Addresses.Where(address => address.UserId == userId).ToList().LastOrDefault(),
+                RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).ToList()
+            };
 
-            ViewBag.User = user;
-            return View("Profile");
+            ViewBag.ViewProfile = true;
+            ViewBag.Feedbacks = db.Feedbacks.Where(f => f.Receiver.UserName == username).ToList();
+            var partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#profile-container" }, ScrollTarget = "#profile-container" }, JsonRequestBehavior.AllowGet);
         }
 
         //
@@ -569,7 +578,7 @@ namespace CollectionSwap.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<ActionResult> DeleteUserCollection(int id)
+        public ActionResult DeleteUserCollection(int id)
         {
             var partial = String.Empty;
             var userCollection = db.UserCollections.Find(id);

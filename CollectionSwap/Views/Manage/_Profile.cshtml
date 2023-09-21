@@ -1,7 +1,18 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Profile";
+    var feedbacks = ViewBag.Feedbacks;
+    var username = Request.Form["id"];
 }
 
-@ViewBag.User.UserName
+<div class="row">
+    <button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-angle-left"></i></button>
+    <span class="header">
+        @username
+    </span>
+</div>
+
+@foreach (var feedback in feedbacks)
+{
+    @feedback.Sender.UserName
+}
 

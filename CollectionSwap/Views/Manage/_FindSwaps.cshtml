@@ -9,52 +9,63 @@
     string statusMessage = ViewBag.Status;
 }
 
-<div id="find-swaps-container" class="@(matchingSwapViews == null || matchingSwapViews.Count == 0 ? "no-swaps" : "")">
-    @if (!String.IsNullOrEmpty(statusMessage))
-    {
-        <div class="status-message">@statusMessage</div>
-    }
-    <span class="header">Find Swaps</span>
-    <section class="column">
-        @if (userAddress == null)
+<div class="scroll-snap-row">
+    <div class="status-container">
+        @if (!String.IsNullOrEmpty(statusMessage))
         {
-            <div>
-                <strong>Added your address?</strong><br />
-                <span>Before you can request a swap you must <a href="/Manage/Account">add your mailing address</a></span>
+            <div class="status-message">@statusMessage</div>
+        }
+    </div>
+    <div id="find-swaps-container" class="@(matchingSwapViews == null || matchingSwapViews.Count == 0 ? "no-swaps" : "")">
+        <span class="header">Find Swaps</span>
+        <section class="column">
+            @if (userAddress == null)
+            {
+                <div>
+                    <strong>Added your address?</strong><br />
+                    <span>Before you can request a swap you must <a href="/Manage/Account">add your mailing address</a></span>
+                </div>
+                <br />
+            }
+            <h3>Select a collection to find swaps for:</h3>
+            <br />
+            <div class="user-collection-container">
+                @foreach (UserCollection userCollection in Model.UserCollections)
+                {
+                    @Html.ActionLink(userCollection.Name, "FindSwaps", "Manage", new { id = userCollection.Id }, new { @class = $"submit-button load-content user-collection {(selectedCollection != null && userCollection.Id == selectedCollection.Id ? "selected" : "")}" })
+                }
             </div>
             <br />
-        }
-        <h3>Select a collection to find swaps for:</h3>
-        <br />
-        <div class="user-collection-container">
-            @foreach (UserCollection userCollection in Model.UserCollections)
-            {
-                @Html.ActionLink(userCollection.Name, "FindSwaps", "Manage", new { id = userCollection.Id }, new { @class = $"submit-button user-collection {(selectedCollection != null && userCollection.Id == selectedCollection.Id ? "selected" : "")}" })
-            }
-        </div>
-        <br />
 
-        @*Available Swaps*@
-        @if (matchingSwapViews != null)
+            @*Available Swaps*@
+            @if (matchingSwapViews != null)
+            {
+                if (matchingSwapViews.Count > 0)
+                {
+                    <div class="column gap-1 min-width-100">
+                        <h3>Available Swaps:</h3>
+
+                        @for (int i = 0; i < matchingSwapViews.Count; i++)
+                        {
+                            @Html.Partial("_Swap", matchingSwapViews[i]);
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="swap-none-found">
+                        <img src="~/Content/images/doodles/14.png" />
+                        <span>Sorry, no macthes found</span>
+                    </div>
+                }
+            }
+        </section>
+    </div>
+
+    <div id="profile-container" class="d-none">
+        @if (ViewBag.ViewProfile == true)
         {
-            if (matchingSwapViews.Count > 0)
-            {
-                <div class="column gap-1 min-width-100">
-                    <h3>Available Swaps:</h3>
-
-                    @for (int i = 0; i < matchingSwapViews.Count; i++)
-                    {
-                        @Html.Partial("_Swap", matchingSwapViews[i]);
-                    }
-                </div>
-            }
-            else
-            {
-                <div class="swap-none-found">
-                    <img src="~/Content/images/doodles/14.png" />
-                    <span>Sorry, no macthes found</span>
-                </div>
-            }
+            @Html.Partial("_Profile")
         }
-    </section>
+    </div>
 </div>

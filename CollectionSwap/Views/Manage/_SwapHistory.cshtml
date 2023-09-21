@@ -45,11 +45,11 @@
                             <td>@swap.Collection.Name</td>
                             @if (swap.SenderId == userId)
                             {
-                                <td>@swap.Receiver.UserName</td>
+                                <td><a class="load-content" href="/Manage/Member/@swap.Receiver.UserName">@swap.Receiver.UserName</a></td>
                             }
                             else if (swap.ReceiverId == userId)
                             {
-                                <td>@swap.Sender.UserName</td>
+                                <td><a class="load-content" href="/Manage/Member/@swap.Sender.UserName">@swap.Sender.UserName</a></td>
                             }
                             @switch (swapStatus)
                             {
@@ -175,25 +175,25 @@
                                         <td>
                                             @if (swap.SenderId == userId)
                                             {
-                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">Review Request</a>
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">Review Request</a>
                                             }
                                             else
                                             {
                                                 <span>Waiting for @swap.Sender.UserName</span><br />
-                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Request)</a>
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">(View Request)</a>
                                             }
                                         </td>
                                         break;
                                     case "charity-canceled":
                                         <td>
                                             <span>Canceled</span><br />
-                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Request)</a>
+                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">(View Request)</a>
                                         </td>
                                         break;
                                     case "charity-declined":
                                         <td>
                                             <span>Declined</span><br />
-                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Request)</a>
+                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">(View Request)</a>
                                         </td>
                                         break;
                                     case "charity-confirmed":
@@ -201,7 +201,7 @@
                                         {
                                             <td>
                                                 <span>Complete</span><br />
-                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Swap)</a>
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">(View Swap)</a>
                                             </td>
                                         }
                                         else if (hasSentItems && hasReceivedItems)
@@ -225,11 +225,11 @@
                                             @if (swap.SenderId == userId)
                                             {
                                                 <span>Waiting for @swap.Receiver.UserName</span><br />
-                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Offer)</a>
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">(View Offer)</a>
                                             }
                                             else
                                             {
-                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">Review Offer</a>
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">Review Offer</a>
                                             }
                                         </td>
                                         break;
@@ -237,12 +237,12 @@
                                         <td>
                                             @if (swap.SenderId == userId)
                                             {
-                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">Confirm Swap</a>
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">Confirm Swap</a>
                                             }
                                             else
                                             {
                                                 <span>Waiting for @swap.Sender.UserName</span><br />
-                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Offer)</a>
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">(View Offer)</a>
                                             }
                                         </td>
                                         break;
@@ -251,7 +251,7 @@
                                         {
                                             <td>
                                                 <span>Complete</span><br />
-                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Swap)</a>
+                                                <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">(View Swap)</a>
                                             </td>
                                         }
                                         else if (hasSentItems && hasReceivedItems)
@@ -273,7 +273,7 @@
                                     default:
                                         <td>
                                             <span>Complete</span><br />
-                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer">(View Swap)</a>
+                                            <a href="/Manage/SwapHistory/@swap.Id" class="swap-offer load-content">(View Swap)</a>
                                         </td>
                                         break;
                                 }
@@ -290,10 +290,11 @@
             @Html.Partial("_Offer", Model.Offer)
         }
     </div>
+
     <div id="profile-container" class="d-none">
-        @if (Model.UserFeedbacks != null)
+        @if (ViewBag.ViewProfile == true)
         {
-            @Html.Partial("_Profile", Model.UserFeedbacks)
+            @Html.Partial("_Profile")
         }
     </div>
 </div>

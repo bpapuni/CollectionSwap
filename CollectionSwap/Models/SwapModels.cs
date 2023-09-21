@@ -231,7 +231,6 @@ namespace CollectionSwap.Models
                 return new ProcessSwapResult { Succeeded = false, Error = ex.Message };
             }
         }
-
         public void Confirm(string type, string userId, ApplicationDbContext db)
         {
             var isCharity = this.SenderRequestedItems == "[]" || this.ReceiverRequestedItems == "[]";

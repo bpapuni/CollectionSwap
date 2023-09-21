@@ -13,11 +13,11 @@ namespace CollectionSwap
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
-            //routes.MapRoute(
-            //    name: "MemberProfile",
-            //    url: "Manage/Member/{username}/{id}",
-            //    defaults: new { controller = "Members", action = "DisplayProfile", id = UrlParameter.Optional }
-            //);
+            routes.MapRoute(
+                name: "MemberProfile",
+                url: "Manage/Member/{username}/{id}",
+                defaults: new { controller = "Manage", action = "Index", id = UrlParameter.Optional }
+            );
 
             routes.MapRoute(
                 name: "FindSwaps",
