@@ -191,16 +191,20 @@ function OpenCreateUserCollection(e) {
 }
 
 function ScrollRowBack(e) {
-    var scrollRow = $(e).closest(".scroll-snap-row");
+    var scrollRow = $(".scroll-snap-row");
+    var pages = scrollRow.children().length - 1;
+    var previousPageIndex = $(".scroll-snap-row").children("div.d-none:first").index() == -1 ? pages - 1 : $(".scroll-snap-row").children("div.d-none:first").index() - 2;
+    var offset = previousPageIndex == 0 ? 0 : 16 + (1120 + 48) * (previousPageIndex - 1);
+
+    scrollRow.children().css("scroll-snap-align", "none");
     scrollRow.css("scroll-snap-type", "none");
     history.pushState({ partialName: partialName }, null, `/Manage/${partialName}`);
 
-    scrollRow.animate({ scrollLeft: 0 }, 250, "swing", () => {
-        var numChildren = scrollRow.children().length;
-        console.log(numChildren);
+    scrollRow.animate({ scrollLeft: offset }, 250, "swing", () => {
         $(document).scrollTop(0);
+        scrollRow.children().css("scroll-snap-align", "start");
         scrollRow.css("scroll-snap-type", "x mandatory");
-        scrollRow.children("div:gt(1)").addClass("d-none");
+        scrollRow.children(`div:gt(${previousPageIndex})`).addClass("d-none");
     });
 }
 
