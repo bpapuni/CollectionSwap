@@ -2,17 +2,22 @@
 @using Newtonsoft.Json;
 @{
     string statusMessage = ViewBag.Status;
+    string errorMessage = ViewBag.Error;
     var recentFeedback = Model.RecentFeedback;
 }
 
 <div class="scroll-snap-row">
     <div class="status-container">
-        @if (!String.IsNullOrEmpty(statusMessage))
+        @if (!String.IsNullOrEmpty(statusMessage) || !String.IsNullOrEmpty(errorMessage))
         {
             <div class="status-message">@statusMessage</div>
+            <div class="status-message error">@errorMessage</div>
         }
     </div>
-    <div id="account-container">
+    <div class="page-navigation">
+        <span class="header d-none"></span>
+    </div>
+    <div data-nav="Account" id="account-container">
         <section class="gap-2">
             <div>
                 <span class="header">Change Email</span>
@@ -163,7 +168,7 @@
             }
         </section>
 
-        @if (recentFeedback.Count > 0)
+        @if (recentFeedback != null && recentFeedback.Count > 0)
         {
             <span class="header">
                 Recent Feedback
@@ -180,7 +185,7 @@
                             <div class="rating">
                                 @for (int i = 0; i < feedback.Rating; i++)
                                 {
-                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa fa-star"></i>
                                 }
                                 @for (int i = 0; i < 5 - feedback.Rating; i++)
                                 {

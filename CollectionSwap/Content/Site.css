@@ -419,7 +419,7 @@ body.support-bg-split .main-navbar {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    gap: 8rem;
+    gap: 1rem;
     padding: 3rem 0;
     font-family: 'Montserrat Alternates';
 }
@@ -471,16 +471,32 @@ section.showcase div:first-child::after {
     pointer-events: none;
 }
 
-#support-container div.row {
-    justify-content: space-around;
-    /*margin-top: 8rem;*/
+#support-container section.quick-start-steps {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    flex: 1;
+    flex-wrap: nowrap;
+    width: 60rem;
+    margin-top: 4rem
 }
 
-#support-container div.row > * {
+#support-container section.faq {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
     flex: 1;
-    width: 20rem;
+    flex-wrap: nowrap;
+    width: 60rem;
 }
-       
+
+    #support-container section.quick-start-steps .header,
+    #support-container section.faq .header {
+        margin: 2rem 0 0rem;
+    }
+
 
 #about-container p {
     width: 40rem;
@@ -1440,6 +1456,13 @@ button.close {
     z-index: 999;
     animation: slide 3s ease-in;
 }
+
+    .status-message.error {
+        color: var(--brand-red);
+        font-weight: 600;
+        border: 1px solid var(--brand-red);
+        background: #eabebe;
+    }
 
 @keyframes slide {
     0% {
@@ -2506,7 +2529,7 @@ input[type=number] {
     /*width: 100%;
         height: 100%;*/
     padding: 0 0.5rem;
-    font-family: 'Font Awesome 6 Free';
+    font-family: 'FontAwesome';
     font-weight: 900;
     font-size: 1.5rem;
     color: var(--brand-green);
@@ -2532,7 +2555,7 @@ input[type=number] {
     /*width: 100%;
     height: 100%;*/
     padding: 0 0.5rem;
-    font-family: 'Font Awesome 6 Free';
+    font-family: 'FontAwesome';
     font-weight: 900;
     font-size: 1.5rem;
     color: var(--brand-red);

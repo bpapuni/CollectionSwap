@@ -27,7 +27,6 @@ namespace CollectionSwap.Models
 
     public class FindSwapsViewModel
     {
-        //public List<ApplicationUser> Users { get; set; }
         public List<Collection> Collections { get; set; }
         public List<UserCollection> UserCollections { get; set; }
         public List<Swap> UserSwaps { get; set; }
@@ -40,7 +39,6 @@ namespace CollectionSwap.Models
         public Swap Swap { get; set; }
         public Feedback Feedback { get; set; }
         public Address Address { get; set; }
-        public double Rating { get; set; }
         public ValidateResult Validation { get; set; }
     }
 

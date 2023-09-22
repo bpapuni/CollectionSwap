@@ -3,12 +3,11 @@
 @{
     List<string> items = JsonConvert.DeserializeObject<List<string>>(Model.Collection.ItemListJSON);
     int[] userItems = JsonConvert.DeserializeObject<int[]>(Model.ItemCountJSON);
-    string statusMessage = ViewBag.Status;
     var sponsor = Model.Collection.Sponsor;
 }
 
 <div class="row">
-    <button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-angle-left"></i></button>
+    <button class="scroll-row-button" onclick="ScrollRowBack(null)"><i class="fa fa-angle-left"></i></button>
 
     <span class="header">
         Edit Collection
@@ -17,10 +16,6 @@
 
 <section>
     <div class="collection-items-container">
-        @if (!String.IsNullOrEmpty(statusMessage))
-        {
-            <div class="status-message">@statusMessage</div>
-        }
         <span>
             <strong>Completed a swap?</strong> <br />
             Tick the 'Items Received' checkbox in Swap History to automatically update this collection with your new items.

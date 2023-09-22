@@ -128,3 +128,25 @@
     font-family: 'Plus Jakarta Sans';
     src: url('../fonts/plusjakartasans-variablefont_wght.ttf') format('truetype');
 }
+
+@font-face {
+    font-family: "Font Awesome 6 Free";
+    src: url('../Fonts/fa-brands-400.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: "Font Awesome 6 Free";
+    src: url('../Fonts/fa-solid-900.ttf') format('truetype');
+    font-weight: 900;
+}
+
+@font-face {
+    font-family: "Font Awesome 6 Free";
+    src: url('../Fonts/fa-regular-400.ttf') format('truetype');
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: "Font Awesome 6 Free";
+    src: url('../Fonts/fa-v4compatibility.ttf') format('truetype');
+}

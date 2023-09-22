@@ -141,7 +141,7 @@ namespace CollectionSwap.Models
             public string Error { get; set; }
         }
 
-        public async Task<CreateAddressResult> CreateAddressAsync(string userId, ApplicationDbContext db)
+        public CreateAddressResult CreateAddress(string userId, ApplicationDbContext db)
         {
             try
             {
@@ -167,7 +167,7 @@ namespace CollectionSwap.Models
                 user.Address = this;
                 db.Entry(user).State = EntityState.Modified;
 
-                await db.SaveChangesAsync();
+                db.SaveChanges();
                 return new CreateAddressResult { Succeeded = true };
             }
             catch (Exception ex)

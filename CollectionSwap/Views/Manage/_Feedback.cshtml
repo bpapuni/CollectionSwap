@@ -3,8 +3,6 @@
 @using Microsoft.AspNet.Identity
 @using Newtonsoft.Json
 @{
-    string statusMessage = ViewBag.Status;
-
     var userId = User.Identity.GetUserId();
     var sender = Model.Swap.Sender;
     var receiver = Model.Swap.Receiver;

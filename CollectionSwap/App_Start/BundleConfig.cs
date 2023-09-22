@@ -20,14 +20,11 @@ namespace CollectionSwap
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
-            //bundles.Add(new Bundle("~/bundles/bootstrap").Include(
-            //          "~/Scripts/bootstrap.js"));
-
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      //"~/Content/bootstrap.css",
-                      "~/Content/font-awesome.min.css",
-                      "~/Content/fonts.css",
-                      "~/Content/site.css"));
+                      "~/Content/fontawesome.css",
+                      "~/Content/fontawesome.min.css",
+                      "~/Content/Fonts.css",
+                      "~/Content/Site.css"));
         }
     }
 }

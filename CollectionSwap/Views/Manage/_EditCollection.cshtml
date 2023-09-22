@@ -3,10 +3,11 @@
 @{
     List<string> items = JsonConvert.DeserializeObject<List<string>>(Model.Collection.ItemListJSON);
     string statusMessage = ViewBag.Status;
+    string errorMessage = ViewBag.Error;
     var sponsor = Model.Collection.Sponsor;
 }
 <div class="row">
-    <button class="scroll-row-button" onclick="ScrollRowBack(this)"><i class="fa fa-angle-left"></i></button>
+    <button class="scroll-row-button" onclick="ScrollRowBack(null)"><i class="fa fa-angle-left"></i></button>
 
     <span class="header">
         Edit Collection

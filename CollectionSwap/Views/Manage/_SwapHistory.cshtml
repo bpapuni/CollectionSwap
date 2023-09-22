@@ -1,17 +1,18 @@
 ﻿@model CollectionSwap.Models.SwapHistoryViewModel
 @using Microsoft.AspNet.Identity
 @{
-    string navText = ViewBag.NavText;
     string statusMessage = ViewBag.Status;
+    string errorMessage = ViewBag.Error;
     var userId = User.Identity.GetUserId();
     var displayableSwaps = Model.Swaps.Where(s => (s.Sender.Id == userId && s.SenderDisplaySwap) || (s.Receiver.Id == userId && s.ReceiverDisplaySwap));
 }
 
 <div class="scroll-snap-row">
     <div class="status-container">
-        @if (!String.IsNullOrEmpty(statusMessage))
+        @if (!String.IsNullOrEmpty(statusMessage) || !String.IsNullOrEmpty(errorMessage))
         {
             <div class="status-message">@statusMessage</div>
+            <div class="status-message error">@errorMessage</div>
         }
     </div>
     <div class="page-navigation">
@@ -42,6 +43,13 @@
                 </thead>
 
                 <tbody>
+                    <!--<tr>
+                        <td colspan="7" style="text-align: center">
+                            You have no swaps in progress.<br />
+                            <a href="/Manage/YourCollections">Add a collection</a> to get started.-->
+                            @*Click <a href="/Manage/FindSwaps">here</a> to start searching for swaps.*@
+                        <!--</td>
+                    </tr>-->
                     @foreach (var swap in displayableSwaps)
                     {
                         var swapStatus = swap.SenderRequestedItems == "[]" || swap.ReceiverRequestedItems == "[]" ? $"charity-{swap.Status}" : swap.Status;

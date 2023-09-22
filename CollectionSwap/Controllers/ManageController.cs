@@ -267,25 +267,29 @@ namespace CollectionSwap.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<ActionResult> ChangeAddress(IndexViewModel model)
+        public ActionResult ChangeAddress(IndexViewModel model)
         {
             var partial = String.Empty;
+            var userId = User.Identity.GetUserId();
+            var receivedFeedback = db.Feedbacks.Where(f => f.Receiver.Id == userId).ToList();
+            model.RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).ToList();
             if (!ModelState.IsValid)
             {
                 partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-                return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
+                return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" } });
             }
 
-            var result = await model.ChangeAddress.CreateAddressAsync(User.Identity.GetUserId(), db);
+            var result = model.ChangeAddress.CreateAddress(User.Identity.GetUserId(), db);
             if (!result.Succeeded)
             {
+                ViewBag.Error = result.Error;
                 partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-                return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
+                return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" } });
             }
 
-            ViewBag.Status = "Your mailing address has been changed.";
+            ViewBag.Status = "Your mailing address has been updated.";
             partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" } });
         }
 
         //
