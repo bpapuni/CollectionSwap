@@ -71,6 +71,8 @@
             @foreach (var feedback in feedbacks)
             {
                 var comments = JsonConvert.DeserializeObject<List<string>>(feedback.Comments);
+                var positiveComments = Feedback.PositiveComments;
+                var negativeComments = Feedback.NegativeComments;
                 <div>
                     <div class="rating">
                         @for (int i = 0; i < feedback.Rating; i++)
@@ -89,10 +91,10 @@
                         }
                         else
                         {
-                            <ul class="feedback-list">
+                            <ul class="feedback-list disabled">
                                 @foreach (var comment in comments)
                                 {
-                                    <li>@comment</li>
+                                    <li class="@(positiveComments.Contains(comment) ? "positive" : negativeComments.Contains(comment) ? "negative" : "")">@comment</li>
                                 }
                             </ul>
                         }

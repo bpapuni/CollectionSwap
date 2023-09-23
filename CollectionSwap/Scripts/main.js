@@ -88,6 +88,14 @@ $(document).on("click", ".load-content", function (e) {
     HandleFormSubmit(`/${controller}/${action}`, "POST", formData);
 });
 
+function OpenOffer(swapId) {
+    const formData = new FormData();
+    formData.append("id", swapId);
+
+    history.pushState({ partialName: "SwapHistory" }, null, `/Manage/SwapHistory/${swapId}`);
+    HandleFormSubmit(`/Manage/SwapHistoryPartial`, "POST", formData);
+}
+
 // Breadcrumb navigation button click listeners
 $(document).on("click", ".navigation", function (e) {
     e.preventDefault();
@@ -252,7 +260,7 @@ $(document).on("input", "#user-collection-container [type='number']", function (
 });
 
 // Feedback option toggle
-$(document).on("click", ".feedback-list li", function () {
+$(document).on("click", ".feedback-list:not(.disabled) li", function () {
     if ($(".feedback-form-container .submit-button").is(":disabled")) {
         return;
     }
@@ -261,7 +269,7 @@ $(document).on("click", ".feedback-list li", function () {
 
 // Feedback star toggle
 $(document).on("click", ".star-button", function () {
-    if ($(".feedback-form-container .submit-button").is(":disabled")) {
+    if ($("#feedback-container > .submit-button").is(":disabled")) {
         return;
     }
     const index = $(".star-button").index(this);

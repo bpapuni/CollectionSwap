@@ -147,7 +147,7 @@ function AcceptSwap(e, swapId) {
     HandleFormSubmit("/Swap/ProcessSwap", "POST", formData);
 }
 
-function confirmSwap(e, swapId) {
+function ConfirmSwap(e, swapId) {
     const swapContainer = $(e).parent().prev(".swap-container");
     const requestedItems = swapContainer.find(".swap-items").eq(0).find(".swap-item > img").map(function () {
         return +$(this).data("item-id");

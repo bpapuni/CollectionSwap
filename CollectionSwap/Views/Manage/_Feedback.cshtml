@@ -53,53 +53,58 @@
         @using (Html.BeginForm("PlaceFeedback", "Manage", FormMethod.Post, new { id = "feedback-form" }))
         {
             <div class="feedback-options">
-                <ul class="feedback-list">
-                    @{
-
-                        var positiveComments = Feedback.PositiveComments;
-                        var negativeComments = Feedback.NegativeComments;
-
-                        if (userComments != null)
+                @{
+                    var positiveComments = Feedback.PositiveComments;
+                    var negativeComments = Feedback.NegativeComments;
+                }
+                <span class="feedback-header">Positive Feedback</span>
+                <ul class="feedback-list positive @(userComments != null ? "disabled" : "")">
+                    @if (userComments != null)
+                    {
+                        foreach (var comment in positiveComments)
                         {
-                            <span class="feedback-header">Positive Feedback</span>
-                            foreach (var comment in positiveComments)
+                            if (userComments.Contains(comment))
                             {
-                                if (userComments.Contains(comment))
-                                {
-                                    <li class="selected">@comment</li>
-                                }
-                                else
-                                {
-
-                                    <li>@comment</li>
-                                }
+                                <li class="selected">@comment</li>
                             }
-                            <span class="feedback-header">Negative Feedback</span>
-                            foreach (var comment in negativeComments)
+                            else
                             {
-                                if (userComments.Contains(comment))
-                                {
-                                    <li class="selected">@comment</li>
-                                }
-                                else
-                                {
 
-                                    <li>@comment</li>
-                                }
+                                <li>@comment</li>
                             }
                         }
-                        else
+                    }
+                    else
+                    {
+                        foreach (var comment in positiveComments)
                         {
-                            <span class="feedback-header">Positive Feedback</span>
-                            foreach (var comment in positiveComments)
+                            <li>@comment</li>
+                        }
+                    }
+                </ul>
+
+                <span class="feedback-header">Negative Feedback</span>
+                <ul class="feedback-list negative @(userComments != null ? "disabled" : "")">
+                    @if (userComments != null)
+                    {
+                        foreach (var comment in negativeComments)
+                        {
+                            if (userComments.Contains(comment))
                             {
+                                <li class="selected">@comment</li>
+                            }
+                            else
+                            {
+
                                 <li>@comment</li>
                             }
-                            <span class="feedback-header">Negative Feedback</span>
-                            foreach (var comment in negativeComments)
-                            {
-                                <li>@comment</li>
-                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var comment in negativeComments)
+                        {
+                            <li>@comment</li>
                         }
                     }
                 </ul>
