@@ -585,7 +585,7 @@ namespace CollectionSwap.Models
                     "Items arrived quickly",
                     "Items packaged well",
                     "Items in good condition",
-                    "Swapper donated cards",
+                    "Generous swapper",
                     "Would gladly swap with again",
                 };
             }

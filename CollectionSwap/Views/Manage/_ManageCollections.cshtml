@@ -7,12 +7,17 @@
 }
 
 <div class="scroll-snap-row">
-    <div id="manage-collections-container">
+    <div class="status-container">
         @if (!String.IsNullOrEmpty(statusMessage) || !String.IsNullOrEmpty(errorMessage))
         {
             <div class="status-message">@statusMessage</div>
             <div class="status-message error">@errorMessage</div>
         }
+    </div>
+    <div class="page-navigation">
+        <span class="header d-none"></span>
+    </div>
+    <div data-nav="Manage Collections" id="manage-collections-container">
         <span class="header">
             Available Collections
         </span>
@@ -48,7 +53,7 @@
         </section>
     </div>
 
-    <div id="edit-collection-container" class="d-none">
+    <div data-nav="Edit Collection" id="edit-collection-container" class="d-none">
         @if (Model.EditCollection != null)
         {
             @Html.Partial("_EditCollection", Model.EditCollection)

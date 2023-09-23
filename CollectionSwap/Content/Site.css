@@ -216,7 +216,7 @@ h1, h2, h3, h4 {
     font-family: 'Montserrat Alternates';
 }
 
-    #home-container > section {
+    #home-container > section:not(.add-sponsor) {
         display: flex;
         align-items: flex-end;
         gap: 12rem;
@@ -1470,6 +1470,7 @@ button.close {
 .page-navigation {
     position: absolute;
     top: -1.5rem;
+    padding-left: 0.5rem;
     z-index: 99;
 }
 

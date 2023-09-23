@@ -313,7 +313,7 @@ $(document).on("change", ".swap-confirm", function () {
             }
         }
     } else {
-        //this.checked = true;
+        this.checked = true;
     }
 });
 
