@@ -172,13 +172,13 @@
                             <span class="duplicate-missing-items-error">
                                 @if (validation.LowInventoryItems.Count > 0)
                                 {
-                                    <text><i class="fa-solid fa-circle-exclamation"></i> You do not have enough copies of the marked item(s) to accept this swap.</text>
+                                    <p><i class="fa-solid fa-circle-exclamation"></i> You do not have enough copies of the marked item(s) to accept this swap.</p>
                                 }
                                 else if (validation.DuplicateOfferedItems.Count > 0)
                                 {
 
-                                    <text><i class="fa-solid fa-circle-exclamation"></i> Several users have requested these items.</text>
-                                    <text>If you do not have enough copies in your collection you'll be unable to accept this swap.</text>
+                                    <p><i class="fa-solid fa-circle-exclamation"></i> Several users have requested these items.</p>
+                                    <p>If you do not have enough copies in your collection you'll be unable to accept this swap.</p>
                                 }
                             </span>
 
@@ -201,7 +201,7 @@
                             <span class="duplicate-missing-items-error">
                                 @if (validation.DuplicateRequestItems.Count > 0)
                                 {
-                                    <text><i class="fa-solid fa-circle-exclamation"></i> You have already requested the marked item(s) from one or more users.</text>
+                                    <p><i class="fa-solid fa-circle-exclamation"></i> You have already requested the marked item(s) from one or more users.</p>
                                 }
                             </span>
 
@@ -311,7 +311,7 @@
                             <span class="duplicate-missing-items-error">
                                 @if (validation.DuplicateRequestItems.Count > 0)
                                 {
-                                    <text><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from one or more users.</text>
+                                    <p><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from one or more users.</p>
                                 }
                             </span>
 
@@ -334,7 +334,7 @@
                             <span class="duplicate-missing-items-error">
                                 @if (validation.LowInventoryItems.Count > 0)
                                 {
-                                    <text><i class="fa-solid fa-circle-exclamation"></i> You will not have enough copies of the marked item(s) to complete all pending swaps (this included).</text>
+                                    <p><i class="fa-solid fa-circle-exclamation"></i> You will not have enough copies of the marked item(s) to complete all pending swaps (this included).</p>
                                 }
                             </span>
 
@@ -358,13 +358,13 @@
                             <span class="duplicate-missing-items-error">
                                 @if (validation.LowInventoryItems.Count > 0)
                                 {
-                                    <text><i class="fa-solid fa-circle-exclamation"></i> You do not have enough copies of the marked item(s) to accept this swap.</text>
+                                    <p><i class="fa-solid fa-circle-exclamation"></i> You do not have enough copies of the marked item(s) to accept this swap.</p>
                                 }
                                 else if (validation.DuplicateOfferedItems.Count > 0)
                                 {
 
-                                    <text><i class="fa-solid fa-circle-exclamation"></i> Several users have requested these items.</text>
-                                    <text>If you do not have enough copies in your collection you'll be unable to accept this swap.</text>
+                                    <p><i class="fa-solid fa-circle-exclamation"></i> Several users have requested these items.</p>
+                                    <p>If you do not have enough copies in your collection you'll be unable to accept this swap.</p>
                                 }
                             </span>
 
@@ -372,7 +372,7 @@
                             <div class="swap-items">
                                 @foreach (var itemId in receiverRequestedItems)
                                 {
-                                    <div class="swap-item swap-request-item @(validation.LowInventoryItems.Contains(itemId) || validation.DuplicateRequestItems.Contains(itemId) ? "attention" : "")">
+                                    <div class="swap-item @(validation.LowInventoryItems.Contains(itemId) || validation.DuplicateRequestItems.Contains(itemId) ? "attention" : "")">
                                         <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
                                     </div>
                                 }
@@ -387,7 +387,7 @@
                             <span class="duplicate-missing-items-error">
                                 @if (validation.DuplicateRequestItems.Count > 0)
                                 {
-                                    <text><i class="fa-solid fa-circle-exclamation"></i> You have already requested the marked item(s) from one or more users.</text>
+                                    <p><i class="fa-solid fa-circle-exclamation"></i> You have already requested the marked item(s) from one or more users.</p>
                                 }
                             </span>
 
@@ -414,7 +414,7 @@
                             @if (validation.DuplicateRequestItems.Count > 0)
                             {
                                 <span class="duplicate-missing-items-error">
-                                    <text><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from one or more users.</text>
+                                    <p><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from one or more users.</p>
                                 </span>
                             }
 
@@ -436,13 +436,13 @@
                             <span class="duplicate-missing-items-error">
                                 @if (validation.LowInventoryItems.Count > 0)
                                 {
-                                    <text><i class="fa-solid fa-circle-exclamation"></i> You will not have enough copies of the marked item(s) to complete all pending swaps (this included).</text>
+                                    <p><i class="fa-solid fa-circle-exclamation"></i> You will not have enough copies of the marked item(s) to complete all pending swaps (this included).</p>
                                 }
                                 else if (validation.DuplicateAcceptedItems.Count > 0)
                                 {
 
-                                    <text><i class="fa-solid fa-circle-exclamation"></i> Several users have requested these items.</text>
-                                    <text>If you do not have enough copies in your collection you'll be unable to accept this swap.</text>
+                                    <p><i class="fa-solid fa-circle-exclamation"></i> Several users have requested these items.</p>
+                                    <p>If you do not have enough copies in your collection you'll be unable to accept this swap.</p>
                                 }
                             </span>
 
@@ -484,7 +484,7 @@
                             @if (validation.DuplicateRequestItems.Count > 0)
                             {
                                 <span class="duplicate-missing-items-error">
-                                    <text><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from several users.</text>
+                                    <p><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from several users.</p>
                                 </span>
                             }
 
@@ -525,7 +525,7 @@
                             <span class="duplicate-missing-items-error">
                                 @if (userId == sender.Id)
                                 {
-                                    <text><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from several users.</text>
+                                    <p><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from several users.</p>
                                 }
                             </span>
                         }
@@ -564,8 +564,8 @@
                             if (userId == sender.Id)
                             {
                                 <span class="duplicate-missing-items-error">
-                                    <text><i class="fa-solid fa-circle-exclamation"></i> Several users have requested the marked item(s).</text>
-                                    <text>If you do not have enough copies in your collection you'll be unable to confirm this swap.</text>
+                                    <p><i class="fa-solid fa-circle-exclamation"></i> Several users have requested the marked item(s).</p>
+                                    <p>If you do not have enough copies in your collection you'll be unable to confirm this swap.</p>
                                 </span>
                             }
                         }
@@ -574,8 +574,8 @@
                         @if (validation.LowInventoryItems.Count > 0 && userId == sender.Id)
                         {
                             <span class="duplicate-missing-items-error">
-                                <text><i class="fa-solid fa-circle-exclamation"></i> You do not have enough copies of the marked item(s) to confirm this swap.</text>
-                                @*<text>If you do not have enough copies in your collection you'll be unable to confirm this swap.</text>*@
+                                <p><i class="fa-solid fa-circle-exclamation"></i> You do not have enough copies of the marked item(s) to confirm this swap.</p>
+                                @*<p>If you do not have enough copies in your collection you'll be unable to confirm this swap.</p>*@
                             </span>
                         }
 
@@ -653,7 +653,7 @@
                             {
                                 foreach (var itemId in receiverRequestedItems)
                                 {
-                                    <div class="swap-item swap-request-item">
+                                    <div class="swap-item">
                                         <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
                                     </div>
                                 }
@@ -661,7 +661,7 @@
                         </div>
                     </div>
                 }
-                else if (swapStatus == "canceled")
+                else if (swapStatus == "canceled" || swapStatus == "declined")
                 {
                     if (userId == sender.Id)
                     {
@@ -673,7 +673,7 @@
                             <div class="swap-items">
                                 @foreach (var itemId in receiverRequestedItems)
                                 {
-                                    <div class="swap-item swap-request-item">
+                                    <div class="swap-item">
                                         <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
                                     </div>
                                 }
@@ -704,7 +704,7 @@
                             <div class="swap-items">
                                 @foreach (var itemId in receiverRequestedItems)
                                 {
-                                    <div class="swap-item swap-request-item">
+                                    <div class="swap-item">
                                         <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
                                     </div>
                                 }
@@ -718,7 +718,7 @@
                             <div class="swap-items sender-items">
                                 @foreach (var itemId in senderRequestedItems)
                                 {
-                                    <div class="swap-item swap-request-item">
+                                    <div class="swap-item">
                                         <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
                                     </div>
                                 }

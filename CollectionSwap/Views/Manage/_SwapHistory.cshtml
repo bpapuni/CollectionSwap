@@ -286,6 +286,11 @@
                                             </td>
                                         }
                                         break;
+                                    case "declined":
+                                        <td onclick="OpenOffer(@swap.Id)">
+                                            <span class="status-declined">Declined</span>
+                                        </td>
+                                        break;
                                     default:
                                         <td onclick="OpenOffer(@swap.Id)">
                                             <span class="status-complete">Complete</span>
