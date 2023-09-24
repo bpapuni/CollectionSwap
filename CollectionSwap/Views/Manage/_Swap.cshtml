@@ -1,5 +1,4 @@
 ﻿@model CollectionSwap.Models.SwapViewModel
-@using Microsoft.AspNet.Identity
 @using Newtonsoft.Json;
 @{
     var sender = Model.Swap.Sender;
@@ -30,7 +29,7 @@
         <div class="swap-info">
             @if (swapStatus == "charity")
             {
-                <span class="swap-size">Free</span>
+                <span class="swap-size">Charity</span>
             }
             else if (swapStatus == "swap")
             {
@@ -99,9 +98,9 @@
                 </div>
 
                 <div class="swap-items">
-                    @foreach (var itemId in senderRequestedItems) // Opposite to normal, we actually need to display the items you'd normall request
+                    @foreach (var itemId in senderRequestedItems) // Opposite to normal, we actually need to display the items you'd normally request
                     {
-                        <div class="swap-item swap-request-item @(Validation.DuplicateRequestItems.Contains(itemId) ? "attention" : "")" onclick="SelectItem(this)">
+                        <div class="swap-item @(Validation.DuplicateRequestItems.Contains(itemId) ? "attention" : "")" onclick="SelectItem(this)">
                             <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
                         </div>
                     }

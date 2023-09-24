@@ -363,7 +363,7 @@ namespace CollectionSwap.Models
                     // sender is now the other user and needs none of the receiver's (user's) items
                     senderNeededItems = new List<int>();
                     // All items in the senders user collection are needed by the receiver
-                    receiverNeededItems
+                    receiverNeededItems = ucItems
                         .Select((value, index) => new { Value = value, Index = index })
                         .Where(item => item.Value != 0)
                         .Select(item => item.Index)
