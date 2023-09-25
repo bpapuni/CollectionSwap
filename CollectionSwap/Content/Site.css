@@ -2409,7 +2409,7 @@ input[type=number] {
     z-index: 99;
 }
 
-  /*  .swap-container:nth-of-type(4n-2) .swap-container-header {
+/*  .swap-container:nth-of-type(4n-2) .swap-container-header {
     background: var(--brand-green);
 }
 
@@ -2420,11 +2420,10 @@ input[type=number] {
 .swap-container:nth-of-type(4n) .swap-container-header {
     background: var(--brand-red);
 }*/
-
-    .swap-container-header .header {
-        font-family: 'Montserrat Alternates';
-        font-weight: 600;
-    }
+.swap-container-header .header {
+    font-family: 'Montserrat Alternates';
+    font-weight: 600;
+}
 
 .swap-profile {
     display: flex;
@@ -2444,11 +2443,15 @@ input[type=number] {
         justify-content: flex-end;
     }
 
-        .swap-profile > .rating > .header {
-            font-size: 1rem;
-            margin: 0;
-            padding: 0;
-        }
+.swap-container-header .header {
+    font-size: 1rem;
+    margin: 0;
+    padding: 0;
+}
+
+.swap-info .header {
+    font-size: 1.7rem;
+}
 
 .new-swapper {
     margin: 0;
@@ -2589,6 +2592,29 @@ input[type=number] {
     flex-wrap: wrap;
     padding: 1rem 0 0 0;
 }
+
+    .swap-item > .charity-item-count {
+        position: absolute;
+        right: -1rem;
+        top: -1rem;
+        display: flex;
+        align-items: flex-end;
+        width: auto;
+        aspect-ratio: 1/1;
+        padding: 0.5rem;
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 1rem;
+        line-height: 1;
+        color: #242822;
+        background: white;
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .swap-item > .charity-item-count > strong {
+        font-size: 0.6rem;
+    }
 
 .selection-pool {
     position: relative;

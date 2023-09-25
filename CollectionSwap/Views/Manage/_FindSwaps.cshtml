@@ -12,9 +12,12 @@
 
 <div class="scroll-snap-row">
     <div class="status-container">
-        @if (!String.IsNullOrEmpty(statusMessage) || !String.IsNullOrEmpty(errorMessage))
+        @if (!String.IsNullOrEmpty(statusMessage))
         {
             <div class="status-message">@statusMessage</div>
+        }
+        else if (!String.IsNullOrEmpty(errorMessage))
+        {
             <div class="status-message error">@errorMessage</div>
         }
     </div>

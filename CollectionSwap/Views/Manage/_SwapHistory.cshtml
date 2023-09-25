@@ -9,9 +9,12 @@
 
 <div class="scroll-snap-row">
     <div class="status-container">
-        @if (!String.IsNullOrEmpty(statusMessage) || !String.IsNullOrEmpty(errorMessage))
+        @if (!String.IsNullOrEmpty(statusMessage))
         {
             <div class="status-message">@statusMessage</div>
+        }
+        else if (!String.IsNullOrEmpty(errorMessage))
+        {
             <div class="status-message error">@errorMessage</div>
         }
     </div>
@@ -24,7 +27,7 @@
         <section class="column">
             <div class="swap-history-filters">
                 <span data-status="all" class="selected">All</span>
-                <span data-status="offered">Offered</span>
+                <span data-status="requested">Requested</span>
                 <span data-status="accepted">Accepted</span>
                 <span data-status="confirmed">Confirmed</span>
                 <span data-status="completed">Completed</span>
@@ -92,7 +95,7 @@
                                 case "charity-completed":
                                     if (swap.SenderId == userId)
                                     {
-                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="You offered this swap, waiting for @swap.Receiver.UserName to accept or decline.">@Html.Partial("_SwapProgress", swap)</td>
+                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="You requested this swap, waiting for @swap.Receiver.UserName to accept or decline.">@Html.Partial("_SwapProgress", swap)</td>
                                     }
                                     else
                                     {
@@ -105,14 +108,14 @@
                                 case "charity-declined":
                                     <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="@swap.Sender.UserName has donated the items to another user">@Html.Partial("_SwapProgress", swap)</td>
                                     break;
-                                case "offered":
+                                case "requested":
                                     if (swap.SenderId == userId)
                                     {
-                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="You offered this swap, waiting for @swap.Receiver.UserName to accept or decline.">@Html.Partial("_SwapProgress", swap)</td>
+                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="You requested this swap, waiting for @swap.Receiver.UserName to accept or decline.">@Html.Partial("_SwapProgress", swap)</td>
                                     }
                                     else
                                     {
-                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="You've been offered this swap, waiting for you to accept or decline.">@Html.Partial("_SwapProgress", swap)</td>
+                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="This swap has been requested from you, waiting for you to accept or decline.">@Html.Partial("_SwapProgress", swap)</td>
                                     }
                                     break;
                                 case "accepted":
@@ -236,7 +239,7 @@
                                             </td>
                                         }
                                         break;
-                                    case "offered":
+                                    case "requested":
                                         <td onclick="OpenOffer(@swap.Id)">
                                             @if (swap.SenderId == userId)
                                             {
@@ -244,7 +247,7 @@
                                             }
                                             else
                                             {
-                                                <span class="status-pending">Review Offer</span>
+                                                <span class="status-pending">Review Request</span>
                                             }
                                         </td>
                                         break;

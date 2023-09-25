@@ -76,7 +76,7 @@ namespace CollectionSwap.Controllers
                 case "charity-canceled":
                     TempData["Status"] = "You've canceled this request";
                     return RedirectToAction("SwapHistoryPartial", "Manage");
-                case "offered":
+                case "requested":
                     TempData["Status"] = "Your swap request has been sent";
                     return RedirectToAction("DisplaySwapMatches", "Manage", new { id = request.SenderUserCollectionId });
                 case "accepted":
@@ -87,8 +87,8 @@ namespace CollectionSwap.Controllers
                     return RedirectToAction("SwapHistoryPartial", "Manage");
                 case "canceled":
                     TempData["Status"] = "You've canceled this swap";
-                    //return RedirectToAction("SwapHistoryPartial", "Manage");
-                    return Json(new { ScrollRowBack = true });
+                    return RedirectToAction("SwapHistoryPartial", "Manage");
+                    //return Json(new { ScrollRowBack = true });
                 case "declined":
                     TempData["Status"] = "You've declined this swap";
                     return RedirectToAction("SwapHistoryPartial", "Manage");

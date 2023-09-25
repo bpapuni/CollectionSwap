@@ -149,7 +149,7 @@ namespace CollectionSwap.Controllers
             ViewBag.User = db.Users.Find(userId);
             ViewBag.Status = TempData["Status"];
             var partial = Helper.RenderViewToString(ControllerContext, "_FindSwaps", model, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#find-swaps-container" } }, JsonRequestBehavior.AllowGet);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" } }, JsonRequestBehavior.AllowGet);
         }
 
         //
@@ -703,7 +703,6 @@ namespace CollectionSwap.Controllers
                     .OrderBy(swap => swap.Status == "declined" ? 0 : 1)
                     .ThenBy(swap => swap.Status == "canceled" ? 0 : 1)
                     .ThenBy(swap => swap.Status == "requested" ? 0 : 1)
-                    .ThenBy(swap => swap.Status == "offered" ? 0 : 1)
                     .ThenBy(swap => swap.Status == "accepted" ? 0 : 1)
                     .ThenBy(swap => swap.Status == "confirmed" ? 0 : 1)
                     .ThenBy(swap => swap.Status == "completed" ? 0 : 1)
@@ -725,8 +724,8 @@ namespace CollectionSwap.Controllers
             {
                 case "all":
                     break;
-                case "offered":
-                    swaps = swaps.Where(swap => swap.Status == "offered").ToList();
+                case "requested":
+                    swaps = swaps.Where(swap => swap.Status == "requested").ToList();
                     break;
                 case "accepted":
                     swaps = swaps.Where(swap => swap.Status == "accepted").ToList();
@@ -745,7 +744,6 @@ namespace CollectionSwap.Controllers
             swaps = swaps.OrderBy(swap => swap.Status == "declined" ? 0 : 1)
                 .ThenBy(swap => swap.Status == "canceled" ? 0 : 1)
                 .ThenBy(swap => swap.Status == "requested" ? 0 : 1)
-                .ThenBy(swap => swap.Status == "offered" ? 0 : 1)
                 .ThenBy(swap => swap.Status == "accepted" ? 0 : 1)
                 .ThenBy(swap => swap.Status == "confirmed" ? 0 : 1)
                 .ThenBy(swap => swap.Status == "completed" ? 0 : 1)
@@ -818,9 +816,8 @@ namespace CollectionSwap.Controllers
 
             ViewBag.Status = "Thank you for your feedback";
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = ".status-container", second = $"tr:has(a[href='/Manage/SwapHistory/{model.SwapId}'])" }, ScrollRowBack = true });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".status-container", second = $"tr:has(td[onclick='OpenOffer({model.SwapId})'])" }, ScrollRowBack = true });
         }
-
         //
         // GET: /Manage/YourSwaps/Offer
 

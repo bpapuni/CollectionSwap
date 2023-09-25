@@ -27,9 +27,9 @@
     @* Container Header *@
     <div class="swap-container-header">
         <div class="swap-info">
-            @if (swapStatus == "charity")
+            @if (swapStatus.Contains("charity"))
             {
-                <span class="swap-size">Charity</span>
+                <span class="header">Charity</span>
             }
             else if (swapStatus == "swap")
             {
@@ -102,6 +102,13 @@
                     {
                         <div class="swap-item @(Validation.DuplicateRequestItems.Contains(itemId) ? "attention" : "")" onclick="SelectItem(this)">
                             <img data-item-id="@itemId" src="@Url.Content("/Collections/" + @collectionId + '/' + @itemList[itemId])" />
+                            @if (@senderItems[itemId] > 1)
+                            {
+                                <div class="charity-item-count">
+                                    <strong>x</strong>
+                                    @senderItems[itemId]
+                                </div>
+                            }
                         </div>
                     }
                 </div>
@@ -228,6 +235,6 @@ else if (swapStatus == "swap")
     }
     else
     {
-<button class="submit-button offer" onclick="OfferSwap(this)" disabled>Items Selected (0/@swapSize)</button>
+        <button class="submit-button offer" onclick="RequestSwap(this)" disabled>Items Selected (0/@swapSize)</button>
     }
 }

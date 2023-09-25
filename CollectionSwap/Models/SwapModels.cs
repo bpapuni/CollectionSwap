@@ -107,7 +107,7 @@ namespace CollectionSwap.Models
             {
                 string response = string.Empty;
                 var senderItemCount = new List<int>();
-                var isCharity = request.Status != "offered" && (this.SenderRequestedItems == null || this.SenderRequestedItems == "[]" || this.ReceiverRequestedItems == null || this.ReceiverRequestedItems == "[]");
+                var isCharity = request.Status != "requested" && (this.SenderRequestedItems == null || this.SenderRequestedItems == "[]" || this.ReceiverRequestedItems == null || this.ReceiverRequestedItems == "[]");
                 var swapStatus = isCharity ? $"charity-{request.Status}" : request.Status;
                 switch (swapStatus)
                 {
@@ -161,7 +161,7 @@ namespace CollectionSwap.Models
                         HoldItems(this.SenderRequestedItems, db.UserCollections.Find(this.SenderCollectionId), this, db);
                         break;
 
-                    case "offered":
+                    case "requested":
                         this.CollectionId = request.CollectionId;
                         this.SenderCollectionId = request.SenderUserCollectionId;
                         this.ReceiverCollectionId = request.ReceiverUserCollectionId;
@@ -193,7 +193,7 @@ namespace CollectionSwap.Models
                         break;
                     case "charity-canceled":
                     case "canceled":
-                        if (this.Status == "offered" || this.Status == "requested")
+                        if (this.Status == "requested")
                         {
                             this.SenderDisplaySwap = false;
                             this.ReceiverDisplaySwap = false;
@@ -211,6 +211,7 @@ namespace CollectionSwap.Models
                         db.Entry(this).State = EntityState.Modified;
                         break;
 
+                    case "charity-declined":
                     case "declined":
                         ReleaseItems(this, db);
                         this.Status = request.Status;
@@ -380,7 +381,7 @@ namespace CollectionSwap.Models
                 .Include("Collection")
                 .Include("Sender")
                 .Include("Receiver")
-                .Where(swap => this.Id != swap.Id && (this.SenderCollectionId == swap.SenderCollectionId || this.SenderCollectionId == swap.ReceiverCollectionId || this.ReceiverCollectionId == swap.SenderCollectionId || this.ReceiverCollectionId == swap.ReceiverCollectionId) && (swap.Status == "offered" || swap.Status == "accepted"))
+                .Where(swap => this.Id != swap.Id && swap.ReceiverRequestedItems != "[]" && (this.SenderCollectionId == swap.SenderCollectionId || this.SenderCollectionId == swap.ReceiverCollectionId || this.ReceiverCollectionId == swap.SenderCollectionId || this.ReceiverCollectionId == swap.ReceiverCollectionId) && (swap.Status == "requested" || swap.Status == "accepted"))
                 .ToList();
 
             if (this.Status == "swap") // Check if matching swap contains an item already requested in another swap by the sender
@@ -414,7 +415,7 @@ namespace CollectionSwap.Models
                     }
                 }
             }
-            else if (this.Status == "offered") // Check if receiver has items available to accept swap
+            else if (this.Status == "requested") // Check if receiver has items available to accept swap
             {
                 if (userId == this.SenderId)
                 {

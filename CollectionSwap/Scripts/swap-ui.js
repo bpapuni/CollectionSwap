@@ -98,7 +98,7 @@ function ConfirmDonation(e, swapId) {
     HandleFormSubmit("/Swap/ProcessSwap", "POST", formData);
 }
 
-function OfferSwap(e) {
+function RequestSwap(e) {
     const swapContainer = $(e).prev(".swap-container");
     const senderItems = swapContainer.find(".your-items .swap-item > img").map(function () {
         return +$(this).data("item-id");
@@ -116,7 +116,7 @@ function OfferSwap(e) {
         RequestedItems: JSON.stringify(requestedItems),
         StartDate: new Date().toISOString(),
         SwapSize: +swapContainer.find(".swap-size").text(),
-        Status: "offered"
+        Status: "requested"
     }
 
     const formData = new FormData();
@@ -188,8 +188,4 @@ function toggleYourItems(e) {
 
     yourItems.toggleClass("expanded");
     toggledItems.toggleClass("d-none");
-    //const message = yourItems.hasClass("expanded") ?
-    //    yourItemsMessage.text().replace("duplicates", "following duplicates") :
-    //    yourItemsMessage.text().replace("following duplicates", "duplicates");
-    //yourItemsMessage.text(message);
 }
