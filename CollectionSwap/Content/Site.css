@@ -162,7 +162,7 @@ html {
 body {
     display: flex;
     justify-content: center;
-    width: 100vw;
+    /*width: 100vw;*/
     min-height: 100vh;
     margin: 0;
     padding: 0;
@@ -417,10 +417,6 @@ body.support-bg-split {
     background: linear-gradient(to bottom, var(--background) 0, var(--background) 5rem, var(--brand-yellow) 5rem, var(--brand-yellow) 40rem, var(--background) 40rem), var(--background) 100% no-repeat;
 }
 
-body.support-bg-split .main-navbar {
-    padding-right: calc(2rem + 6px);
-}
-
 #support-container {
     display: flex;
     flex-direction: column;
@@ -647,7 +643,7 @@ section.mugshots img {
     display: flex;
     flex-direction: column;
     width: calc(100% - var(--_nav-width));
-    padding: 0 1rem 0;
+    /*padding: 0;*/
     background-color: var(--background-accent);
     border-radius: 2rem;
 }
@@ -871,7 +867,11 @@ button.close {
             cursor: pointer;
         }
 
-            #history-container table :not(thead) tr:hover {
+            #history-container table :not(thead) tr.no-swaps {
+                cursor: unset;
+            }
+
+            #history-container table :not(thead) tr:not(.no-swaps):hover {
                 background: #ededed;
             }
         /* Collection Name */
@@ -1476,7 +1476,7 @@ button.close {
 .page-navigation {
     position: absolute;
     top: -1.5rem;
-    padding-left: 0.5rem;
+    /*padding-left: 0.5rem;*/
     z-index: 99;
 }
 
@@ -1802,11 +1802,11 @@ nav a {
     position: fixed;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 2rem;
     width: 100%;
     height: 5rem;
-    padding: 0 2rem 0 calc((100vw - var(--main-width)) / 2 + 0.5rem);
+    padding: 0;
     color: inherit;
     font-size: 1rem;
     /*background: inherit;*/
@@ -1815,27 +1815,29 @@ nav a {
     z-index: 100;
 }
 
-.main-navbar ul {
-    display: flex;
-    gap: 2rem;
-    margin: 0;
-    padding: 0;
-}
-
-    .main-navbar ul:nth-child(1) {
-        position: relative;
-        font-family: 'Montserrat Alternates'; 
-        font-size: 2rem;
-        line-height: 1;
+    .main-navbar ul {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+        width: var(--main-width);
+        margin: 0;
+        padding: 1rem;
     }
 
-    .main-navbar ul:nth-child(1)::after {
-        content: url("data:image/svg+xml,%3Csvg width='32' height='7' viewBox='0 0 32 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M31.5761 5.01314C30.4687 3.71358 30.2908 2.08904 30.1421 0.604423C30.1421 0.604423 30.1393 0.516846 30.073 0.512716C30.0066 0.508585 29.9999 0.595572 29.9999 0.595572C29.7783 1.74599 29.7133 2.92276 30.0092 4.09228C21.5063 -1.43119 7.11521 1.03284 0.622331 6.84568C0.622331 6.84568 0.517659 6.92046 0.597249 6.97873C0.676839 7.037 0.811578 6.95711 0.811578 6.95711C4.60322 4.30881 11.06 2.48454 15.0892 2.30356C20.859 2.04563 24.4611 2.85893 29.1544 4.40267C27.6463 3.90587 25.5723 4.47513 24.6103 5.49993C24.6103 5.49993 24.5558 5.55334 24.5839 5.57957C24.612 5.60579 24.7024 5.58694 24.7024 5.58694C25.9704 5.32762 27.2935 5.382 28.6028 5.44689C29.6306 5.45762 30.6579 5.55088 31.6666 5.72499C31.7218 5.73402 31.7788 5.73082 31.8303 5.71581C31.8817 5.70079 31.9254 5.67464 31.9556 5.64069C31.9859 5.60674 32.0013 5.56653 32 5.5252C31.9987 5.48387 31.9808 5.4433 31.9484 5.40865L31.5761 5.01314Z' fill='%23191A1B'/%3E%3C/svg%3E%0A");
-        position: absolute;
-        right: 0;
-        bottom: -1rem;
-        pointer-events: none;
-    }
+        .main-navbar ul > li:nth-child(1) {
+            margin-right: auto;
+            font-family: 'Montserrat Alternates';
+            font-size: 2rem;
+        }
+
+        .main-navbar ul > li:nth-child(1)::after {
+            content: url("data:image/svg+xml,%3Csvg width='32' height='7' viewBox='0 0 32 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M31.5761 5.01314C30.4687 3.71358 30.2908 2.08904 30.1421 0.604423C30.1421 0.604423 30.1393 0.516846 30.073 0.512716C30.0066 0.508585 29.9999 0.595572 29.9999 0.595572C29.7783 1.74599 29.7133 2.92276 30.0092 4.09228C21.5063 -1.43119 7.11521 1.03284 0.622331 6.84568C0.622331 6.84568 0.517659 6.92046 0.597249 6.97873C0.676839 7.037 0.811578 6.95711 0.811578 6.95711C4.60322 4.30881 11.06 2.48454 15.0892 2.30356C20.859 2.04563 24.4611 2.85893 29.1544 4.40267C27.6463 3.90587 25.5723 4.47513 24.6103 5.49993C24.6103 5.49993 24.5558 5.55334 24.5839 5.57957C24.612 5.60579 24.7024 5.58694 24.7024 5.58694C25.9704 5.32762 27.2935 5.382 28.6028 5.44689C29.6306 5.45762 30.6579 5.55088 31.6666 5.72499C31.7218 5.73402 31.7788 5.73082 31.8303 5.71581C31.8817 5.70079 31.9254 5.67464 31.9556 5.64069C31.9859 5.60674 32.0013 5.56653 32 5.5252C31.9987 5.48387 31.9808 5.4433 31.9484 5.40865L31.5761 5.01314Z' fill='%23191A1B'/%3E%3C/svg%3E%0A");
+            position: absolute;
+            right: 0;
+            bottom: -1rem;
+            pointer-events: none;
+        }
 
     .main-navbar li {
         position: relative;
@@ -2389,7 +2391,7 @@ input[type=number] {
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 43rem;
+    width: 44rem;
     color: black;
     box-shadow: 0 2px 5px #888;
     border-radius: 1rem;

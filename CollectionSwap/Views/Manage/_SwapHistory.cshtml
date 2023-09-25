@@ -4,7 +4,7 @@
     string statusMessage = ViewBag.Status;
     string errorMessage = ViewBag.Error;
     var userId = User.Identity.GetUserId();
-    var displayableSwaps = Model.Swaps.Where(s => (s.Sender.Id == userId && s.SenderDisplaySwap) || (s.Receiver.Id == userId && s.ReceiverDisplaySwap));
+    var displayableSwaps = Model.Swaps;
 }
 
 <div class="scroll-snap-row">
@@ -40,19 +40,19 @@
                         <th>Progress</th>
                         <th>Sent</th>
                         <th>Received</th>
-                        <th onclick="SortByDate(@displayableSwaps)">Start Date <i class="fa-solid fa-sort"></i></th>
-                        <th>Next Action</th>
+                        <th>Start Date</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
 
                 <tbody>
                     @if (displayableSwaps.Count() == 0)
                     {
-                        <tr>
+                        <tr class="no-swaps">
                             <td colspan="7" style="text-align: center">
-                                You have no swaps in progress.<br />
-                                <a href="/Manage/YourCollections">Add a collection</a> to get started.
-                                Click <a href="/Manage/FindSwaps">here</a> to start searching for swaps.
+                                No swaps to display<br />
+                                @*<a href="/Manage/YourCollections">Add a collection</a> to get started.
+                                Click <a href="/Manage/FindSwaps">here</a> to start searching for swaps.*@
                             </td>
                         </tr>
                     }
@@ -188,13 +188,14 @@
                                 var hasSentItems = userId == swap.SenderId ? swap.SenderConfirmSent : swap.ReceiverConfirmSent;
                                 var hasReceivedItems = userId == swap.SenderId ? swap.SenderConfirmReceived : swap.ReceiverConfirmReceived;
                                 var hasSentFeedback = userId == swap.SenderId ? isCharity || swap.SenderFeedback != null : swap.ReceiverFeedback != null;
+                                var hasExpired = DateTime.Now.Day - swap.StartDate.Day > 14;
                                 switch (swapStatus)
                                 {
                                     case "charity-requested":
                                         <td onclick="OpenOffer(@swap.Id)">
                                             @if (swap.SenderId == userId)
                                             {
-                                                <span class="status-pending">Review Request</span>
+                                                <span class="status-pending">Request Pending</span>
                                             }
                                             else
                                             {
@@ -223,7 +224,7 @@
                                         else if (hasSentItems && hasReceivedItems)
                                         {
                                             <td onclick="OpenOffer(@swap.Id)">
-                                                <span class="status-pending">Provide Feedback</span>
+                                                <span class="status-pending">Awaiting Feedback</span>
                                             </td>
                                         }
                                         else if (hasSentItems)
@@ -235,7 +236,7 @@
                                         else
                                         {
                                             <td onclick="OpenOffer(@swap.Id)">
-                                                <span class="status-pending">View Mailing Instructions</span>
+                                                <span class="status-pending">Needs Mailing</span>
                                             </td>
                                         }
                                         break;
@@ -247,7 +248,7 @@
                                             }
                                             else
                                             {
-                                                <span class="status-pending">Review Request</span>
+                                                <span class="status-pending">Request Pending</span>
                                             }
                                         </td>
                                         break;
@@ -255,7 +256,7 @@
                                         <td onclick="OpenOffer(@swap.Id)">
                                             @if (swap.SenderId == userId)
                                             {
-                                                <span class="status-pending">Review Swap</span>
+                                                <span class="status-pending">Pending Confirmation</span>
                                             }
                                             else
                                             {
@@ -270,10 +271,10 @@
                                                 <span class="status-complete">Complete</span>
                                             </td>
                                         }
-                                        else if (hasSentItems && hasReceivedItems)
+                                        else if ((hasSentItems && hasReceivedItems) || hasExpired)
                                         {
                                             <td onclick="OpenOffer(@swap.Id)">
-                                                <span class="status-pending">Provide Feedback</span>
+                                                <span class="status-pending">Awaiting Feedback</span>
                                             </td>
                                         }
                                         else if (hasSentItems)
@@ -285,7 +286,7 @@
                                         else
                                         {
                                             <td onclick="OpenOffer(@swap.Id)">
-                                                <span class="status-pending">View Mailing Instructions</span>
+                                                <span class="status-pending">Needs Mailing</span>
                                             </td>
                                         }
                                         break;

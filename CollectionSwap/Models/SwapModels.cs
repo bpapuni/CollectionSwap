@@ -371,6 +371,38 @@ namespace CollectionSwap.Models
             db.HeldItems.Remove(heldItems);
             db.SaveChanges();
         }
+        public static List<Swap> Filter(string userId, string filter, ApplicationDbContext db)
+        {
+            var swaps = db.Swaps.Where(s => (s.Sender.Id == userId && s.SenderDisplaySwap) || (s.Receiver.Id == userId && s.ReceiverDisplaySwap)).ToList();
+            var result = filter == "all" ? swaps : swaps.Where(s => s.Status == filter).ToList();
+
+            if (filter == "confirmed")
+            {
+                // When a user has sent and received the items involved in their transaction they're essentially "completed" but the swap.Status does not reflect that
+                // until both users are done. We do still want to filter these swaps out though, so that's what this is doing.
+                result.RemoveAll(s => (s.Sender.Id == userId && s.SenderConfirmSent && s.SenderConfirmReceived) || (s.Receiver.Id == userId && s.ReceiverConfirmSent && s.ReceiverConfirmReceived));
+            }
+            else if (filter == "completed")
+            {
+                // Add in 'confirmed' swaps where the user has sent and received the items involved in their transaction
+                var pseudoCompletedSwaps = swaps.Where(s => s.Status == "confirmed" && ((s.Sender.Id == userId && s.SenderConfirmSent && s.SenderConfirmReceived) || (s.Receiver.Id == userId && s.ReceiverConfirmSent && s.ReceiverConfirmReceived)));
+                result.AddRange(pseudoCompletedSwaps);
+            }
+
+            result = result
+                .OrderBy(s => s.Status == "requested" ? 0 : 1)
+                .ThenBy(s => s.Status == "accepted" ? 0 : 1)
+                .ThenBy(s => s.Status == "confirmed" && ((s.Sender.Id == userId && s.SenderFeedback == null) || (s.Receiver.Id == userId && s.ReceiverFeedback == null)) ? 0 : 1)
+                .ThenBy(s => s.Status == "confirmed" || s.Status == "completed" ? 0 : 1)
+                //.ThenBy(s => s.Status == "completed" || (s.Status == "confirmed" && (s.Sender.Id == userId && s.SenderConfirmSent && s.SenderConfirmReceived) || (s.Receiver.Id == userId && s.ReceiverConfirmSent && s.ReceiverConfirmReceived)) ? 0 : 1)
+                .ThenBy(s => s.Status == "declined" ? 0 : 1)
+                .ThenBy(s => s.Status == "canceled" ? 0 : 1)
+                .ThenByDescending(s => s.StartDate)
+                .ToList();
+
+
+            return result;
+        }
         public ValidateResult Validate(string userId, ApplicationDbContext db)
         {
             var result = new ValidateResult();

@@ -218,7 +218,7 @@ function ScrollRowBack(target) {
     const pages = scrollRow.children().length - 3;                                // -1 cause we want 0 index, -2 for the first 2 elements we want to ignore
     const currentPageIndex = pages - scrollRow.children("div.d-none").length;
     const previousPageIndex = target == null ? currentPageIndex - 1 : $("div[data-nav]").index(target);
-    const offset = previousPageIndex == 0 ? 0 : 16 + (1120 + 48) * previousPageIndex;
+    const offset = previousPageIndex == 0 ? 0 : 1216 * previousPageIndex;
 
     scrollRow.css("scroll-snap-type", "none");
     history.pushState({ partialName: partialName }, null, `/Manage/${partialName}`);
@@ -330,7 +330,7 @@ $(document).on("click", ".swap-history-filters > span", function () {
     $(".swap-history-filters > span").removeClass("selected");
     $(this).addClass("selected");
     const formData = new FormData();
-    formData.append("displayStatus", $(this).data("status"));
+    formData.append("filter", $(this).data("status"));
 
     HandleFormSubmit("/Manage/FilterSwaps", "POST", formData);
 });

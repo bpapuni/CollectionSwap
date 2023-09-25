@@ -626,7 +626,7 @@ namespace CollectionSwap.Controllers
         {
             var partial = String.Empty;
             var userId = User.Identity.GetUserId();
-            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId).ToList();
+            var swaps = Swap.Filter(userId, "all", db);
 
             var shModel = new SwapHistoryViewModel
             {
@@ -699,60 +699,25 @@ namespace CollectionSwap.Controllers
                 processedSwaps.Add(swaps.Where(s => s.Id == missingItems.id).FirstOrDefault());
             }
 
-            processedSwaps = processedSwaps
-                    .OrderBy(swap => swap.Status == "declined" ? 0 : 1)
-                    .ThenBy(swap => swap.Status == "canceled" ? 0 : 1)
-                    .ThenBy(swap => swap.Status == "requested" ? 0 : 1)
-                    .ThenBy(swap => swap.Status == "accepted" ? 0 : 1)
-                    .ThenBy(swap => swap.Status == "confirmed" ? 0 : 1)
-                    .ThenBy(swap => swap.Status == "completed" ? 0 : 1)
-                    .ThenByDescending(swap => swap.EndDate)
-                    .ToList();
-
             return processedSwaps;
         }
 
         [HttpPost]
         [Authorize]
-        public ActionResult FilterSwaps(string displayStatus)
+        public ActionResult FilterSwaps(string filter)
         {
-            var partial = String.Empty;
-            var userId = User.Identity.GetUserId();
-            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId).ToList();
-
-            switch (displayStatus)
+            if (filter == "all")
             {
-                case "all":
-                    break;
-                case "requested":
-                    swaps = swaps.Where(swap => swap.Status == "requested").ToList();
-                    break;
-                case "accepted":
-                    swaps = swaps.Where(swap => swap.Status == "accepted").ToList();
-                    break;
-                case "confirmed":
-                    swaps = swaps.Where(swap => swap.Status == "confirmed").ToList();
-                    break;
-                case "completed":
-                    swaps = swaps.Where(swap => swap.Status == "completed").ToList();
-                    break;
-                default:
-                    swaps = new List<Swap>();
-                    break;
+                return RedirectToAction("SwapHistoryPartial");
             }
 
-            swaps = swaps.OrderBy(swap => swap.Status == "declined" ? 0 : 1)
-                .ThenBy(swap => swap.Status == "canceled" ? 0 : 1)
-                .ThenBy(swap => swap.Status == "requested" ? 0 : 1)
-                .ThenBy(swap => swap.Status == "accepted" ? 0 : 1)
-                .ThenBy(swap => swap.Status == "confirmed" ? 0 : 1)
-                .ThenBy(swap => swap.Status == "completed" ? 0 : 1)
-                .ThenByDescending(swap => swap.EndDate)
-                .ToList();
+            var partial = String.Empty;
+            var userId = User.Identity.GetUserId();
+            var filteredSwaps = Swap.Filter(userId, filter, db);
 
             var shModel = new SwapHistoryViewModel
             {
-                Swaps = ProcessCharityRequests(swaps),
+                Swaps = ProcessCharityRequests(filteredSwaps),
                 Offer = null
             };
 

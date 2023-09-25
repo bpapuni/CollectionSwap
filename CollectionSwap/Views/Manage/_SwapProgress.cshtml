@@ -1,23 +1,29 @@
 ﻿@model CollectionSwap.Models.Swap
 @using Microsoft.AspNet.Identity
 @{
-    var otherUserSent = ((Model.SenderId == User.Identity.GetUserId() && Model.ReceiverConfirmSent) || (Model.ReceiverId == User.Identity.GetUserId() && Model.SenderConfirmSent));
-    var progIndex = Model.Status == "requested" || Model.Status == "offered" ? 0 :
-                    Model.Status == "charity-accepted" || Model.Status == "accepted" ? 1 :
-                    Model.Status == "charity-confirmed" ? 2 :
-                    Model.Status == "confirmed" ? otherUserSent ? 3 : 2 :
-                    Model.Status == "charity-completed" || Model.Status == "completed" || Model.Status == "canceled" || Model.Status == "declined" ? 4 : 5;
+    var userId = User.Identity.GetUserId();
+    var otherUserSent = ((Model.SenderId == userId && Model.ReceiverConfirmSent) || (Model.ReceiverId == userId && Model.SenderConfirmSent));
+    var itemsSent = ((Model.SenderId == userId && Model.SenderConfirmSent) || (Model.ReceiverId == userId && Model.ReceiverConfirmSent));
+    var itemsReceived = ((Model.SenderId == userId && Model.ReceiverConfirmSent) || (Model.ReceiverId == userId && Model.SenderConfirmSent));
+    var progIndex = Model.Status == "requested" ? 0 :
+                    Model.Status == "accepted" ? 1 :
+                    Model.Status == "confirmed" && itemsSent && itemsReceived ? 4 : 
+                    Model.Status == "confirmed" && otherUserSent ? 3 : 
+                    Model.Status == "confirmed" ? 2 : 
+                    Model.Status == "completed" || 
+                    Model.Status == "canceled" || 
+                    Model.Status == "declined" ? 4 : -1;
 
     }
 <div class="swap-prog-container @(Model.Status == "canceled" || Model.Status == "declined" ? "declined" : "")">
     <div class="swap-capstone @("prog-index-" + progIndex)">
-        @if (Model.Status == "confirmed" && otherUserSent)
+        @if (progIndex == 3)
         {
             <p>Items Sent</p>
         }
-        else if (Model.Status == "charity")
+        else if (progIndex == 4)
         {
-            <p>Requested</p>
+            <p>Complete</p>
         }
         else
         {
@@ -25,10 +31,7 @@
         }
     </div>
     <div class="swap-prog-1 @(progIndex >= 1 ? "prog-index-1" : "disabled")"></div>
-    @*<div class="swap-prog-1 @(progIndex >= 1 ? "prog-index-1" : "disabled") @(Model.Status.Contains("charity") ? "hidden" : "")"></div>*@
     <div class="swap-prog-2 @(progIndex >= 2 ? "prog-index-2" : "disabled")"></div>
     <div class="swap-prog-3 @(progIndex >= 3 ? "prog-index-3" : "disabled")"></div>
-    @*<div class="swap-prog-3 @(progIndex >= 3 ? "prog-index-3" : "disabled") @(Model.Status.Contains("charity") ? "hidden" : "")"></div>*@
     <div class="swap-prog-4 @(progIndex >= 4 ? "prog-index-4" : "disabled")"></div>
-    @*<div class="swap-prog-5 @if (progIndex >= 5) { <text>prog-index-5</text> } "></div>*@
 </div>
