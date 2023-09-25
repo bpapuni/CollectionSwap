@@ -16,61 +16,66 @@
 
 <section>
     <div class="collection-items-container">
-        <span>
-            <strong>Completed a swap?</strong> <br />
-            Tick the 'Items Received' checkbox in Swap History to automatically update this collection with your new items.
-        </span>
-
-        <br />
-
-        <div>
-            <strong>No longer collecting?</strong> <input data-user-collection-id="@Model.Id" class="charity-checkbox" type="checkbox" checked="@Model.Charity" /> <br />
-            If you'd like to donate your items to another collector bla bla bla
-        </div>
-
-        <br />
-        @using (Html.BeginForm("ChangeUserCollectionName", "Manage", null, FormMethod.Post))
-        {
-            <div class="form-group">
-                @Html.AntiForgeryToken()
-                @Html.HiddenFor(model => model.Id)
-                @Html.HiddenFor(model => model.UserId)
-
-                @Html.LabelFor(model => model.Name)
-                @Html.TextBoxFor(model => model.Name, new { @class = "" })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-                <input class="submit-button" type="submit" value="Update Name" />
-            </div>
-        }
-        <br />
-        <div id="collection-items" class="row gap-2" style="">
-            @foreach (var item in items)
+        <div class="collection-controls">
+            @using (Html.BeginForm("ChangeUserCollectionName", "Manage", null, FormMethod.Post))
             {
-                var imagePath = $"~/Collections/{Model.CollectionId}";
-                var itemId = items.IndexOf(item);
+                <div class="form-group">
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.Id)
+                    @Html.HiddenFor(model => model.UserId)
 
-                <div class="column align-items-center">
-                    <div class="item-container @(userItems[itemId] < 1 ? "item-not-owned" : "")">
-                        <img class="item" src="@Url.Content(imagePath)/@item" />
-                    </div>
-                    <div class="item-quantity column align-items-center">
-                        Quantity:
-                        @using (Html.BeginForm("UpdateItemCount", "Manage", null, FormMethod.Post))
-                        {
-                            @Html.AntiForgeryToken()
-                            @Html.Hidden("index", itemId)
-                            @Html.Hidden("userId", Model.UserId)
-                            @Html.Hidden("ucId", Model.Id)
-
-                            <div class="row align-items-center">
-                                <button class="counter counter-minus" type="submit"><i class="fa fa-minus-circle"></i></button>
-                                <input type="number" id="@itemId" name="quantity" min="0" max="99" value="@userItems[itemId]" />
-                                <button class="counter counter-add" type="submit"><i class="fa fa-plus-circle"></i></button>
-                            </div>
-                        }
-                    </div>
+                    @Html.Label("Update Collection Name")
+                    @Html.TextBoxFor(model => model.Name, new { @class = "" })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
                 </div>
+                <input class="submit-button" type="submit" value="Update Name" />
             }
+            <div class="charity">
+                @*<span class="header">Charity</span>*@
+                <span>
+                    <strong>Donate this collection to another user</strong>
+                    <label class="switch">
+                        <input data-user-collection-id="@Model.Id" class="charity-checkbox" type="checkbox" checked="@Model.Charity" />
+                        <span class="slider round"></span>
+                    </label>
+                </span>
+                
+                <span>
+                    Enable this option if you're no longer collecting these items and/or want to donate them to another user.
+                </span>
+            </div>
+        </div>
+        <div id="collection-items">
+            <span class="header">Your Items</span>
+            <div class="body">
+                @foreach (var item in items)
+                {
+                    var imagePath = $"~/Collections/{Model.CollectionId}";
+                    var itemId = items.IndexOf(item);
+
+                    <div class="column align-items-center">
+                        <div class="item-container @(userItems[itemId] < 1 ? "item-not-owned" : "")">
+                            <img class="item" src="@Url.Content(imagePath)/@item" />
+                        </div>
+                        <div class="item-quantity column align-items-center">
+                            Quantity:
+                            @using (Html.BeginForm("UpdateItemCount", "Manage", null, FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("index", itemId)
+                                @Html.Hidden("userId", Model.UserId)
+                                @Html.Hidden("ucId", Model.Id)
+
+                                <div class="row align-items-center">
+                                    <button class="counter counter-minus" type="submit"><i class="fa fa-minus-circle"></i></button>
+                                    <input type="number" id="@itemId" name="quantity" min="0" max="99" value="@userItems[itemId]" />
+                                    <button class="counter counter-add" type="submit"><i class="fa fa-plus-circle"></i></button>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     </div>
     @if (sponsor != null)

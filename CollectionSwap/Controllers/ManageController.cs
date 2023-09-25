@@ -402,7 +402,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.Status = "Collection name updated successfully";
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcViewModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container", second = "#edit-collection-container" } });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".status-container", second = "#edit-collection-container" } });
         }
 
         [HttpPost]
@@ -416,9 +416,9 @@ namespace CollectionSwap.Controllers
 
             if (!ModelState.IsValidField("FileInput"))
             {
-                //model.Collection = collection;
-                //mcViewModel.Collections = db.Collections.ToList();
-                //mcViewModel.EditCollection = model;
+                model.Collection = collection;
+                mcViewModel.Collections = db.Collections.ToList();
+                mcViewModel.EditCollection = model;
 
                 partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcViewModel, true);
                 return Json(new { PartialView = partial, RefreshTargets = new { first = "#edit-collection-container" } });
@@ -431,7 +431,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.Status = "Item successfully added to collection";
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcViewModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container", second = "#edit-collection-container" } });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".status-container", second = "#edit-collection-container" } });
         }
 
         [HttpPost]
@@ -555,7 +555,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.Status = "Collection name updated successfully";
             partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container", second = "#user-collection-container" } });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".status-container", second = "#user-collection-container" } });
         }
 
         [HttpPost]

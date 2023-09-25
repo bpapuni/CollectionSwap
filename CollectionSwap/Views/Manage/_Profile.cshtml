@@ -23,8 +23,8 @@
 
 <section>
     @*<div class="">Test</div>*@
-    @if (feedbacks.Count > 0)
-    {
+    @*@if (feedbacks.Count > 0)
+    {*@
         <div class="feedback-bar-chart">
             <div class="header">
                 <span>
@@ -55,11 +55,11 @@
                 {
                     <div>
                         @{
-                            var width = ratings[4 - i].Count / (double)feedbacks.Count * 100;
+                            var width = feedbacks.Count == 0 ? 0 : ratings[4 - i].Count / (double)feedbacks.Count * 100;
                         }
                         <span>@(5 - i) Stars</span>
                         <span class="bar">
-                            <text>@ratings[4 - i].Count</text>
+                            <p>@(feedbacks.Count == 0 ? 0 : ratings[4 - i].Count)</p>
                             <span class="bar-fill" style="width: @($"{width}%")"></span>
                         </span>
                     </div>
@@ -69,6 +69,10 @@
         </div>
 
         <div class="feedback">
+            @if (feedbacks.Count == 0)
+            {
+                <p>@username has not received any feedback yet.</p>
+            }
             @foreach (var feedback in feedbacks)
             {
                 var comments = JsonConvert.DeserializeObject<List<string>>(feedback.Comments);
@@ -109,5 +113,5 @@
                 </div>
             }
         </div>
-    }
+    @* } *@
 </section>

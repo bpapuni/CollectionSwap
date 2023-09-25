@@ -491,7 +491,6 @@
     <Content Include="Views\Shared\Info.cshtml" />
     <Content Include="Views\Manage\_Feedback.cshtml" />
     <Content Include="Views\Manage\_Profile.cshtml" />
-    <Content Include="Views\Manage\_Tutorial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

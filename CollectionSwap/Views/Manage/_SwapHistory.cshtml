@@ -188,7 +188,7 @@
                                 var hasSentItems = userId == swap.SenderId ? swap.SenderConfirmSent : swap.ReceiverConfirmSent;
                                 var hasReceivedItems = userId == swap.SenderId ? swap.SenderConfirmReceived : swap.ReceiverConfirmReceived;
                                 var hasSentFeedback = userId == swap.SenderId ? isCharity || swap.SenderFeedback != null : swap.ReceiverFeedback != null;
-                                var hasExpired = DateTime.Now.Day - swap.StartDate.Day > 14;
+                                var hasExpired = (DateTime.Now - swap.StartDate).Days > 14;
                                 switch (swapStatus)
                                 {
                                     case "charity-requested":
