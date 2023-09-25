@@ -17,7 +17,7 @@
     var userId = sender.Id;
     var otherUserId = receiver.Id;
     var otherUserName = receiver.UserName;
-    var rating = userId == sender.Id ? receiver.Rating : sender.Rating;
+    var rating = swapStatus == "charity" ? sender.Rating : userId == sender.Id ? receiver.Rating : sender.Rating;
     var Validation = Model.Validation;
 }
 
