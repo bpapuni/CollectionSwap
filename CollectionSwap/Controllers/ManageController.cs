@@ -205,7 +205,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.Status = "Your email has been changed.";
             partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" }, FormResetTarget = "#change-email-form" });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" }, FormResetTarget = "#change-email-form" });
         }
 
         [HttpPost]
@@ -598,8 +598,9 @@ namespace CollectionSwap.Controllers
                 UserCollections = db.UserCollections.Where(uc => uc.UserId == userId && uc.Archived == false).ToList(),
             };
 
+            ViewBag.Status = "Collection deleted";
             partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycViewModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container" } });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" } });
         }
 
         [HttpPost]

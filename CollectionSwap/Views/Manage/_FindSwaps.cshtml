@@ -31,7 +31,7 @@
             @if (userAddress == null)
             {
                 <div>
-                    <span class="header"><i class="fa-solid fa-circle-exclamation"></i>Added your address?</span>
+                    <span class="header warning"><i class="fa-solid fa-circle-exclamation"></i>Added your address?</span>
                     <span>Before you can request a swap you must <a href="/Manage/Account">add your mailing address</a></span>
                 </div>
                 <br />
@@ -39,7 +39,7 @@
             @if (userCollections.Count == 0)
             {
                 <div>
-                    <span class="header"><i class="fa-solid fa-circle-exclamation"></i>Create a collection</span>
+                    <span class="header warning"><i class="fa-solid fa-circle-exclamation"></i>Create a collection</span>
                     <span>Before you can find any swaps you'll need to <a href="/Manage/YourCollections">create a collection</a></span>
                 </div>
             }

@@ -276,13 +276,13 @@ namespace CollectionSwap.Models
         public void Delete(ApplicationDbContext db)
         {
             var affectedSwaps = db.Swaps.Where(swap => (swap.SenderCollectionId == this.Id || swap.ReceiverCollectionId == this.Id)).ToList();
-            var offeredSwaps = affectedSwaps.Where(swap => swap.Status == "offered");
+            var requestedSwaps = affectedSwaps.Where(swap => swap.Status == "requested");
             var acceptedSwaps = affectedSwaps.Where(swap => swap.Status == "accepted");
             var confirmedSwaps = affectedSwaps.Where(swap => swap.Status == "confirmed");
 
             foreach(var swap in affectedSwaps)
             {
-                if (offeredSwaps.Contains(swap) || acceptedSwaps.Contains(swap))
+                if (requestedSwaps.Contains(swap) || acceptedSwaps.Contains(swap))
                 {
                     swap.ProcessSwap(this.UserId, new SwapRequestViewModel { Status = "canceled" }, db);
                 }

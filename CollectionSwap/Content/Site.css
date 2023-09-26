@@ -990,7 +990,7 @@ button.close {
     align-items: flex-start;
     justify-content: flex-start;
     gap: 1rem;
-    background: url('images/doodles/8.png') no-repeat;
+    /*background: url('images/doodles/8.png') no-repeat;*/
     background-size: 25%;
     background-position-x: right;
     background-position-y: bottom;
@@ -2341,7 +2341,7 @@ section {
 }
 
 .button-icon-trash {
-    /*background: var(--danger-500);*/
+    background: none;
     /*border: 1px solid var(--danger-500);*/
 }
 
@@ -2833,7 +2833,7 @@ input[type=number] {
     padding: 0;
     color: var(--brand-orange);
     font-size: 1.5rem;
-    font-weight: 400;
+    font-weight: 500;
 }
 
 .mailing-instructions-container p {
@@ -2848,15 +2848,15 @@ input[type=number] {
     padding: 0 1rem 1rem 1rem;
 }
 
-#find-swaps-container > section .header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--brand-orange);
-}
+    #find-swaps-container .header.warning {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--brand-orange);
+    }
 
 #register-container {
     display: flex;
