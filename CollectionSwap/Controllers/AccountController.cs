@@ -12,6 +12,7 @@ using CollectionSwap.Models;
 using System.Web.UI.WebControls;
 using System.Data.Entity.Infrastructure;
 using CollectionSwap.Helpers;
+using System.Reflection;
 
 namespace CollectionSwap.Controllers
 {
@@ -270,7 +271,17 @@ namespace CollectionSwap.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await UserManager.FindByNameAsync(model.Email);
+                // Identity by default passes Email to PasswordSignInAsync but checks Username
+                // Since our Username and Email are different we must send Username as a parameter not the default Email
+                string userName;
+                using (var db = new ApplicationDbContext())
+                {
+                    userName = db.Users.Where(u => u.Email == model.Email)
+                                       .Select(u => u.UserName).FirstOrDefault();
+                }
+                userName = String.IsNullOrEmpty(userName) ? "" : userName;
+
+                var user = await UserManager.FindByNameAsync(userName);
                 if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
@@ -279,10 +290,11 @@ namespace CollectionSwap.Controllers
 
                 // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                 // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                EmailSender.SendEmail(model.Email, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                TempData["EmailRecipient"] = model.Email;
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
             // If we got this far, something failed, redisplay form
@@ -294,6 +306,7 @@ namespace CollectionSwap.Controllers
         [AllowAnonymous]
         public ActionResult ForgotPasswordConfirmation()
         {
+            ViewBag.EmailRecipient = TempData["EmailRecipient"];
             return View();
         }
 
@@ -316,7 +329,17 @@ namespace CollectionSwap.Controllers
             {
                 return View(model);
             }
-            var user = await UserManager.FindByNameAsync(model.Email);
+            // Identity by default passes Email to PasswordSignInAsync but checks Username
+            // Since our Username and Email are different we must send Username as a parameter not the default Email
+            string userName;
+            using (var db = new ApplicationDbContext())
+            {
+                userName = db.Users.Where(u => u.Email == model.Email)
+                                   .Select(u => u.UserName).FirstOrDefault();
+            }
+            userName = String.IsNullOrEmpty(userName) ? "" : userName;
+
+            var user = await UserManager.FindByNameAsync(userName);
             if (user == null)
             {
                 // Don't reveal that the user does not exist

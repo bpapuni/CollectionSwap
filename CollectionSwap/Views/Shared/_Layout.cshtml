@@ -14,7 +14,7 @@
     @Scripts.Render("~/bundles/modernizr")
 
 </head>
-<body class="@(currentAction == "Support" ? "support-bg-split" : "")">
+<body class="@(currentAction == "Support" ? "support-bg-split" : currentController == "Account" ? "bg-split" : "")">
     <nav class="main-navbar" @* @(currentController == "Account" ? "bg-split" : "")"*@>
         <ul>
             <li>

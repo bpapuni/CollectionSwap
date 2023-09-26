@@ -261,7 +261,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.Status = "Your password has been changed.";
             partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" }, FormResetTarget = "#change-password-form" });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" }, FormResetTarget = "#change-password-form" });
         }
 
         [HttpPost]
