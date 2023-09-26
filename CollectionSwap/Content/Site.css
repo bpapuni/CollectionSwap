@@ -2803,11 +2803,13 @@ input[type=number] {
 .swap-none-found {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    width: 100%;
-    font-family: 'Montserrat Alternates';
-    font-size: 2rem;
+    width: 40rem;
+}
+
+.swap-none-found .header {
+    margin: 0;
     font-weight: 500;
 }
 
