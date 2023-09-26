@@ -244,7 +244,13 @@ namespace CollectionSwap.Controllers
                 return View("Error");
             }
             var result = await UserManager.ConfirmEmailAsync(userId, code);
-            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+            using (var db = new ApplicationDbContext())
+            {
+                var user = db.Users.Where(u => u.Id == userId).FirstOrDefault();
+                await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+            }
+
+            return View(result.Succeeded ? "/Views/Manage/Index.cshtml" : "Error");
         }
 
         //

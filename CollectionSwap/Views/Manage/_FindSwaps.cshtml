@@ -4,6 +4,7 @@
     ViewBag.Title = "Find Swaps";
     var userSwaps = Model.UserSwaps;
     var matchingSwapViews = Model.MatchingSwapViews;
+    var userCollections = Model.UserCollections;
     var selectedCollection = ViewBag.SelectedCollection;
     var userAddress = ViewBag.User.Address;
     string statusMessage = ViewBag.Status;
@@ -30,12 +31,22 @@
             @if (userAddress == null)
             {
                 <div>
-                    <strong>Added your address?</strong><br />
+                    <span class="header"><i class="fa-solid fa-circle-exclamation"></i>Added your address?</span>
                     <span>Before you can request a swap you must <a href="/Manage/Account">add your mailing address</a></span>
                 </div>
                 <br />
             }
-            <h3>Select a collection to find swaps for:</h3>
+            @if (userCollections.Count == 0)
+            {
+                <div>
+                    <span class="header"><i class="fa-solid fa-circle-exclamation"></i>Create a collection</span>
+                    <span>Before you can find any swaps you'll need to <a href="/Manage/YourCollections">create a collection</a></span>
+                </div>
+            }
+            else
+            {
+                <h3>Select a collection to find swaps for:</h3>
+            }
             <br />
             <div class="user-collection-container">
                 @foreach (UserCollection userCollection in Model.UserCollections)

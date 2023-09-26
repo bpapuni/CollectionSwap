@@ -522,8 +522,10 @@ namespace CollectionSwap.Controllers
             var userCollection = db.UserCollections.Find(id);
 
             ycModel.EditCollection = userCollection;
+
+            ViewBag.Status = TempData["Status"];
             partial = Helper.RenderViewToString(ControllerContext, "_YourCollections", ycModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#your-collections-container", second = "#user-collection-container" }, ScrollTarget = "#user-collection-container" }, JsonRequestBehavior.AllowGet);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".status-container", second = "#your-collections-container", third = "#user-collection-container" }, ScrollTarget = "#user-collection-container" }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -576,6 +578,7 @@ namespace CollectionSwap.Controllers
             var userId = User.Identity.GetUserId();
             var newUserCollection = Models.UserCollection.Create(id, userId, db);
 
+            TempData["Status"] = "New collection created";
             return RedirectToAction("UserCollection", new { id = newUserCollection.Id });
         }
 
