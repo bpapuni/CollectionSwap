@@ -449,3 +449,6 @@ function UpdateNavText() {
         $(".page-navigation > .header").html(navHtml).addClass("d-none");
     }
 }
+$(document).on("click", "strong.faq", function () {
+    $(this).next().slideToggle();
+})

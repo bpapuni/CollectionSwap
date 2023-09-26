@@ -498,7 +498,7 @@ section.showcase div:first-child::after {
     flex: 1;
     flex-wrap: nowrap;
     width: 60rem;
-    margin-top: 4rem
+    /*margin-top: 4rem;*/
 }
 
 #support-container section.quick-start-steps > .row {
@@ -550,9 +550,13 @@ section.showcase div:first-child::after {
     width: 60rem;
 }
 
-    #support-container section.quick-start-steps .header,
+    #support-container section.quick-start-steps .header
+    {
+        margin: 2rem 0 4rem;
+    }
+
     #support-container section.faq .header {
-        margin: 2rem 0 3rem;
+        margin: 1rem 0 0;
     }
 
     #support-container section.quick-start-steps strong,
