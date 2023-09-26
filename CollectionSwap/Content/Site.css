@@ -564,6 +564,10 @@ section.showcase div:first-child::after {
         font-size: 1.1rem;
     }
 
+#support-container strong.faq {
+    cursor: pointer;
+}
+
 
 #about-container p {
     width: 40rem;

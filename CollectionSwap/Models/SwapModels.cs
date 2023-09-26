@@ -392,9 +392,11 @@ namespace CollectionSwap.Models
             result = result
                 .OrderBy(s => s.Status == "requested" ? 0 : 1)
                 .ThenBy(s => s.Status == "accepted" ? 0 : 1)
+                // Of the confirmed swaps, show first the swaps where the other user hasnt sent their items yet
+                .ThenBy(s => s.Status == "confirmed" && ((s.Sender.Id == userId && s.ReceiverConfirmSent == false) || (s.Receiver.Id == userId && s.SenderConfirmSent == false)) ? 0 : 1)
+                // Then show confirmed swaps  that are 'pseudo-completed', that is, the exchange is done but the user hasn't provided feedback yet
                 .ThenBy(s => s.Status == "confirmed" && ((s.Sender.Id == userId && s.SenderFeedback == null) || (s.Receiver.Id == userId && s.ReceiverFeedback == null)) ? 0 : 1)
-                .ThenBy(s => s.Status == "confirmed" || s.Status == "completed" ? 0 : 1)
-                //.ThenBy(s => s.Status == "completed" || (s.Status == "confirmed" && (s.Sender.Id == userId && s.SenderConfirmSent && s.SenderConfirmReceived) || (s.Receiver.Id == userId && s.ReceiverConfirmSent && s.ReceiverConfirmReceived)) ? 0 : 1)
+                .ThenBy(s => s.Status == "completed" ? 0 : 1)
                 .ThenBy(s => s.Status == "declined" ? 0 : 1)
                 .ThenBy(s => s.Status == "canceled" ? 0 : 1)
                 .ThenByDescending(s => s.StartDate)

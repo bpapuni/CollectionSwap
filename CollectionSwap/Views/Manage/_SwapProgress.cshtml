@@ -4,7 +4,7 @@
     var userId = User.Identity.GetUserId();
     var otherUserSent = ((Model.SenderId == userId && Model.ReceiverConfirmSent) || (Model.ReceiverId == userId && Model.SenderConfirmSent));
     var itemsSent = ((Model.SenderId == userId && Model.SenderConfirmSent) || (Model.ReceiverId == userId && Model.ReceiverConfirmSent));
-    var itemsReceived = ((Model.SenderId == userId && Model.ReceiverConfirmSent) || (Model.ReceiverId == userId && Model.SenderConfirmSent));
+    var itemsReceived = ((Model.SenderId == userId && Model.SenderConfirmReceived) || (Model.ReceiverId == userId && Model.ReceiverConfirmReceived));
     var progIndex = Model.Status == "requested" ? 0 :
                     Model.Status == "accepted" ? 1 :
                     Model.Status == "confirmed" && itemsSent && itemsReceived ? 4 : 
