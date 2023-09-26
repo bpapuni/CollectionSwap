@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Newtonsoft.Json;
 
 namespace CollectionSwap.Models
 {
@@ -51,6 +52,32 @@ namespace CollectionSwap.Models
                     var rating = db.Feedbacks.Where(f => f.Receiver.Id == this.Id).Select(f => f.Rating).ToList();
                     return rating.Count == 0 ? -1 : rating.Average();
                 }
+            }
+        }
+        public string BlockedUsers { get; set; }
+        public void HandleBlock(string username, bool isBlocked, ApplicationDbContext db)
+        {
+            var blockedUser = db.Users.Where(u => u.UserName.ToLower() == username.ToLower()).FirstOrDefault();
+            var blockedUsers = this.BlockedUsers == null || this.BlockedUsers == "[]" ? new List<string>() : JsonConvert.DeserializeObject<List<string>>(this.BlockedUsers);
+            if (isBlocked)
+            {
+                if (!blockedUsers.Contains(blockedUser.Id))
+                    blockedUsers.Add(blockedUser.Id);
+            }
+            else
+                blockedUsers.Remove(blockedUser.Id);
+
+            this.BlockedUsers = JsonConvert.SerializeObject(blockedUsers);
+
+            db.Entry(this).State = EntityState.Modified;
+            db.SaveChanges();
+        }
+        public bool HasUserBlocked(string username)
+        {
+            using (ApplicationDbContext db = new ApplicationDbContext())
+            {
+                string userId = db.Users.Where(u => u.UserName.ToLower().Contains(username.ToLower())).Select(u => u.Id).FirstOrDefault();
+                return this.BlockedUsers.Contains(userId);
             }
         }
     }

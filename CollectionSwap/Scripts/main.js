@@ -317,6 +317,15 @@ $(document).on("change", ".swap-confirm", function () {
     }
 });
 
+// Items sent / received checkbox listener
+$(document).on("change", ".block-user-container input[type=checkbox]", function () {
+    const formData = new FormData();
+    formData.append("username", $(this).data("username"));
+    formData.append("isBlocked", this.checked);
+
+    HandleFormSubmit("/Manage/BlockUser", "POST", formData);
+});
+
 // Charity collection checkbox listener
 $(document).on("change", ".charity-checkbox", function () {
     const formData = new FormData();

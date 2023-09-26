@@ -305,8 +305,10 @@ namespace CollectionSwap.Models
         public List<SwapViewModel> FindMatchingSwaps(ApplicationDbContext db)
         {
             var userId = this.User.Id;
-            // Find all user collections of the same type that don't belong to the user
-            var matchingUserCollections = db.UserCollections.Where(uc => uc.CollectionId == this.CollectionId && uc.Archived == false && uc.UserId != userId).ToList();
+            var blockedUsers = this.User.BlockedUsers != null ? this.User.BlockedUsers : "";
+            var usersBlockingYou = string.Join(",", db.Users.Where(u => u.BlockedUsers.Contains(userId)).Select(u => u.Id).ToList());
+            // Find all user collections of the same type that don't belong to the user, aren't blocked by you, and aren't blocking you
+            var matchingUserCollections = db.UserCollections.Where(uc => uc.CollectionId == this.CollectionId && uc.Archived == false && uc.UserId != userId && !blockedUsers.Contains(uc.UserId) && !usersBlockingYou.Contains(uc.UserId)).ToList();
             // Find all pending swaps the user is involved with to eliminate duplicate swap offers
             var pendingSwaps = db.Swaps
                     .Where(swap => (swap.Status == "offered" || swap.Status == "accepted" || swap.Status == "requested") && (swap.Sender.Id == userId || swap.Receiver.Id == userId))

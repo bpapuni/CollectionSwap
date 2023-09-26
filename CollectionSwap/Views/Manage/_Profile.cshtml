@@ -3,6 +3,7 @@
 @using System.Linq;
 @{
     ViewBag.Title = "Profile";
+    var user = ViewBag.User;
     var feedbacks = ViewBag.Feedbacks as List<Feedback>;
     var ratings = new List<Feedback>[5];
     ratings[4] = feedbacks.Count > 0 ? feedbacks.Where(f => f.Rating == 5).ToList() : null;
@@ -24,7 +25,8 @@
 <section>
     @*<div class="">Test</div>*@
     @*@if (feedbacks.Count > 0)
-    {*@
+        {*@
+    <div class="row">
         <div class="feedback-bar-chart">
             <div class="header">
                 <span>
@@ -65,53 +67,66 @@
                     </div>
                 }
             </div>
-
         </div>
+        <div class="block-user-container">
+            <span>
+                <strong>Block this user</strong>
+                <label class="switch">
+                    <input data-username="@username" class="block-user-checkbox" type="checkbox" checked="@user.HasUserBlocked(username)" />
+                    <span class="slider round"></span>
+                </label>
+            </span>
 
-        <div class="feedback">
-            @if (feedbacks.Count == 0)
-            {
-                <p>@username has not received any feedback yet.</p>
-            }
-            @foreach (var feedback in feedbacks)
-            {
-                var comments = JsonConvert.DeserializeObject<List<string>>(feedback.Comments);
-                var positiveComments = Feedback.PositiveComments;
-                var negativeComments = Feedback.NegativeComments;
-                <div>
-                    <div class="rating">
-                        @for (int i = 0; i < feedback.Rating; i++)
-                        {
-                            <i class="fa fa-star"></i>
-                        }
-                        @for (int i = 0; i < 5 - feedback.Rating; i++)
-                        {
-                            <i class="fa-regular fa-star"></i>
-                        }
-                    </div>
-                    <div class="comments">
-                        @if (comments.Count == 0)
-                        {
-                            <text>User chose not to leave any comments</text>
-                        }
-                        else
-                        {
-                            <ul class="feedback-list disabled">
-                                @foreach (var comment in comments)
-                                {
-                                    <li class="@(positiveComments.Contains(comment) ? "positive" : negativeComments.Contains(comment) ? "negative" : "")">@comment</li>
-                                }
-                            </ul>
-                        }
-                    </div>
-                    <div class="profile">
-                        <span>
-                            <strong>By: @feedback.Sender.UserName</strong><br />
-                            @feedback.DatePlaced.ToString("dd/MM/yyyy")
-                        </span>
-                    </div>
+            <span>
+                Enable this option if you'd like to block this user from interacting with you.
+            </span>
+        </div>
+    </div>
+
+    <div class="feedback">
+        @if (feedbacks.Count == 0)
+        {
+            <p>@username has not received any feedback yet.</p>
+        }
+        @foreach (var feedback in feedbacks)
+        {
+            var comments = JsonConvert.DeserializeObject<List<string>>(feedback.Comments);
+            var positiveComments = Feedback.PositiveComments;
+            var negativeComments = Feedback.NegativeComments;
+            <div>
+                <div class="rating">
+                    @for (int i = 0; i < feedback.Rating; i++)
+                    {
+                        <i class="fa fa-star"></i>
+                    }
+                    @for (int i = 0; i < 5 - feedback.Rating; i++)
+                    {
+                        <i class="fa-regular fa-star"></i>
+                    }
                 </div>
-            }
-        </div>
+                <div class="comments">
+                    @if (comments.Count == 0)
+                    {
+                        <text>User chose not to leave any comments</text>
+                    }
+                    else
+                    {
+                        <ul class="feedback-list disabled">
+                            @foreach (var comment in comments)
+                            {
+                                <li class="@(positiveComments.Contains(comment) ? "positive" : negativeComments.Contains(comment) ? "negative" : "")">@comment</li>
+                            }
+                        </ul>
+                    }
+                </div>
+                <div class="profile">
+                    <span>
+                        <strong>By: @feedback.Sender.UserName</strong><br />
+                        @feedback.DatePlaced.ToString("dd/MM/yyyy")
+                    </span>
+                </div>
+            </div>
+        }
+    </div>
     @* } *@
 </section>

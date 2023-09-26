@@ -101,6 +101,7 @@ namespace CollectionSwap.Controllers
                 RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).ToList()
             };
 
+            ViewBag.User = db.Users.Find(userId);
             ViewBag.ViewProfile = true;
             ViewBag.Feedbacks = db.Feedbacks.Where(f => f.Receiver.UserName == username).ToList();
             var partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
@@ -590,7 +591,7 @@ namespace CollectionSwap.Controllers
             var partial = String.Empty;
             var userCollection = db.UserCollections.Find(id);
             userCollection.Delete(db);
-
+            
             var userId = User.Identity.GetUserId();
             var ycViewModel = new YourCollectionViewModel
             {
@@ -902,6 +903,28 @@ namespace CollectionSwap.Controllers
             ViewBag.Sponsors = db.Sponsors.Where(s => s.CollectionId == 0).ToList();
             partial = Helper.RenderViewToString(ControllerContext, "/Views/Home/Index.cshtml", null, false);
             return Json(new { PartialView = partial, RefreshTargets = new { first = ".add-sponsor .body" } });
+        }
+
+        [HttpPost]
+        [Authorize]
+        public ActionResult BlockUser(string username, bool isBlocked)
+        {
+            var partial = String.Empty;
+            var userId = User.Identity.GetUserId();
+            var user = db.Users.Find(userId);
+
+            user.HandleBlock(username, isBlocked, db);
+
+            var receivedFeedback = db.Feedbacks.Where(f => f.Receiver.Id == userId).ToList();
+            var model = new IndexViewModel
+            {
+                ChangeAddress = db.Addresses.Where(address => address.UserId == userId).ToList().LastOrDefault(),
+                RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).ToList()
+            };
+
+            ViewBag.Status = $"{username} has been {(isBlocked ? "blocked" : "unblocked")}";
+            partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".status-container" } });
         }
 
 
