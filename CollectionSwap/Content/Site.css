@@ -3350,9 +3350,9 @@ input[type=number] {
         }
 
 .feedback-bar-chart {
-    /*width: calc(50% - 1rem);*/
+    /*max-width: 100%;*/
     padding: 1rem;
-    flex: 1;
+    /*flex: 1;*/
     background: #ffffffaa;
     border-radius: 1rem;
     box-shadow: var(--container-box-shadow);

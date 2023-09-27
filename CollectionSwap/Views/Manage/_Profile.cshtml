@@ -1,4 +1,5 @@
 ﻿@using CollectionSwap.Models;
+@using Microsoft.AspNet.Identity
 @using Newtonsoft.Json;
 @using System.Linq;
 @{
@@ -65,19 +66,22 @@
                 }
             </div>
         </div>
-        <div class="block-user-container @(user.HasUserBlocked(username) ? "blocked" : "")">
-            <span>
-                <strong>Block @username</strong>
-                <label class="switch">
-                    <input data-username="@username" class="block-user-checkbox" type="checkbox" checked="@user.HasUserBlocked(username)" />
-                    <span class="slider round"></span>
-                </label>
-            </span>
+        @if (User.Identity.GetUserName() != username)
+        {
+            <div class="block-user-container @(user.HasUserBlocked(username) ? "blocked" : "")">
+                <span>
+                    <strong>Block @username</strong>
+                    <label class="switch">
+                        <input data-username="@username" class="block-user-checkbox" type="checkbox" checked="@user.HasUserBlocked(username)" />
+                        <span class="slider round"></span>
+                    </label>
+                </span>
 
-            <span>
-                Enable this option if you'd like to block @username from interacting with you.
-            </span>
-        </div>
+                <span>
+                    Enable this option if you'd like to block @username from interacting with you.
+                </span>
+            </div>
+        }
     </div>
 
     <div class="feedback">
