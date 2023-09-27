@@ -450,5 +450,16 @@ function UpdateNavText() {
     }
 }
 $(document).on("click", "strong.faq", function () {
-    $(this).next().slideToggle();
+    const self = $(this);
+    const faqRows = $("section.faq > .column");
+
+    
+    faqRows.find("p").slideUp();
+    if (self.parent().hasClass("selected")) {
+        faqRows.removeClass("selected");
+        return;
+    }
+    faqRows.removeClass("selected");
+    self.parent().addClass("selected");
+    self.next().slideToggle();
 })

@@ -30,7 +30,7 @@
         <section class="column">
             @if (userAddress == null)
             {
-                <div>
+                <div class="warning">
                     <span class="header warning"><i class="fa-solid fa-circle-exclamation"></i>Added your address?</span>
                     <span>Before you can request a swap you must <a href="/Manage/Account">add your mailing address</a></span>
                 </div>
@@ -38,7 +38,7 @@
             }
             @if (userCollections.Count == 0)
             {
-                <div>
+                <div class="warning">
                     <span class="header warning"><i class="fa-solid fa-circle-exclamation"></i>Create a collection</span>
                     <span>Before you can find any swaps you'll need to <a href="/Manage/YourCollections">create a collection</a></span>
                 </div>

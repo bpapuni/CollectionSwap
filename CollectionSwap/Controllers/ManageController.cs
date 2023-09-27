@@ -739,12 +739,11 @@ namespace CollectionSwap.Controllers
             var swap = db.Swaps.Find(id);
             swap.Confirm(type, userId, db);
 
-            var swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId).ToList();
+            var filteredSwaps = Swap.Filter(userId, "all", db);
 
             var shModel = new SwapHistoryViewModel
             {
-                Swaps = ProcessCharityRequests(swaps),
-                //Feedback = null,
+                Swaps = ProcessCharityRequests(filteredSwaps),
                 Offer = null
             };
 
