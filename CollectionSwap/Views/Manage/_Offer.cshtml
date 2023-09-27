@@ -117,7 +117,7 @@
                                 @if (userId == sender.Id)
                                 {
                                     <span class="header">
-                                        @(swapStatus == "charity-completed" ? "Donated" : "Donate") to <a class="load-content" href="/Manage/Member/@otherUserName">@otherUserName</a>
+                                        @(swapStatus == "charity-completed" ? "Donated" : "Donation") to <a class="load-content" href="/Manage/Member/@otherUserName">@otherUserName</a>
                                     </span>
                                 }
                                 else if (userId == receiver.Id)
