@@ -117,11 +117,11 @@
                                 @if (userId == sender.Id)
                                 {
                                     <span class="header">
-                                        Donate to <a class="load-content" href="/Manage/Member/@otherUserName">@otherUserName</a>
+                                        @(swapStatus == "charity-completed" ? "Donated" : "Donate") to <a class="load-content" href="/Manage/Member/@otherUserName">@otherUserName</a>
                                     </span>
                                 }
-                                    else if (userId == receiver.Id)
-                                    {
+                                else if (userId == receiver.Id)
+                                {
                                     <span class="header">
                                         Donation from <a class="load-content" href="/Manage/Member/@otherUserName">@otherUserName</a>
                                     </span>

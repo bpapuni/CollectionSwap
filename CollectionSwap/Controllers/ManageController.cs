@@ -856,7 +856,7 @@ namespace CollectionSwap.Controllers
 
             ViewBag.Status = "Sponsor statement updated successfully";
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container", second = ".user-collection-sponsor-container" } });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".status-container", second = ".user-collection-sponsor-container" } });
         }
 
         [HttpPost]

@@ -467,15 +467,6 @@ namespace CollectionSwap.Models
                     this.CollectionId = collectionId;
                     this.Image = fileName + $"?time={cacheBuster}";
 
-                    if (statement != null)
-                    {
-                        this.Statement = HttpUtility.HtmlEncode(statement);
-                    }
-                    if (url != null)
-                    {
-                        this.Url = HttpUtility.HtmlEncode(url);
-                    }
-
                     if (this.Id == 0)
                     {
                         // Generate the new sponsor id
@@ -511,6 +502,16 @@ namespace CollectionSwap.Models
                 db.Entry(this).State = EntityState.Modified;
                 db.SaveChanges();
             }
+            if (statement != null)
+            {
+                this.Statement = HttpUtility.HtmlEncode(statement);
+            }
+            if (url != null)
+            {
+                this.Url = HttpUtility.HtmlEncode(url);
+            }
+            db.Entry(this).State = EntityState.Modified;
+            db.SaveChanges();
         }
         public void Delete(ApplicationDbContext db)
         {
