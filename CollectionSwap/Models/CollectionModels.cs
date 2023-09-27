@@ -515,9 +515,13 @@ namespace CollectionSwap.Models
         }
         public void Delete(ApplicationDbContext db)
         {
-            string filePath = HostingEnvironment.MapPath("~/Sponsors/0/" + this.Image.Split('?')[0]);
+            string filePath = HostingEnvironment.MapPath($"~/Sponsors/{this.CollectionId}/" + this.Image.Split('?')[0]);
             if (File.Exists(filePath))
             {
+                var collection = db.Collections.Where(c => c.Sponsor.Id == this.Id).FirstOrDefault();
+                collection.Sponsor = null;
+                db.Entry(collection).State = EntityState.Modified;
+
                 File.Delete(filePath);
                 db.Sponsors.Remove(this);
                 db.SaveChanges();

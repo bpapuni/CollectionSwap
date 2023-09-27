@@ -361,6 +361,14 @@ function EditSponsor(e) {
     HandleFormSubmit("/Manage/EditSponsor", "POST", formData);
 }
 
+// Edit sponsor on Manage Collections page
+function DeleteSponsor(e) {
+    const form = $("#edit-sponsor-form")[0];
+    const formData = new FormData(form);
+
+    HandleFormSubmit("/Manage/DeleteSponsor", "POST", formData);
+}
+
 // Edit sponsor on Home page
 function EditHomeSponsors(e) {
     const editButton = $(e);

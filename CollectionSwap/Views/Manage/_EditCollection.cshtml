@@ -116,7 +116,10 @@
                     <input type="hidden" name="statement" id="sponsor-statement">
                 </div>
             </div>
-            <button class="submit-button" onclick="EditSponsor(this)">Save</button>
+            <span class="row gap-1">
+                <button class="submit-button" onclick="EditSponsor(this)">Save</button>
+                <button class="submit-button clear" onclick="DeleteSponsor(this)">Delete</button>
+            </span>
         </div>
     }
     else if (sponsor != null)

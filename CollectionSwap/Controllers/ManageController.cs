@@ -862,6 +862,26 @@ namespace CollectionSwap.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        public ActionResult DeleteSponsor(int id, HttpPostedFileBase fileInput, string statement)
+        {
+            var partial = String.Empty;
+            var sponsor = db.Sponsors.Where(s => s.CollectionId == id).FirstOrDefault() ?? new Sponsor();
+            sponsor.Delete(db);
+
+            var mcModel = new ManageCollectionsViewModel
+            {
+                Collections = db.Collections.ToList(),
+                EditCollection = new EditCollectionModel { Collection = db.Collections.Find(id) }
+            };
+
+            ViewBag.Status = "Sponsor removed successfully";
+            partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", mcModel, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".status-container", second = ".user-collection-sponsor-container" } });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult AddHomePageSponsor(CreateSponsorModel model)
         {
             var partial = String.Empty;
@@ -898,8 +918,7 @@ namespace CollectionSwap.Controllers
             var sponsor = db.Sponsors.Find(id);
             sponsor.Delete(db);
 
-            ViewBag.Status = "Sponsor successfully removed";
-            //return RedirectToAction("Index", "Home");
+            ViewBag.Status = "Sponsor removed successfully";
             ViewBag.Sponsors = db.Sponsors.Where(s => s.CollectionId == 0).ToList();
             partial = Helper.RenderViewToString(ControllerContext, "/Views/Home/Index.cshtml", null, false);
             return Json(new { PartialView = partial, RefreshTargets = new { first = ".add-sponsor .body" } });
