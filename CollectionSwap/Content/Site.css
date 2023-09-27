@@ -994,6 +994,17 @@ button.close {
             border-radius: 1rem;
         }
 
+        #history-container table .status-attention {
+            width: 100%;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #f7a015;
+            background: #ffead8aa;
+            /*border: 1px solid var(--brand-yellow);*/
+            border-radius: 1rem;
+        }
+
         #history-container table .status-complete {
             width: 100%;
             padding: 0.2rem 0.5rem;

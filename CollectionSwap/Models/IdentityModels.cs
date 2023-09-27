@@ -77,7 +77,7 @@ namespace CollectionSwap.Models
             using (ApplicationDbContext db = new ApplicationDbContext())
             {
                 string userId = db.Users.Where(u => u.UserName.ToLower().Contains(username.ToLower())).Select(u => u.Id).FirstOrDefault();
-                return this.BlockedUsers.Contains(userId);
+                return this.BlockedUsers != null ? this.BlockedUsers.Contains(userId) : false;
             }
         }
     }
