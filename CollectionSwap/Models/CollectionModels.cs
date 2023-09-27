@@ -518,9 +518,12 @@ namespace CollectionSwap.Models
             string filePath = HostingEnvironment.MapPath($"~/Sponsors/{this.CollectionId}/" + this.Image.Split('?')[0]);
             if (File.Exists(filePath))
             {
-                var collection = db.Collections.Where(c => c.Sponsor.Id == this.Id).FirstOrDefault();
-                collection.Sponsor = null;
-                db.Entry(collection).State = EntityState.Modified;
+                if (this.CollectionId != 0)
+                {
+                    var collection = db.Collections.Where(c => c.Sponsor.Id == this.Id).FirstOrDefault();
+                    collection.Sponsor = null;
+                    db.Entry(collection).State = EntityState.Modified;
+                }
 
                 File.Delete(filePath);
                 db.Sponsors.Remove(this);
