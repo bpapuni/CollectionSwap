@@ -84,7 +84,7 @@ namespace CollectionSwap.Controllers
                 Collections = db.Collections.ToList(),
                 UserCollections = db.UserCollections.Where(uc => uc.UserId == userId && uc.Archived == false).ToList(),
                 ChangeAddress = db.Addresses.Where(address => address.UserId == userId).ToList().LastOrDefault(),
-                RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).ToList()
+                RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).OrderByDescending(f => f.DatePlaced).ToList()
             };
 
             return View(model);
@@ -98,12 +98,12 @@ namespace CollectionSwap.Controllers
             var model = new IndexViewModel
             {
                 ChangeAddress = db.Addresses.Where(address => address.UserId == userId).ToList().LastOrDefault(),
-                RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).ToList()
+                RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).OrderByDescending(f => f.DatePlaced).ToList()
             };
 
             ViewBag.User = db.Users.Find(userId);
             ViewBag.ViewProfile = true;
-            ViewBag.Feedbacks = db.Feedbacks.Where(f => f.Receiver.UserName == username).ToList();
+            ViewBag.Feedbacks = db.Feedbacks.Where(f => f.Receiver.UserName == username).OrderByDescending(f => f.DatePlaced).ToList();
             var partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = "#profile-container" }, ScrollTarget = "#profile-container" }, JsonRequestBehavior.AllowGet);
         }
@@ -164,7 +164,7 @@ namespace CollectionSwap.Controllers
             var model = new IndexViewModel
             {
                 ChangeAddress = db.Addresses.Where(address => address.UserId == userId).ToList().LastOrDefault(),
-                RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).ToList()
+                RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).OrderByDescending(f => f.DatePlaced).ToList()
             };
 
             var partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
@@ -273,7 +273,7 @@ namespace CollectionSwap.Controllers
             var partial = String.Empty;
             var userId = User.Identity.GetUserId();
             var receivedFeedback = db.Feedbacks.Where(f => f.Receiver.Id == userId).ToList();
-            model.RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).ToList();
+            model.RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).OrderByDescending(f => f.DatePlaced).ToList();
             if (!ModelState.IsValid)
             {
                 partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
@@ -938,7 +938,7 @@ namespace CollectionSwap.Controllers
             var model = new IndexViewModel
             {
                 ChangeAddress = db.Addresses.Where(address => address.UserId == userId).ToList().LastOrDefault(),
-                RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).ToList()
+                RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).OrderByDescending(f => f.DatePlaced).ToList()
             };
 
             ViewBag.Status = $"{username} has been {(isBlocked ? "blocked" : "unblocked")}";
