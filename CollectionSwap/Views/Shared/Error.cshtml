@@ -4,7 +4,18 @@
     ViewBag.Title = "Error";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">@ViewBag.errorMessage</h2>
-<span class="error header"><i class="fa-solid fa-circle-exclamation"></i>@ViewBag.errorMessage</span>
+@if (ViewBag.errorMessage.Contains("confirm your email"))
+{
+    <div class="confirm-email-warning-container">
+        <div class="warning">
+            <span class="header warning"><i class="fa-solid fa-circle-exclamation"></i>@ViewBag.errorMessage</span>
+            <span>We have sent an email to <strong>@ViewBag.EmailRecipient</strong> to confirm your identity. Please follow the link provided in the email to complete your registration.</span>
+        </div>
+    </div>
+}
+else
+{
+    <h1 class="text-danger">Error.</h1>
+    <h2 class="text-danger">@ViewBag.errorMessage</h2>
+}
 

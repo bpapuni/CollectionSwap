@@ -109,6 +109,7 @@ namespace CollectionSwap.Controllers
                 if (!await UserManager.IsEmailConfirmedAsync(user.Id))
                 {
                     ViewBag.errorMessage = "You must confirm your email before you can login.";
+                    ViewBag.EmailRecipient = model.Email;
                     return View("Error");
                 }
             }
@@ -189,6 +190,7 @@ namespace CollectionSwap.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(AccountViewModel avModel)
         {
+            var partial = String.Empty;
             RegisterViewModel model = avModel.RegisterViewModel;
             if (ModelState.IsValid)
             {
@@ -226,13 +228,14 @@ namespace CollectionSwap.Controllers
                 var errorCounter = 0;
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError(errorCounter == 0 ? "UsernameTaken" : "EmailTaken", error);
+                    ModelState.AddModelError(errorCounter == 0 ? "RegisterViewModel.Username" : "RegisterViewModel.Email", error);
                     errorCounter++;
                 }
             }
 
             // If we got this far, something failed, redisplay form
-            return View("Login", avModel);
+            partial = Helper.RenderViewToString(ControllerContext, "Login", avModel, true);
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#register-form" } });
         }
 
         //

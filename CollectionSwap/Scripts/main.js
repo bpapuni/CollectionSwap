@@ -107,7 +107,7 @@ $(document).on("click", ".navigation", function (e) {
 });
 
 // Form submit listeners Handle loading form submission partial views
-$(document).on("submit", ".manage-container-main form, #home-container form", function (event) {
+$(document).on("submit", ".manage-container-main form, #home-container form, #register-form", function (event) {
     event.preventDefault();
     var formData = new FormData(this);
 
@@ -215,7 +215,7 @@ function OpenCreateUserCollection(e) {
 // Page navigation back button
 function ScrollRowBack(target) {
     const scrollRow = $(".scroll-snap-row");
-    const pages = scrollRow.children().length - 3;                                // -1 cause we want 0 index, -2 for the first 2 elements we want to ignore
+    const pages = scrollRow.children().length - 3;  // -3 as we want to ignore the first 2 children, and we want the pages to be 0-indexed
     const currentPageIndex = pages - scrollRow.children("div.d-none").length;
     const previousPageIndex = target == null ? currentPageIndex - 1 : $("div[data-nav]").index(target);
     const offset = previousPageIndex == 0 ? 0 : 1216 * previousPageIndex;
@@ -319,6 +319,7 @@ $(document).on("change", ".swap-confirm", function () {
 
 // Items sent / received checkbox listener
 $(document).on("change", ".block-user-container input[type=checkbox]", function () {
+    $(".block-user-container").toggleClass("blocked");
     const formData = new FormData();
     formData.append("username", $(this).data("username"));
     formData.append("isBlocked", this.checked);
@@ -341,7 +342,8 @@ $(document).on("click", ".swap-history-filters > span", function () {
     const formData = new FormData();
     formData.append("filter", $(this).data("status"));
 
-    HandleFormSubmit("/Manage/FilterSwaps", "POST", formData);
+    //HandleFormSubmit("/Manage/FilterSwaps", "POST", formData);
+    HandleFormSubmit("/Manage/SwapHistoryPartial", "POST", formData);
 });
 
 // Edit sponsor on Manage Collections page

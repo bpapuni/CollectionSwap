@@ -627,11 +627,11 @@ namespace CollectionSwap.Controllers
         // GET: /Manage/SwapHistory
 
         [Authorize]
-        public ActionResult SwapHistoryPartial(int? id)
+        public ActionResult SwapHistoryPartial(int? id, string filter)
         {
             var partial = String.Empty;
             var userId = User.Identity.GetUserId();
-            var swaps = Swap.Filter(userId, "all", db);
+            var swaps = Swap.Filter(userId, filter == null ? "all" : filter, db);
 
             var shModel = new SwapHistoryViewModel
             {
@@ -645,6 +645,7 @@ namespace CollectionSwap.Controllers
             }
 
             ViewBag.Status = TempData["Status"];
+            ViewBag.Filter = filter == null ? "all" : filter;
             partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
             return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" } }, JsonRequestBehavior.AllowGet);
         }
@@ -707,29 +708,29 @@ namespace CollectionSwap.Controllers
             return processedSwaps;
         }
 
-        [HttpPost]
-        [Authorize]
-        public ActionResult FilterSwaps(string filter)
-        {
-            if (filter == "all")
-            {
-                return RedirectToAction("SwapHistoryPartial");
-            }
+        //[HttpPost]
+        //[Authorize]
+        //public ActionResult FilterSwaps(string filter)
+        //{
+        //    if (filter == "all")
+        //    {
+        //        return RedirectToAction("SwapHistoryPartial");
+        //    }
 
-            var partial = String.Empty;
-            var userId = User.Identity.GetUserId();
-            var filteredSwaps = Swap.Filter(userId, filter, db);
+        //    var partial = String.Empty;
+        //    var userId = User.Identity.GetUserId();
+        //    var filteredSwaps = Swap.Filter(userId, filter, db);
 
-            var shModel = new SwapHistoryViewModel
-            {
-                Swaps = ProcessCharityRequests(filteredSwaps),
-                Offer = null
-            };
+        //    var shModel = new SwapHistoryViewModel
+        //    {
+        //        Swaps = ProcessCharityRequests(filteredSwaps),
+        //        Offer = null
+        //    };
 
-            ViewBag.Status = TempData["Status"];
-            partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container table" } }, JsonRequestBehavior.AllowGet);
-        }
+        //    ViewBag.Status = TempData["Status"];
+        //    partial = Helper.RenderViewToString(ControllerContext, "_SwapHistory", shModel, true);
+        //    return Json(new { PartialView = partial, RefreshTargets = new { first = "#history-container table" } }, JsonRequestBehavior.AllowGet);
+        //}
 
         [HttpPost]
         [Authorize]

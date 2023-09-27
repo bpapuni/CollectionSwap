@@ -23,9 +23,6 @@
 </div>
 
 <section>
-    @*<div class="">Test</div>*@
-    @*@if (feedbacks.Count > 0)
-        {*@
     <div class="row">
         <div class="feedback-bar-chart">
             <div class="header">
@@ -68,9 +65,9 @@
                 }
             </div>
         </div>
-        <div class="block-user-container">
+        <div class="block-user-container @(user.HasUserBlocked(username) ? "blocked" : "")">
             <span>
-                <strong>Block this user</strong>
+                <strong>Block @username</strong>
                 <label class="switch">
                     <input data-username="@username" class="block-user-checkbox" type="checkbox" checked="@user.HasUserBlocked(username)" />
                     <span class="slider round"></span>
@@ -78,7 +75,7 @@
             </span>
 
             <span>
-                Enable this option if you'd like to block this user from interacting with you.
+                Enable this option if you'd like to block @username from interacting with you.
             </span>
         </div>
     </div>

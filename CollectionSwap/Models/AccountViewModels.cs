@@ -48,12 +48,12 @@ namespace CollectionSwap.Models
 
     public class LoginViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "This field is required.")]
         [Display(Name = "Email")]
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "This field is required.")]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
@@ -64,16 +64,17 @@ namespace CollectionSwap.Models
 
     public class RegisterViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "This field is required.")]
+        [StringLength(100, ErrorMessage = "{0} must be at least {2} characters long.", MinimumLength = 6)]
         [Display(Name = "Username")]
         public string Username { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "This field is required.")]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "This field is required.")]
         [StringLength(100, ErrorMessage = "{0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]

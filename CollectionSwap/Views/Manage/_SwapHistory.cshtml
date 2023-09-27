@@ -5,6 +5,7 @@
     string errorMessage = ViewBag.Error;
     var userId = User.Identity.GetUserId();
     var displayableSwaps = Model.Swaps;
+    var filter = ViewBag.Filter;
 }
 
 <div class="scroll-snap-row">
@@ -26,11 +27,11 @@
 
         <section class="column">
             <div class="swap-history-filters">
-                <span data-status="all" class="selected">All</span>
-                <span data-status="requested">Requested</span>
-                <span data-status="accepted">Accepted</span>
-                <span data-status="confirmed">Confirmed</span>
-                <span data-status="completed">Completed</span>
+                <span data-status="all" class="@(filter == "all" ? "selected" : "")">All</span>
+                <span data-status="requested" class="@(filter == "requested" ? "selected" : "")">Requested</span>
+                <span data-status="accepted" class="@(filter == "accepted" ? "selected" : "")">Accepted</span>
+                <span data-status="confirmed" class="@(filter == "confirmed" ? "selected" : "")">Confirmed</span>
+                <span data-status="completed" class="@(filter == "completed" ? "selected" : "")">Completed</span>
             </div>
             <table>
                 <thead>

@@ -2977,18 +2977,16 @@ input[type=number] {
     padding: 0 1rem 1rem 1rem;
 }
 
+    .confirm-email-warning-container > div.warning,
     #find-swaps-container div.warning {
         width: 38rem;
         padding: 1rem 1rem 1rem 1.25rem;
-        background: linear-gradient(to right, 
-            var(--brand-orange) 0, 
-            var(--brand-orange) 0.5rem, 
-            #ffffffaa 0.5rem);
-            100% no-repeat;
+        background: linear-gradient(to right, var(--brand-orange) 0, var(--brand-orange) 0.5rem, #ffffffaa 0.5rem) no-repeat;
         border: 1px solid #aaa;
         border-radius: 0.25rem;
     }
 
+    .confirm-email-warning-container .header.warning,
     #find-swaps-container .header.warning {
         display: flex;
         align-items: center;
@@ -2997,6 +2995,10 @@ input[type=number] {
         font-size: 1.1rem;
         font-weight: 500;
         color: var(--brand-orange);
+    }
+
+    .confirm-email-warning-container {
+        margin-top: 4rem;
     }
 
 #register-container {
@@ -3295,8 +3297,7 @@ input[type=number] {
         }
 
 .feedback-bar-chart {
-    width: 50%;
-    /*height: 16rem;*/
+    width: calc(50% - 1rem);
     padding: 1rem;
     background: #ffffffaa;
     border-radius: 1rem;
@@ -3364,6 +3365,7 @@ input[type=number] {
     #profile-container .feedback > p {
         width: calc(50% - 1rem);
         padding: 1rem;
+        margin: 0;
         background: white;
         border-radius: 1rem;
         box-shadow: var(--container-box-shadow);
@@ -3381,10 +3383,6 @@ input[type=number] {
 #profile-container > section > .row {
     align-items: flex-end;
     gap: 2rem;
-}
-
-#profile-container > section > .row > * {
-    flex: 1;
 }
 
 #profile-container .feedback > div {
@@ -3486,11 +3484,33 @@ input:checked + .slider:before {
 }
 
 .block-user-container {
+    position: relative;
     padding: 1rem;
+    width: 27rem;
+    /*margin-right: 11rem;*/
     background: #FFFFFFaa;
     border-radius: 1rem;
     box-shadow: var(--container-box-shadow);
 }
+
+    .block-user-container::after {
+        position: absolute;
+        content: "";
+        bottom: 0;
+        right: -9rem;
+        display: flex;
+        justify-content: flex-end;
+        width: 11rem;
+        height: 16rem;
+        background: url('images/doodles/8.png') no-repeat;
+        background-size: contain;
+    }
+
+    .block-user-container.blocked::after {
+        bottom: -1.2rem;
+        background: url('images/doodles/7.png') no-repeat;
+        background-size: contain;
+    }
 
     .block-user-container > span:first-child {
         display: flex;
