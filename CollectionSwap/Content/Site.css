@@ -3361,9 +3361,11 @@ input[type=number] {
         }
 
 .feedback-bar-chart {
-    /*max-width: 100%;*/
+    display: flex;
+    flex-direction: column;
+    flex: 1;
     padding: 1rem;
-    /*flex: 1;*/
+    max-width: 50%;
     background: #ffffffaa;
     border-radius: 1rem;
     box-shadow: var(--container-box-shadow);
@@ -3444,6 +3446,7 @@ input[type=number] {
 #profile-container > section {
     display: flex;
     flex-direction: column;
+    flex-wrap: nowrap;
 }
 
 #profile-container > section > .row {
@@ -3553,6 +3556,8 @@ input:checked + .slider:before {
 .block-user-container {
     position: relative;
     padding: 1rem;
+    flex: 1;
+    max-width: 23rem;
     background: #FFFFFFaa;
     border-radius: 1rem;
     box-shadow: var(--container-box-shadow);
