@@ -101,7 +101,7 @@
                 .Index(t => t.UserName, unique: true, name: "UserNameIndex");
 
             // Insert initial admin data
-            Sql($"INSERT INTO dbo.AspNetUsers (Id, Email, EmailConfirmed, PasswordHash, SecurityStamp, PhoneNumber, PhoneNumberConfirmed, TwoFactorEnabled, LockoutEndDateUtc, LockoutEnabled, AccessFailedCount, UserName) VALUES ('6b5afcbf-6f42-486e-bcb0-e7d80c230902', 'admin@swapper.co.nz', 1, 'AM0mrAh/WsskwdcMml71ZhgyJiOhKkAQqo/XjCwrsVizhSpneekETw35vAg35QXAUQ==', 'b1196dc8-b687-40db-bc45-c43f4078e851', NULL, 0, 0, NULL, 1, 0, 'SwapperAdmin')");
+            //Sql($"INSERT INTO dbo.AspNetUsers (Id, Email, EmailConfirmed, PasswordHash, SecurityStamp, PhoneNumber, PhoneNumberConfirmed, TwoFactorEnabled, LockoutEndDateUtc, LockoutEnabled, AccessFailedCount, UserName) VALUES ('6b5afcbf-6f42-486e-bcb0-e7d80c230902', 'admin@swapper.co.nz', 1, 'AM0mrAh/WsskwdcMml71ZhgyJiOhKkAQqo/XjCwrsVizhSpneekETw35vAg35QXAUQ==', 'b1196dc8-b687-40db-bc45-c43f4078e851', NULL, 0, 0, NULL, 1, 0, 'SwapperAdmin')");
 
             CreateTable(
                 "dbo.AspNetUserClaims",
