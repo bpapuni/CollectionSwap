@@ -126,8 +126,7 @@ $(document).on("submit", ".manage-container-main form, #home-container form, #re
         formData = new FormData(this);
     }
 
-    console.log(token);
-    HandleFormSubmit($(this).attr("action"), $(this).attr("method"), formData, token);
+    HandleFormSubmit($(this).attr("action"), $(this).attr("method"), formData);
 });
 
 // Handle loading the navigation partial views
@@ -164,13 +163,19 @@ function HandleFormSubmit(url, type, formData, token) {
         contentType: false,
         success: function (result) {
             var partialView = result.PartialView;
-
             if (result.RefreshTargets) {
                 $.each(result.RefreshTargets, function (key, target) {
                     if (`#${$(partialView).attr("id")}` === target || `.${$(partialView).attr("class")}` == target) {
                         $(`${target}`).prop("outerHTML", $(partialView).prop("outerHTML"));
                     } else {
-                        $(`${target}`).prop("outerHTML", $(partialView).find(target).prop("outerHTML"));
+                        const loadedContent = $(partialView).find(target);
+                        if (loadedContent.length == 0) {
+                            $("body").html($(partialView));
+                        }
+                        else {
+                            $(`${target}`).prop("outerHTML", loadedContent.prop("outerHTML"));
+                        }
+                            
                     }
                     $(`${target}`).removeClass("d-none");
                 });
@@ -202,7 +207,7 @@ function HandleFormSubmit(url, type, formData, token) {
             }
         },
         error: function () {
-            // Handle error
+            
         }
     });
 }
@@ -481,8 +486,4 @@ $(document).on("click", "strong.faq", function () {
     faqRows.removeClass("selected");
     self.parent().addClass("selected");
     self.next().slideToggle();
-});
-
-function DisplayPrompt() {
-
-}
+})
