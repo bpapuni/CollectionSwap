@@ -52,13 +52,14 @@
 
         @using (Html.BeginForm("PlaceFeedback", "Manage", FormMethod.Post, new { id = "feedback-form" }))
         {
+            @Html.AntiForgeryToken()
             <div class="feedback-options">
                 @{
                     var positiveComments = Feedback.PositiveComments;
                     var negativeComments = Feedback.NegativeComments;
                 }
                 <span class="feedback-header">Positive Feedback</span>
-                <ul class="feedback-list positive @(userComments != null ? "disabled" : "")">
+                <ul class="feedback-list positive">
                     @if (userComments != null)
                     {
                         foreach (var comment in positiveComments)
@@ -84,7 +85,7 @@
                 </ul>
 
                 <span class="feedback-header">Negative Feedback</span>
-                <ul class="feedback-list negative @(userComments != null ? "disabled" : "")">
+                <ul class="feedback-list negative">
                     @if (userComments != null)
                     {
                         foreach (var comment in negativeComments)
@@ -121,11 +122,4 @@
     </div>
 </div>
 
-@if (hasPlacedFeedback)
-{
-    <button class="submit-button" disabled>Feedback Submitted</button>
-}
-else
-{
-    <button class="submit-button" onclick="$('#feedback-form').trigger('submit')">Submit Feedback</button>
-}
+<button class="submit-button" onclick="$('#feedback-form').trigger('submit')">Submit Feedback</button>

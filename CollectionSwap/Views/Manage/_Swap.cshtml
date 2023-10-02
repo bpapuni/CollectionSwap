@@ -52,35 +52,7 @@
                     </span>
                 }
 
-                @if (rating == -1)
-                {
-                    <span class="new-swapper">New</span>
-                }
-                else
-                {
-                    <span class="swap-rating">
-                        @for (int i = 0; i < 5; i++)
-                        {
-                            if (i < Math.Floor(rating))
-                            {
-                                <i class="fa-solid fa-star"></i>
-                            }
-                            else if (i < Math.Ceiling(rating))
-                            {
-                                <i class="fa-solid fa-star-half-alt"></i>
-                                @*<span class="half-star">
-                                    <i class="fa-solid fa-star-half"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                </span>*@
-                            }
-                            else
-                            {
-                                <i class="fa-regular fa-star"></i>
-                                @*<i class="fa-solid fa-star"></i>*@
-                            }
-                        }
-                    </span>
-                }
+                @Html.Partial("_Rating", rating)
             </div>
         </div>
     </div>

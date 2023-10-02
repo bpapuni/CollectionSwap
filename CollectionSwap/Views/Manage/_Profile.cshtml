@@ -28,21 +28,7 @@
         <div class="feedback-bar-chart">
             <div class="header">
                 <span>
-                    @for (int i = 0; i < 5; i++)
-                    {
-                        if (i < Math.Floor(average))
-                        {
-                            <i class="fa fa-star"></i>
-                        }
-                        else if (i < Math.Ceiling(average))
-                        {
-                            <i class="fa-solid fa-star-half-alt"></i>
-                        }
-                        else
-                        {
-                            <i class="fa-regular fa-star"></i>
-                        }
-                    }
+                    @Html.Partial("_Rating", average)
                 </span>
                 <div class="overall-rating">
                     <span>@Math.Round(average, 1) out of 5 Stars</span>
@@ -96,18 +82,11 @@
             var negativeComments = Feedback.NegativeComments;
             <div>
                 <div class="rating">
-                    @for (int i = 0; i < feedback.Rating; i++)
-                    {
-                        <i class="fa fa-star"></i>
-                    }
-                    @for (int i = 0; i < 5 - feedback.Rating; i++)
-                    {
-                        <i class="fa-regular fa-star"></i>
-                    }
+                    @Html.Partial("_Rating", (double) feedback.Rating)
                 </div>
                 <div class="comments">
                     @if (comments.Count == 0)
-                    {
+                            {
                         <text>User chose not to leave any comments</text>
                     }
                     else
@@ -116,7 +95,7 @@
                             @foreach (var comment in comments)
                             {
                                 <li class="@(positiveComments.Contains(comment) ? "positive" : negativeComments.Contains(comment) ? "negative" : "")">@comment</li>
-                            }
+                        }
                         </ul>
                     }
                 </div>

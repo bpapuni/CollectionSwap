@@ -3,6 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CollectionSwap.Models
 {
+    public class PromptViewModel
+    {
+        public string Title { get; set; }
+        public string Body { get; set; }
+    }
     public class ExternalLoginConfirmationViewModel
     {
         [Required]

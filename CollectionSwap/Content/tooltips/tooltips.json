@@ -1,0 +1,19 @@
+{
+  // Displays when a user mouses over the 'Sent' <th> on the Your Swaps page.
+  "your-swaps-sent": {
+    "title": "Items Sent",
+    "content": "Tick the checkbox in this column to let your swap partner know you've sent out their items."
+  },
+
+  // Displays when a user mouses over the 'Received' <th> on the Your Swaps page.
+  "your-swaps-received": {
+    "title": "Items Received",
+    "content": "Tick the checkbox in this column to complete your swap and update your collection with your new items."
+  },
+
+  // Displays when a user mouses over the  on the Your Swaps page.
+  "donate-collection": {
+    "title": "Donate Collection",
+    "content": "When this option is enabled, all of the items in this collection are made available as a 'Charity Swap'. This means other users can request these items for nothing in exchange.\nPlease remove any items from the collection that you are not happy to donate or leave this option disabled."
+  }
+}

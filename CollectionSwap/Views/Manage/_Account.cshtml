@@ -216,15 +216,25 @@
                             </div>
                             <div class="profile">
                                 <span>
-                                    <strong>By: <a class="load-content" href="/Manage/Member/@feedback.Sender.UserName">@feedback.Sender.UserName</a></strong><br />
-                                    @feedback.DatePlaced.ToString("dd/MM/yyyy")
+                                    <strong>By: <a class="load-content" href="/Manage/Member/@feedback.Sender.UserName">@feedback.Sender.UserName</a></strong>@Html.Partial("_Rating", @feedback.Sender.Rating)<br />
                                 </span>
+                                @feedback.DatePlaced.ToString("dd/MM/yyyy")
                             </div>
                         </div>
                     }
                 </div>
             </section>
         }
+
+        
+        <div class="close-account">
+            <div class="column">
+                <strong>Close account</strong>
+                Close this account and cancel any outstanding swaps.
+            </div>
+            <button class="submit-button cancel" onclick="$(this).next().removeClass('d-none')">Close Account</button>
+            @Html.Partial("_Prompt", new PromptViewModel { Title = "Are you sure you wish to close your account?", Body = "Content" })
+        </div>
     </div>
 
     <div data-nav="Member Profile" id="profile-container" class="d-none">

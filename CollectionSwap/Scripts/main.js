@@ -4,7 +4,7 @@ var scrollTop = $(window).scrollTop();
 
 // Map the values of our partial views to an array
 const partialNames = subNavLinks.map(function () {
-    return $(this).text().replace(' ', '');
+    return $(this).data("nav");
 }).get();
 
 // Get the current partial views name and id if there is one
@@ -13,7 +13,7 @@ var partialId = location.pathname.split("/Manage/").pop().split("/")[1];
 
 // If user has navigated to a page not within our partialNames array redirect them them to the Account partial
 if (!partialNames.includes(partialName)) {
-    partialName = "SwapHistory";
+    partialName = "Swaps";
 }
 
 // Find the link index of the the currently active partial view
@@ -29,7 +29,7 @@ LoadPartial(partialName, `/Manage/${partialName}`)
 
 if (partialId) {
     const formData = new FormData();
-    var action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches").replace("SwapHistory", "SwapHistoryPartial");
+    var action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches").replace("YourSwaps", "YourSwapsPartial");
 
     formData.append("id", partialId);
     HandleFormSubmit(`/Manage/${action}`, "POST", formData);
@@ -37,12 +37,12 @@ if (partialId) {
 
 // On back/forward navigation update the partial name and display the corresponding view
 $(window).on("popstate", function (e) {
-    partialName = partialName == "Index" ? "SwapHistory" : location.pathname.split("/Manage")[1] == "" ? "SwapHistory" : location.pathname.split("/Manage/").pop().split("/")[0]
+    partialName = partialName == "Index" ? "YourSwaps" : location.pathname.split("/Manage")[1] == "" ? "YourSwaps" : location.pathname.split("/Manage/").pop().split("/")[0]
     partialId = location.pathname.split("/Manage/").pop().split("/")[1];
     LoadPartial(partialName, `/Manage/${partialName}`)
     if (partialId) {
         const formData = new FormData();
-        const action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches").replace("SwapHistory", "SwapHistoryPartial");
+        const action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches").replace("YourSwaps", "YourSwapsPartial");
         formData.append("id", partialId);
 
         HandleFormSubmit(`/Manage/${action}`, "POST", formData);
@@ -83,7 +83,7 @@ $(document).on("click", ".load-content", function (e) {
     const formData = new FormData();
     formData.append(action == "Member" ? "username" : "id", id);
 
-    action = action.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches").replace("SwapHistory", "SwapHistoryPartial");
+    action = action.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches").replace("YourSwaps", "YourSwapsPartial");
 
     HandleFormSubmit(`/${controller}/${action}`, "POST", formData);
 });
@@ -92,8 +92,8 @@ function OpenOffer(swapId) {
     const formData = new FormData();
     formData.append("id", swapId);
 
-    history.pushState({ partialName: "SwapHistory" }, null, `/Manage/SwapHistory/${swapId}`);
-    HandleFormSubmit(`/Manage/SwapHistoryPartial`, "POST", formData);
+    history.pushState({ partialName: "Swaps" }, null, `/Manage/Swaps/${swapId}`);
+    HandleFormSubmit(`/Manage/SwapsPartial`, "POST", formData);
 }
 
 // Breadcrumb navigation button click listeners
@@ -110,6 +110,7 @@ $(document).on("click", ".navigation", function (e) {
 $(document).on("submit", ".manage-container-main form, #home-container form, #register-form", function (event) {
     event.preventDefault();
     var formData = new FormData(this);
+    const token = $(this).find("input[name='__RequestVerificationToken']").val();
 
     if (this.id == "feedback-form") {
         var rating = $(".star-button.selected").length > 0 ? $(".star-button.selected").length : null;
@@ -124,7 +125,9 @@ $(document).on("submit", ".manage-container-main form, #home-container form, #re
         $("#Feedback_Comments").val(JSON.stringify(comments));
         formData = new FormData(this);
     }
-    HandleFormSubmit($(this).attr("action"), $(this).attr("method"), formData);
+
+    console.log(token);
+    HandleFormSubmit($(this).attr("action"), $(this).attr("method"), formData, token);
 });
 
 // Handle loading the navigation partial views
@@ -146,10 +149,16 @@ function LoadPartial(partialName, url) {
     });
 }
 
-function HandleFormSubmit(url, type, formData) {
+function HandleFormSubmit(url, type, formData, token) {
+    const headers = {};
+    if (token !== null) {
+        headers["X-CSRF-Token"] = token;
+    }
+
     $.ajax({
         url: url,
         type: type,
+        headers: headers,
         data: formData,
         processData: false,
         contentType: false,
@@ -343,7 +352,7 @@ $(document).on("click", ".swap-history-filters > span", function () {
     formData.append("filter", $(this).data("status"));
 
     //HandleFormSubmit("/Manage/FilterSwaps", "POST", formData);
-    HandleFormSubmit("/Manage/SwapHistoryPartial", "POST", formData);
+    HandleFormSubmit("/Manage/SwapsPartial", "POST", formData);
 });
 
 // Edit sponsor on Manage Collections page
@@ -463,7 +472,7 @@ $(document).on("click", "strong.faq", function () {
     const self = $(this);
     const faqRows = $("section.faq > .column");
 
-    
+
     faqRows.find("p").slideUp();
     if (self.parent().hasClass("selected")) {
         faqRows.removeClass("selected");
@@ -472,4 +481,8 @@ $(document).on("click", "strong.faq", function () {
     faqRows.removeClass("selected");
     self.parent().addClass("selected");
     self.next().slideToggle();
-})
+});
+
+function DisplayPrompt() {
+
+}

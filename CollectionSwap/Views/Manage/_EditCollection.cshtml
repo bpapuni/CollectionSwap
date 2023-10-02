@@ -20,9 +20,7 @@
             @using (Html.BeginForm("ChangeCollectionName", "Manage", null, FormMethod.Post, new { enctype = "multipart/form-data", role = "form", id = "update-name-form", @class = "edit-collection-form" }))
             {
                 @Html.AntiForgeryToken()
-                @*<span class="header">Update Collection Name</span>*@
                 <div class="form-group">
-                    @Html.AntiForgeryToken()
                     @Html.HiddenFor(model => model.Collection.Id)
 
                     <label>Update Collection Name</label>
@@ -35,7 +33,6 @@
             @using (Html.BeginForm("AddItem", "Manage", null, FormMethod.Post, new { enctype = "multipart/form-data", role = "form", id = "add-item-form", @class = "edit-collection-form" }))
             {
                 @Html.AntiForgeryToken()
-                @*<span class="header">Add Item</span>*@
                 <div class="form-group">
                     @Html.HiddenFor(model => model.Collection.Id)
                     @Html.HiddenFor(model => model.Collection.Name)

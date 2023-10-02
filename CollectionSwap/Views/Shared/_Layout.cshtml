@@ -32,7 +32,7 @@
                 {
                     @Html.AntiForgeryToken()
                     <li class="@(currentController == "Manage" ? "selected" : "")">
-                        @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "SwapHistory", "Manage")
+                        @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Swaps", "Manage")
                     </li>
                     <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
                 }

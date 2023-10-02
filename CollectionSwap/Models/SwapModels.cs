@@ -42,7 +42,7 @@ namespace CollectionSwap.Models
         public ValidateResult Validation { get; set; }
     }
 
-    public class SwapHistoryViewModel
+    public class YourSwapsViewModel
     {
         public List<Swap> Swaps { get; set; }
         public SwapViewModel Offer { get; set; }
@@ -413,10 +413,15 @@ namespace CollectionSwap.Models
             var receiverRequestedItems = JsonConvert.DeserializeObject<List<int>>(this.ReceiverRequestedItems); // Items requested from (not by) the receiver
             // Find all swaps (not including this swap) where this swaps user collection id is involved            
             var pendingSwaps = db.Swaps
-                .Include("Collection")
-                .Include("Sender")
-                .Include("Receiver")
-                .Where(swap => this.Id != swap.Id && swap.ReceiverRequestedItems != "[]" && (this.SenderCollectionId == swap.SenderCollectionId || this.SenderCollectionId == swap.ReceiverCollectionId || this.ReceiverCollectionId == swap.SenderCollectionId || this.ReceiverCollectionId == swap.ReceiverCollectionId) && (swap.Status == "requested" || swap.Status == "accepted"))
+                .Where(swap => (swap.Sender.Id == userId || swap.Receiver.Id == userId) && 
+                    this.Id != swap.Id && 
+                    swap.ReceiverRequestedItems != "[]" && 
+                    this.ReceiverRequestedItems != "[]" &&
+                        (this.SenderCollectionId == swap.SenderCollectionId || 
+                        this.SenderCollectionId == swap.ReceiverCollectionId || 
+                        this.ReceiverCollectionId == swap.SenderCollectionId || 
+                        this.ReceiverCollectionId == swap.ReceiverCollectionId) && 
+                    (swap.Status == "requested" || swap.Status == "accepted"))
                 .ToList();
 
             if (this.Status == "swap") // Check if matching swap contains an item already requested in another swap by the sender
@@ -632,19 +637,19 @@ namespace CollectionSwap.Models
             {
                 return new List<string>
                 {
-                    "Swap took a long time to be accepted",
-                    "Items took too long to arrive",
-                    "Items packaged poorly",
+                    "Swap took a long time to complete",
                     "Items in poor condition",
                     "Expected items were missing",
                     "Would not swap with again",
                     "User came to my address",
+                    "User attempted to make direct contact",
                 };
             }
         }
         public Feedback Create(string userId, ApplicationDbContext db)
         {
             var comments = JsonConvert.DeserializeObject<List<string>>(this.Comments);
+            var feedback = db.Feedbacks.Find(this.Id) ?? new Feedback();
 
             // Guard clause that prevents the user from submitting a comment not contained within our feedback options
             foreach (var comment in comments) 
@@ -655,31 +660,41 @@ namespace CollectionSwap.Models
                 }
             }
 
-            if (db.Feedbacks.Find(this.Id) != null)
+            // If this is neew feedback
+            if (feedback == null)
             {
-                return this;
+                this.DatePlaced = DateTime.UtcNow;
+                db.Feedbacks.Add(this);
+                
+                // Find the swap this feedback is for
+                var swap = db.Swaps.Find(this.SwapId);
+                // Determine if the swap was a donation
+                var isCharity = swap.ReceiverRequestedItems == "[]";
+
+                this.Sender = db.Users.Find(userId);
+                this.Receiver = db.Users.Find(swap.SenderId == userId ? swap.ReceiverId : swap.SenderId);
+
+                if (swap.Sender.Id == userId)
+                {
+                    swap.SenderFeedback = this;
+                }
+                else if (swap.ReceiverId == userId)
+                {
+                    swap.ReceiverFeedback = this;
+                }
+
+                // If both sender and receiver have sent feedback OR if the swaps charity and the receiver has sent feedback, set status to completed
+                swap.Status = (swap.SenderFeedback != null && swap.ReceiverFeedback != null) || (isCharity && swap.ReceiverFeedback != null) ? "completed" : swap.Status;
+                db.Entry(swap).State = EntityState.Modified;
+            }
+            // Else its updating feedback
+            else
+            {
+                feedback.Rating = this.Rating;
+                feedback.Comments = this.Comments;
+                db.Entry(feedback).State = EntityState.Modified;
             }
 
-            var swap = db.Swaps.Find(this.SwapId);
-            var isCharity = swap.ReceiverRequestedItems == "[]";
-
-            this.Sender = db.Users.Find(userId);
-            this.Receiver = db.Users.Find(swap.SenderId == userId ? swap.ReceiverId : swap.SenderId);
-
-            if (swap.Sender.Id == userId)
-            {
-                swap.SenderFeedback = this;
-            } 
-            else if (swap.ReceiverId == userId)
-            {
-                swap.ReceiverFeedback = this;
-            }
-
-            swap.Status = (swap.SenderFeedback != null && swap.ReceiverFeedback != null) || (isCharity && swap.ReceiverFeedback != null) ? "completed" : swap.Status;
-            db.Entry(swap).State = EntityState.Modified;
-
-            this.DatePlaced = DateTime.UtcNow;
-            db.Feedbacks.Add(this);
             db.SaveChanges();
 
             return this;

@@ -31,9 +31,8 @@
                 <input class="submit-button" type="submit" value="Update Name" />
             }
             <div class="charity">
-                @*<span class="header">Charity</span>*@
                 <span>
-                    <strong>Donate this collection to another user</strong>
+                    <strong class="tooltip tooltip-below">Donate this collection to another user<i class="fa-solid fa-circle-info">@Html.Partial("_Tooltip", "donate-collection")</i></strong>
                     <label class="switch">
                         <input data-user-collection-id="@Model.Id" class="charity-checkbox" type="checkbox" checked="@Model.Charity" />
                         <span class="slider round"></span>
@@ -41,13 +40,17 @@
                 </span>
                 
                 <span>
-                    Enable this option if you're no longer collecting these items and/or want to donate them to another user.
+                    Enabling this option will offer <strong>ALL</strong> of your items within this collection to other users as a donation.
                 </span>
             </div>
         </div>
         <div id="collection-items">
             <span class="header">Your Items</span>
             <div class="body">
+                <div class="min-width-100">
+                    <strong>Keep your collection up to date</strong><br />
+                    After completing a swap, your collection will be automatically updated with your new items.<br /> For the best experience, update your collection manually whenever you acquire or part with items outside of Swapper.
+                </div>
                 @foreach (var item in items)
                 {
                     var imagePath = $"~/Collections/{Model.CollectionId}";

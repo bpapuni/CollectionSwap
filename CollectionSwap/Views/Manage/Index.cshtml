@@ -8,15 +8,14 @@
 <div class="manage-container">
     <div class="manage-container-nav">
         <ul class="">
-            @*<li>@Html.ActionLink("Swapper", "Index", "Home")</li>*@
-            <li>@Html.ActionLink("Find Swaps", "FindSwaps", "Manage", null, new { @class = "submit-button" })</li>
-            <li>@Html.ActionLink("Swap History", "SwapHistory", "Manage")</li>
-            <li>@Html.ActionLink("Your Collections", "YourCollections", "Manage")</li>
+            <li><a class="submit-button" href="/Manage/Find" data-nav="FindSwaps">Find Swaps</a></li>
+            <li><a href="/Manage/Swaps" data-nav="Swaps">Your Swaps</a></li>
+            <li><a href="/Manage/YourCollections" data-nav="YourCollections">Your Collections</a></li>
             @if (User.IsInRole("Admin"))
             {
-                <li>@Html.ActionLink("Manage Collections", "ManageCollections", "Manage")</li>
+                <li><a href="/Manage/Collections" data-nav="Collections">Manage Collections</a></li>
             }
-            <li>@Html.ActionLink("Account", "Account", "Manage")</li>
+            <li><a href="/Manage/Account" data-nav="Account">Your Account</a></li>
         </ul>
     </div>
     <div class="manage-container-main">

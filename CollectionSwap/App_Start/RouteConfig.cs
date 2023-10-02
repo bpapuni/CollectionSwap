@@ -21,7 +21,7 @@ namespace CollectionSwap
 
             routes.MapRoute(
                 name: "FindSwaps",
-                url: "Manage/FindSwaps/{id}",
+                url: "Manage/Swaps/{id}",
                 defaults: new { controller = "Manage", action = "Index", id = UrlParameter.Optional }
             );
 
@@ -44,8 +44,8 @@ namespace CollectionSwap
             );
 
             routes.MapRoute(
-                name: "SwapHistory",
-                url: "Manage/SwapHistory/{id}",
+                name: "YourSwaps",
+                url: "Manage/YourSwaps/{id}",
                 defaults: new { controller = "Manage", action = "Index", id = UrlParameter.Optional }
             );
 

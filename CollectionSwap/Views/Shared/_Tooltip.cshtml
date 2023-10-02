@@ -1,0 +1,18 @@
+﻿@model string
+@using System.Web.Hosting
+@using Newtonsoft.Json
+@{
+    string jsonFilePath = HostingEnvironment.MapPath("~/Content/tooltips/tooltips.json");
+    string jsonContent = System.IO.File.ReadAllText(jsonFilePath);
+    var tooltips = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(jsonContent);
+
+    string tooltipKey = Model;
+    var tooltipTitle = tooltips.ContainsKey(tooltipKey) ? tooltips[tooltipKey]["title"] : null;
+    string[] lines = tooltips.ContainsKey(tooltipKey) ? tooltips[tooltipKey]["content"].Split('\n') : null;
+    var tooltipContent = Html.Raw(string.Join("<br />", lines));
+}
+
+<div class="tooltip-content">
+    <strong>@tooltipTitle</strong>
+    @tooltipContent
+</div>
