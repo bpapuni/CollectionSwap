@@ -222,7 +222,8 @@ namespace CollectionSwap.Controllers
                     EmailSender.SendEmail(model.Email, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
                     ViewBag.EmailRecipient = model.Email;
-                    return View("Info");
+                    partial = Helper.RenderViewToString(ControllerContext, "Info", null, true);
+                    return Json(new { PartialView = partial, RefreshTargets = new { first = "main" } });
                 }
 
                 var errorCounter = 0;

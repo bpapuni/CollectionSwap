@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewBag.Title = "Email Confirmation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (ViewBag.EmailRecipient != null)
+{
+    <section class="confirm-email-module">
+        <div class="row">
+            <img src="~/Content/images/doodles/9.png" />
+            <div class="body">
+                <span class="header">Email Confirmation</span>
+                <span>We have sent an email to <strong>@ViewBag.EmailRecipient</strong> to confirm your identity. Please follow the link provided in the email to complete your registration.</span>
+                <hr />
+            </div>
+        </div>
+        <span>If you do not see the email, please check your spam folder.</span>
+    </section>
+    @*<h3 class="status-message">@ViewBag.ConfirmEmail</h3>*@
+}
