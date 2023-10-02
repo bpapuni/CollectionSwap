@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace CollectionSwap.Models
 {
@@ -71,11 +72,13 @@ namespace CollectionSwap.Models
     {
         [Required(ErrorMessage = "This field is required.")]
         [StringLength(100, ErrorMessage = "{0} must be at least {2} characters long.", MinimumLength = 6)]
+        [Remote("IsUsernameAvailable", "RemoteValidation", ErrorMessage = "This username is already taken.")]
         [Display(Name = "Username")]
         public string Username { get; set; }
 
         [Required(ErrorMessage = "This field is required.")]
         [EmailAddress]
+        [Remote("IsEmailAvailable", "RemoteValidation", ErrorMessage = "This email is already taken.")]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
@@ -87,7 +90,7 @@ namespace CollectionSwap.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "Passwords do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "Passwords do not match.")]
         public string ConfirmPassword { get; set; }
     }
 
@@ -112,7 +115,7 @@ namespace CollectionSwap.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
         public string Code { get; set; }

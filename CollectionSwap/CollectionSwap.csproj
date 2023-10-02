@@ -202,6 +202,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\RemoteValidationController.cs" />
     <Compile Include="Controllers\SwapController.cs" />
     <Compile Include="Helpers\EmailSender.cs" />
     <Compile Include="Helpers\Helper.cs" />
@@ -494,6 +495,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Content\images\doodles\" />
     <Folder Include="temp\" />
+    <Folder Include="Views\RemoteValidation\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

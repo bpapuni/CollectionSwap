@@ -226,12 +226,16 @@ namespace CollectionSwap.Controllers
                     return Json(new { PartialView = partial, RefreshTargets = new { first = "main" } });
                 }
 
-                var errorCounter = 0;
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(errorCounter == 0 ? "RegisterViewModel.Username" : "RegisterViewModel.Email", error);
-                    errorCounter++;
-                }
+                //var errorCounter = 0;
+                //foreach (var error in result.Errors)
+                //{
+
+                //    // if error starts with name
+                //    // if error starts with email
+                //    // if error starts with password
+                //    ModelState.AddModelError(errorCounter == 0 ? "RegisterViewModel.Username" : "RegisterViewModel.Email", error);
+                //    errorCounter++;
+                //}
             }
 
             // If we got this far, something failed, redisplay form
@@ -255,7 +259,10 @@ namespace CollectionSwap.Controllers
                 await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             }
 
-            return View(result.Succeeded ? "/Views/Manage/Index.cshtml" : "Error");
+            if (result.Succeeded)
+                return RedirectToAction("Index", "Manage");
+            else
+                return View("Error");
         }
 
         //
