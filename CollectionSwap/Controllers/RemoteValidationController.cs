@@ -29,5 +29,45 @@ namespace CollectionSwap.Controllers
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
         }
+
+        public JsonResult IsPasswordValid()
+        {
+            string password = Request.QueryString["RegisterViewModel_Password"];
+
+            bool hasUpper = false;
+            bool hasNumber = false;
+            bool hasSpecial = false;
+            bool hasLength = false;
+
+            if (password.Length >= 6)
+            {
+                hasLength = true;
+            }
+            foreach (char c in password)
+            {
+                if (char.IsUpper(c))
+                {
+                    hasUpper = true;
+                }
+                if (char.IsNumber(c))
+                {
+                    hasNumber = true;
+                }
+                if (char.IsSymbol(c) || char.IsPunctuation(c))
+                {
+                    hasSpecial = true;
+                }
+            }
+
+            var validationResults = new[]
+            {
+                new { Rule = "upper", IsValid = hasUpper },
+                new { Rule = "number", IsValid = hasNumber },
+                new { Rule = "special", IsValid = hasSpecial },
+                new { Rule = "length", IsValid = hasLength }
+            };
+
+            return Json(validationResults, JsonRequestBehavior.AllowGet);
+        }
     }
 }

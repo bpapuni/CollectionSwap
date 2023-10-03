@@ -82,16 +82,18 @@ namespace CollectionSwap.Models
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "This field is required.")]
-        [StringLength(100, ErrorMessage = "{0} must be at least {2} characters long.", MinimumLength = 6)]
+        //[Required(ErrorMessage = "This field is required.")]
+        //[StringLength(100, ErrorMessage = "{0} must be at least {2} characters long.", MinimumLength = 6)]
+        //[Remote("IsPasswordValid", "RemoteValidation", ErrorMessage = "Password must contain an uppercase letter, a number, and a @#$ symbol.")]
+        //[Remote("IsPasswordValid", "RemoteValidation")]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
 
-        [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "Passwords do not match.")]
-        public string ConfirmPassword { get; set; }
+        //[DataType(DataType.Password)]
+        //[Display(Name = "Confirm password")]
+        //[System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "Passwords do not match.")]
+        //public string ConfirmPassword { get; set; }
     }
 
     public class AccountViewModel

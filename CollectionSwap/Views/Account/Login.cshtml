@@ -56,14 +56,22 @@
             <div class="form-group">
                 @Html.LabelFor(m => m.RegisterViewModel.Password)
                 @Html.PasswordFor(m => m.RegisterViewModel.Password)
-                @Html.ValidationMessageFor(m => m.RegisterViewModel.Password)
+                @*@Html.ValidationMessageFor(m => m.RegisterViewModel.Password)*@
+                <div class="password-validation">
+                    <span class="upper" data-val-remote-url="/RemoteValidation/IsPasswordValid"><i class="fa-solid fa-circle"></i>One uppercase character</span>
+                    <span class="number @((string)ViewData["number"] == "True" ? "valid" : "")"><i class="fa-solid fa-circle"></i>One number</span>
+                    <span class="special @((string)ViewData["special"] == "True" ? "valid" : "")"><i class="fa-solid fa-circle"></i>One special character</span>
+                    <span class="length @((string)ViewData["length"] == "True" ? "valid" : "")"><i class="fa-solid fa-circle"></i>6 characters minimum</span>
+                </div>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 @Html.LabelFor(m => m.RegisterViewModel.ConfirmPassword)
                 @Html.PasswordFor(m => m.RegisterViewModel.ConfirmPassword)
                 @Html.ValidationMessageFor(m => m.RegisterViewModel.ConfirmPassword)
-            </div>
+            </div>*@
+
             <button class="submit-button" type="submit">Create Account</button>
+            <button class="submit-button spinner d-none" type="submit" disabled><i class="fa-solid fa-spinner fa-spin"></i></button>
         }
     </section>
 </div>

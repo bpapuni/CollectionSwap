@@ -5,12 +5,13 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Mail;
+using System.Threading.Tasks;
 
 namespace CollectionSwap.Helpers
 {
     public class EmailSender
     {
-        public static void SendEmail(string toAddress, string subject, string body)
+        public static async Task SendEmailAsync(string toAddress, string subject, string body)
         {
             string smtpUsername = ConfigurationManager.AppSettings["smtpUsername"];
             string smtpPassword = ConfigurationManager.AppSettings["smtpPassword"];
@@ -29,7 +30,7 @@ namespace CollectionSwap.Helpers
 
                 try
                 {
-                    smtpClient.Send(mailMessage);
+                    await smtpClient.SendMailAsync(mailMessage);
                     Console.WriteLine("Email sent successfully!");
                 }
                 catch (Exception ex)

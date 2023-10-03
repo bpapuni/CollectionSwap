@@ -198,7 +198,7 @@ namespace CollectionSwap.Controllers
                 var role = new ApplicationRole { };
                 using (var db = new ApplicationDbContext())
                 {
-                    if (db.Users.Count() == 0)
+                    if (!db.Users.Any())
                     {
                         role.Name = "Admin";
                     }
@@ -219,23 +219,12 @@ namespace CollectionSwap.Controllers
                     // Send an email with this link
                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    EmailSender.SendEmail(model.Email, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    await EmailSender.SendEmailAsync(model.Email, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
                     ViewBag.EmailRecipient = model.Email;
                     partial = Helper.RenderViewToString(ControllerContext, "Info", null, true);
                     return Json(new { PartialView = partial, RefreshTargets = new { first = "main" } });
                 }
-
-                //var errorCounter = 0;
-                //foreach (var error in result.Errors)
-                //{
-
-                //    // if error starts with name
-                //    // if error starts with email
-                //    // if error starts with password
-                //    ModelState.AddModelError(errorCounter == 0 ? "RegisterViewModel.Username" : "RegisterViewModel.Email", error);
-                //    errorCounter++;
-                //}
             }
 
             // If we got this far, something failed, redisplay form
@@ -303,7 +292,7 @@ namespace CollectionSwap.Controllers
                 // Send an email with this link
                 string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                EmailSender.SendEmail(model.Email, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                await EmailSender.SendEmailAsync(model.Email, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
                 TempData["EmailRecipient"] = model.Email;
                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }

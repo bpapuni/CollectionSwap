@@ -107,7 +107,7 @@ $(document).on("click", ".navigation", function (e) {
 });
 
 // Form submit listeners Handle loading form submission partial views
-$(document).on("submit", ".manage-container-main form, #home-container form, #register-form", function (event) {
+$(document).on("submit", ".manage-container-main form, #home-container form", function (event) {
     event.preventDefault();
     var formData = new FormData(this);
     const token = $(this).find("input[name='__RequestVerificationToken']").val();
@@ -126,7 +126,7 @@ $(document).on("submit", ".manage-container-main form, #home-container form, #re
         formData = new FormData(this);
     }
 
-    HandleFormSubmit($(this).attr("action"), $(this).attr("method"), formData);
+    HandleFormSubmit($(this).attr("action"), $(this).attr("method"), formData, token);
 });
 
 // Handle loading the navigation partial views
@@ -162,7 +162,10 @@ function HandleFormSubmit(url, type, formData, token) {
         processData: false,
         contentType: false,
         success: function (result) {
+            // The returned view
             var partialView = result.PartialView;
+
+
             if (result.RefreshTargets) {
                 $.each(result.RefreshTargets, function (key, target) {
                     if (`#${$(partialView).attr("id")}` === target || `.${$(partialView).attr("class")}` == target) {
@@ -486,4 +489,53 @@ $(document).on("click", "strong.faq", function () {
     faqRows.removeClass("selected");
     self.parent().addClass("selected");
     self.next().slideToggle();
-})
+});
+
+// Register form submit handler
+$(document).on("submit", "#register-form", async function (e) {
+    e.preventDefault();
+    const form = $(this);
+    const formData = new FormData(this);
+    const token = form.find("input[name='__RequestVerificationToken']").val();
+    const passwordInput = form.find("#RegisterViewModel_Password");
+    const password = passwordInput.val();
+
+    const hasInvalid = await ValidatePassword(true);
+    if (hasInvalid) {
+        return false;
+    }
+
+    $("#register-form input[type='text'], #register-form input[type='email'], #register-form input[type='password']").prop("disabled", true);
+    $("#register-form .submit-button").toggleClass("d-none");
+    HandleFormSubmit($(this).attr("action"), $(this).attr("method"), formData, token);
+});
+
+// Register form password validation
+$(document).on("input", "#register-form input[type='password']", ValidatePassword);
+
+function ValidatePassword(checkForInvalid) {
+    return new Promise((resolve, reject) => {
+        var password = $("#RegisterViewModel_Password").val();
+
+        $.get("/RemoteValidation/IsPasswordValid", { RegisterViewModel_Password: password }, function (data) {
+            $(".password-validation span").removeClass("valid invalid");
+
+            // Update the class of each span based on the validation results
+            $.each(data, function (index, item) {
+                if (item.IsValid) {
+                    $(".password-validation span." + item.Rule).addClass("valid");
+                } else if (checkForInvalid == true) {
+                    $(".password-validation span." + item.Rule).addClass("invalid");
+                }
+            });
+
+            // Check for invalid spans
+            var hasInvalid = $(".password-validation span.invalid").length > 0;
+            resolve(hasInvalid);
+        });
+    });
+}
+
+function ShowSpinner(e) {
+    $(e).find("i").removeClass("d-none");
+}
