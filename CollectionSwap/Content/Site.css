@@ -3554,6 +3554,11 @@ input[type=number] {
         width: 100%;
     }
 
+    .confirm-email-module > .row + div {
+        width: 80%;
+        padding-bottom: 2rem;
+    }
+
     .confirm-email-module img {
         width: auto;
         height: 11rem;
