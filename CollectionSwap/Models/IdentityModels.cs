@@ -55,6 +55,7 @@ namespace CollectionSwap.Models
             }
         }
         public string BlockedUsers { get; set; }
+        //public bool 
         public void HandleBlock(string username, bool isBlocked, ApplicationDbContext db)
         {
             var blockedUser = db.Users.Where(u => u.UserName.ToLower() == username.ToLower()).FirstOrDefault();

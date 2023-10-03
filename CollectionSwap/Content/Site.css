@@ -203,14 +203,6 @@ body {
     object-fit: contain;
 }
 
-    body.bg-split {
-        /*background: linear-gradient(to right, var(--background-accent) 50%, var(--background) 50%);*/
-        background: var(--background) url('images/doodles/4.png') no-repeat;
-        background-size: 20rem;
-        background-position-x: center;
-        background-position-y: 38rem;
-    }
-
 main {
     display: flex;
     flex-direction: column;
@@ -221,6 +213,13 @@ main {
     /*height: 100%;*/
     /*background: var(--background);*/
 }
+
+    main.bg-split {
+        background: var(--background) url('images/doodles/4.png') no-repeat;
+        background-size: 20rem;
+        background-position-x: center;
+        background-position-y: bottom;
+    }
 
 nav.bg-split {
     background: none;
@@ -3542,7 +3541,7 @@ input[type=number] {
     /*gap: 1rem;*/
     flex-wrap: nowrap;
     width: 50rem;
-    height: 15rem;
+    /*height: 15rem;*/
     margin-top: 6rem;
     padding: 0 1rem 1rem;
     border-radius: 2rem;
