@@ -76,6 +76,7 @@ namespace CollectionSwap.Controllers
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
+            ViewBag.Status = TempData["Status"];
             return View();
         }
 
@@ -224,6 +225,11 @@ namespace CollectionSwap.Controllers
                     ViewBag.EmailRecipient = model.Email;
                     partial = Helper.RenderViewToString(ControllerContext, "Info", null, true);
                     return Json(new { PartialView = partial, RefreshTargets = new { first = "main" } });
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error);
                 }
             }
 

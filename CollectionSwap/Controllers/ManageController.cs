@@ -15,6 +15,7 @@ using System.Data.Entity.Infrastructure;
 using System.Reflection;
 using System.Data.Entity;
 using System.Collections.ObjectModel;
+using System.Web.UI;
 
 namespace CollectionSwap.Controllers
 {
@@ -101,7 +102,10 @@ namespace CollectionSwap.Controllers
                 RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).OrderByDescending(f => f.DatePlaced).ToList()
             };
 
+            // The user viewing the profile
             ViewBag.User = db.Users.Find(userId);
+            // The user who's profile is being viewed.
+            ViewBag.Member = db.Users.FirstOrDefault(u => u.UserName == username);
             ViewBag.ViewProfile = true;
             ViewBag.Feedbacks = db.Feedbacks.Where(f => f.Receiver.UserName == username).OrderByDescending(f => f.DatePlaced).ToList();
             var partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
@@ -167,8 +171,27 @@ namespace CollectionSwap.Controllers
                 RecentFeedback = receivedFeedback.Skip(receivedFeedback.Count - 3).Take(3).OrderByDescending(f => f.DatePlaced).ToList()
             };
 
+            ViewBag.Error = TempData["Error"];
             var partial = Helper.RenderViewToString(ControllerContext, "_Account", model, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#account-container" } });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = ".scroll-snap-row" } }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public ActionResult CloseAccount()
+        {
+            var userId = User.Identity.GetUserId();
+            var user = db.Users.Find(userId);
+
+            var result = user.CloseAccount(db);
+            if (!result.Success)
+            {
+                TempData["Error"] = result.Message;
+                return RedirectToAction("AccountPartial");
+            }
+
+            TempData["Status"] = "Your account has been closed.";
+            return Json(new { CloseAccount = true }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]

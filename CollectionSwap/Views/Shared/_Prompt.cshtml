@@ -1,12 +1,12 @@
 ﻿@model CollectionSwap.Models.PromptViewModel
 
-<div class="prompt-container d-none" onclick="$(this).addClass('d-none')">
+<div class="prompt-container d-none">
     <div class="prompt">
         <span class="header">@Model.Title</span>
-        <div class="body">@Model.Body</div>
+        <div class="body">@Html.Raw(@Model.Body)</div>
         <span class="controls">
-            <button class="submit-button clear">Cancel</button>
-            <button class="submit-button">Confirm</button>
+            <button class="submit-button clear" onclick="Prompt(this, false)">Cancel</button>
+            <button class="submit-button" onclick="@Html.Raw(Model.Action)">Continue</button>
         </span>
     </div>
 </div>

@@ -32,13 +32,16 @@
                 <span data-status="confirmed" class="@(filter == "confirmed" ? "selected" : "")">Confirmed</span>
                 <span data-status="completed" class="@(filter == "completed" ? "selected" : "")">Completed</span>
             </div>
-            <div class="status-key">
-                <strong>Status Key </strong>
-                <span class="status-pending"><i class="fa-solid fa-circle"></i>- Waiting for other user</span>
-                <span class="status-attention"><i class="fa-solid fa-circle"></i>- Requires action from you</span>
-                <span class="status-complete"><i class="fa-solid fa-circle"></i>- Swap complete</span>
-                <span class="status-declined"><i class="fa-solid fa-circle"></i>- Swap canceled/declined</span>
-            </div>
+            @if (displayableSwaps.Any())
+            {
+                <div class="status-key">
+                    <strong>Status Key </strong>
+                    <span class="status-pending"><i class="fa-solid fa-circle"></i>- Waiting for other user</span>
+                    <span class="status-attention"><i class="fa-solid fa-circle"></i>- Requires action from you</span>
+                    <span class="status-complete"><i class="fa-solid fa-circle"></i>- Swap complete</span>
+                    <span class="status-declined"><i class="fa-solid fa-circle"></i>- Swap canceled/declined</span>
+                </div>
+            }
             <table>
                 <thead>
                     <tr>

@@ -165,7 +165,6 @@ function HandleFormSubmit(url, type, formData, token) {
             // The returned view
             var partialView = result.PartialView;
 
-
             if (result.RefreshTargets) {
                 $.each(result.RefreshTargets, function (key, target) {
                     if (`#${$(partialView).attr("id")}` === target || `.${$(partialView).attr("class")}` == target) {
@@ -207,6 +206,10 @@ function HandleFormSubmit(url, type, formData, token) {
                     .val("")
                     .prop("checked", false)
                     .prop("selected", false);
+            }
+
+            if (result.CloseAccount) {
+                $("#logoutForm").submit();
             }
         },
         error: function () {
@@ -538,4 +541,27 @@ function ValidatePassword(checkForInvalid) {
 
 function ShowSpinner(e) {
     $(e).find("i").removeClass("d-none");
+}
+
+$(document).on("click", ".prompt-container", function (e) {
+    if (!e.target.classList.contains("prompt-container")) {
+        return;
+    }
+
+    Prompt(e.target, false);
+})
+
+function Prompt(e, show) {
+    const self = $(e);
+    if (show) {
+        $(self).next().removeClass("d-none");
+    }
+    else {
+        $(self).closest(".prompt-container").addClass("d-none");
+    }
+}
+
+function CloseAccount(e) {
+    Prompt(e, false);
+    HandleFormSubmit("/Manage/CloseAccount", "POST", null);
 }

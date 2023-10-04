@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 
@@ -53,7 +54,8 @@ namespace CollectionSwap.Controllers
                 {
                     hasNumber = true;
                 }
-                if (char.IsSymbol(c) || char.IsPunctuation(c))
+                Regex symbol = new Regex(@"^[.#@$!]*$");
+                if (symbol.IsMatch(c.ToString()))
                 {
                     hasSpecial = true;
                 }

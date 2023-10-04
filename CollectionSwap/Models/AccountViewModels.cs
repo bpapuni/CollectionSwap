@@ -8,6 +8,7 @@ namespace CollectionSwap.Models
     {
         public string Title { get; set; }
         public string Body { get; set; }
+        public string Action { get; set; }
     }
     public class ExternalLoginConfirmationViewModel
     {
@@ -88,6 +89,7 @@ namespace CollectionSwap.Models
         //[Remote("IsPasswordValid", "RemoteValidation")]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
+        [RegularExpression(@"^[.#@$!a-zA-Z0-9]*$")]
         public string Password { get; set; }
 
         //[DataType(DataType.Password)]

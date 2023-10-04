@@ -226,15 +226,23 @@
             </section>
         }
 
-        
+        @if (User.IsInRole("User"))
+        {
+
         <div class="close-account">
             <div class="column">
                 <strong>Close account</strong>
                 Close this account and cancel any outstanding swaps.
             </div>
-            <button class="submit-button cancel" onclick="$(this).next().removeClass('d-none')">Close Account</button>
-            @Html.Partial("_Prompt", new PromptViewModel { Title = "Are you sure you wish to close your account?", Body = "Content" })
+            <button class="submit-button cancel" onclick="Prompt(this, true)">Close Account</button>
+            @Html.Partial("_Prompt", new PromptViewModel { Title = "Account Closure Disclaimer", Body =
+                "<p>Before you proceed with closing your account, please take a moment to review the following important information:</p>" +
+                "<ul><li>Any swaps that are already confirmed (both by you and the other party involved) must be completed and have feedback provided.</li>" +
+                "<li>Any swaps that you have requested or accepted but haven't been confirmed by both parties will be automatically canceled when you close your account. These swaps will not be completed or honored.</li></ul>" +
+
+                "<p>Are you sure you wish to continue?</p>", Action = "CloseAccount(this)" })
         </div>
+        }
     </div>
 
     <div data-nav="Member Profile" id="profile-container" class="d-none">

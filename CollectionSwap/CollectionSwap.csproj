@@ -304,6 +304,10 @@
     <Compile Include="Migrations\202309262043519_ChangedBlockedUsersType.designer.cs">
       <DependentUpon>202309262043519_ChangedBlockedUsersType.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202310032034121_AddCloseAccount.cs" />
+    <Compile Include="Migrations\202310032034121_AddCloseAccount.designer.cs">
+      <DependentUpon>202310032034121_AddCloseAccount.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CollectionModels.cs" />
@@ -569,6 +573,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202309262043519_ChangedBlockedUsersType.resx">
       <DependentUpon>202309262043519_ChangedBlockedUsersType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202310032034121_AddCloseAccount.resx">
+      <DependentUpon>202310032034121_AddCloseAccount.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

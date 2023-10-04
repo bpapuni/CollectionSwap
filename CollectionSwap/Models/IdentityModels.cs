@@ -55,7 +55,7 @@ namespace CollectionSwap.Models
             }
         }
         public string BlockedUsers { get; set; }
-        //public bool 
+        public bool ClosedAccount { get; set; }
         public void HandleBlock(string username, bool isBlocked, ApplicationDbContext db)
         {
             var blockedUser = db.Users.Where(u => u.UserName.ToLower() == username.ToLower()).FirstOrDefault();
@@ -80,6 +80,43 @@ namespace CollectionSwap.Models
                 string userId = db.Users.Where(u => u.UserName.ToLower().Contains(username.ToLower())).Select(u => u.Id).FirstOrDefault();
                 return this.BlockedUsers != null ? this.BlockedUsers.Contains(userId) : false;
             }
+        }
+        public class CloseAccountResult
+        {
+            public bool Success { get; set; }
+            public string Message { get; set; }
+        }
+        public CloseAccountResult CloseAccount(ApplicationDbContext db)
+        {
+            var pendingSwaps = db.Swaps
+                .Where(s => (s.Sender.Id == this.Id || s.Receiver.Id == this.Id) &&
+                s.Status == "requested" || s.Status == "accepted")
+                .ToList();
+            // By ensuring the user has not left feedback, we don't unintentionally include'pseudo-completed' swaps
+            var confirmedSwaps = db.Swaps
+                .Where(s => ((s.Sender.Id == this.Id && s.SenderFeedback == null) || (s.Receiver.Id == this.Id && s.ReceiverFeedback == null)) && s.Status == "confirmed").ToList();
+
+
+            if (confirmedSwaps.Any())
+            {
+                return new CloseAccountResult { Success = false, Message = "You cannot close your account while you have confirmed swaps pending." };
+            }
+
+            foreach(var swap in pendingSwaps)
+            {
+                var cancelRequest = new SwapRequestViewModel
+                {
+                    SwapId = swap.Id,
+                    Status = "canceled"
+                };
+                swap.ProcessSwap(this.Id, cancelRequest, db);
+            }
+
+            this.Email = "(closed)" + this.Email;
+            this.ClosedAccount = true;
+            db.Entry(this).State = EntityState.Modified;
+            db.SaveChanges();
+            return new CloseAccountResult { Success = true, Message = "Your account has been closed." };
         }
     }
 

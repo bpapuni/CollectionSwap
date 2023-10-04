@@ -660,8 +660,8 @@ namespace CollectionSwap.Models
                 }
             }
 
-            // If this is neew feedback
-            if (feedback == null)
+            // If this is new feedback
+            if (feedback.Id == 0)
             {
                 this.DatePlaced = DateTime.UtcNow;
                 db.Feedbacks.Add(this);

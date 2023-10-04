@@ -5,6 +5,7 @@
 @{
     ViewBag.Title = "Profile";
     var user = ViewBag.User;
+    var member = ViewBag.Member;
     var feedbacks = ViewBag.Feedbacks as List<Feedback>;
     var ratings = new List<Feedback>[5];
     ratings[4] = feedbacks.Count > 0 ? feedbacks.Where(f => f.Rating == 5).ToList() : null;
@@ -13,7 +14,7 @@
     ratings[1] = feedbacks.Count > 0 ? feedbacks.Where(f => f.Rating == 2).ToList() : null;
     ratings[0] = feedbacks.Count > 0 ? feedbacks.Where(f => f.Rating == 1).ToList() : null;
     double average = feedbacks.Count > 0 ? feedbacks.Select(f => f.Rating).Average() : 0;
-    var username = Request.Form["username"];
+    var username = member.UserName;
 }
 
 <div class="row">
@@ -24,89 +25,101 @@
 </div>
 
 <section>
-    <div class="row">
-        <div class="feedback-bar-chart">
-            <div class="header">
-                <span>
-                    @Html.Partial("_Rating", average)
-                </span>
-                <div class="overall-rating">
-                    <span>@Math.Round(average, 1) out of 5 Stars</span>
-                    <span>Based on @feedbacks.Count Reviews</span>
-                </div>
-            </div>
-
-            <div class="body">
-                @for (int i = 0; i < 5; i++)
-                {
-                    <div>
-                        @{
-                            var width = feedbacks.Count == 0 ? 0 : ratings[4 - i].Count / (double)feedbacks.Count * 100;
-                        }
-                        <span>@(5 - i) Stars</span>
-                        <span class="bar">
-                            <p>@(feedbacks.Count == 0 ? 0 : ratings[4 - i].Count)</p>
-                            <span class="bar-fill" style="width: @($"{width}%")"></span>
-                        </span>
-                    </div>
-                }
-            </div>
+    @if (member.ClosedAccount)
+    {
+        <div class="warning">
+            <span class="header warning"><i class="fa-solid fa-circle-exclamation"></i>Account Closed</span>
+            <span>This account has been closed at the request of the owner.</span>
         </div>
-        @if (User.Identity.GetUserName() != username)
-        {
-            <div class="block-user-container @(user.HasUserBlocked(username) ? "blocked" : "")">
-                <span>
-                    <strong>Block @username</strong>
-                    <label class="switch">
-                        <input data-username="@username" class="block-user-checkbox" type="checkbox" checked="@user.HasUserBlocked(username)" />
-                        <span class="slider round"></span>
-                    </label>
-                </span>
-
-                <span>
-                    Enable this option if you'd like to block @username from interacting with you.
-                </span>
-            </div>
-        }
-    </div>
-
-    <div class="feedback">
-        @if (feedbacks.Count == 0)
-        {
-            <p>@username has not received any feedback yet.</p>
-        }
-        @foreach (var feedback in feedbacks)
-        {
-            var comments = JsonConvert.DeserializeObject<List<string>>(feedback.Comments);
-            var positiveComments = Feedback.PositiveComments;
-            var negativeComments = Feedback.NegativeComments;
-            <div>
-                <div class="rating">
-                    @Html.Partial("_Rating", (double) feedback.Rating)
-                </div>
-                <div class="comments">
-                    @if (comments.Count == 0)
-                            {
-                        <text>User chose not to leave any comments</text>
-                    }
-                    else
-                    {
-                        <ul class="feedback-list disabled">
-                            @foreach (var comment in comments)
-                            {
-                                <li class="@(positiveComments.Contains(comment) ? "positive" : negativeComments.Contains(comment) ? "negative" : "")">@comment</li>
-                        }
-                        </ul>
-                    }
-                </div>
-                <div class="profile">
+    }
+    else
+    {
+        <div class="row">
+            <div class="feedback-bar-chart">
+                <div class="header">
                     <span>
-                        <strong>By: @feedback.Sender.UserName</strong><br />
-                        @feedback.DatePlaced.ToString("dd/MM/yyyy")
+                        @Html.Partial("_Rating", average)
+                    </span>
+                    <div class="overall-rating">
+                        <span>@Math.Round(average, 1) out of 5 Stars</span>
+                        <span>Based on @feedbacks.Count Reviews</span>
+                    </div>
+                </div>
+
+                <div class="body">
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        <div>
+                            @{
+                                var width = feedbacks.Count == 0 ? 0 : ratings[4 - i].Count / (double)feedbacks.Count * 100;
+                            }
+                            <span>@(5 - i) Stars</span>
+                            <span class="bar">
+                                <p>@(feedbacks.Count == 0 ? 0 : ratings[4 - i].Count)</p>
+                                <span class="bar-fill" style="width: @($"{width}%")"></span>
+                            </span>
+                        </div>
+                    }
+                </div>
+            </div>
+            @if (user.UserName != username)
+            {
+                <div class="block-user-container @(user.HasUserBlocked(username) ? "blocked" : "")">
+                    <span>
+                        <strong>Block @username</strong>
+                        <label class="switch">
+                            <input data-username="@username" class="block-user-checkbox" type="checkbox" checked="@user.HasUserBlocked(username)" />
+                            <span class="slider round"></span>
+                        </label>
+                    </span>
+
+                    <span>
+                        Enable this option if you'd like to block @username from interacting with you.
                     </span>
                 </div>
-            </div>
-        }
-    </div>
-    @* } *@
+            }
+        </div>
+
+        <div class="feedback">
+            @if (!feedbacks.Any())
+            {
+                <p>@username has not received any feedback yet.</p>
+            }
+            else
+            {
+                foreach (var feedback in feedbacks)
+                {
+                    var comments = JsonConvert.DeserializeObject<List<string>>(feedback.Comments);
+                    var positiveComments = Feedback.PositiveComments;
+                    var negativeComments = Feedback.NegativeComments;
+                    <div>
+                        <div class="rating">
+                            @Html.Partial("_Rating", (double)feedback.Rating)
+                        </div>
+                        <div class="comments">
+                            @if (comments.Count == 0)
+                            {
+                                <text>User chose not to leave any comments</text>
+                            }
+                            else
+                            {
+                                <ul class="feedback-list disabled">
+                                    @foreach (var comment in comments)
+                                    {
+                                        <li class="@(positiveComments.Contains(comment) ? "positive" : negativeComments.Contains(comment) ? "negative" : "")">@comment</li>
+                                    }
+                                </ul>
+                            }
+                        </div>
+                        <div class="profile">
+                            <span>
+                                <strong>By: @feedback.Sender.UserName</strong><br />
+                                @feedback.DatePlaced.ToString("dd/MM/yyyy")
+                            </span>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    }
 </section>

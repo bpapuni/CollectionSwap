@@ -207,19 +207,9 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /*flex-grow: 1;*/
     margin-top: 5rem;
     width: var(--main-width);
-    /*height: 100%;*/
-    /*background: var(--background);*/
 }
-
-    main.bg-split {
-        background: var(--background) url('images/doodles/4.png') no-repeat;
-        background-size: 20rem;
-        background-position-x: center;
-        background-position-y: bottom;
-    }
 
 nav.bg-split {
     background: none;
@@ -1068,7 +1058,7 @@ button.close {
 
     #history-container table {
         position: relative;
-        flex-grow: 1;
+        /*flex-grow: 1;*/
         table-layout: fixed;
         width: 100%;
         color: #667085;
@@ -2310,7 +2300,7 @@ nav a {
     .prompt-container > .prompt {
         display: flex;
         flex-direction: column;
-        min-width: 30rem;
+        width: 30rem;
         background: #ffffff;
         border-radius: 0.75rem;
         box-shadow: 0 2px 5px #000;
@@ -3290,6 +3280,7 @@ input[type=number] {
     }
 
 #register-container {
+    position: relative;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -3304,6 +3295,13 @@ input[type=number] {
     #register-container a {
         font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
         font-size: 1rem;
+    }
+
+    #register-container > img {
+        position: absolute;
+        top: 27rem;
+        width: 21rem;
+        height: auto;
     }
 
     #register-container section {
@@ -3824,10 +3822,11 @@ input:checked + .slider:before {
 
 .password-validation {
     display: flex;
-    justify-content: center;
+    /*justify-content: center;*/
     flex-wrap: wrap;
     gap: 0 2rem;
     width: 30rem;
+    padding-left: 0.5rem;
     font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
     color: #999;
     font-size: 0.8rem;
@@ -3837,7 +3836,7 @@ input:checked + .slider:before {
         display: flex;
         align-items: center;
         flex-wrap: nowrap;
-        width: 38%;
+        width: 46%;
         margin: 0;
         padding: 0;
     }
