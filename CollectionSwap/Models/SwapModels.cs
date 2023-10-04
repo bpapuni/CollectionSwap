@@ -381,6 +381,88 @@ namespace CollectionSwap.Models
             
             return status;
         }
+        public string StatusColor(string userId)
+        {
+            var itemsSent = (userId == this.Sender.Id && this.SenderConfirmSent) || (userId == this.Receiver.Id && this.ReceiverConfirmSent);
+            var itemsReceived = (userId == this.Sender.Id && this.SenderConfirmReceived) || (userId == this.Receiver.Id && this.ReceiverConfirmReceived);
+            var feedbackProvided = (userId == this.Sender.Id && this.SenderFeedback != null) || (userId == this.Receiver.Id && this.ReceiverFeedback != null);
+            var statusColor = 
+                this.Status == "requested" ? userId == this.Sender.Id ? "blue" : "orange" :
+                this.Status == "accepted" ? userId == this.Sender.Id ? "orange" : "blue" :
+                this.Status == "confirmed" && itemsSent && itemsReceived && feedbackProvided ? "green" :
+                this.Status == "confirmed" ? "orange" :
+                this.Status == "completed" ? "green" : "red";
+
+            return statusColor;
+        }
+        public string StatusMessage(string userId)
+        {
+            var itemsSent = (userId == this.Sender.Id && this.SenderConfirmSent) || (userId == this.Receiver.Id && this.ReceiverConfirmSent);
+            var itemsReceived = (userId == this.Sender.Id && this.SenderConfirmReceived) || (userId == this.Receiver.Id && this.ReceiverConfirmReceived);
+            var feedbackProvided = (userId == this.Sender.Id && this.SenderFeedback != null) || (userId == this.Receiver.Id && this.ReceiverFeedback != null);
+            var hasExpired = (DateTime.Now - this.StartDate).Days > 14;
+            switch (this.Status)
+            {
+                case "charity-requested":
+                    if (userId == this.Sender.Id)
+                        return "Request Pending";
+                    else
+                        return $"Waiting for {this.Sender.UserName}";
+                case "canceled":
+                case "charity-canceled":
+                    return "Canceled";
+                case "declined":
+                case "charity-declined":
+                    return "Declined";
+                case "charity-confirmed":
+                    if (feedbackProvided)
+                        return "Complete";
+                    else if (itemsSent && itemsReceived)
+                        return "Awaiting Feedback";
+                    else if (itemsSent)
+                        return "Waiting to receive items";
+                    else
+                        return "Needs Mailing";
+                case "requested":
+                    if (userId == this.Sender.Id)
+                        return $"Waiting for {this.Receiver.UserName}";
+                    else
+                        return "Request Pending";
+                case "accepted":
+                    if (userId == this.Sender.Id)
+                        return "Pending Confirmation";
+                    else
+                        return $"Waiting for {this.Sender.UserName}";
+                case "confirmed":
+                    if (feedbackProvided)
+                        return "Complete";
+                    else if ((itemsSent && itemsReceived) || hasExpired)
+                        return "Awaiting Feedback";
+                    else if (itemsSent)
+                        return "Waiting to receive items";
+                    else
+                        return "Needs Mailing";
+                default:
+                    return "Complete";
+            }
+        }
+        public int ProgressIndex(string userId)
+        {
+            var itemsSent = (userId == this.Sender.Id && this.SenderConfirmSent) || (userId == this.Receiver.Id && this.ReceiverConfirmSent);
+            var itemsReceived = (userId == this.Sender.Id && this.SenderConfirmReceived) || (userId == this.Receiver.Id && this.ReceiverConfirmReceived);
+            var otherUserSent = (userId == this.Sender.Id && this.ReceiverConfirmSent) || (userId == this.Receiver.Id && this.SenderConfirmSent);
+            var progIndex =
+                this.Status == "requested" ? 0 :
+                this.Status == "accepted" ? 1 :
+                this.Status == "confirmed" && itemsSent && itemsReceived ? 4 :
+                this.Status == "confirmed" && otherUserSent ? 3 :
+                this.Status == "confirmed" ? 2 :
+                this.Status == "completed" ||
+                this.Status == "canceled" ||
+                this.Status == "declined" ? 4 : -1;
+
+            return progIndex;
+        }
         public static List<Swap> Filter(string userId, string filter, ApplicationDbContext db)
         {
             var swaps = db.Swaps.Where(s => (s.Sender.Id == userId && s.SenderDisplaySwap) || (s.Receiver.Id == userId && s.ReceiverDisplaySwap)).ToList();

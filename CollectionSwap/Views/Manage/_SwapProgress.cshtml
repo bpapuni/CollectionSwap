@@ -2,30 +2,11 @@
 @using Microsoft.AspNet.Identity
 @{
     var userId = User.Identity.GetUserId();
-    var otherUserSent = ((Model.SenderId == userId && Model.ReceiverConfirmSent) || (Model.ReceiverId == userId && Model.SenderConfirmSent));
-    var itemsSent = ((Model.SenderId == userId && Model.SenderConfirmSent) || (Model.ReceiverId == userId && Model.ReceiverConfirmSent));
-    var itemsReceived = ((Model.SenderId == userId && Model.SenderConfirmReceived) || (Model.ReceiverId == userId && Model.ReceiverConfirmReceived));
-    var feedbackProvided = ((Model.Sender.Id == userId && Model.SenderFeedback != null) || (Model.Receiver.Id == userId && Model.ReceiverFeedback != null));
     var status = Model.StatusForUser(userId) == "pseudo-completed" ? "completed" : Model.Status;
-    var progIndex =
-        Model.Status == "requested" ? 0 :
-        Model.Status == "accepted" ? 1 :
-        Model.Status == "confirmed" && itemsSent && itemsReceived ? 4 :
-        Model.Status == "confirmed" && otherUserSent ? 3 :
-        Model.Status == "confirmed" ? 2 :
-        Model.Status == "completed" ||
-        Model.Status == "canceled" ||
-        Model.Status == "declined" ? 4 : -1;
-    var statusColor = /*Model.Status == "canceled" || Model.Status == "declined " ? "red" : "green";*/
-    Model.Status == "requested" ? Model.Sender.Id == userId ? "blue" : "orange" :
-Model.Status == "accepted" ? Model.Sender.Id == userId ? "orange" : "blue" :
-Model.Status == "confirmed" && itemsSent && itemsReceived && feedbackProvided ? "green" :
-Model.Status == "confirmed" ? "orange" :
-Model.Status == "completed" ? "green" : "red";
+    var statusColor = Model.StatusColor(userId);
+    var progIndex = Model.ProgressIndex(userId);
+}
 
-
-
-    }
 <div class="swap-prog-container @Html.Raw(statusColor)">
     <div class="swap-capstone @("prog-index-" + progIndex)">
         @if (progIndex == 3)

@@ -1108,7 +1108,7 @@ button.close {
         width: 100%;
     }
 
-        #history-container .status-pending {
+        #history-container .status-blue {
             padding: 0.2rem 0.5rem;
             font-size: 0.85rem;
             font-weight: 600;
@@ -1117,13 +1117,13 @@ button.close {
             border-radius: 1rem;
         }
 
-            #history-container .status-pending i {
+            #history-container .status-blue i {
                 margin-right: 0.5rem;
                 font-size: 0.5rem;
                 transform: translateY(-25%)
             }
 
-        #history-container .status-attention {
+        #history-container .status-orange {
             padding: 0.2rem 0.75rem;
             font-size: 0.85rem;
             font-weight: 600;
@@ -1132,13 +1132,13 @@ button.close {
             border-radius: 1rem;
         }
 
-        #history-container .status-attention i {
-            margin-right: 0.5rem;
-            font-size: 0.5rem;
-            transform: translateY(-25%)
-        }
+            #history-container .status-orange i {
+                margin-right: 0.5rem;
+                font-size: 0.5rem;
+                transform: translateY(-25%)
+            }
 
-        #history-container .status-complete {
+        #history-container .status-green {
             padding: 0.2rem 0.5rem;
             font-size: 0.85rem;
             font-weight: 600;
@@ -1147,13 +1147,13 @@ button.close {
             border-radius: 1rem;
         }
 
-            #history-container .status-complete i {
+            #history-container .status-green i {
                 margin-right: 0.5rem;
                 font-size: 0.5rem;
                 transform: translateY(-25%)
             }
 
-        #history-container .status-declined {
+        #history-container .status-red {
             padding: 0.2rem 0.5rem;
             font-size: 0.85rem;
             font-weight: 600;
@@ -1162,7 +1162,7 @@ button.close {
             border-radius: 1rem;
         }
 
-            #history-container .status-declined i {
+            #history-container .status-red i {
                 margin-right: 0.5rem;
                 font-size: 0.5rem;
                 transform: translateY(-25%)
