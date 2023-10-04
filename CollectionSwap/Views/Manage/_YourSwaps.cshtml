@@ -2,10 +2,10 @@
 @using Microsoft.AspNet.Identity
 @{
     var userId = User.Identity.GetUserId();
-    string statusMessage = ViewBag.Status;
-    string errorMessage = ViewBag.Error;
     var displayableSwaps = Model.Swaps;
     var filter = ViewBag.Filter;
+    string statusMessage = ViewBag.Status;
+    string errorMessage = ViewBag.Error;
 }
 
 <div class="scroll-snap-row">
@@ -24,303 +24,295 @@
     </div>
     <div data-nav="Your Swaps" id="history-container">
         <span class="header">Your Swaps</span>
-        @*<section class="column">*@
-            <div class="swap-history-filters">
-                <span data-status="all" class="@(filter == "all" ? "selected" : "")">All</span>
-                <span data-status="requested" class="@(filter == "requested" ? "selected" : "")">Requested</span>
-                <span data-status="accepted" class="@(filter == "accepted" ? "selected" : "")">Accepted</span>
-                <span data-status="confirmed" class="@(filter == "confirmed" ? "selected" : "")">Confirmed</span>
-                <span data-status="completed" class="@(filter == "completed" ? "selected" : "")">Completed</span>
+        <div class="swap-history-filters">
+            <span data-status="all" class="@(filter == "all" ? "selected" : "")">All</span>
+            <span data-status="requested" class="@(filter == "requested" ? "selected" : "")">Requested</span>
+            <span data-status="accepted" class="@(filter == "accepted" ? "selected" : "")">Accepted</span>
+            <span data-status="confirmed" class="@(filter == "confirmed" ? "selected" : "")">Confirmed</span>
+            <span data-status="completed" class="@(filter == "completed" ? "selected" : "")">Completed</span>
+        </div>
+        @if (displayableSwaps.Any())
+        {
+            <div class="status-key">
+                <strong>Status Key </strong>
+                <span class="status-pending"><i class="fa-solid fa-circle"></i>- Waiting for other user</span>
+                <span class="status-attention"><i class="fa-solid fa-circle"></i>- Requires action from you</span>
+                <span class="status-complete"><i class="fa-solid fa-circle"></i>- Swap complete</span>
+                <span class="status-declined"><i class="fa-solid fa-circle"></i>- Swap canceled/declined</span>
             </div>
-            @if (displayableSwaps.Any())
-            {
-                <div class="status-key">
-                    <strong>Status Key </strong>
-                    <span class="status-pending"><i class="fa-solid fa-circle"></i>- Waiting for other user</span>
-                    <span class="status-attention"><i class="fa-solid fa-circle"></i>- Requires action from you</span>
-                    <span class="status-complete"><i class="fa-solid fa-circle"></i>- Swap complete</span>
-                    <span class="status-declined"><i class="fa-solid fa-circle"></i>- Swap canceled/declined</span>
-                </div>
-            }
-            <table>
-                <thead>
-                    <tr>
-                        <th>Collection Name</th>
-                        <th>User</th>
-                        <th>Progress</th>
-                        <th class="tooltip">
-                            Sent <i class="fa-solid fa-circle-info"></i>
-                            @Html.Partial("_Tooltip", "your-swaps-sent")
-                        </th>
-                        <th class="tooltip">
-                            Received <i class="fa-solid fa-circle-info"></i>
-                            @Html.Partial("_Tooltip", "your-swaps-received")
-                        </th>
-                        <th>Start Date</th>
-                        <th>Status</th>
+        }
+        <table>
+            <thead>
+                <tr>
+                    <th>Collection Name</th>
+                    <th>User</th>
+                    <th>Swap Progress</th>
+                    <th class="tooltip">
+                        Sent <i class="fa-solid fa-circle-info"></i>
+                        @Html.Partial("_Tooltip", "your-swaps-sent")
+                    </th>
+                    <th class="tooltip">
+                        Received <i class="fa-solid fa-circle-info"></i>
+                        @Html.Partial("_Tooltip", "your-swaps-received")
+                    </th>
+                    <th>Start Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (!displayableSwaps.Any())
+                {
+                    <tr class="no-swaps">
+                        <td colspan="7" style="text-align: center">
+                            No swaps to display<br />
+                        </td>
                     </tr>
-                </thead>
+                }
 
-                <tbody>
-                    @if (displayableSwaps.Count() == 0)
-                    {
-                        <tr class="no-swaps">
-                            <td colspan="7" style="text-align: center">
-                                No swaps to display<br />
-                            </td>
-                        </tr>
-                    }
-
-                    @foreach (var swap in displayableSwaps)
-                    {
-                        var swapStatus = swap.SenderRequestedItems == "[]" || swap.ReceiverRequestedItems == "[]" ? $"charity-{swap.Status}" : swap.Status;
-                        <tr>
-                            <td onclick="OpenOffer(@swap.Id)">@swap.Collection.Name</td>
-                            @if (swap.SenderId == userId)
-                            {
-                                <td><a class="load-content" data-nav="View Swap" href="/Manage/Member/@swap.Receiver.UserName">@swap.Receiver.UserName</a></td>
-                            }
-                            else if (swap.ReceiverId == userId)
-                            {
-                                <td><a class="load-content" data-nav="View Swap" href="/Manage/Member/@swap.Sender.UserName">@swap.Sender.UserName</a></td>
-                            }
-                            @switch (swapStatus)
-                            {
-                                case "charity-requested":
-                                    if (swap.SenderId == userId)
+                @foreach (var swap in displayableSwaps)
+                {
+                    var otherUser = swap.SenderId == userId ? swap.Receiver : swap.Sender;
+                    var swapStatus = swap.ReceiverRequestedItems == "[]" ? $"charity-{swap.Status}" : swap.Status;
+                    <tr>
+                        <td onclick="OpenOffer(@swap.Id)">@swap.Collection.Name</td>
+                        <td><a class="load-content" data-nav="View Swap" href="/Manage/Member/@otherUser.UserName">@otherUser.UserName</a></td>
+                        @switch (swapStatus)
+                        {
+                            case "charity-requested":
+                                if (swap.SenderId == userId)
+                                {
+                                    <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="@swap.Receiver.UserName has requested your items.">@Html.Partial("_SwapProgress", swap)</td>
+                                }
+                                else
+                                {
+                                    <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="You've requested these items, waiting @swap.Sender.UserName to accept or decline.">@Html.Partial("_SwapProgress", swap)</td>
+                                }
+                                break;
+                            case "charity-confirmed":
+                                if (swap.SenderId == userId)
+                                {
+                                    <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="You confirmed this swap, please follow the provided mailing instructions.">@Html.Partial("_SwapProgress", swap)</td>
+                                }
+                                else if (swap.ReceiverId == userId)
+                                {
+                                    <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="@swap.Sender.UserName has accepted your request.">@Html.Partial("_SwapProgress", swap)</td>
+                                }
+                                break;
+                            case "charity-completed":
+                                if (swap.SenderId == userId)
+                                {
+                                    <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="You requested this swap, waiting for @swap.Receiver.UserName to accept or decline.">@Html.Partial("_SwapProgress", swap)</td>
+                                }
+                                else
+                                {
+                                    <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="Swap complete">@Html.Partial("_SwapProgress", swap)</td>
+                                }
+                                break;
+                            case "charity-canceled":
+                                <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="@swap.Receiver.UserName canceled their request.">@Html.Partial("_SwapProgress", swap)</td>
+                                break;
+                            case "charity-declined":
+                                <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="@swap.Sender.UserName has donated the items to another user">@Html.Partial("_SwapProgress", swap)</td>
+                                break;
+                            case "requested":
+                                if (swap.SenderId == userId)
+                                {
+                                    <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="You requested this swap, waiting for @swap.Receiver.UserName to accept or decline.">@Html.Partial("_SwapProgress", swap)</td>
+                                }
+                                else
+                                {
+                                    <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="This swap has been requested from you, waiting for you to accept or decline.">@Html.Partial("_SwapProgress", swap)</td>
+                                }
+                                break;
+                            case "accepted":
+                                if (swap.SenderId == userId)
+                                {
+                                    <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="The swap has been accepted, waiting for you to confirm.">@Html.Partial("_SwapProgress", swap)</td>
+                                }
+                                else
+                                {
+                                    <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="You've accepted this swap, waiting for @swap.Sender.UserName to confirm.">@Html.Partial("_SwapProgress", swap)</td>
+                                }
+                                break;
+                            case "confirmed":
+                                if (swap.SenderId == userId)
+                                {
+                                    if (swap.ReceiverConfirmSent)
                                     {
-                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="@swap.Receiver.UserName has requested your items.">@Html.Partial("_SwapProgress", swap)</td>
+                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="@swap.Receiver.UserName has sent your items, please follow the provided mailing instructions.">@Html.Partial("_SwapProgress", swap)</td>
                                     }
                                     else
-                                    {
-                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="You've requested these items, waiting @swap.Sender.UserName to accept or decline.">@Html.Partial("_SwapProgress", swap)</td>
-                                    }
-                                    break;
-                                case "charity-confirmed":
-                                    if (swap.SenderId == userId)
                                     {
                                         <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="You confirmed this swap, please follow the provided mailing instructions.">@Html.Partial("_SwapProgress", swap)</td>
                                     }
-                                    else if (swap.ReceiverId == userId)
+                                }
+                                else
+                                {
+                                    if (swap.SenderConfirmSent)
                                     {
-                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="@swap.Sender.UserName has accepted your request.">@Html.Partial("_SwapProgress", swap)</td>
-                                    }
-                                    break;
-                                case "charity-completed":
-                                    if (swap.SenderId == userId)
-                                    {
-                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="You requested this swap, waiting for @swap.Receiver.UserName to accept or decline.">@Html.Partial("_SwapProgress", swap)</td>
+                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="@swap.Sender.UserName has sent your items, please follow the provided mailing instructions.">@Html.Partial("_SwapProgress", swap)</td>
                                     }
                                     else
                                     {
-                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="Swap complete">@Html.Partial("_SwapProgress", swap)</td>
+                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="@swap.Sender.UserName confirmed this swap, please follow the provided mailing instructions.">@Html.Partial("_SwapProgress", swap)</td>
                                     }
-                                    break;
-                                case "charity-canceled":
-                                    <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="@swap.Receiver.UserName canceled their request.">@Html.Partial("_SwapProgress", swap)</td>
-                                    break;
-                                case "charity-declined":
-                                    <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="@swap.Sender.UserName has donated the items to another user">@Html.Partial("_SwapProgress", swap)</td>
-                                    break;
-                                case "requested":
-                                    if (swap.SenderId == userId)
-                                    {
-                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="You requested this swap, waiting for @swap.Receiver.UserName to accept or decline.">@Html.Partial("_SwapProgress", swap)</td>
-                                    }
-                                    else
-                                    {
-                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="This swap has been requested from you, waiting for you to accept or decline.">@Html.Partial("_SwapProgress", swap)</td>
-                                    }
-                                    break;
-                                case "accepted":
-                                    if (swap.SenderId == userId)
-                                    {
-                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="The swap has been accepted, waiting for you to confirm.">@Html.Partial("_SwapProgress", swap)</td>
-                                    }
-                                    else
-                                    {
-                                        <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="You've accepted this swap, waiting for @swap.Sender.UserName to confirm.">@Html.Partial("_SwapProgress", swap)</td>
-                                    }
-                                    break;
-                                case "confirmed":
-                                    if (swap.SenderId == userId)
-                                    {
-                                        if (swap.ReceiverConfirmSent)
+                                }
+                                break;
+                            case "completed":
+                                <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="Swap complete">@Html.Partial("_SwapProgress", swap)</td>
+                                break;
+                            case "canceled":
+                            case "declined":
+                                <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="Swap @swapStatus">@Html.Partial("_SwapProgress", swap)</td>
+                                break;
+                            default:
+                                break;
+                        }
+                        @if (userId == swap.SenderId)
+                        {
+                            <td>
+                                <input data-swap-id="@swap.Id" data-type="sent" class="swap-confirm" type="checkbox" checked="@swap.SenderConfirmSent" @Html.Raw(swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "") />
+                            </td>
+                            <td>
+                                <input data-swap-id="@swap.Id" data-type="received" class="swap-confirm" type="checkbox" checked="@(swap.SenderConfirmReceived || swap.ReceiverRequestedItems == "[]")" @Html.Raw(swap.ReceiverRequestedItems == "[]" || swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "") />
+                            </td>
+                        }
+                        else if (userId == swap.ReceiverId)
+                        {
+                            <td>
+                                <input data-swap-id="@swap.Id" data-type="sent" class="swap-confirm" type="checkbox" checked="@swap.ReceiverConfirmSent" @Html.Raw(swap.ReceiverRequestedItems == "[]" || swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "") />
+                            </td>
+                            <td>
+                                <input data-swap-id="@swap.Id" data-type="received" class="swap-confirm" type="checkbox" checked="@swap.ReceiverConfirmReceived" @Html.Raw(swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "") />
+                            </td>
+                        }
+                        <td onclick="OpenOffer(@swap.Id)">
+                            @swap.StartDate.ToLocalTime().ToString("dd/MM/yyyy")
+                        </td>
+                        @{
+                            var isCharity = swap.ReceiverRequestedItems == "[]";
+                            var hasSentItems = userId == swap.SenderId ? swap.SenderConfirmSent : swap.ReceiverConfirmSent;
+                            var hasReceivedItems = userId == swap.SenderId ? swap.SenderConfirmReceived : swap.ReceiverConfirmReceived;
+                            var hasSentFeedback = userId == swap.SenderId ? isCharity || swap.SenderFeedback != null : swap.ReceiverFeedback != null;
+                            var hasExpired = (DateTime.Now - swap.StartDate).Days > 14;
+                            switch (swapStatus)
+                            {
+                                case "charity-requested":
+                                    <td onclick="OpenOffer(@swap.Id)">
+                                        @if (swap.SenderId == userId)
                                         {
-                                            <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="@swap.Receiver.UserName has sent your items, please follow the provided mailing instructions.">@Html.Partial("_SwapProgress", swap)</td>
+                                            <span class="status-attention"><i class="fa-solid fa-circle"></i>Request Pending</span>
                                         }
                                         else
                                         {
-                                            <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="You confirmed this swap, please follow the provided mailing instructions.">@Html.Partial("_SwapProgress", swap)</td>
+                                            <span class="status-pending"><i class="fa-solid fa-circle"></i>Waiting for @swap.Sender.UserName</span>
                                         }
-                                    }
-                                    else
-                                    {
-                                        if (swap.SenderConfirmSent)
-                                        {
-                                            <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="@swap.Sender.UserName has sent your items, please follow the provided mailing instructions.">@Html.Partial("_SwapProgress", swap)</td>
-                                        }
-                                        else
-                                        {
-                                            <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="@swap.Sender.UserName confirmed this swap, please follow the provided mailing instructions.">@Html.Partial("_SwapProgress", swap)</td>
-                                        }
-                                    }
-                                    break;
-                                case "completed":
-                                    <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="Swap complete">@Html.Partial("_SwapProgress", swap)</td>
+                                    </td>
                                     break;
                                 case "canceled":
-                                case "declined":
-                                    <td onclick="OpenOffer(@swap.Id)" class="swap-status" title="Swap @swapStatus">@Html.Partial("_SwapProgress", swap)</td>
+                                case "charity-canceled":
+                                    <td onclick="OpenOffer(@swap.Id)">
+                                        <span class="status-declined"><i class="fa-solid fa-circle"></i>Canceled</span>
+                                    </td>
                                     break;
-                                default:
+                                case "charity-declined":
+                                    <td onclick="OpenOffer(@swap.Id)">
+                                        <span class="status-declined"><i class="fa-solid fa-circle"></i>Declined</span>
+                                    </td>
                                     break;
-                            }
-                            @if (userId == swap.SenderId)
-                            {
-                                <td>
-                                    <input data-swap-id="@swap.Id" data-type="sent" class="swap-confirm" type="checkbox" checked="@swap.SenderConfirmSent" @Html.Raw(swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "") />
-                                </td>
-                                <td>
-                                    <input data-swap-id="@swap.Id" data-type="received" class="swap-confirm" type="checkbox" checked="@(swap.SenderConfirmReceived || swap.ReceiverRequestedItems == "[]")" @Html.Raw(swap.ReceiverRequestedItems == "[]" || swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "") />
-                                </td>
-                            }
-                            else if (userId == swap.ReceiverId)
-                            {
-                                <td>
-                                    <input data-swap-id="@swap.Id" data-type="sent" class="swap-confirm" type="checkbox" checked="@swap.ReceiverConfirmSent" @Html.Raw(swap.ReceiverRequestedItems == "[]" || swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "") />
-                                </td>
-                                <td>
-                                    <input data-swap-id="@swap.Id" data-type="received" class="swap-confirm" type="checkbox" checked="@swap.ReceiverConfirmReceived" @Html.Raw(swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "") />
-                                </td>
-                            }
-                            <td onclick="OpenOffer(@swap.Id)">
-                                @swap.StartDate.ToLocalTime().ToString("dd/MM/yyyy")
-                            </td>
-                            @{
-                                var isCharity = swap.ReceiverRequestedItems == "[]";
-                                var hasSentItems = userId == swap.SenderId ? swap.SenderConfirmSent : swap.ReceiverConfirmSent;
-                                var hasReceivedItems = userId == swap.SenderId ? swap.SenderConfirmReceived : swap.ReceiverConfirmReceived;
-                                var hasSentFeedback = userId == swap.SenderId ? isCharity || swap.SenderFeedback != null : swap.ReceiverFeedback != null;
-                                var hasExpired = (DateTime.Now - swap.StartDate).Days > 14;
-                                switch (swapStatus)
-                                {
-                                    case "charity-requested":
-                                        <td onclick="OpenOffer(@swap.Id)">
-                                            @if (swap.SenderId == userId)
-                                            {
-                                                <span class="status-attention"><i class="fa-solid fa-circle"></i>Request Pending</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="status-pending"><i class="fa-solid fa-circle"></i>Waiting for @swap.Sender.UserName</span>
-                                            }
-                                        </td>
-                                        break;
-                                    case "canceled":
-                                    case "charity-canceled":
-                                        <td onclick="OpenOffer(@swap.Id)">
-                                            <span class="status-declined"><i class="fa-solid fa-circle"></i>Canceled</span>
-                                        </td>
-                                        break;
-                                    case "charity-declined":
-                                        <td onclick="OpenOffer(@swap.Id)">
-                                            <span class="status-declined"><i class="fa-solid fa-circle"></i>Declined</span>
-                                        </td>
-                                        break;
-                                    case "charity-confirmed":
-                                        if (hasSentFeedback)
-                                        {
-                                            <td onclick="OpenOffer(@swap.Id)">
-                                                <span class="status-complete"><i class="fa-solid fa-circle"></i>Complete</span>
-                                            </td>
-                                        }
-                                        else if (hasSentItems && hasReceivedItems)
-                                        {
-                                            <td onclick="OpenOffer(@swap.Id)">
-                                                <span class="status-attention"><i class="fa-solid fa-circle"></i>Awaiting Feedback</span>
-                                            </td>
-                                        }
-                                        else if (hasSentItems)
-                                        {
-                                            <td onclick="OpenOffer(@swap.Id)">
-                                                <span class="status-pending"><i class="fa-solid fa-circle"></i>Waiting to receive items</span>
-                                            </td>
-                                        }
-                                        else
-                                        {
-                                            <td onclick="OpenOffer(@swap.Id)">
-                                                <span class="status-attention"><i class="fa-solid fa-circle"></i>Needs Mailing</span>
-                                            </td>
-                                        }
-                                        break;
-                                    case "requested":
-                                        <td onclick="OpenOffer(@swap.Id)">
-                                            @if (swap.SenderId == userId)
-                                            {
-                                                <span class="status-pending"><i class="fa-solid fa-circle"></i>Waiting for @swap.Receiver.UserName</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="status-attention"><i class="fa-solid fa-circle"></i>Request Pending</span>
-                                            }
-                                        </td>
-                                        break;
-                                    case "accepted":
-                                        <td onclick="OpenOffer(@swap.Id)">
-                                            @if (swap.SenderId == userId)
-                                            {
-                                                <span class="status-attention"><i class="fa-solid fa-circle"></i>Pending Confirmation</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="status-pending"><i class="fa-solid fa-circle"></i>Waiting for @swap.Sender.UserName</span>
-                                            }
-                                        </td>
-                                        break;
-                                    case "confirmed":
-                                        if (hasSentFeedback)
-                                        {
-                                            <td onclick="OpenOffer(@swap.Id)">
-                                                <span class="status-complete"><i class="fa-solid fa-circle"></i>Complete</span>
-                                            </td>
-                                        }
-                                        else if ((hasSentItems && hasReceivedItems) || hasExpired)
-                                        {
-                                            <td onclick="OpenOffer(@swap.Id)">
-                                                <span class="status-attention"><i class="fa-solid fa-circle"></i>Awaiting Feedback</span>
-                                            </td>
-                                        }
-                                        else if (hasSentItems)
-                                        {
-                                            <td onclick="OpenOffer(@swap.Id)">
-                                                <span class="status-pending"><i class="fa-solid fa-circle"></i>Waiting to receive items</span>
-                                            </td>
-                                        }
-                                        else
-                                        {
-                                            <td onclick="OpenOffer(@swap.Id)">
-                                                <span class="status-attention"><i class="fa-solid fa-circle"></i>Needs Mailing</span>
-                                            </td>
-                                        }
-                                        break;
-                                    case "declined":
-                                        <td onclick="OpenOffer(@swap.Id)">
-                                            <span class="status-declined"><i class="fa-solid fa-circle"></i>Declined</span>
-                                        </td>
-                                        break;
-                                    default:
+                                case "charity-confirmed":
+                                    if (hasSentFeedback)
+                                    {
                                         <td onclick="OpenOffer(@swap.Id)">
                                             <span class="status-complete"><i class="fa-solid fa-circle"></i>Complete</span>
                                         </td>
-                                        break;
-                                }
+                                    }
+                                    else if (hasSentItems && hasReceivedItems)
+                                    {
+                                        <td onclick="OpenOffer(@swap.Id)">
+                                            <span class="status-attention"><i class="fa-solid fa-circle"></i>Awaiting Feedback</span>
+                                        </td>
+                                    }
+                                    else if (hasSentItems)
+                                    {
+                                        <td onclick="OpenOffer(@swap.Id)">
+                                            <span class="status-pending"><i class="fa-solid fa-circle"></i>Waiting to receive items</span>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td onclick="OpenOffer(@swap.Id)">
+                                            <span class="status-attention"><i class="fa-solid fa-circle"></i>Needs Mailing</span>
+                                        </td>
+                                    }
+                                    break;
+                                case "requested":
+                                    <td onclick="OpenOffer(@swap.Id)">
+                                        @if (swap.SenderId == userId)
+                                        {
+                                            <span class="status-pending"><i class="fa-solid fa-circle"></i>Waiting for @swap.Receiver.UserName</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-attention"><i class="fa-solid fa-circle"></i>Request Pending</span>
+                                        }
+                                    </td>
+                                    break;
+                                case "accepted":
+                                    <td onclick="OpenOffer(@swap.Id)">
+                                        @if (swap.SenderId == userId)
+                                        {
+                                            <span class="status-attention"><i class="fa-solid fa-circle"></i>Pending Confirmation</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-pending"><i class="fa-solid fa-circle"></i>Waiting for @swap.Sender.UserName</span>
+                                        }
+                                    </td>
+                                    break;
+                                case "confirmed":
+                                    if (hasSentFeedback)
+                                    {
+                                        <td onclick="OpenOffer(@swap.Id)">
+                                            <span class="status-complete"><i class="fa-solid fa-circle"></i>Complete</span>
+                                        </td>
+                                    }
+                                    else if ((hasSentItems && hasReceivedItems) || hasExpired)
+                                    {
+                                        <td onclick="OpenOffer(@swap.Id)">
+                                            <span class="status-attention"><i class="fa-solid fa-circle"></i>Awaiting Feedback</span>
+                                        </td>
+                                    }
+                                    else if (hasSentItems)
+                                    {
+                                        <td onclick="OpenOffer(@swap.Id)">
+                                            <span class="status-pending"><i class="fa-solid fa-circle"></i>Waiting to receive items</span>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td onclick="OpenOffer(@swap.Id)">
+                                            <span class="status-attention"><i class="fa-solid fa-circle"></i>Needs Mailing</span>
+                                        </td>
+                                    }
+                                    break;
+                                case "declined":
+                                    <td onclick="OpenOffer(@swap.Id)">
+                                        <span class="status-declined"><i class="fa-solid fa-circle"></i>Declined</span>
+                                    </td>
+                                    break;
+                                default:
+                                    <td onclick="OpenOffer(@swap.Id)">
+                                        <span class="status-complete"><i class="fa-solid fa-circle"></i>Complete</span>
+                                    </td>
+                                    break;
                             }
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        @*</section>*@
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
     <div data-nav="View Swap" id="offer-container" class="d-none">
         @if (Model.Offer != null)

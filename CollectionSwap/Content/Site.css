@@ -1081,7 +1081,8 @@ button.close {
             border-radius: 0 1rem 0 0;
         }
 
-    #history-container .status-key {
+    /*Top right positioning*/
+    /*#history-container .status-key {
         position: absolute;
         top: 8rem;
         right: 1rem;
@@ -1092,6 +1093,15 @@ button.close {
         flex-wrap: wrap;
         margin-bottom: 1rem;
         transform: translateY(-100%);
+    }*/
+
+    /* Between Filters and table positioning */
+    #history-container .status-key {
+        display: flex;
+        gap: 0.55rem;
+        flex-wrap: wrap;
+        width: 100%;
+        margin-bottom: 1rem;
     }
 
     #history-container .status-key > strong {
@@ -1589,6 +1599,22 @@ button.close {
 }
 
 .swap-prog-container {
+    --_blue-hue: 218;
+    --_blue-sat: 80%;
+    --_blue-light: 46%;
+
+    --_orange-hue: 37;
+    --_orange-sat: 93%;
+    --_orange-light: 53%;
+
+    --_green-hue: 114;
+    --_green-sat: 54%;
+    --_green-light: 34%;
+
+    --_red-hue: 1;
+    --_red-sat: 78%;
+    --_red-light: 59%;
+
     --_size: 1.4rem;
     --_segments: 4;
     position: relative;
@@ -1609,11 +1635,6 @@ button.close {
         background: #ccc;
     }
 
-    /* Progress background */
-    .swap-prog-container.declined::after {
-        background: linear-gradient(90deg, #D1787866 0%, #D1787899 25%, #CA6D6D99 25%, #CA6D6Daa 50%, #C36262aa 50%, #C36262aa 75%, #BC5959aa 75%, #BC5959cc 100%);
-    }
-
 .swap-capstone {
     position: absolute;
     top: calc((var(--_size) / 2) * 0.1);
@@ -1622,13 +1643,28 @@ button.close {
     justify-content: center;
     width: calc((var(--_size) / 2) * 0.8);
     height: calc((var(--_size) / 2) * 0.8);
-    background: #308427;
     border-radius: 50%;
     z-index: calc(var(--_segments) + 1);
 }
 
-.swap-prog-container.declined .swap-capstone {
+/*.swap-prog-container.declined .swap-capstone {
     background: #8B2929;
+}*/
+
+.swap-prog-container.blue .swap-capstone {
+    background: hsl(var(--_blue-hue), calc(var(--_blue-sat) * 1.00), calc(var(--_blue-light) * 1.00));
+}
+
+.swap-prog-container.orange .swap-capstone {
+    background: hsl(var(--_orange-hue), calc(var(--_orange-sat) * 1.00), calc(var(--_orange-light) * 1.00));
+}
+
+.swap-prog-container.green .swap-capstone {
+    background: hsl(var(--_green-hue), calc(var(--_green-sat) * 1.00), calc(var(--_green-light) * 1.00));
+}
+
+.swap-prog-container.red .swap-capstone {
+    background: hsl(var(--_red-hue), calc(var(--_red-sat) * 1.00), calc(var(--_red-light) * 1.00));
 }
 
     .swap-capstone.prog-index-1 {
@@ -1682,62 +1718,97 @@ button.close {
     border-radius: 50%;
 }
 
-.swap-prog-container > *:not(.swap-capstone).hidden::after {
-    background: transparent;
+/*Blue fills*/
+.swap-prog-container.blue > *:not(.swap-capstone).prog-index-1 {
+    background: hsl(var(--_blue-hue), calc(var(--_blue-sat) * 1.00), calc(var(--_blue-light) * 1.80));
 }
 
-.swap-prog-container > *:not(.swap-capstone).prog-index-1 {
-    background: #ABECA4;
+.swap-prog-container.blue > *:not(.swap-capstone).prog-index-2 {
+    background: hsl(var(--_blue-hue), calc(var(--_blue-sat) * 1.00), calc(var(--_blue-light) * 1.70));
 }
 
-    .swap-prog-container > *:not(.swap-capstone).prog-index-1::before {
-        background: #48A43E;
-    }
-
-    .swap-prog-container > *:not(.swap-capstone).prog-index-1::after {
-        background: #48A43E;
-    }
-
-    .swap-prog-container > *:not(.swap-capstone).hidden.prog-index-1::after {
-        background: transparent;
-    }
-
-.swap-prog-container > *:not(.swap-capstone).prog-index-2 {
-    background: #95E28D;
+.swap-prog-container.blue > *:not(.swap-capstone).prog-index-3 {
+    background: hsl(var(--_blue-hue), calc(var(--_blue-sat) * 1.00), calc(var(--_blue-light) * 1.60));
 }
 
-    .swap-prog-container > *:not(.swap-capstone).prog-index-2::after {
-        background: #4AA241;
-    }
-
-.swap-prog-container > *:not(.swap-capstone).prog-index-3 {
-    background: #83D779;
+.swap-prog-container.blue > *:not(.swap-capstone).prog-index-4 {
+    background: hsl(var(--_blue-hue), calc(var(--_blue-sat) * 1.00), calc(var(--_blue-light) * 1.50));
 }
 
-    .swap-prog-container > *:not(.swap-capstone).prog-index-3::after {
-        background: #3F8F36;
-    }
-
-    .swap-prog-container > *:not(.swap-capstone).hidden.prog-index-3::after {
-        background: transparent;
-    }
-
-.swap-prog-container > *:not(.swap-capstone).prog-index-4 {
-    background: #73CC69;
+/*Blue passed capstones*/
+.swap-prog-container.blue > *:not(.swap-capstone, .disabled)::before,
+.swap-prog-container.blue > *:not(.swap-capstone, .disabled)::after {
+    background: hsl(var(--_blue-hue), calc(var(--_blue-sat) * 1.00), calc(var(--_blue-light) * 1.22));
 }
 
-    .swap-prog-container > *:not(.swap-capstone).prog-index-4::after {
-        background: #48A43E;
-    }
-
-.swap-prog-container.declined > *:not(.swap-capstone) {
-    background: transparent;
+/*Orange fills*/
+.swap-prog-container.orange > *:not(.swap-capstone).prog-index-1 {
+    background: hsl(var(--_orange-hue), calc(var(--_orange-sat) * 1.00), calc(var(--_orange-light) * 1.60));
 }
 
-    .swap-prog-container.declined > *:not(.swap-capstone)::before,
-    .swap-prog-container.declined > *:not(.swap-capstone)::after {
-        background: #B55050;
-    }
+.swap-prog-container.orange > *:not(.swap-capstone).prog-index-2 {
+    background: hsl(var(--_orange-hue), calc(var(--_orange-sat) * 1.00), calc(var(--_orange-light) * 1.52));
+}
+
+.swap-prog-container.orange > *:not(.swap-capstone).prog-index-3 {
+    background: hsl(var(--_orange-hue), calc(var(--_orange-sat) * 1.00), calc(var(--_orange-light) * 1.44));
+}
+
+.swap-prog-container.orange > *:not(.swap-capstone).prog-index-4 {
+    background: hsl(var(--_orange-hue), calc(var(--_orange-sat) * 1.00), calc(var(--_orange-light) * 1.36));
+}
+
+/*Orange passed capstones*/
+.swap-prog-container.orange > *:not(.swap-capstone, .disabled)::before,
+.swap-prog-container.orange > *:not(.swap-capstone, .disabled)::after {
+    background: hsl(var(--_orange-hue), calc(var(--_orange-sat) * 1.00), calc(var(--_orange-light) * 1.1));
+}
+
+/*Green fills*/
+.swap-prog-container.green > *:not(.swap-capstone).prog-index-1 {
+    background: hsl(var(--_green-hue), calc(var(--_green-sat) * 1.00), calc(var(--_green-light) * 2.30));
+}
+
+.swap-prog-container.green > *:not(.swap-capstone).prog-index-2 {
+    background: hsl(var(--_green-hue), calc(var(--_green-sat) * 1.00), calc(var(--_green-light) * 2.10));
+}
+
+.swap-prog-container.green > *:not(.swap-capstone).prog-index-3 {
+    background: hsl(var(--_green-hue), calc(var(--_green-sat) * 1.00), calc(var(--_green-light) * 1.95));
+}
+
+.swap-prog-container.green > *:not(.swap-capstone).prog-index-4 {
+    background: hsl(var(--_green-hue), calc(var(--_green-sat) * 1.00), calc(var(--_green-light) * 1.80));
+}
+
+/* Green passed capstones*/
+.swap-prog-container.green > *:not(.swap-capstone, .disabled)::before,
+.swap-prog-container.green > *:not(.swap-capstone, .disabled)::after {
+    background: hsl(var(--_green-hue), calc(var(--_green-sat) * 1.00), calc(var(--_green-light) * 1.2));
+}
+
+/*Red fills*/
+.swap-prog-container.red > *:not(.swap-capstone).prog-index-1 {
+    background: hsl(var(--_red-hue), calc(var(--_red-sat) * 1.00), calc(var(--_red-light) * 1.38));
+}
+
+.swap-prog-container.red > *:not(.swap-capstone).prog-index-2 {
+    background: hsl(var(--_red-hue), calc(var(--_red-sat) * 1.00), calc(var(--_red-light) * 1.32));
+}
+
+.swap-prog-container.red > *:not(.swap-capstone).prog-index-3 {
+    background: hsl(var(--_red-hue), calc(var(--_red-sat) * 1.00), calc(var(--_red-light) * 1.26));
+}
+
+.swap-prog-container.red > *:not(.swap-capstone).prog-index-4 {
+    background: hsl(var(--_red-hue), calc(var(--_red-sat) * 1.00), calc(var(--_red-light) * 1.20));
+}
+
+/* Red passed capstones*/
+.swap-prog-container.red > *:not(.swap-capstone, .disabled)::before,
+.swap-prog-container.red > *:not(.swap-capstone, .disabled)::after {
+    background: hsl(var(--_red-hue), calc(var(--_red-sat) * 1.00), calc(var(--_red-light) * 1.1));
+}
 
 .swap-prog-container > *:not(.swap-capstone) {
     position: relative;

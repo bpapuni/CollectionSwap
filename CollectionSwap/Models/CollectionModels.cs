@@ -553,8 +553,8 @@ namespace CollectionSwap.Models
         [Key]
         public int Id { get; set; }
         public string ItemListJSON { get; set; }
-        public UserCollection UserCollection { get; set; }
-        public Swap Swap { get; set; }
+        public virtual UserCollection UserCollection { get; set; }
+        public virtual Swap Swap { get; set; }
 
     }
 }

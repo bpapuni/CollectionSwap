@@ -334,10 +334,10 @@ namespace CollectionSwap.Models
             {
                 case "sender":
                     // Find the items that DO NOT belong to to sender
-                    heldItems = db.HeldItems.Include("UserCollection").Where(
-                                                                            hi => hi.Swap.Id == swap.Id &&
-                                                                            hi.UserCollection.UserId != swap.SenderId)
-                                                                            .FirstOrDefault();
+                    heldItems = db.HeldItems
+                        .Where(hi => hi.Swap.Id == swap.Id &&
+                        hi.UserCollection.UserId != swap.SenderId)
+                        .FirstOrDefault();
 
                     // Define the User Collection that will be getting updated as the senders
                     userCollection = db.UserCollections.Find(swap.SenderCollectionId);
@@ -345,10 +345,10 @@ namespace CollectionSwap.Models
 
                 case "receiver":
                     // Find the items that DO NOT belong to to receiver
-                    heldItems = db.HeldItems.Include("UserCollection").Where(
-                                                                        hi => hi.Swap.Id == swap.Id &&
-                                                                        hi.UserCollection.UserId != swap.ReceiverId)
-                                                                        .FirstOrDefault();
+                    heldItems = db.HeldItems
+                        .Where(hi => hi.Swap.Id == swap.Id &&
+                        hi.UserCollection.UserId != swap.ReceiverId)
+                        .FirstOrDefault();
 
                     // Define the User Collection that will be getting updated as the receivers
                     userCollection = db.UserCollections.Find(swap.ReceiverCollectionId);
@@ -370,6 +370,16 @@ namespace CollectionSwap.Models
 
             db.HeldItems.Remove(heldItems);
             db.SaveChanges();
+        }
+        public string StatusForUser(string userId)
+        {
+            var isCharity = this.ReceiverRequestedItems == "[]";
+            var status = isCharity && (this.Status == "requested" || this.Status == "accepted") ? $"charity-{this.Status}" : this.Status;
+            var senderPseudoCompleted = this.Status == "confirmed" && this.SenderConfirmSent && this.SenderConfirmReceived;
+            var receiverPseudoCompleted = this.Status == "confirmed" && this.ReceiverConfirmSent && this.ReceiverConfirmReceived;
+            status = (this.Sender.Id == userId && senderPseudoCompleted) || (this.Receiver.Id == userId && receiverPseudoCompleted) ? "pseudo-completed" : status;
+            
+            return status;
         }
         public static List<Swap> Filter(string userId, string filter, ApplicationDbContext db)
         {
