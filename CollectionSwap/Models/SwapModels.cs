@@ -392,6 +392,8 @@ namespace CollectionSwap.Models
             result = result
                 .OrderBy(s => s.Status == "requested" ? 0 : 1)
                 .ThenBy(s => s.Status == "accepted" ? 0 : 1)
+                // Of the confirmed swaps, show first the swaps where the user hasnt sent their items yet
+                .ThenBy(s => s.Status == "confirmed" && ((s.Sender.Id == userId && s.SenderConfirmSent == false) || (s.Receiver.Id == userId && s.ReceiverConfirmSent == false)) ? 0 : 1)
                 // Of the confirmed swaps, show first the swaps where the other user hasnt sent their items yet
                 .ThenBy(s => s.Status == "confirmed" && ((s.Sender.Id == userId && s.ReceiverConfirmSent == false) || (s.Receiver.Id == userId && s.SenderConfirmSent == false)) ? 0 : 1)
                 // Then show confirmed swaps that are 'pseudo-completed', that is, the exchange is done but the user hasn't provided feedback yet
