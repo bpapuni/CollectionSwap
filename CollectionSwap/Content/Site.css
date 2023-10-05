@@ -623,6 +623,7 @@ section.showcase div:first-child::after {
             height: 400px;
             background: #c7d1d099 url('images/support-bg.png') no-repeat;
             background-size: contain;
+            border-radius: 10rem;
             z-index: -1;
         }
 
@@ -3902,4 +3903,11 @@ input:checked + .slider:before {
 .loading-spinner {
     width: 2rem;
     height: 2rem;
+}
+
+footer.disclaimer {
+    margin-top: 1rem;
+    color: #888;
+    font-size: 0.8rem;
+    line-height: 1.4;
 }

@@ -33,7 +33,7 @@ namespace CollectionSwap
 
             routes.MapRoute(
                 name: "ManageCollections",
-                url: "Manage/ManageCollections/{id}",
+                url: "Manage/Collections/{id}",
                 defaults: new { controller = "Manage", action = "Index", id = UrlParameter.Optional }
             );
 

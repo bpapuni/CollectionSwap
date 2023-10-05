@@ -34,8 +34,8 @@
                 .PrimaryKey(t => t.Id);
 
             // Insert initial data
-            Sql("INSERT INTO dbo.Collections (Name, ItemListJSON) VALUES ('Feelings', '[\"1.png\",\"2.png\",\"3.png\",\"4.png\",\"5.png\",\"6.png\",\"7.png\",\"8.png\",\"9.png\",\"10.png\",\"11.png\",\"12.png\",\"13.png\",\"14.png\",\"15.png\"]')");
-            Sql("INSERT INTO dbo.Collections (Name, ItemListJSON) VALUES ('Women of History', '[\"1.png\",\"2.png\",\"3.png\",\"4.png\",\"5.png\",\"6.png\",\"7.png\",\"8.png\",\"9.png\",\"10.png\",\"11.png\",\"12.png\",\"13.png\",\"14.png\",\"15.png\",\"16.png\"]')");
+            Sql("INSERT INTO dbo.Collections (Name, ItemListJSON, Description) VALUES ('Feelings', '[\"1.png\",\"2.png\",\"3.png\",\"4.png\",\"5.png\",\"6.png\",\"7.png\",\"8.png\",\"9.png\",\"10.png\",\"11.png\",\"12.png\",\"13.png\",\"14.png\",\"15.png\"]', 'Explore the richness of human feelings')");
+            Sql("INSERT INTO dbo.Collections (Name, ItemListJSON, Description) VALUES ('Women of History', '[\"1.png\",\"2.png\",\"3.png\",\"4.png\",\"5.png\",\"6.png\",\"7.png\",\"8.png\",\"9.png\",\"10.png\",\"11.png\",\"12.png\",\"13.png\",\"14.png\",\"15.png\",\"16.png\"]', 'Celebrate women who shaped history')");
 
             CreateTable(
                 "dbo.HeldItems",

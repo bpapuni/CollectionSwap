@@ -105,10 +105,10 @@
                 @* Display any duplicate item request warnings *@
                 <span class="duplicate-missing-items-error">
                     @if (Validation.LowInventoryItems.Count > 0)
-                    {
-                        <text><i class="fa-solid fa-circle-exclamation"></i> One or more users have already requested the marked item(s) from you.<br />
-                            You currently will have enough duplicates to complete all requested swaps (this included).</text>
-                    }
+{
+    @Html.Raw("<i class=\"fa-solid fa-circle-exclamation\"></i> You've already offered the marked item(s) to another/other user(s).<br />\r\n" +
+   "You will not have enough duplicates to complete all requested swaps (this included).")
+}
                 </span>
 
                 <div class="swap-items">
@@ -127,14 +127,14 @@
             <div class="selection-pool">
                 <div>
                     <span class="header">Select @swapSize of @otherUserName's items</span>
-                    <button class="swap-your-items-button" onclick="ToggleSwapItems(this)"><i class="fa-solid fa-file"></i><text>Your Items</text></button>
+                    <button class="swap-your-items-button @(Validation.LowInventoryItems.Count > 0 ? "selected" : null)" onclick="ToggleSwapItems(this)"><i class="fa-solid fa-file"></i><text>Your Items</text></button>
                 </div>
 
                 @* Display any duplicate item request warnings *@
                 <span class="duplicate-missing-items-error">
                     @if (Validation.DuplicateRequestItems.Count > 0)
                     {
-                        <text><i class="fa-solid fa-circle-exclamation"></i> You have already requested the marked item(s) from another user.</text>
+                        @Html.Raw("<i class=\"fa-solid fa-circle-exclamation\"></i> You've already requested the marked item(s) from another user.")
                     }
                 </span>
 
@@ -162,16 +162,16 @@
             </div>
 
             @* Hidden, second row of swap *@
-            <div class="selection-pool your-items d-none">
+            <div class="selection-pool your-items @(Validation.LowInventoryItems.Count > 0 ? null : "d-none")">
                 <span class="header">@otherUserName will be offered to select @swapSize of your items</span>
 
                 @* Display any duplicate item request warnings *@
                 <span class="duplicate-missing-items-error">
                     @if (Validation.LowInventoryItems.Count > 0)
-                    {
-                        <text><i class="fa-solid fa-circle-exclamation"></i> One or more users have already requested the marked item(s) from you.<br />
-                            You currently will have enough duplicates to complete all requested swaps (this included).</text>
-                    }
+{
+    @Html.Raw("<i class=\"fa-solid fa-circle-exclamation\"></i> You've already offered the marked item(s) to another/other user(s).<br />\r\n" +
+   "You will not have enough duplicates to complete all requested swaps (this included).")
+}
                 </span>
 
                 <div class="swap-items">

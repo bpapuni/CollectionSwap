@@ -29,7 +29,9 @@ LoadPartial(partialName, `/Manage/${partialName}`)
 
 if (partialId) {
     const formData = new FormData();
-    var action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("Find", "DisplaySwapMatches").replace("YourSwaps", "YourSwapsPartial");
+    // We want to replace Collections with EditCollection but not in the word YourCollections so we need a regex to get an exact match
+    const regex = new RegExp(`\\bCollections\\b`, 'g');
+    var action = partialName.replace(regex, "EditCollection").replace("YourCollections", "UserCollection").replace("Find", "DisplaySwapMatches").replace("Swaps", "SwapsPartial");
 
     formData.append("id", partialId);
     HandleFormSubmit(`/Manage/${action}`, "POST", formData);
@@ -42,7 +44,9 @@ $(window).on("popstate", function (e) {
     LoadPartial(partialName, `/Manage/${partialName}`)
     if (partialId) {
         const formData = new FormData();
-        const action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("Find", "DisplaySwapMatches").replace("YourSwaps", "YourSwapsPartial");
+        // We want to replace Collections with EditCollection but not in the word YourCollections so we need a regex to get an exact match
+        const regex = new RegExp(`\\bCollections\\b`, 'g');
+        const action = partialName.replace(regex, "EditCollection").replace("YourCollections", "UserCollection").replace("Find", "DisplaySwapMatches").replace("Swaps", "SwapsPartial");
         formData.append("id", partialId);
 
         HandleFormSubmit(`/Manage/${action}`, "POST", formData);
@@ -83,7 +87,9 @@ $(document).on("click", ".load-content", function (e) {
     const formData = new FormData();
     formData.append(action == "Member" ? "username" : "id", id);
 
-    action = action.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("Find", "DisplaySwapMatches").replace("YourSwaps", "YourSwapsPartial");
+    // We want to replace Collections with EditCollection but not in the word YourCollections so we need a regex to get an exact match
+    const regex = new RegExp(`\\bCollections\\b`, 'g');
+    action = action.replace(regex, "EditCollection").replace("YourCollections", "UserCollection").replace("Find", "DisplaySwapMatches").replace("Swaps", "SwapsPartial");
 
     HandleFormSubmit(`/${controller}/${action}`, "POST", formData);
 });
@@ -140,8 +146,6 @@ function LoadPartial(partialName, url) {
         url: `${url}Partial`,
         type: "POST",
         success: function (result) {
-
-            console.log(result.PartialView);
             $('.manage-container-main').html(result.PartialView);
         },
         error: function () {

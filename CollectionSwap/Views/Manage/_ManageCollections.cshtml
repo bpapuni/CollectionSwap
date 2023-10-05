@@ -42,7 +42,7 @@
                         };
                         collectionButton.SetSize = collectionButton.ItemList.Count;
                     }
-                    <a class="collection-button load-content" href="@Url.Content($"/Manage/ManageCollections/{collection.Id}")">
+                    <a class="collection-button load-content" href="@Url.Content($"/Manage/Collections/{collection.Id}")">
                         @Html.Partial("_CollectionButton", collectionButton)
                     </a>
 
