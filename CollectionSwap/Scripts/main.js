@@ -29,7 +29,7 @@ LoadPartial(partialName, `/Manage/${partialName}`)
 
 if (partialId) {
     const formData = new FormData();
-    var action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches").replace("YourSwaps", "YourSwapsPartial");
+    var action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("Find", "DisplaySwapMatches").replace("YourSwaps", "YourSwapsPartial");
 
     formData.append("id", partialId);
     HandleFormSubmit(`/Manage/${action}`, "POST", formData);
@@ -42,7 +42,7 @@ $(window).on("popstate", function (e) {
     LoadPartial(partialName, `/Manage/${partialName}`)
     if (partialId) {
         const formData = new FormData();
-        const action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches").replace("YourSwaps", "YourSwapsPartial");
+        const action = partialName.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("Find", "DisplaySwapMatches").replace("YourSwaps", "YourSwapsPartial");
         formData.append("id", partialId);
 
         HandleFormSubmit(`/Manage/${action}`, "POST", formData);
@@ -83,7 +83,7 @@ $(document).on("click", ".load-content", function (e) {
     const formData = new FormData();
     formData.append(action == "Member" ? "username" : "id", id);
 
-    action = action.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("FindSwaps", "DisplaySwapMatches").replace("YourSwaps", "YourSwapsPartial");
+    action = action.replace("ManageCollections", "EditCollection").replace("YourCollections", "UserCollection").replace("Find", "DisplaySwapMatches").replace("YourSwaps", "YourSwapsPartial");
 
     HandleFormSubmit(`/${controller}/${action}`, "POST", formData);
 });
@@ -140,6 +140,8 @@ function LoadPartial(partialName, url) {
         url: `${url}Partial`,
         type: "POST",
         success: function (result) {
+
+            console.log(result.PartialView);
             $('.manage-container-main').html(result.PartialView);
         },
         error: function () {

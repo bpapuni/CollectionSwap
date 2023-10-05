@@ -51,7 +51,7 @@
             <div class="user-collection-container">
                 @foreach (UserCollection userCollection in Model.UserCollections)
                 {
-                    @Html.ActionLink(userCollection.Name, "FindSwaps", "Manage", new { id = userCollection.Id }, new { @class = $"submit-button load-content user-collection {(selectedCollection != null && userCollection.Id == selectedCollection.Id ? "selected" : "")}" })
+                    @Html.ActionLink(userCollection.Name, "Find", "Manage", new { id = userCollection.Id }, new { @class = $"submit-button load-content user-collection {(selectedCollection != null && userCollection.Id == selectedCollection.Id ? "selected" : "")}" })
                 }
             </div>
             <br />
@@ -74,7 +74,7 @@
                 {
                     <div class="swap-none-found">
                         <span class="header">No matches were found</span>
-                        <span>No matches were found this time, but treasures await! <br />Keep checking back regularly for new collectibles and swap opportunities.</span><br />
+                        <span>Keep checking back regularly for new collectibles and swap opportunities.</span><br />
                         <img src="~/Content/images/doodles/12.png" style="transform: scaleX(-1.1)" />
                     </div>
                 }
