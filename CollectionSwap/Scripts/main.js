@@ -315,7 +315,7 @@ $(document).on("click", ".confirm-sent-items > a", function (event) {
 // Items sent / received checkbox listener
 $(document).on("change", ".swap-confirm", function () {
     if (this.checked) {
-        var status = $(this).closest("tr").find(".swap-capstone p").text();
+        var status = $(this).closest("tr").find(".capstone p").text();
         if (status != "confirmed" && status != "Items Sent") {
             this.checked = false;
         }

@@ -494,13 +494,11 @@
     <Content Include="Views\Shared\_Tooltip.cshtml" />
     <Content Include="Views\Shared\_Rating.cshtml" />
     <Content Include="Views\Shared\_Prompt.cshtml" />
-    <Content Include="Views\Manage\_YourSwaps - Copy.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\images\doodles\" />
     <Folder Include="temp\" />
-    <Folder Include="Views\RemoteValidation\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

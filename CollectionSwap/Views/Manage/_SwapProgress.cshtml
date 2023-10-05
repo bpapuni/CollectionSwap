@@ -2,24 +2,20 @@
 @using Microsoft.AspNet.Identity
 @{
     var userId = User.Identity.GetUserId();
-    var status = Model.StatusForUser(userId) == "pseudo-completed" ? "completed" : Model.Status;
     var statusColor = Model.StatusColor(userId);
     var progIndex = Model.ProgressIndex(userId);
+    var status = Model.StatusForUser(userId) == "pseudo-completed" ? "completed" : progIndex == 3 ? "Items Sent" : Model.Status;
+    var progTooltip = Model.ProgressTooltip(userId, progIndex);
 }
 
-<div class="swap-prog-container @Html.Raw(statusColor)">
-    <div class="swap-capstone @("prog-index-" + progIndex)">
-        @if (progIndex == 3)
-        {
-            <p>Items Sent</p>
-        }
-        else
-        {
-            <p>@status</p>
-        }
-    </div>
-    <div class="swap-prog-1 @(progIndex >= 1 ? "prog-index-1" : "disabled")"></div>
-    <div class="swap-prog-2 @(progIndex >= 2 ? "prog-index-2" : "disabled")"></div>
-    <div class="swap-prog-3 @(progIndex >= 3 ? "prog-index-3" : "disabled")"></div>
-    <div class="swap-prog-4 @(progIndex >= 4 ? "prog-index-4" : "disabled")"></div>
+<div class="swap-prog-container @Html.Raw($"swap-prog-{progIndex}") @Html.Raw(statusColor)">
+    @for (int i = 0; i < 5; i++)
+    {
+        <div class="@(i == progIndex ? "capstone tooltip" : null) @(i > progIndex ? "disabled" : null)">
+            @if (i == progIndex) {
+                <p>@status</p>
+                @Html.Partial("_Tooltip", progTooltip)
+            }
+        </div>
+    }
 </div>

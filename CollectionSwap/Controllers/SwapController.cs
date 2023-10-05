@@ -72,26 +72,25 @@ namespace CollectionSwap.Controllers
                     return RedirectToAction("DisplaySwapMatches", "Manage", new { id = request.ReceiverUserCollectionId });
                 case "charity-confirmed":
                     TempData["Status"] = "You've confirmed this request";
-                    return RedirectToAction("SwapHistoryPartial", "Manage");
+                    return RedirectToAction("SwapsPartial", "Manage");
                 case "charity-canceled":
                     TempData["Status"] = "You've canceled this request";
-                    return RedirectToAction("SwapHistoryPartial", "Manage");
+                    return RedirectToAction("SwapsPartial", "Manage");
                 case "requested":
                     TempData["Status"] = "Your swap request has been sent";
                     return RedirectToAction("DisplaySwapMatches", "Manage", new { id = request.SenderUserCollectionId });
                 case "accepted":
                     TempData["Status"] = "You've accepted this swap";
-                    return RedirectToAction("SwapHistoryPartial", "Manage");
+                    return RedirectToAction("SwapsPartial", "Manage");
                 case "confirmed":
                     TempData["Status"] = "You've confirmed this swap";
-                    return RedirectToAction("SwapHistoryPartial", "Manage");
+                    return RedirectToAction("SwapsPartial", "Manage");
                 case "canceled":
                     TempData["Status"] = "You've canceled this swap";
-                    return RedirectToAction("SwapHistoryPartial", "Manage");
-                    //return Json(new { ScrollRowBack = true });
+                    return RedirectToAction("SwapsPartial", "Manage");
                 case "declined":
                     TempData["Status"] = "You've declined this swap";
-                    return RedirectToAction("SwapHistoryPartial", "Manage");
+                    return RedirectToAction("SwapsPartial", "Manage");
                 default:
                     return Json(new { reloadPage = false });
             }

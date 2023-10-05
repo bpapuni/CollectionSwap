@@ -9,10 +9,13 @@
     string tooltipKey = Model;
     var tooltipTitle = tooltips.ContainsKey(tooltipKey) ? tooltips[tooltipKey]["title"] : null;
     string[] lines = tooltips.ContainsKey(tooltipKey) ? tooltips[tooltipKey]["content"].Split('\n') : null;
-    var tooltipContent = Html.Raw(string.Join("<br />", lines));
+    string tooltipContent = lines == null ? Model : string.Join("<br />", lines);
 }
 
-<div class="tooltip-content">
-    <strong>@tooltipTitle</strong>
-    @tooltipContent
+<div class="tooltip-content" style="@Html.Raw($"width: {Math.Min(tooltipContent.Length / 2, 20)}rem")">
+    @if (tooltipTitle != null)
+    {
+        <strong>@tooltipTitle</strong>
+    }
+    @Html.Raw(tooltipContent)
 </div>

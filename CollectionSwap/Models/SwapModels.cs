@@ -390,6 +390,7 @@ namespace CollectionSwap.Models
                 this.Status == "requested" ? userId == this.Sender.Id ? "blue" : "orange" :
                 this.Status == "accepted" ? userId == this.Sender.Id ? "orange" : "blue" :
                 this.Status == "confirmed" && itemsSent && itemsReceived && feedbackProvided ? "green" :
+                this.Status == "confirmed" && itemsSent && !itemsReceived ? "blue" :
                 this.Status == "confirmed" ? "orange" :
                 this.Status == "completed" ? "green" : "red";
 
@@ -463,6 +464,84 @@ namespace CollectionSwap.Models
 
             return progIndex;
         }
+        public string ProgressTooltip(string userId, int progIndex)
+        {
+            var status = StatusForUser(userId);
+
+            switch (status)
+            {
+                case "charity-requested":
+                    if (userId == this.Sender.Id)
+                        return $"{this.Receiver.UserName} has requested your items.";
+                    else
+                        return $"You've requested these items, waiting for {this.Sender.UserName} to accept or decline.";
+                case "charity-confirmed":
+                    if (userId == this.Sender.Id)
+                        return "You confirmed this swap, please follow the provided mailing instructions.";
+                    else
+                        return $"{this.Sender.UserName} has accepted your request.";
+                case "charity-canceled":
+                    return $"{this.Receiver.UserName} canceled their request.";
+                case "charity-declined":
+                    return $"{this.Sender.UserName} has donated the items to another user.";
+                case "requested":
+                    if (userId == this.Sender.Id)
+                        return $"You requested this swap, waiting for {this.Receiver.UserName} to accept or decline.";
+                    else
+                        return $"{this.Sender.UserName} has requested this swap from you, waiting for you to accept or decline.";
+                case "accepted":
+                    if (userId == this.Sender.Id)
+                        return $"{this.Receiver.UserName} accepted this swap, waiting for you to confirm.";
+                    else
+                        return $"You've accepted this swap, waiting for {this.Sender.UserName} to confirm.";
+                case "confirmed":
+                    if (userId == this.Sender.Id)
+                    {
+                        if (this.ReceiverConfirmSent && !this.SenderConfirmSent)
+                            return $"{this.Receiver.UserName} has sent your items. Please follow the provided mailing instructions.";
+                        else if (this.ReceiverConfirmSent)
+                            return $"{this.Receiver.UserName} has sent your items. Please mark them as 'received' as soon as they arrive.";
+                        else if (this.SenderConfirmSent)
+                            return $"{this.Receiver.UserName} has yet to send your items. Please mark them as 'received' as soon as they arrive.";
+                        else
+                            return "You confirmed this swap, please follow the provided mailing instructions.";
+                    }
+                    else
+                    {
+                        if (this.SenderConfirmSent && !this.ReceiverConfirmSent)
+                            return $"{this.Sender.UserName} has sent your items. Please follow the provided mailing instructions.";
+                        else if (this.SenderConfirmSent)
+                            return $"{this.Sender.UserName} has sent your items. Please mark them as 'received' as soon as they arrive.";
+                        else if (this.ReceiverConfirmSent)
+                            return $"{this.Sender.UserName} has yet to send your items. Please mark them as 'received' as soon as they arrive.";
+                        else
+                            return $"{this.Sender.UserName} confirmed this swap, please follow the provided mailing instructions.";
+                    }
+                case "pseudo-completed":
+                    if (userId == this.Sender.Id)
+                    {
+                        if (this.SenderFeedback == null)
+                            return $"Swap completed, please provide feedback about your swap with {this.Receiver.UserName}";
+                        else
+                            return "This swap has been completed.";
+                    }
+                    else
+                    {
+                        if (this.ReceiverFeedback == null)
+                            return $"Swap completed, please provide feedback about your swap with {this.Sender.UserName}";
+                        else
+                            return "This swap has been completed.";
+                    }
+                case "completed":
+                case "charity-completed":
+                    return "This swap has been completed.";
+                case "canceled":
+                case "declined":
+                    return $"This swap has been {status}.";
+                default:
+                    return String.Empty;
+            }
+        }
         public static List<Swap> Filter(string userId, string filter, ApplicationDbContext db)
         {
             var swaps = db.Swaps.Where(s => (s.Sender.Id == userId && s.SenderDisplaySwap) || (s.Receiver.Id == userId && s.ReceiverDisplaySwap)).ToList();
@@ -486,12 +565,14 @@ namespace CollectionSwap.Models
                 .ThenBy(s => s.Status == "accepted" ? 0 : 1)
                 // Of the confirmed swaps, show first the swaps where the user hasnt sent their items yet
                 .ThenBy(s => s.Status == "confirmed" && ((s.Sender.Id == userId && s.SenderConfirmSent == false) || (s.Receiver.Id == userId && s.ReceiverConfirmSent == false)) ? 0 : 1)
-                // Of the confirmed swaps, show first the swaps where the other user hasnt sent their items yet
+                // Of the confirmed swaps, then show the swaps where the OTHER user hasnt sent their items yet
                 .ThenBy(s => s.Status == "confirmed" && ((s.Sender.Id == userId && s.ReceiverConfirmSent == false) || (s.Receiver.Id == userId && s.SenderConfirmSent == false)) ? 0 : 1)
+                // Of the confirmed swaps, then show the swaps where the user hasnt received their items yet
+                .ThenBy(s => s.Status == "confirmed" && ((s.Sender.Id == userId && s.SenderConfirmReceived == false) || (s.Receiver.Id == userId && s.ReceiverConfirmReceived == false)) ? 0 : 1)
                 // Then show confirmed swaps that are 'pseudo-completed', that is, the exchange is done but the user hasn't provided feedback yet
-                .ThenBy(s => s.Status == "confirmed" && ((s.Sender.Id == userId && s.SenderFeedback == null) || (s.Receiver.Id == userId && s.ReceiverFeedback == null)) ? 0 : 1)
+                .ThenBy(s => s.StatusForUser(userId) == "pseudo-completed" && ((s.Sender.Id == userId && s.SenderFeedback == null) || (s.Receiver.Id == userId && s.ReceiverFeedback == null)) ? 0 : 1)
                 // Then show confirmed swaps that are 'pseudo-completed', but only awaiting other users feedback OR are complete
-                .ThenBy(s => (s.Status == "confirmed" && ((s.Sender.Id == userId && s.SenderFeedback != null) || (s.Receiver.Id == userId && s.ReceiverFeedback != null)) || s.Status == "completed") ? 0 : 1)
+                .ThenBy(s => (s.StatusForUser(userId) == "pseudo-completed" && ((s.Sender.Id == userId && s.SenderFeedback != null) || (s.Receiver.Id == userId && s.ReceiverFeedback != null)) || s.Status == "completed") ? 0 : 1)
                 .ThenBy(s => s.Status == "declined" ? 0 : 1)
                 .ThenBy(s => s.Status == "canceled" ? 0 : 1)
                 .ThenByDescending(s => s.StartDate)
@@ -718,7 +799,6 @@ namespace CollectionSwap.Models
                 {
                     "Swap accepted quickly",
                     "Items arrived quickly",
-                    "Items packaged well",
                     "Items in good condition",
                     "Generous swapper",
                     "Would gladly swap with again",
@@ -736,7 +816,8 @@ namespace CollectionSwap.Models
                     "Expected items were missing",
                     "Would not swap with again",
                     "User came to my address",
-                    "User attempted to make direct contact",
+                    "User shared personal information",
+                    "User tried to communicate privately"
                 };
             }
         }
@@ -759,20 +840,20 @@ namespace CollectionSwap.Models
             {
                 this.DatePlaced = DateTime.UtcNow;
                 db.Feedbacks.Add(this);
-                
+
                 // Find the swap this feedback is for
                 var swap = db.Swaps.Find(this.SwapId);
                 // Determine if the swap was a donation
                 var isCharity = swap.ReceiverRequestedItems == "[]";
 
                 this.Sender = db.Users.Find(userId);
-                this.Receiver = db.Users.Find(swap.SenderId == userId ? swap.ReceiverId : swap.SenderId);
+                this.Receiver = db.Users.Find(userId == swap.Sender.Id ? swap.ReceiverId : swap.SenderId);
 
-                if (swap.Sender.Id == userId)
+                if (userId == swap.Sender.Id)
                 {
                     swap.SenderFeedback = this;
                 }
-                else if (swap.ReceiverId == userId)
+                else if (userId == swap.Receiver.Id)
                 {
                     swap.ReceiverFeedback = this;
                 }

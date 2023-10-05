@@ -76,16 +76,22 @@
                     var isCharity = swap.ReceiverRequestedItems == "[]";
                     var hasSentItems = userId == swap.Sender.Id ? swap.SenderConfirmSent : swap.ReceiverConfirmSent;
                     var hasReceivedItems = userId == swap.Sender.Id ? swap.SenderConfirmReceived : swap.ReceiverConfirmReceived;
-                    var swapStatus = isCharity ? $"charity-{swap.Status}" : swap.Status;
-                    var swapStatusMessage = swap.StatusMessage(userId);
                     var statusColor = swap.StatusColor(userId);
+                    var swapStatusMessage = swap.StatusMessage(userId);
                     <tr>
+                        @*Collection Name*@
                         <td onclick="OpenOffer(@swap.Id)">@swap.Collection.Name</td>
+                        @*User*@
                         <td><a class="load-content" data-nav="View Swap" href="/Manage/Member/@otherUser.UserName">@otherUser.UserName</a></td>
+                        @*Swap Progress*@
                         <td onclick="OpenOffer(@swap.Id)" class="swap-status">@Html.Partial("_SwapProgress", swap)</td>
+                        @*Sent*@
                         <td><input data-swap-id="@swap.Id" data-type="sent" class="swap-confirm" type="checkbox" checked="@hasSentItems" @Html.Raw(swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "") /></td>
+                        @*Received*@
                         <td><input data-swap-id="@swap.Id" data-type="received" class="swap-confirm" type="checkbox" checked="@(hasReceivedItems || isCharity)" @Html.Raw(isCharity || swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "") /></td>
+                        @*Start Date*@
                         <td onclick="OpenOffer(@swap.Id)">@swap.StartDate.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                        @*Status*@
                         <td onclick="OpenOffer(@swap.Id)"><span class="@Html.Raw($"status-{statusColor}")"><i class="fa-solid fa-circle"></i>@swapStatusMessage</span></td>
                     </tr>
                 }
