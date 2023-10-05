@@ -534,7 +534,7 @@ body.support-bg-split {
 
 #support-container .hero-message {
     position: relative;
-    margin-bottom: 2rem;
+    margin-bottom: 4rem;
 }
 
     #support-container .hero-message::after {
@@ -2176,11 +2176,8 @@ nav a {
     padding: 0;
     color: inherit;
     font-size: 1rem;
-    /*background: inherit;*/
-    /*background: linear-gradient(to top, #00000000 0, #00000000 20%, var(--background) 100%);*/
     background: #F5F2EEF6;
-    /*background: #edededf6;*/
-    box-shadow: 0 0 0 1px #aaa, 0 0 0 2px #fff;
+    box-shadow: 0 1px 0 0 #aaa, 0 2px 0 0 #fff;
     z-index: 100;
 }
 
@@ -3533,11 +3530,11 @@ input[type=number] {
     }
 
         #offer-container > section.mailing {
-            min-height: 45rem;
+            min-height: 44rem;
             background: url('images/doodles/10.png') no-repeat;
-            background-size: 35%;
+            background-size: 30%;
             background-position-x: left;
-            background-position-y: 22rem;
+            background-position-y: 23rem;
         }
 
 .mailing-instructions-container {
@@ -3910,4 +3907,36 @@ footer.disclaimer {
     color: #888;
     font-size: 0.8rem;
     line-height: 1.4;
+}
+
+.screen-incompatible {
+    display: none;
+    padding: 5rem 1rem 1rem 1rem;
+    /*margin-top: 5rem;*/
+}
+
+.screen-incompatible > img {
+    width: 10rem;
+    height: auto;
+    object-fit: contain;
+}
+
+@media (max-width: 1439px) {
+    body {
+        align-items: center;
+    }
+    body > *:not(.screen-incompatible) {
+        display: none;
+    }
+
+    .screen-incompatible {
+        display: flex;
+        align-items: flex-end;
+    }
+}
+
+@media (max-width: 720px) {
+    .screen-incompatible > img {
+        display: none;
+    }
 }
