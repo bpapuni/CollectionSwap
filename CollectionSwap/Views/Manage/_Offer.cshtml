@@ -367,18 +367,16 @@
                             <span class="header">@otherUserName has requested the following items</span>
 
                             @* Display any low inventory errors first as this is most important, if none exist, display any duplicate item request warnings to receiver *@
-                            <span class="duplicate-missing-items-error">
-                                @if (validation.LowInventoryItems.Count > 0)
-                                {
-                                    <p><i class="fa-solid fa-circle-exclamation"></i> You do not have enough copies of the marked item(s) to accept this swap.</p>
-                                }
-                                else if (validation.DuplicateOfferedItems.Count > 0)
-                                {
-
-                                    <p><i class="fa-solid fa-circle-exclamation"></i> Several users have requested these items.</p>
-                                    <p>If you do not have enough copies in your collection you'll be unable to accept this swap.</p>
-                                }
-                            </span>
+                        <span class="duplicate-missing-items-error">
+                            @if (validation.LowInventoryItems.Count > 0)
+                            {
+                                @Html.Raw("<i class=\"fa-solid fa-circle-exclamation\"></i> You do not have enough copies of the marked item(s) to accept this swap.")
+                            }
+                            else if (validation.DuplicateOfferedItems.Count > 0)
+                            {
+                                @Html.Raw("<i class=\"fa-solid fa-circle-exclamation\"></i> Several users have requested these items.<br/>If you do not have enough copies in your collection you'll be unable to accept this swap.")
+                            }
+                        </span>
 
                             @* Display items requested by the sender to the receiver *@
                             <div class="swap-items">
@@ -448,13 +446,13 @@
                             <span class="duplicate-missing-items-error">
                                 @if (validation.LowInventoryItems.Count > 0)
                                 {
-                                    <p><i class="fa-solid fa-circle-exclamation"></i> You will not have enough copies of the marked item(s) to complete all pending swaps (this included).</p>
+                                    @Html.Raw("<i class=\"fa-solid fa-circle-exclamation\"></i> You will not have enough copies of the marked item(s) to complete all pending swaps (this included).")
                                 }
                                 else if (validation.DuplicateAcceptedItems.Count > 0)
                                 {
 
-                                    <p><i class="fa-solid fa-circle-exclamation"></i> Several users have requested these items.</p>
-                                    <p>If you do not have enough copies in your collection you'll be unable to accept this swap.</p>
+                                    @Html.Raw("<i class=\"fa-solid fa-circle-exclamation\"></i> Several users have requested these items.<br/>If you do not have enough copies in your collection you'll be unable to accept this swap.")
+                                    
                                 }
                             </span>
 

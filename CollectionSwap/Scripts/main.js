@@ -326,17 +326,9 @@ $(document).on("change", ".swap-confirm", function () {
             this.checked = false;
         }
         else {
-            const confirmed = confirm("By confirming, you acknowledge that you've received the items and this setting cannot be changed later. Are you sure?");
-            if (!confirmed) {
-                this.checked = false;
-            }
-            else {
-                const formData = new FormData();
-                formData.append("id", $(this).data("swap-id"));
-                formData.append("type", $(this).data("type"));
-
-                HandleFormSubmit("/Manage/ConfirmSentReceived", "POST", formData);
-            }
+            // Prevent the checkbox from being ticked until after the prompt
+            this.checked = false;
+            Prompt(this, true);
         }
     } else {
         this.checked = true;
@@ -550,18 +542,22 @@ function ShowSpinner(e) {
 }
 
 $(document).on("click", ".prompt-container", function (e) {
+    // Guard clause if the click is on a child of the prompt container
     if (!e.target.classList.contains("prompt-container")) {
         return;
     }
 
+    // If user has clicked outside of the prompt container hide it
     Prompt(e.target, false);
 })
 
 function Prompt(e, show) {
     const self = $(e);
+    // Show the prompt
     if (show) {
         $(self).next().removeClass("d-none");
     }
+    // Hide the prompt
     else {
         $(self).closest(".prompt-container").addClass("d-none");
     }
@@ -571,3 +567,14 @@ function CloseAccount(e) {
     Prompt(e, false);
     HandleFormSubmit("/Manage/CloseAccount", "POST", null);
 }
+
+function ConfirmSentReceived(e) {
+    const checkbox = $(e).closest("td").find(".swap-confirm");
+    const formData = new FormData();
+    formData.append("id", $(checkbox).data("swap-id"));
+    formData.append("type", $(checkbox).data("type"));
+
+    Prompt(e, false);
+    HandleFormSubmit("/Manage/ConfirmSentReceived", "POST", formData);
+}
+

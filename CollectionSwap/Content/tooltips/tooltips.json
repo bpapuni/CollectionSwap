@@ -15,5 +15,11 @@
   "donate-collection": {
     "title": "Donate Collection",
     "content": "When this option is enabled, all of the items in this collection are made available as a 'Charity Swap'. This means other users can request these items for nothing in exchange.\nPlease remove any items from the collection that you are not happy to donate or leave this option disabled."
+  },
+
+  // Displays when a user mouses over the  on the Your Swaps page.
+  "inactive-checkbox": {
+    "title": null,
+    "content": "This checkbox will only become active once your swap is confirmed."
   }
 }
