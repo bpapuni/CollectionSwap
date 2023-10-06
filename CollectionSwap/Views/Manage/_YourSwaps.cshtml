@@ -1,4 +1,5 @@
 ﻿@model CollectionSwap.Models.YourSwapsViewModel
+@using CollectionSwap.Models;
 @using Microsoft.AspNet.Identity
 @{
     var userId = User.Identity.GetUserId();
@@ -34,7 +35,6 @@
         @if (displayableSwaps.Any())
         {
             <div class="status-key">
-                @*<strong>Status Key </strong>*@
                 <span class="status-blue"><i class="fa-solid fa-circle"></i>- Waiting for other user</span>
                 <span class="status-orange"><i class="fa-solid fa-circle"></i>- Requires action from you</span>
                 <span class="status-green"><i class="fa-solid fa-circle"></i>- Swap complete</span>
@@ -86,15 +86,39 @@
                         @*Swap Progress*@
                         <td onclick="OpenOffer(@swap.Id)" class="swap-status">@Html.Partial("_SwapProgress", swap)</td>
                         @*Sent*@
-                        <td><input data-swap-id="@swap.Id" data-type="sent" class="swap-confirm" type="checkbox" checked="@hasSentItems" @Html.Raw(swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "") /></td>
+                        <td class="@(swap.Status == "requested" || swap.Status == "accepted" ? "tooltip" : null)">
+                            <input data-swap-id="@swap.Id" data-type="sent" class="swap-confirm" type="checkbox" checked="@hasSentItems" @Html.Raw(swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "") />
+                            @Html.Partial("_Prompt", new PromptViewModel
+                            {
+                                Title = "Confirm Items Sent",
+                                Body = $"<p>By pressing continue you confirm that you've sent {otherUser.UserName}'s item(s) in the mail. This action cannot be undone.</p>",
+                                Action = "ConfirmSentReceived(this)"
+                            })
+                            @if (swap.Status == "requested" || swap.Status == "accepted")
+                            {
+                                @Html.Partial("_Tooltip", "inactive-checkbox")
+                            }
+                        </td>
                         @*Received*@
-                        <td><input data-swap-id="@swap.Id" data-type="received" class="swap-confirm" type="checkbox" checked="@(hasReceivedItems || isCharity)" @Html.Raw(isCharity || swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "") /></td>
-                        @*Start Date*@
-                        <td onclick="OpenOffer(@swap.Id)">@swap.StartDate.ToLocalTime().ToString("dd/MM/yyyy")</td>
-                        @*Status*@
-                        <td onclick="OpenOffer(@swap.Id)"><span class="@Html.Raw($"status-{statusColor}")"><i class="fa-solid fa-circle"></i>@swapStatusMessage</span></td>
-                    </tr>
-                }
+                            <td class="@(swap.Status == "requested" || swap.Status == "accepted" ? "tooltip" : null)">
+                                <input data-swap-id="@swap.Id" data-type="received" class="swap-confirm" type="checkbox" checked="@(hasReceivedItems || isCharity)" @Html.Raw(isCharity || swap.Status == "canceled" || swap.Status == "declined" ? "disabled" : "") />
+                                @Html.Partial("_Prompt", new PromptViewModel
+                                {
+                                    Title = "Confirm Items Received",
+                                    Body = $"<p>By pressing continue you confirm that you've received your items from {otherUser.UserName}. This action cannot be undone.</p>",
+                                    Action = "ConfirmSentReceived(this)"
+                                })
+                                @if (swap.Status == "requested" || swap.Status == "accepted")
+                                {
+                                    @Html.Partial("_Tooltip", "inactive-checkbox")
+                                }
+                            </td>
+                            @*Start Date*@
+                            <td onclick="OpenOffer(@swap.Id)">@swap.StartDate.ToLocalTime().ToString("dd/MM/yyyy")</td>
+                            @*Status*@
+                            <td onclick="OpenOffer(@swap.Id)"><span class="@Html.Raw($"status-{statusColor}")"><i class="fa-solid fa-circle"></i>@swapStatusMessage</span></td>
+                        </tr>
+                    }
             </tbody>
         </table>
     </div>

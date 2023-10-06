@@ -231,18 +231,17 @@ h1, h2, h3, h4 {
         visibility: hidden;
         position: absolute;
         content: "";
-        top: -4px;
+        top: -8px;
         left: 50%;
         width: 1rem;
         height: 1rem;
         background: black;
         box-shadow: 0 0 5px 0 #000000aa;
-        transform: rotateZ(45deg) translateX(-50%);
+        transform: translateX(-50%) rotateZ(45deg);
     }
 
     .capstone.tooltip::before {
-        top: -16px;
-        left: 2px;
+        top: -22px;
     }
 
     .tooltip:hover::before {
@@ -252,7 +251,7 @@ h1, h2, h3, h4 {
 .tooltip-content {
     visibility: hidden;
     position: absolute;
-    top: 0rem;
+    top: 0;
     left: 50%;
     display: flex;
     flex-direction: column;
@@ -296,7 +295,7 @@ h1, h2, h3, h4 {
 
 .below::before {
     top: unset;
-    bottom: -1rem;
+    bottom: -9px;
 }
 
 .below .tooltip-content {
@@ -2334,6 +2333,7 @@ nav a {
         display: flex;
         flex-direction: column;
         width: 30rem;
+        text-align: left;
         background: #ffffff;
         border-radius: 0.75rem;
         box-shadow: 0 2px 5px #000;
