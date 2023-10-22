@@ -275,7 +275,7 @@ namespace CollectionSwap.Models
         }
         public void Delete(ApplicationDbContext db)
         {
-            var affectedSwaps = db.Swaps.Where(swap => (swap.SenderCollectionId == this.Id || swap.ReceiverCollectionId == this.Id)).ToList();
+            var affectedSwaps = db.Swaps.Where(swap => (swap.SenderCollection.Id == this.Id || swap.ReceiverCollection.Id == this.Id)).ToList();
             var requestedSwaps = affectedSwaps.Where(swap => swap.Status == "requested");
             var acceptedSwaps = affectedSwaps.Where(swap => swap.Status == "accepted");
             var confirmedSwaps = affectedSwaps.Where(swap => swap.Status == "confirmed");
@@ -319,7 +319,7 @@ namespace CollectionSwap.Models
             // Find all pending swaps the user is involved with to eliminate duplicate swap offers
             var pendingSwaps = db.Swaps.Where(swap => (swap.Status == "offered" || swap.Status == "accepted" || swap.Status == "requested") && 
                 (swap.Sender.Id == userId || swap.Receiver.Id == userId))
-                .Select(swap => new { sUC = swap.SenderCollectionId, rUC = swap.ReceiverCollectionId })
+                .Select(swap => new { sUC = swap.SenderCollection.Id, rUC = swap.ReceiverCollection.Id })
                 .ToList();
             // Get users current items
             var senderItems = JsonConvert.DeserializeObject<List<int>>(this.ItemCountJSON);
@@ -381,12 +381,9 @@ namespace CollectionSwap.Models
                     // Create the swap
                     matchingSwap.Sender = uc.User;
                     matchingSwap.Receiver = this.User;
-                    matchingSwap.CollectionId = this.Collection.Id;
                     matchingSwap.Collection = this.Collection;
-                    matchingSwap.SenderCollectionId = uc.Id;
                     matchingSwap.SenderCollection = uc;
                     matchingSwap.SenderRequestedItems = JsonConvert.SerializeObject(receiverNeededItems);
-                    matchingSwap.ReceiverCollectionId = this.Id;
                     matchingSwap.ReceiverCollection = this;
                     matchingSwap.ReceiverRequestedItems = JsonConvert.SerializeObject(new List<int>());
                     matchingSwap.SwapSize = 0;
@@ -408,12 +405,9 @@ namespace CollectionSwap.Models
                     // Create the swap
                     matchingSwap.Sender = this.User;
                     matchingSwap.Receiver = uc.User;
-                    matchingSwap.CollectionId = this.Collection.Id;
                     matchingSwap.Collection = this.Collection;
-                    matchingSwap.SenderCollectionId = this.Id;
                     matchingSwap.SenderCollection = this;
                     matchingSwap.SenderRequestedItems = JsonConvert.SerializeObject(receiverNeededItems);
-                    matchingSwap.ReceiverCollectionId = uc.Id;
                     matchingSwap.ReceiverCollection = uc;
                     matchingSwap.ReceiverRequestedItems = JsonConvert.SerializeObject(senderNeededItems);
                     matchingSwap.SwapSize = Math.Min(senderNeededItems.Count(), receiverNeededItems.Count());

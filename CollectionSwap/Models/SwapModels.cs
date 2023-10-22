@@ -54,12 +54,6 @@ namespace CollectionSwap.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public int CollectionId { get; set; }
-        [Required]
-        public string SenderId { get; set; }
-        [Required]
-        public int SenderCollectionId { get; set; }
-        [Required]
         public string SenderRequestedItems { get; set; }
         [Required]
         public bool SenderConfirmSent { get; set; }
@@ -67,10 +61,6 @@ namespace CollectionSwap.Models
         public bool SenderConfirmReceived { get; set; }
         public virtual Feedback SenderFeedback { get; set; }
         public bool SenderDisplaySwap { get; set; } = true;
-        [Required]
-        public string ReceiverId { get; set; }
-        [Required]
-        public int ReceiverCollectionId { get; set; }
         [Required]
         public string ReceiverRequestedItems { get; set; }
         [Required]
@@ -85,15 +75,10 @@ namespace CollectionSwap.Models
         [Required]
         public DateTimeOffset StartDate { get; set; }
         public DateTimeOffset? EndDate { get; set; }
-        [ForeignKey("CollectionId")]
         public virtual Collection Collection { get; set; }
-        [ForeignKey("SenderId")]
         public virtual ApplicationUser Sender { get; set; }
-        [ForeignKey("SenderCollectionId")]
         public virtual UserCollection SenderCollection { get; set; }
-        [ForeignKey("ReceiverId")]
         public virtual ApplicationUser Receiver { get; set; }
-        [ForeignKey("ReceiverCollectionId")]
         public virtual UserCollection ReceiverCollection { get; set; }
         public class ProcessSwapResult
         {
@@ -117,11 +102,11 @@ namespace CollectionSwap.Models
                                             .SelectMany((value, index) => Enumerable.Repeat(index, value))
                                             .ToList();
 
-                        this.CollectionId = request.CollectionId;
-                        this.SenderCollectionId = request.SenderUserCollectionId;
-                        this.ReceiverCollectionId = request.ReceiverUserCollectionId;
-                        this.SenderId = request.ReceiverId;                                         // Sender and receiver are switched for donated items
-                        this.ReceiverId = userId;
+                        this.Collection = db.Collections.Find(request.CollectionId);
+                        this.SenderCollection = db.UserCollections.Find(request.SenderUserCollectionId);
+                        this.ReceiverCollection = db.UserCollections.Find(request.ReceiverUserCollectionId);
+                        this.Sender = db.Users.Find(request.ReceiverId);                        // Sender and receiver are switched for donated items
+                        this.Receiver = db.Users.Find(userId);
                         this.SenderRequestedItems = JsonConvert.SerializeObject(senderItemCount);   // Snapshot of the items the sender has on offer 
                         this.ReceiverRequestedItems = JsonConvert.SerializeObject(new List<int>());
                         this.SwapSize = 0;
@@ -130,9 +115,8 @@ namespace CollectionSwap.Models
 
                         db.Swaps.Add(this);
                         break;
-
                     case "charity-confirmed":
-                        var declinedSwaps = db.Swaps.Where(s => s.Id != this.Id && s.SenderCollectionId == this.SenderCollectionId && s.Status == "charity").ToList();
+                        var declinedSwaps = db.Swaps.Where(s => s.Id != this.Id && s.SenderCollection.Id == this.SenderCollection.Id && s.Status == "charity").ToList();
 
                         // Decline all requests that weren't accepted
                         foreach (var swap in declinedSwaps)
@@ -158,15 +142,14 @@ namespace CollectionSwap.Models
                         this.Status = request.Status;
                         db.Entry(this).State = EntityState.Modified;
 
-                        HoldItems(this.SenderRequestedItems, db.UserCollections.Find(this.SenderCollectionId), this, db);
+                        HoldItems(this.SenderRequestedItems, this.SenderCollection, this, db);
                         break;
-
                     case "requested":
-                        this.CollectionId = request.CollectionId;
-                        this.SenderCollectionId = request.SenderUserCollectionId;
-                        this.ReceiverCollectionId = request.ReceiverUserCollectionId;
-                        this.SenderId = userId;
-                        this.ReceiverId = request.ReceiverId;
+                        this.Collection = db.Collections.Find(request.CollectionId);
+                        this.SenderCollection = db.UserCollections.Find(request.SenderUserCollectionId);
+                        this.ReceiverCollection = db.UserCollections.Find(request.ReceiverUserCollectionId);
+                        this.Sender = db.Users.Find(userId);
+                        this.Receiver = db.Users.Find(request.ReceiverId);
                         this.SenderRequestedItems = request.SenderItems;
                         this.ReceiverRequestedItems = request.RequestedItems;
                         this.SwapSize = request.SwapSize;
@@ -175,21 +158,19 @@ namespace CollectionSwap.Models
 
                         db.Swaps.Add(this);
                         break;
-
                     case "accepted":
                         this.SenderRequestedItems = request.SenderItems;
                         this.Status = request.Status;
                         db.Entry(this).State = EntityState.Modified;
 
-                        HoldItems(this.ReceiverRequestedItems, db.UserCollections.Find(this.ReceiverCollectionId), this, db);
+                        HoldItems(this.ReceiverRequestedItems, this.ReceiverCollection, this, db);
                         break;
-
                     case "confirmed":
                         this.ReceiverRequestedItems = request.RequestedItems;
                         this.Status = request.Status;
                         db.Entry(this).State = EntityState.Modified;
 
-                        HoldItems(this.SenderRequestedItems, db.UserCollections.Find(this.SenderCollectionId), this, db);
+                        HoldItems(this.SenderRequestedItems, this.SenderCollection, this, db);
                         break;
                     case "charity-canceled":
                     case "canceled":
@@ -198,11 +179,11 @@ namespace CollectionSwap.Models
                             this.SenderDisplaySwap = false;
                             this.ReceiverDisplaySwap = false;
                         }
-                        else if (userId == this.SenderId)
+                        else if (userId == this.Sender.Id)
                         {
                             this.SenderDisplaySwap = false;
                         }
-                        else if (userId == this.ReceiverId)
+                        else if (userId == this.Receiver.Id)
                         {
                             this.ReceiverDisplaySwap = false;
                         }
@@ -210,7 +191,6 @@ namespace CollectionSwap.Models
                         this.Status = request.Status;
                         db.Entry(this).State = EntityState.Modified;
                         break;
-
                     case "charity-declined":
                     case "declined":
                         ReleaseItems(this, db);
@@ -234,7 +214,7 @@ namespace CollectionSwap.Models
         {
             var isCharity = this.SenderRequestedItems == "[]" || this.ReceiverRequestedItems == "[]";
             var userType = String.Empty;
-            if (userId == this.SenderId)
+            if (userId == this.Sender.Id)
             {
                 userType = "sender";
 
@@ -249,7 +229,7 @@ namespace CollectionSwap.Models
 
                     if (isCharity)
                     {
-                        db.UserCollections.Find(this.SenderCollectionId).Delete(db);
+                        db.UserCollections.Find(this.SenderCollection.Id).Delete(db);
                     }
                 }
                 // If user has clicked the received items checkbox
@@ -258,7 +238,7 @@ namespace CollectionSwap.Models
                     this.SenderConfirmReceived = true;
                 }
             }
-            else if (userId == this.ReceiverId)
+            else if (userId == this.Receiver.Id)
             {
                 userType = "receiver";
 
@@ -336,22 +316,22 @@ namespace CollectionSwap.Models
                     // Find the items that DO NOT belong to to sender
                     heldItems = db.HeldItems
                         .Where(hi => hi.Swap.Id == swap.Id &&
-                        hi.UserCollection.UserId != swap.SenderId)
+                        hi.UserCollection.UserId != swap.Sender.Id)
                         .FirstOrDefault();
 
                     // Define the User Collection that will be getting updated as the senders
-                    userCollection = db.UserCollections.Find(swap.SenderCollectionId);
+                    userCollection = db.UserCollections.Find(swap.SenderCollection.Id);
                     break;
 
                 case "receiver":
                     // Find the items that DO NOT belong to to receiver
                     heldItems = db.HeldItems
                         .Where(hi => hi.Swap.Id == swap.Id &&
-                        hi.UserCollection.UserId != swap.ReceiverId)
+                        hi.UserCollection.UserId != swap.Receiver.Id)
                         .FirstOrDefault();
 
                     // Define the User Collection that will be getting updated as the receivers
-                    userCollection = db.UserCollections.Find(swap.ReceiverCollectionId);
+                    userCollection = db.UserCollections.Find(swap.ReceiverCollection.Id);
                     break;
                 default:
                     break;
@@ -592,10 +572,10 @@ namespace CollectionSwap.Models
                     this.Id != swap.Id && 
                     swap.ReceiverRequestedItems != "[]" && 
                     this.ReceiverRequestedItems != "[]" &&
-                        (this.SenderCollectionId == swap.SenderCollectionId || 
-                        this.SenderCollectionId == swap.ReceiverCollectionId || 
-                        this.ReceiverCollectionId == swap.SenderCollectionId || 
-                        this.ReceiverCollectionId == swap.ReceiverCollectionId) && 
+                        (this.SenderCollection.Id == swap.SenderCollection.Id || 
+                        this.SenderCollection.Id == swap.ReceiverCollection.Id || 
+                        this.ReceiverCollection.Id == swap.SenderCollection.Id || 
+                        this.ReceiverCollection.Id == swap.ReceiverCollection.Id) && 
                     (swap.Status == "requested" || swap.Status == "accepted"))
                 .ToList();
 
@@ -632,7 +612,7 @@ namespace CollectionSwap.Models
             }
             else if (this.Status == "requested") // Check if receiver has items available to accept swap
             {
-                if (userId == this.SenderId)
+                if (userId == this.Sender.Id)
                 {
                     // Checks if sender has already requested an item
                     foreach (var item in receiverRequestedItems)
@@ -663,7 +643,7 @@ namespace CollectionSwap.Models
                         }
                     }
                 }
-                else if (userId == this.ReceiverId)
+                else if (userId == this.Receiver.Id)
                 {
                     // Checks if receiver has already requested an item
                     foreach (var item in senderRequestedItems)
@@ -698,7 +678,7 @@ namespace CollectionSwap.Models
             }
             else if (this.Status == "accepted") // Check if sender has items available to confirm swap
             {
-                if (userId == this.SenderId)
+                if (userId == this.Sender.Id)
                 {
                     // Checks if sender has already requested an item
                     foreach (var item in receiverRequestedItems)
@@ -729,7 +709,7 @@ namespace CollectionSwap.Models
                         }
                     }
                 }
-                else if (userId == this.ReceiverId)
+                else if (userId == this.Receiver.Id)
                 {
                     // Checks if receiver has already requested an item
                     foreach (var item in senderRequestedItems)
@@ -847,7 +827,7 @@ namespace CollectionSwap.Models
                 var isCharity = swap.ReceiverRequestedItems == "[]";
 
                 this.Sender = db.Users.Find(userId);
-                this.Receiver = db.Users.Find(userId == swap.Sender.Id ? swap.ReceiverId : swap.SenderId);
+                this.Receiver = db.Users.Find(userId == swap.Sender.Id ? swap.Receiver.Id : swap.Sender.Id);
 
                 if (userId == swap.Sender.Id)
                 {

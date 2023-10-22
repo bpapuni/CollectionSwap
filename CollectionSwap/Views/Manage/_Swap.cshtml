@@ -3,12 +3,12 @@
 @{
     var sender = Model.Swap.Sender;
     var receiver = Model.Swap.Receiver;
-    var collectionId = Model.Swap.CollectionId;
+    var collectionId = Model.Swap.Collection.Id;
     var itemList = JsonConvert.DeserializeObject<List<string>>(Model.Swap.Collection.ItemListJSON);
-    var senderCollectionId = Model.Swap.SenderCollectionId;
+    var senderCollectionId = Model.Swap.SenderCollection.Id;
     var senderItems = JsonConvert.DeserializeObject<List<int>>(Model.Swap.SenderCollection.ItemCountJSON);
     var senderRequestedItems = JsonConvert.DeserializeObject<List<int>>(Model.Swap.SenderRequestedItems);
-    var receiverCollectionId = Model.Swap.ReceiverCollectionId;
+    var receiverCollectionId = Model.Swap.ReceiverCollection.Id;
     var receiverItems = JsonConvert.DeserializeObject<List<int>>(Model.Swap.ReceiverCollection.ItemCountJSON);
     var receiverRequestedItems = JsonConvert.DeserializeObject<List<int>>(Model.Swap.ReceiverRequestedItems);
     var swapSize = Model.Swap.SwapSize;

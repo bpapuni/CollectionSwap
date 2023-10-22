@@ -360,7 +360,7 @@ namespace CollectionSwap.Controllers
             model.Collections = db.Collections.ToList();
 
             partial = Helper.RenderViewToString(ControllerContext, "_ManageCollections", model, true);
-            return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container" } });
+            return Json(new { PartialView = partial, RefreshTargets = new { first = "#manage-collections-container" }, FormResetTarget = "#create-collection-form" });
         }
 
         //
@@ -758,7 +758,7 @@ namespace CollectionSwap.Controllers
             var partial = String.Empty;
             var userId = User.Identity.GetUserId();
 
-            var swaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId).ToList();
+            var swaps = db.Swaps.Where(s => s.Sender.Id == userId || s.Receiver.Id == userId).ToList();
             var swap = swaps.Where(s => s.Id == model.SwapId).FirstOrDefault();
 
             var offerModel = new SwapViewModel
@@ -797,7 +797,7 @@ namespace CollectionSwap.Controllers
             var userId = User.Identity.GetUserId();
 
             // Get all swaps involving the user to update their swap history
-            var usersSwaps = db.Swaps.Where(s => s.SenderId == userId || s.ReceiverId == userId).ToList();
+            var usersSwaps = db.Swaps.Where(s => s.Sender.Id == userId || s.Receiver.Id == userId).ToList();
 
             // Get the offered swap
             var swap = usersSwaps.Where(s => s.Id == id).FirstOrDefault();
@@ -806,7 +806,7 @@ namespace CollectionSwap.Controllers
             {
                 Swap = swap,
                 Feedback = db.Feedbacks.Where(fb => fb.Sender.Id == userId && fb.SwapId == id).FirstOrDefault(),
-                Address = db.Addresses.Where(a => a.UserId != userId && (a.UserId == swap.SenderId || a.UserId == swap.ReceiverId)).FirstOrDefault(),
+                Address = db.Addresses.Where(a => a.UserId != userId && (a.UserId == swap.Sender.Id || a.UserId == swap.Receiver.Id)).FirstOrDefault(),
                 Validation = swap.Validate(userId, db)
             };
 
@@ -825,7 +825,7 @@ namespace CollectionSwap.Controllers
         {
             var partial = String.Empty;
             var userId = User.Identity.GetUserId();
-            var swaps = db.Swaps.Where(swap => swap.SenderId == userId || swap.ReceiverId == userId).ToList();
+            var swaps = db.Swaps.Where(swap => swap.Sender.Id == userId || swap.Receiver.Id == userId).ToList();
 
             var shModel = new YourSwapsViewModel
             {

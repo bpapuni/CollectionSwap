@@ -128,7 +128,7 @@ namespace CollectionSwap.Controllers
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
-                    ModelState.AddModelError("LoginError", "Invalid login attempt.");
+                    ModelState.AddModelError("LoginViewModel.Password", "Invalid login attempt.");
                     return View(avModel);
             }
         }
@@ -227,10 +227,11 @@ namespace CollectionSwap.Controllers
                     return Json(new { PartialView = partial, RefreshTargets = new { first = "main" } });
                 }
 
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error);
-                }
+                // For debugging purposes
+                //foreach (var error in result.Errors)
+                //{
+                //    ModelState.AddModelError(string.Empty, error);
+                //}
             }
 
             // If we got this far, something failed, redisplay form

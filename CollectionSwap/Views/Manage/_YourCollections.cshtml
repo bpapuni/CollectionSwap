@@ -40,7 +40,7 @@
 
             @foreach (var userCollection in Model.UserCollections)
             {
-                var collection = Model.Collections.Where(c => c.Id == userCollection.CollectionId).FirstOrDefault();
+                var collection = Model.Collections.Where(c => c.Id == userCollection.Collection.Id).FirstOrDefault();
                 var deserializedItemListJSON = JsonConvert.DeserializeObject<List<string>>(collection.ItemListJSON);
                 var userItemList = JsonConvert.DeserializeObject<List<int>>(userCollection.ItemCountJSON)
                                                 .Select((value, index) => new { Value = value, Index = index })
@@ -53,7 +53,7 @@
 
                 var collectionButton = new CollectionButton
                 {
-                    Id = userCollection.CollectionId,
+                    Id = userCollection.Collection.Id,
                     Name = userCollection.Name,
                     Description = userCollection.Collection.Description,
                     ItemList = userItemList.Select(index => deserializedItemListJSON[index]).ToList(),

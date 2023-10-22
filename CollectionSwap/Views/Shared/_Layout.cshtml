@@ -21,7 +21,7 @@
                 @Html.ActionLink("Swapper", "Index", "Home")
             </li>
             <li class="@(currentController == "Home" && currentAction == "About" ? "selected" : "")">
-                <a href="/Home/About">About</a>
+                <a href="/Home/About">About Us</a>
             </li>
             <li class="@(currentController == "Home" && currentAction == "Support" ? "selected" : "")">
                 <a href="/Home/Support">Support</a>
@@ -48,13 +48,13 @@
         @RenderBody()
     </main>
     <div class="screen-incompatible">
+        <img src="~/Content/images/doodles/14.png" />
         <div class="column">
-            <strong>Apologies</strong>
-            Swapper's features are optimized for screens with a width of 1440 pixels or more. <br />
+            <strong>This screen size is too small</strong>
+            Some of Swapper's features require a minimum screen width of 1440 pixels. <br />
             Rest assured, we are actively working to improve the experience for smaller screens. <br /><br />
             Thank you for your understanding.
         </div>
-        <img src="~/Content/images/doodles/7.png" />
     </div>
 
     @Scripts.Render("~/bundles/jquery")

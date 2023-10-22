@@ -53,7 +53,7 @@
                 </div>
                 @foreach (var item in items)
                 {
-                    var imagePath = $"~/Collections/{Model.CollectionId}";
+                    var imagePath = $"~/Collections/{Model.Collection.Id}";
                     var itemId = items.IndexOf(item);
 
                     <div class="column align-items-center">
@@ -86,7 +86,7 @@
         <div class="user-collection-sponsor-container">
             <div>
                 <div class="sponsor-logo">
-                    <img src="@(sponsor.Image != null ? $"/Sponsors/{Model.CollectionId}/{sponsor.Image}" : "/Content/images/doodles/3.png")" alt="Sponsor Logo" />
+                    <img src="@(sponsor.Image != null ? $"/Sponsors/{Model.Collection.Id}/{sponsor.Image}" : "/Content/images/doodles/3.png")" alt="Sponsor Logo" />
                 </div>
                 <hr />
                 @if (sponsor.Statement != null)

@@ -55,8 +55,8 @@
                             }
                             <span>@(5 - i) Stars</span>
                             <span class="bar">
-                                <p>@(feedbacks.Count == 0 ? 0 : ratings[4 - i].Count)</p>
                                 <span class="bar-fill" style="width: @($"{width}%")"></span>
+                                <span>@(feedbacks.Count == 0 ? 0 : ratings[4 - i].Count)</span>
                             </span>
                         </div>
                     }
@@ -115,6 +115,10 @@
                             <span>
                                 <strong>By: @feedback.Sender.UserName</strong><br />
                                 @feedback.DatePlaced.ToString("dd/MM/yyyy")
+                            </span>
+                            <span>
+                                @*This would eventually be replaced by a 'dispute feedback' button*@
+                                Feedback Id: @feedback.Id
                             </span>
                         </div>
                     </div>

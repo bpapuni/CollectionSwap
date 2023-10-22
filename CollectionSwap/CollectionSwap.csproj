@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -49,12 +48,18 @@
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.4\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.4\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.4\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\lib\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SendGrid, Version=9.28.1.0, Culture=neutral, PublicKeyToken=4f047e93159395ca, processorArchitecture=MSIL">
       <HintPath>..\packages\SendGrid.9.28.1\lib\net452\SendGrid.dll</HintPath>
@@ -73,18 +78,18 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.IO.Pipelines, Version=4.0.2.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.Pipelines.4.7.2\lib\net461\System.IO.Pipelines.dll</HintPath>
+    <Reference Include="System.IO.Pipelines, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Pipelines.8.0.0-rc.1.23419.4\lib\net462\System.IO.Pipelines.dll</HintPath>
     </Reference>
-    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
     </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.7.0.0-preview.2.22152.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -96,6 +101,24 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.3.0-preview1\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.3.0-preview1\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.3.0-preview1\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.3.0-preview1\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.3.0-preview1\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.3.0-preview1\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -113,32 +136,8 @@
     </Reference>
     <Reference Include="System.Net.Http.WebRequest">
     </Reference>
-    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.Helpers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Mvc, Version=5.2.9.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.9\lib\net45\System.Web.Mvc.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web.Optimization">
       <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.9\lib\net45\System.Web.Razor.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.9\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
@@ -155,9 +154,6 @@
     </Reference>
     <Reference Include="EntityFramework.SqlServer">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
-      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.3\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="Owin">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
@@ -189,9 +185,6 @@
     <Reference Include="Microsoft.Owin.Security.OAuth">
       <HintPath>..\packages\Microsoft.Owin.Security.OAuth.4.2.2\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
-      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -213,100 +206,104 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202308242057559_InitialSchema.cs" />
-    <Compile Include="Migrations\202308242057559_InitialSchema.designer.cs">
+    <Compile Include="Migrations\202308242057559_InitialSchema.Designer.cs">
       <DependentUpon>202308242057559_InitialSchema.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202308270009046_CreateFeedbackTable.cs" />
-    <Compile Include="Migrations\202308270009046_CreateFeedbackTable.designer.cs">
+    <Compile Include="Migrations\202308270009046_CreateFeedbackTable.Designer.cs">
       <DependentUpon>202308270009046_CreateFeedbackTable.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202308270308470_RemovedSwapFeedbackRelationship.cs" />
-    <Compile Include="Migrations\202308270308470_RemovedSwapFeedbackRelationship.designer.cs">
+    <Compile Include="Migrations\202308270308470_RemovedSwapFeedbackRelationship.Designer.cs">
       <DependentUpon>202308270308470_RemovedSwapFeedbackRelationship.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309050350380_SwapsTableTrackFeedbackSent.cs" />
-    <Compile Include="Migrations\202309050350380_SwapsTableTrackFeedbackSent.designer.cs">
+    <Compile Include="Migrations\202309050350380_SwapsTableTrackFeedbackSent.Designer.cs">
       <DependentUpon>202309050350380_SwapsTableTrackFeedbackSent.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309051914241_FixedSwapReceivedTypo.cs" />
-    <Compile Include="Migrations\202309051914241_FixedSwapReceivedTypo.designer.cs">
+    <Compile Include="Migrations\202309051914241_FixedSwapReceivedTypo.Designer.cs">
       <DependentUpon>202309051914241_FixedSwapReceivedTypo.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309052032476_AddDescriptionToCollections.cs" />
-    <Compile Include="Migrations\202309052032476_AddDescriptionToCollections.designer.cs">
+    <Compile Include="Migrations\202309052032476_AddDescriptionToCollections.Designer.cs">
       <DependentUpon>202309052032476_AddDescriptionToCollections.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309060419072_SwapViewModelOverhaul.cs" />
-    <Compile Include="Migrations\202309060419072_SwapViewModelOverhaul.designer.cs">
+    <Compile Include="Migrations\202309060419072_SwapViewModelOverhaul.Designer.cs">
       <DependentUpon>202309060419072_SwapViewModelOverhaul.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309060505544_AddedSwapSizeToModel.cs" />
-    <Compile Include="Migrations\202309060505544_AddedSwapSizeToModel.designer.cs">
+    <Compile Include="Migrations\202309060505544_AddedSwapSizeToModel.Designer.cs">
       <DependentUpon>202309060505544_AddedSwapSizeToModel.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309062332323_AddCollectionUserCollectionRelationship.cs" />
-    <Compile Include="Migrations\202309062332323_AddCollectionUserCollectionRelationship.designer.cs">
+    <Compile Include="Migrations\202309062332323_AddCollectionUserCollectionRelationship.Designer.cs">
       <DependentUpon>202309062332323_AddCollectionUserCollectionRelationship.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309121951244_AddedCharityToUserCollection.cs" />
-    <Compile Include="Migrations\202309121951244_AddedCharityToUserCollection.designer.cs">
+    <Compile Include="Migrations\202309121951244_AddedCharityToUserCollection.Designer.cs">
       <DependentUpon>202309121951244_AddedCharityToUserCollection.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309132244027_AddBoolToDisplaySwapInSwapHistory.cs" />
-    <Compile Include="Migrations\202309132244027_AddBoolToDisplaySwapInSwapHistory.designer.cs">
+    <Compile Include="Migrations\202309132244027_AddBoolToDisplaySwapInSwapHistory.Designer.cs">
       <DependentUpon>202309132244027_AddBoolToDisplaySwapInSwapHistory.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309140623067_AddArchiveBoolToUserCollection.cs" />
-    <Compile Include="Migrations\202309140623067_AddArchiveBoolToUserCollection.designer.cs">
+    <Compile Include="Migrations\202309140623067_AddArchiveBoolToUserCollection.Designer.cs">
       <DependentUpon>202309140623067_AddArchiveBoolToUserCollection.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309150124038_UpdatedCollectionModel.cs" />
-    <Compile Include="Migrations\202309150124038_UpdatedCollectionModel.designer.cs">
+    <Compile Include="Migrations\202309150124038_UpdatedCollectionModel.Designer.cs">
       <DependentUpon>202309150124038_UpdatedCollectionModel.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309150127022_UpdatedCollectionModelAgain.cs" />
-    <Compile Include="Migrations\202309150127022_UpdatedCollectionModelAgain.designer.cs">
+    <Compile Include="Migrations\202309150127022_UpdatedCollectionModelAgain.Designer.cs">
       <DependentUpon>202309150127022_UpdatedCollectionModelAgain.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309150220030_AddAddressToUserModel.cs" />
-    <Compile Include="Migrations\202309150220030_AddAddressToUserModel.designer.cs">
+    <Compile Include="Migrations\202309150220030_AddAddressToUserModel.Designer.cs">
       <DependentUpon>202309150220030_AddAddressToUserModel.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309150337294_ChangeFeedbackToComments.cs" />
-    <Compile Include="Migrations\202309150337294_ChangeFeedbackToComments.designer.cs">
+    <Compile Include="Migrations\202309150337294_ChangeFeedbackToComments.Designer.cs">
       <DependentUpon>202309150337294_ChangeFeedbackToComments.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309161025080_CreateSponsor.cs" />
-    <Compile Include="Migrations\202309161025080_CreateSponsor.designer.cs">
+    <Compile Include="Migrations\202309161025080_CreateSponsor.Designer.cs">
       <DependentUpon>202309161025080_CreateSponsor.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309170107266_CreateCollectionSponsorRelationship.cs" />
-    <Compile Include="Migrations\202309170107266_CreateCollectionSponsorRelationship.designer.cs">
+    <Compile Include="Migrations\202309170107266_CreateCollectionSponsorRelationship.Designer.cs">
       <DependentUpon>202309170107266_CreateCollectionSponsorRelationship.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309192308524_CreateFeedbackUserRelationship.cs" />
-    <Compile Include="Migrations\202309192308524_CreateFeedbackUserRelationship.designer.cs">
+    <Compile Include="Migrations\202309192308524_CreateFeedbackUserRelationship.Designer.cs">
       <DependentUpon>202309192308524_CreateFeedbackUserRelationship.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309200245566_CreateSwapFeedbackRelationship.cs" />
-    <Compile Include="Migrations\202309200245566_CreateSwapFeedbackRelationship.designer.cs">
+    <Compile Include="Migrations\202309200245566_CreateSwapFeedbackRelationship.Designer.cs">
       <DependentUpon>202309200245566_CreateSwapFeedbackRelationship.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309200402036_AddDateToFeedback.cs" />
-    <Compile Include="Migrations\202309200402036_AddDateToFeedback.designer.cs">
+    <Compile Include="Migrations\202309200402036_AddDateToFeedback.Designer.cs">
       <DependentUpon>202309200402036_AddDateToFeedback.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309262027174_AddedBlockedUsers.cs" />
-    <Compile Include="Migrations\202309262027174_AddedBlockedUsers.designer.cs">
+    <Compile Include="Migrations\202309262027174_AddedBlockedUsers.Designer.cs">
       <DependentUpon>202309262027174_AddedBlockedUsers.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202309262043519_ChangedBlockedUsersType.cs" />
-    <Compile Include="Migrations\202309262043519_ChangedBlockedUsersType.designer.cs">
+    <Compile Include="Migrations\202309262043519_ChangedBlockedUsersType.Designer.cs">
       <DependentUpon>202309262043519_ChangedBlockedUsersType.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\202310032034121_AddCloseAccount.cs" />
-    <Compile Include="Migrations\202310032034121_AddCloseAccount.designer.cs">
+    <Compile Include="Migrations\202310032034121_AddCloseAccount.Designer.cs">
       <DependentUpon>202310032034121_AddCloseAccount.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202310181915146_Updates.cs" />
+    <Compile Include="Migrations\202310181915146_Updates.designer.cs">
+      <DependentUpon>202310181915146_Updates.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -357,6 +354,7 @@
     <Content Include="Content\images\doodles\11.png" />
     <Content Include="Content\images\doodles\12.png" />
     <Content Include="Content\images\doodles\13.png" />
+    <Content Include="Content\images\doodles\14.png" />
     <Content Include="Content\images\doodles\2.1.png" />
     <Content Include="Content\images\doodles\2.png" />
     <Content Include="Content\images\doodles\3.png" />
@@ -375,6 +373,7 @@
     <Content Include="Fonts\fa-solid-900.ttf" />
     <Content Include="Fonts\fa-v4compatibility.ttf" />
     <Content Include="Content\tooltips\tooltips.json" />
+    <None Include="Properties\PublishProfiles\CollectionSwap - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.1.js" />
     <Content Include="Scripts\jquery-3.7.1.min.js" />
@@ -506,7 +505,6 @@
     <Content Include="Views\Shared\Info.cshtml" />
     <Content Include="Views\Manage\_Feedback.cshtml" />
     <Content Include="Views\Manage\_Profile.cshtml" />
-    <Content Include="Views\Manage\_SwapRow.cshtml" />
     <Content Include="Views\Shared\_Tooltip.cshtml" />
     <Content Include="Views\Shared\_Rating.cshtml" />
     <Content Include="Views\Shared\_Prompt.cshtml" />
@@ -591,6 +589,9 @@
     <EmbeddedResource Include="Migrations\202310032034121_AddCloseAccount.resx">
       <DependentUpon>202310032034121_AddCloseAccount.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202310181915146_Updates.resx">
+      <DependentUpon>202310181915146_Updates.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -626,9 +627,10 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
     <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets'))" />
   </Target>
   <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

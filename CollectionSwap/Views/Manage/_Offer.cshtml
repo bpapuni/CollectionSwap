@@ -8,12 +8,12 @@
     var id = Model.Swap.Id;
     var sender = Model.Swap.Sender;
     var receiver = Model.Swap.Receiver;
-    var collectionId = Model.Swap.CollectionId;
+    var collectionId = Model.Swap.Collection.Id;
     var itemList = JsonConvert.DeserializeObject<List<string>>(Model.Swap.Collection.ItemListJSON);
-    var senderCollectionId = Model.Swap.SenderCollectionId;
+    var senderCollectionId = Model.Swap.SenderCollection.Id;
     var senderItems = JsonConvert.DeserializeObject<List<int>>(Model.Swap.SenderCollection.ItemCountJSON);
     var senderRequestedItems = JsonConvert.DeserializeObject<List<int>>(Model.Swap.SenderRequestedItems);
-    var receiverCollectionId = Model.Swap.ReceiverCollectionId;
+    var receiverCollectionId = Model.Swap.ReceiverCollection.Id;
     var receiverItems = JsonConvert.DeserializeObject<List<int>>(Model.Swap.ReceiverCollection.ItemCountJSON);
     var receiverRequestedItems = JsonConvert.DeserializeObject<List<int>>(Model.Swap.ReceiverRequestedItems);
     var swapSize = Model.Swap.SwapSize;
@@ -323,7 +323,7 @@
                             <span class="duplicate-missing-items-error">
                                 @if (validation.DuplicateRequestItems.Count > 0)
                                 {
-                                    <p><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from one or more users.</p>
+                                    @Html.Raw("<i class=\"fa-solid fa-circle-exclamation\"></i> You have requested the marked item(s) from one or more users.")
                                 }
                             </span>
 
@@ -397,7 +397,7 @@
                             <span class="duplicate-missing-items-error">
                                 @if (validation.DuplicateRequestItems.Count > 0)
                                 {
-                                    <p><i class="fa-solid fa-circle-exclamation"></i> You have already requested the marked item(s) from one or more users.</p>
+                                    @Html.Raw("<i class=\"fa-solid fa-circle-exclamation\"></i> You have already requested the marked item(s) from one or more users.")
                                 }
                             </span>
 
@@ -424,7 +424,7 @@
                             @if (validation.DuplicateRequestItems.Count > 0)
                             {
                                 <span class="duplicate-missing-items-error">
-                                    <p><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from one or more users.</p>
+                                    @Html.Raw("<i class=\"fa-solid fa-circle-exclamation\"></i> You have requested the marked item(s) from one or more users.")
                                 </span>
                             }
 
@@ -494,7 +494,7 @@
                             @if (validation.DuplicateRequestItems.Count > 0)
                             {
                                 <span class="duplicate-missing-items-error">
-                                    <p><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from several users.</p>
+                                    @Html.Raw("<i class=\"fa-solid fa-circle-exclamation\"></i> You have requested the marked item(s) from several users.")
                                 </span>
                             }
 
@@ -535,7 +535,7 @@
                             <span class="duplicate-missing-items-error">
                                 @if (userId == sender.Id)
                                 {
-                                    <p><i class="fa-solid fa-circle-exclamation"></i> You have requested the marked item(s) from several users.</p>
+                                    @Html.Raw("<i class=\"fa-solid fa-circle-exclamation\"></i> You have requested the marked item(s) from several users.")
                                 }
                             </span>
                         }
@@ -574,8 +574,7 @@
                             if (userId == sender.Id)
                             {
                                 <span class="duplicate-missing-items-error">
-                                    <p><i class="fa-solid fa-circle-exclamation"></i> Several users have requested the marked item(s).</p>
-                                    <p>If you do not have enough copies in your collection you'll be unable to confirm this swap.</p>
+                                    @Html.Raw("<i class=\"fa-solid fa-circle-exclamation\"></i> Several users have requested the marked item(s).<br />\r\nIf you do not have enough copies in your collection you'll be unable to confirm this swap.")
                                 </span>
                             }
                         }
@@ -584,8 +583,7 @@
                         @if (validation.LowInventoryItems.Count > 0 && userId == sender.Id)
                         {
                             <span class="duplicate-missing-items-error">
-                                <p><i class="fa-solid fa-circle-exclamation"></i> You do not have enough copies of the marked item(s) to confirm this swap.</p>
-                                @*<p>If you do not have enough copies in your collection you'll be unable to confirm this swap.</p>*@
+                                @Html.Raw("<i class=\"fa-solid fa-circle-exclamation\"></i> You do not have enough copies of the marked item(s) to confirm this swap.")
                             </span>
                         }
 
